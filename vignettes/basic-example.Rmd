@@ -1,0 +1,42 @@
+---
+title: "Basic example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{basic-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 10,
+  fig.height = 6,
+  out.width = "100%",
+  dpi = 300,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tna)
+library(TraMineR)
+data("engagement", package = "tna")
+seq_data = seqdef(engagement)
+```
+
+```{r}
+tna_model <- build.tna(engagement)
+plot.tna(tna_model, mar = c(4,4,4,4))
+```
+
+```{r}
+calculate.centralities(tna_model$Matrix)
+plot.centralities(tna_model$Matrix)
+```
+
+```{r}
+calculate.centralities(tna_model$Matrix0)
+plot.centralities(tna_model$Matrix0)
+```
+

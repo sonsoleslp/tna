@@ -1,0 +1,27 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+inst/doc
+.lue
+# History files
+# Example code in package build process
+*-Ex.R
+# RStudio files
+# Eclipse files
+src-x64
+*.o
+*.dll
+*.so
+*.Rproj
+*.Rproj.user
+.Rproj.user
+.settings
+*.sty
+*.log
+*.synctex.gz
+*.tex
+*.pdf
+*.bbl
+*.idx
+*.ilg
