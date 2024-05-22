@@ -2,37 +2,41 @@
 % Please edit documentation in R/plot.R
 \name{plot.tna}
 \alias{plot.tna}
-\title{Plot Transition Network Analysis Model}
+\title{Plot a Transition Network Analysis Model}
 \usage{
-plot.tna(model)
+\method{plot}{tna}(
+  model,
+  pie = model$inits,
+  labels = model$labels,
+  color = model$colors,
+  edge.labels = TRUE,
+  ...
+)
 }
 \arguments{
-\item{model}{A list containing the TNA model components, typically the output of the \code{\link{build.tna}} function.}
+\item{model}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
 
-\item{...}{Additional arguments passed to the \code{qgraph} function.}
+\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
-A plot of the transition network.
+A \code{ggplot} of the transition network.
 }
 \description{
 This function plots a transition network analysis (TNA) model using the \code{qgraph} package.
-}
-\details{
-This function uses the \code{qgraph} package to visualize the transition probabilities in the TNA model. The nodes in the graph
-represent states, with node sizes corresponding to initial state probabilities. Edges between nodes represent transition
-probabilities, and the graph is colored according to the state colors specified in the model.
+The nodes in the graph represent states, with node sizes corresponding to initial state probabilities.
+Edges between nodes represent transition probabilities, and the graph is colored according to the state colors specified in the model.
 }
 \examples{
 \dontrun{
-  library(TraMineR)
-  data(biofam3c)
+  library("TraMineR")
+  data(biofam3c, package = "seqHMM")
 
   # Preparing the sequence data
-  seq_data <- seqdef(biofam3c$biofam)
+  seq_data <- seqdef(biofam3c)
 
   # Building a transition matrix from the sequence data
-  tna_model <- build.tna(seq_data)
-  plot.tna(tna_model)
+  tna_model <- build_tna(seq_data)
+  plot(tna_model)
 }
 
 }

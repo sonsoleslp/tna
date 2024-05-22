@@ -1,37 +1,67 @@
-`tna`: An R package for Transition Network Analysis
-====================================================================================================
 
-Install from Github
-```R
-install.packages("devtools")
-library(devtools)
-install_github("sonsoleslp/tna")
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# `tna`: An R package for Transition Network Analysis
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+## Installation
+
+You can install the development version of tna from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("sonsoleslp/tna")
 ```
+
+## Example
+
 Load the library
-```R
-library(tna)
+
+``` r
+library("tna")
 ```
 
 Example data
-```R
+
+``` r
 data("engagement", package = "tna")
 ```
 
 Build a Markov model
-```R
-tna_model <- build.tna(engagement)
+
+``` r
+tna_model <- build_tna(engagement)
 ```
 
 Plot the transition network
-```R
-plot.tna(tna_model, mar = c(4,4,4,4))
+
+``` r
+plot(tna_model)
 ```
 
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
 Calculate the centrality measures
-```R
-calculate.centralities(tna_model$Matrix)
+
+``` r
+cm <- centralities(tna_model)
+cm
+#> # A tibble: 3 × 9
+#>   Interaction OutStrength InStrength ClosenessIn ClosenessOut Closeness
+#> * <chr>             <dbl>      <dbl>       <dbl>        <dbl>     <dbl>
+#> 1 Active                1      0.871        2.90         2.11      3.52
+#> 2 Average               1      1.47         1.10         2.29      2.34
+#> 3 Disengaged            1      0.660        4.22         1.73      4.22
+#> # ℹ 3 more variables: Betweenness <dbl>, Diffusion <dbl>, Clustering <dbl>
 ```
+
 Plot the centrality measures
-```R
-plot.centralities(tna_model$Matrix0)
+
+``` r
+plot(cm)
 ```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />

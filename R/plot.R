@@ -1,20 +1,49 @@
-#' Plot Transition Network Analysis Model
+#' Plot a Transition Network Analysis Model
 #'
-#' This function plots a transition network analysis (TNA) model using the \code{qgraph} package.
+#' This function plots a transition network analysis (TNA) model using the `qgraph` package.
+#' The nodes in the graph represent states, with node sizes corresponding to initial state probabilities.
+#' Edges between nodes represent transition probabilities, and the graph is colored according to the state colors specified in the model.
 #'
-#' @param model A list containing the TNA model components, typically the output of the \code{\link{build.tna}} function.
-#' @param ... Additional arguments passed to the \code{qgraph} function.
+#' @export
+#' @param model A `tna` object from [tna::build_tna()].
+#' @param ... Additional arguments passed to [qgraph::qgraph()].
+#' @return A `ggplot` of the transition network.
+#' @examples
+#' \dontrun{
+#'   library("TraMineR")
+#'   data(biofam3c, package = "seqHMM")
 #'
-#' @return A plot of the transition network.
+#'   # Preparing the sequence data
+#'   seq_data <- seqdef(biofam3c)
 #'
-#' @usage
-#' plot.tna(model)
+#'   # Building a transition matrix from the sequence data
+#'   tna_model <- build_tna(seq_data)
+#'   plot(tna_model)
+#' }
 #'
-#' @details
-#' This function uses the \code{qgraph} package to visualize the transition probabilities in the TNA model. The nodes in the graph
-#' represent states, with node sizes corresponding to initial state probabilities. Edges between nodes represent transition
-#' probabilities, and the graph is colored according to the state colors specified in the model.
+plot.tna <- function(model, pie = model$inits, labels = model$labels,
+                     color = model$colors, edge.labels = TRUE, ...) {
+  qgraph::qgraph(
+    model$matrix,
+    pie = pie,
+    labels = labels,
+    color = color,
+    edge.labels = edge.labels,
+    ...
+  )
+}
+
+#' Plot Centralities for a Transition Matrix
 #'
+#' This function calculates several centrality measures using the `centralities` method
+#' and then plots these measures using [ggcharts::lollipop_chart()].
+#' The resulting plot includes facets for each centrality measure, showing the values for each interaction.
+#' The returned plot is a `ggplot2` object, so it can be easily modified and styled.
+#' See [tna::centralities.tna()] for details on the centrality measures.
+#'
+#' @export
+#' @param x An object of class `centralities`.
+#' @return A `ggplot` object displaying the lollipop charts for each centrality measure.
 #' @examples
 #' \dontrun{
 #'   library(TraMineR)
@@ -25,11 +54,24 @@
 #'
 #'   # Building a transition matrix from the sequence data
 #'   tna_model <- build.tna(seq_data)
-#'   plot.tna(tna_model)
+#'   transition_matrix <- tna_model$Matrix
+#'
+#'   # Plotting the centralities
+#'   plot.centralities(transition_matrix)
 #' }
 #'
-#' @importFrom qgraph qgraph
 #' @export
-plot.tna <- function(model, pie = model$inits, labels = model$Labels, color = model$colors, edge.labels = TRUE, ...) {
-  qgraph::qgraph(model$Matrix, pie = pie, labels = labels, color = color, edge.labels = edge.labels, ...)
+plot.centralities <- function(x, ...) {
+  x |> dplyr::mutate(dplyr::across(ClosenessIn:Clustering, ranger)) |>
+    tidyr::pivot_longer(OutStrength:Clustering) |>
+    ggcharts::lollipop_chart(
+      x = Interaction,
+      y = value,
+      facet = name,
+      line_size = 2,
+      font_size = 3
+    ) +
+    ggplot2::theme(plot.background = ggplot2::element_rect(fill = "white")) +
+    ggplot2::xlab("") +
+    ggplot2::ylab("")
 }

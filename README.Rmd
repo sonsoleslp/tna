@@ -1,0 +1,62 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# `tna`: An R package for Transition Network Analysis
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+
+## Installation
+
+You can install the development version of tna from [GitHub](https://github.com/) with:
+
+```{r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("sonsoleslp/tna")
+```
+
+## Example
+
+Load the library
+```{r}
+library("tna")
+```
+
+Example data
+```{r}
+data("engagement", package = "tna")
+```
+
+Build a Markov model
+```{r}
+tna_model <- build_tna(engagement)
+```
+
+Plot the transition network
+```{r}
+plot(tna_model)
+```
+
+Calculate the centrality measures
+```{r}
+cm <- centralities(tna_model)
+cm
+```
+
+Plot the centrality measures
+```{r}
+plot(cm)
+```
