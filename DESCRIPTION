@@ -1,32 +1,40 @@
 Package: tna
-Type: Package
 Title: Transition Network Analysis (TNA)
 Version: 0.1.0
-Author: Sonsoles López-Pernas [aut, cre], Mohammed Saqr [aut], Santtu Tikka [aut]
-Maintainer: Sonsoles López-Pernas <sonsoles.lopez@uef.fi>
+Authors@R: c(
+    person("Sonsoles", "L\u00f3pez-Pernas", 
+           email = "sonsoles.lopez@uef.fi", role = c("aut", "cre")), 
+    person("Mohammed", "Saqr", role = "aut"), 
+    person("Santtu", "Tikka", role = "aut")
+  )
 Description: Provides tools for performing transition network analysis (TNA),
     including functions for building TNA models, plotting transition networks,
     and calculating centrality measures.
     The package relies on `TraMineR` for sequence analysis, as well as `qgraph`, 
     `igraph` and `NetworkToolbox` for network plotting and centrality measure calculation.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
+URL: https://github.com/sonsoleslp/tna/
+BugReports: https://github.com/sonsoleslp/tna/issues/
+Depends:
+    R (>= 3.6.0)
 Imports: 
-    TraMineR,
-    qgraph,
-    igraph,
-    NetworkToolbox,
-    keyplayer,
-    DCG,
     dplyr,
-    tidyr,
-    tibble,
     ggcharts,
-    seqHMM
-RoxygenNote: 7.3.1
+    ggplot2,
+    igraph,
+    keyplayer,
+    NetworkToolbox,
+    qgraph,
+    seqHMM,
+    tibble,
+    tidyr,
+    TraMineR
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+LazyData: true

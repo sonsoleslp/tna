@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{An object of class \code{centralities}.}
+
+\item{...}{Ignored.}
 }
 \value{
 A \code{ggplot} object displaying the lollipop charts for each centrality measure.

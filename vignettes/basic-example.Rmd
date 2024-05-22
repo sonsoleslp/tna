@@ -18,25 +18,27 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r}
 library("tna")
-library("TraMineR")
+```
+
+```{r}
 data("engagement", package = "tna")
-seq_data <- seqdef(engagement)
 ```
 
 ```{r}
-tna_model <- build.tna(engagement)
-plot.tna(tna_model, mar = c(4,4,4,4))
+tna_model <- build_tna(engagement)
 ```
 
 ```{r}
-calculate.centralities(tna_model$Matrix)
-plot.centralities(tna_model$Matrix)
+plot(tna_model)
 ```
 
 ```{r}
-calculate.centralities(tna_model$Matrix0)
-plot.centralities(tna_model$Matrix0)
+cm <- centralities(tna_model)
+cm
 ```
 
+```{r}
+plot(cm)
+```

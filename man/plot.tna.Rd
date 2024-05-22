@@ -5,16 +5,24 @@
 \title{Plot a Transition Network Analysis Model}
 \usage{
 \method{plot}{tna}(
-  model,
-  pie = model$inits,
-  labels = model$labels,
-  color = model$colors,
+  x,
+  pie = x$inits,
+  labels = x$labels,
+  color = x$colors,
   edge.labels = TRUE,
   ...
 )
 }
 \arguments{
-\item{model}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
+\item{x}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
+
+\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }

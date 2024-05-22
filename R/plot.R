@@ -5,7 +5,11 @@
 #' Edges between nodes represent transition probabilities, and the graph is colored according to the state colors specified in the model.
 #'
 #' @export
-#' @param model A `tna` object from [tna::build_tna()].
+#' @param x A `tna` object from [tna::build_tna()].
+#' @param pie See [qgraph::qgraph()].
+#' @param labels See [qgraph::qgraph()].
+#' @param color See [qgraph::qgraph()].
+#' @param edge.labels See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `ggplot` of the transition network.
 #' @examples
@@ -21,10 +25,10 @@
 #'   plot(tna_model)
 #' }
 #'
-plot.tna <- function(model, pie = model$inits, labels = model$labels,
-                     color = model$colors, edge.labels = TRUE, ...) {
+plot.tna <- function(x, pie = x$inits, labels = x$labels,
+                     color = x$colors, edge.labels = TRUE, ...) {
   qgraph::qgraph(
-    model$matrix,
+    x$matrix,
     pie = pie,
     labels = labels,
     color = color,
@@ -43,6 +47,7 @@ plot.tna <- function(model, pie = model$inits, labels = model$labels,
 #'
 #' @export
 #' @param x An object of class `centralities`.
+#' @param ... Ignored.
 #' @return A `ggplot` object displaying the lollipop charts for each centrality measure.
 #' @examples
 #' \dontrun{

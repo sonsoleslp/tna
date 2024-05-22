@@ -1,5 +1,11 @@
-^.*\.Rproj$
+^tna\.Rproj$
 ^\.Rproj\.user$
+^\.github$
+^codecov\.yml$
+^LICENSE\.md$
+^README\.Rmd$
+^codemeta\.json$
+^data-raw$
+^_pkgdown.yml$
 ^doc$
 ^Meta$
-^README\.Rmd$
