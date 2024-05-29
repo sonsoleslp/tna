@@ -37,12 +37,12 @@ It measures how close a node is to all other nodes based on the incoming paths.
 It measures how close a node is to all other nodes based on the outgoing paths.
 \item \code{Closeness} Closeness centrality (overall), calculated using \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "all"}.
 It measures how close a node is to all other nodes based on both incoming and outgoing paths.
-\item \code{Betweenness} Betweenness centrality, calculated using \code{\link[NetworkToolbox:rspbc]{NetworkToolbox::rspbc()}}.
+\item \code{Betweenness} Betweenness centrality based on randomized shortest paths (Kivimäki et al. 2014).
 It measures the extent to which a node lies on the shortest paths between other nodes.
-\item \code{Diffusion} Diffusion centrality, calculated using \code{\link[keyplayer:diffusion]{keyplayer::diffusion()}}.
+\item \code{Diffusion} Diffusion centrality of Banerjee et.al. (2014).
 It measures the influence of a node in spreading information through the network.
-\item \code{Clustering} Clustering coefficient, calculated using \code{\link[qgraph:clustcoef_auto]{qgraph::clustcoef_auto()}}
-on the symmetric adjacency matrix obtained via \code{\link[DCG:as.symmetricAdjacencyMatrix]{DCG::as.symmetricAdjacencyMatrix()}} with \code{rule = "weak"}.
+\item \code{Clustering} Signed clustering coefficient of Zhang and Horvath (2005)
+based on the symmetric adjacency matrix (sum of the adjacency matrix and its transpose).
 It measures the degree to which nodes tend to cluster together.
 }
 }
@@ -68,4 +68,17 @@ It measures the degree to which nodes tend to cluster together.
   calculate.centralities(transition_matrix0)
 }
 
+}
+\references{
+Banerjee, A., A. Chandrasekhar, E. Duflo, and M. Jackson (2014).
+Gossip: Identifying Central Individuals in a Social Network.
+Working Paper.
+
+Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016).
+Two betweenness centrality measures based on Randomized Shortest Paths.
+Scientific Reports, 6, 19668.
+
+Zhang, B., & Horvath, S. (2005).
+A general framework for weighted gene co-expression network analysis.
+Statistical Applications in Genetics and Molecular Biology, 4(1).
 }

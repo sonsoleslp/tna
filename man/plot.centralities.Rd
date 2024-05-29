@@ -9,17 +9,17 @@
 \arguments{
 \item{x}{An object of class \code{centralities}.}
 
-\item{...}{Ignored.}
+\item{...}{Arguments passed to \code{\link[ggcharts:lollipop_chart]{ggcharts::lollipop_chart()}}.}
 }
 \value{
 A \code{ggplot} object displaying the lollipop charts for each centrality measure.
 }
 \description{
-This function calculates several centrality measures using the \code{centralities} method
+Calculates several centrality measures using the \code{\link[=centralities]{centralities()}} method
 and then plots these measures using \code{\link[ggcharts:lollipop_chart]{ggcharts::lollipop_chart()}}.
 The resulting plot includes facets for each centrality measure, showing the values for each interaction.
 The returned plot is a \code{ggplot2} object, so it can be easily modified and styled.
-See \code{\link[=centralities.tna]{centralities.tna()}} for details on the centrality measures.
+See \code{\link[=centralities]{centralities()}} for details on the centrality measures.
 }
 \examples{
 \dontrun{

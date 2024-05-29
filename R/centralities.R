@@ -13,12 +13,12 @@
 #'     It measures how close a node is to all other nodes based on the outgoing paths.
 #'   * `Closeness` Closeness centrality (overall), calculated using [igraph::closeness()] with `mode = "all"`.
 #'     It measures how close a node is to all other nodes based on both incoming and outgoing paths.
-#'   * `Betweenness` Betweenness centrality, calculated using [NetworkToolbox::rspbc()].
+#'   * `Betweenness` Betweenness centrality based on randomized shortest paths (Kivimäki et al. 2014).
 #'     It measures the extent to which a node lies on the shortest paths between other nodes.
-#'   * `Diffusion` Diffusion centrality, calculated using [keyplayer::diffusion()].
+#'   * `Diffusion` Diffusion centrality of Banerjee et.al. (2014).
 #'     It measures the influence of a node in spreading information through the network.
-#'   * `Clustering` Clustering coefficient, calculated using [qgraph::clustcoef_auto()]
-#'     on the symmetric adjacency matrix obtained via [DCG::as.symmetricAdjacencyMatrix()] with `rule = "weak"`.
+#'   * `Clustering` Signed clustering coefficient of Zhang and Horvath (2005)
+#'     based on the symmetric adjacency matrix (sum of the adjacency matrix and its transpose).
 #'     It measures the degree to which nodes tend to cluster together.
 #'
 #' @export
@@ -27,6 +27,18 @@
 #'   or a `tna` object.
 #' @param ... Ignored.
 #' @return A `data.frame` containing centrality measures for each interaction.
+#' @references
+#' Banerjee, A., A. Chandrasekhar, E. Duflo, and M. Jackson (2014).
+#' Gossip: Identifying Central Individuals in a Social Network.
+#' Working Paper.
+#'
+#' Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016).
+#' Two betweenness centrality measures based on Randomized Shortest Paths.
+#' Scientific Reports, 6, 19668.
+#'
+#' Zhang, B., & Horvath, S. (2005).
+#' A general framework for weighted gene co-expression network analysis.
+#' Statistical Applications in Genetics and Molecular Biology, 4(1).
 #' @examples
 #' \dontrun{
 #'   library(TraMineR)
@@ -76,28 +88,23 @@ centralities_ <- function(mat) {
   ClosenessIn <- igraph::closeness(g, mode = "in")
   ClosenessOut <- igraph::closeness(g, mode = "out")
   Closeness <- igraph::closeness(g, mode = "all")
-  Betweenness <- NetworkToolbox::rspbc(mat)
-  Diffusion <- keyplayer::diffusion(mat) |>
-    data.frame() |>
-    dplyr::pull(diffusion)
-  #Clustering <- DCG::as.symmetricAdjacencyMatrix(mat, rule = "weak", weighted = TRUE) |>
-  mat_symm <- mat + t(mat)
-  diag(mat_symm) <- 0
-  Clustering <- mat_symm |>
-    qgraph::clustcoef_auto() |>
-    dplyr::pull(clustZhang)
+  Betweenness <- rsp_bet(mat)
+  Diffusion <- diffusion(mat)
+  Clustering <- wcc(mat + t(mat))
   structure(
-    data.frame(
-      OutStrength,
-      InStrength,
-      ClosenessIn,
-      ClosenessOut,
-      Closeness,
-      Betweenness,
-      Diffusion,
-      Clustering
-    ) |>
-      tibble::rownames_to_column("Interaction"),
+    tibble::rownames_to_column(
+      data.frame(
+        OutStrength,
+        InStrength,
+        ClosenessIn,
+        ClosenessOut,
+        Closeness,
+        Betweenness,
+        Diffusion,
+        Clustering
+      ),
+      "Interaction"
+    ),
     class = c("centralities", "tbl_df", "tbl", "data.frame")
   )
 }

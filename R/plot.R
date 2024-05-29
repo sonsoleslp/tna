@@ -39,15 +39,15 @@ plot.tna <- function(x, pie = x$inits, labels = x$labels,
 
 #' Plot Centralities for a Transition Matrix
 #'
-#' This function calculates several centrality measures using the `centralities` method
+#' Calculates several centrality measures using the [centralities()] method
 #' and then plots these measures using [ggcharts::lollipop_chart()].
 #' The resulting plot includes facets for each centrality measure, showing the values for each interaction.
 #' The returned plot is a `ggplot2` object, so it can be easily modified and styled.
-#' See [tna::centralities.tna()] for details on the centrality measures.
+#' See [centralities()] for details on the centrality measures.
 #'
 #' @export
 #' @param x An object of class `centralities`.
-#' @param ... Ignored.
+#' @param ... Arguments passed to [ggcharts::lollipop_chart()].
 #' @return A `ggplot` object displaying the lollipop charts for each centrality measure.
 #' @examples
 #' \dontrun{
@@ -67,15 +67,27 @@ plot.tna <- function(x, pie = x$inits, labels = x$labels,
 #'
 #' @export
 plot.centralities <- function(x, ...) {
-  x |> dplyr::mutate(dplyr::across(ClosenessIn:Clustering, ranger)) |>
-    tidyr::pivot_longer(OutStrength:Clustering) |>
-    ggcharts::lollipop_chart(
-      x = Interaction,
-      y = value,
-      facet = name,
+  x[-1] <- lapply(x[-1], ranger)
+  x <- stats::reshape(
+    as.data.frame(x),
+    idvar = "Interaction",
+    ids = x[["Interaction"]],
+    times = names(x)[-1L],
+    timevar = "name",
+    drop = "Interaction",
+    varying = list(names(x)[-1L]),
+    direction = "long",
+    v.names = "value"
+  )
+  ggcharts::lollipop_chart(
+      data = x,
+      x = !!rlang::sym("Interaction"),
+      y = !!rlang::sym("value"),
+      facet = !!rlang::sym("name"),
       line_size = 2,
-      font_size = 3
-    ) +
+      font_size = 3,
+      ...
+  ) +
     ggplot2::theme(plot.background = ggplot2::element_rect(fill = "white")) +
     ggplot2::xlab("") +
     ggplot2::ylab("")
