@@ -1,7 +1,6 @@
 #' Calculate Centralities for a Transition Matrix
 #'
-#' This function calculates several centrality measures using the \code{igraph}, \code{NetworkToolbox}, \code{keyplayer}, and \code{qgraph} packages.
-#' The measures include:
+#' This function calculates the following centrality measures:
 #'
 #'   * `OutStrength` Outgoing strength centrality, calculated using [igraph::strength()] with `mode = "out"`.
 #'     It measures the total weight of the outgoing edges from each node.
@@ -39,27 +38,15 @@
 #' Zhang, B., & Horvath, S. (2005).
 #' A general framework for weighted gene co-expression network analysis.
 #' Statistical Applications in Genetics and Molecular Biology, 4(1).
+#'
 #' @examples
-#' \dontrun{
-#'   library(TraMineR)
-#'   data(biofam3c)
+#' tna_model <- build_tna(engagement)
 #'
-#'   # Preparing the sequence data
-#'   seq_data <- seqdef(biofam3c$biofam)
+#' # Centrality measures including loops in the network
+#' centralities(tna_model)
 #'
-#'   # Building a transition matrix from the sequence data
-#'   tna_model <- build.tna(seq_data)
-#'   transition_matrix <- tna_model$Matrix
-#'
-#'   # Calculating the centralities
-#'   calculate.centralities(transition_matrix)
-#'
-#'   # Building a transition matrix from the sequence data without loops
-#'   transition_matrix0 <- tna_model$Matrix0
-#'
-#'   # Calculating the centralities for the matrix without loops
-#'   calculate.centralities(transition_matrix0)
-#' }
+#' # Centrality measures excluding loops in the network
+#' centralities(tna_model, loops = FALSE)
 #'
 centralities <- function(x, ...) {
   UseMethod("centralities", x)
@@ -67,8 +54,14 @@ centralities <- function(x, ...) {
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, ...) {
-  centralities_(x$matrix)
+#' @param loops A `logical` value indicating whether to include loops in the
+#'   network when computing the centrality measures (default is `TRUE`).
+centralities.tna <- function(x, loops = TRUE, ...) {
+  ifelse_(
+    loops,
+    centralities_(x$matrix),
+    centralities_(x$matrix0)
+  )
 }
 
 #' @export
@@ -107,4 +100,47 @@ centralities_ <- function(mat) {
     ),
     class = c("centralities", "tbl_df", "tbl", "data.frame")
   )
+}
+
+#' Compute diffusion centrality measure
+#'
+#' @param mat A transition probability matrix.
+#' @noRd
+diffusion <- function(mat) {
+  s <- 0
+  n <- ncol(mat)
+  p <- diag(1, n, n)
+  for (i in seq_len(n)) {
+    p <- p %*% mat
+    s <- s + p
+  }
+  .rowSums(s, n, n)
+}
+
+#' Compute randomized shortest path betweennes centrality measure
+#'
+#' @param mat A transition probability matrix.
+#' @noRd
+rsp_bet <- function(mat, beta = 0.01) {
+  n <- ncol(mat)
+  W <- mat * exp(-beta * mat^-1)
+  Z <- solve(diag(1, n, n) - W)
+  Zrecip <- Z^-1
+  Zrecip_diag <- diag(Zrecip) * diag(1, n, n)
+  out <- diag(tcrossprod(Z, Zrecip - n * Zrecip_diag) %*% Z)
+  out <- round(out)
+  out <- out - min(out) + 1
+  out
+}
+
+#' Compute signed clustering coefficient
+#'
+#' @param mat A transition probability matrix.
+#' @noRd
+wcc <- function(mat) {
+  diag(mat) <- 0
+  n <- ncol(mat)
+  num <- diag(mat %*% mat %*% mat)
+  den <- .colSums(mat, n, n)^2 - .colSums(mat^2, n, n)
+  num / den
 }

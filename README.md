@@ -8,7 +8,7 @@
 
 ## Installation
 
-You can install the development version of tna from
+You can install the development version of `tna` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -39,7 +39,7 @@ tna_model <- build_tna(engagement)
 Plot the transition network
 
 ``` r
-plot(tna_model, mar = rep(5, 4))
+plot(tna_model)
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />

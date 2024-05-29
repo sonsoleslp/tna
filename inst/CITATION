@@ -1,7 +1,7 @@
 bibentry(
   key      = "tna_package",
   bibtype  = "Manual",
-  title    = "tna : An R package for Transition Network Analysis",
+  title    = "{tna} : An {R} package for Transition Network Analysis",
   author   = c(person("Sonsoles", "L\u00f3pez-Pernas"), person("Mohammed", "Saqr"), person("Santtu", "Tikka")),
   note     = "R package version 0.1.0",
   year     = "2024",

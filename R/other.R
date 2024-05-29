@@ -1,7 +1,3 @@
-#ranger <- function(xc) {
-#  BBmisc::normalize(xc, method = "range")
-#}
-
 #' Normalize `x` to the unit interval from 0 to 1.
 #'
 #' @param x A `numeric` vector.
@@ -13,45 +9,28 @@ ranger <- function(x, na.rm = FALSE) {
   (x + mi) / (ma - mi)
 }
 
-#' Compute diffusion centrality measure
+#' Shorthand for `if (test) yes else no`
 #'
-#' @param mat A transition probability matrix.
+#' @param test A `logical` value of the condition to evaluate.
+#' @param yes An \R object to return when `test` evaluates to `TRUE`.
+#' @param no An \R object to return when `test` evaluates to `FALSE`.
 #' @noRd
-diffusion <- function(mat) {
-  s <- 0
-  n <- ncol(mat)
-  p <- diag(1, n, n)
-  for (i in seq_len(n)) {
-    p <- p %*% mat
-    s <- s + p
+ifelse_ <- function(test, yes, no) {
+  if (test) {
+    yes
+  } else {
+    no
   }
-  .rowSums(s, n, n)
 }
 
-#' Compute randomized shortest path betweennes centrality measure
+#' Stop function execution unless condition is true
 #'
-#' @param mat A transition probability matrix.
+#' @param message See [cli::cli_abort()].
+#' @param ... See [cli::cli_abort()].
+#' @param call See [cli::cli_abort()].
 #' @noRd
-rsp_bet <- function(mat, beta = 0.01) {
-  n <- ncol(mat)
-  W <- mat * exp(-beta * mat^-1)
-  Z <- solve(diag(1, n, n) - W)
-  Zrecip <- Z^-1
-  Zrecip_diag <- diag(Zrecip) * diag(1, n, n)
-  out <- diag(tcrossprod(Z, Zrecip - n * Zrecip_diag) %*% Z)
-  out <- round(out)
-  out <- out - min(out) + 1
-  out
-}
-
-#' Compute signed clustering coefficient
-#'
-#' @param mat A transition probability matrix.
-#' @noRd
-wcc <- function(mat) {
-  diag(mat) <- 0
-  n <- ncol(mat)
-  num <- diag(mat %*% mat %*% mat)
-  den <- .colSums(mat, n, n)^2 - .colSums(mat^2, n, n)
-  num / den
+stopifnot_ <- function(cond, message, ..., call = rlang::caller_env()) {
+  if (!cond) {
+    cli::cli_abort(message, ..., .envir = parent.frame(), call = call)
+  }
 }

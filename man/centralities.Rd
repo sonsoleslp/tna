@@ -8,7 +8,7 @@
 \usage{
 centralities(x, ...)
 
-\method{centralities}{tna}(x, ...)
+\method{centralities}{tna}(x, loops = TRUE, ...)
 
 \method{centralities}{matrix}(x, ...)
 }
@@ -17,13 +17,15 @@ centralities(x, ...)
 or a \code{tna} object.}
 
 \item{...}{Ignored.}
+
+\item{loops}{A \code{logical} value indicating whether to include loops in the
+network when computing the centrality measures (default is \code{TRUE}).}
 }
 \value{
 A \code{data.frame} containing centrality measures for each interaction.
 }
 \description{
-This function calculates several centrality measures using the \code{igraph}, \code{NetworkToolbox}, \code{keyplayer}, and \code{qgraph} packages.
-The measures include:
+This function calculates the following centrality measures:
 }
 \details{
 \itemize{
@@ -47,26 +49,13 @@ It measures the degree to which nodes tend to cluster together.
 }
 }
 \examples{
-\dontrun{
-  library(TraMineR)
-  data(biofam3c)
+tna_model <- build_tna(engagement)
 
-  # Preparing the sequence data
-  seq_data <- seqdef(biofam3c$biofam)
+# Centrality measures including loops in the network
+centralities(tna_model)
 
-  # Building a transition matrix from the sequence data
-  tna_model <- build.tna(seq_data)
-  transition_matrix <- tna_model$Matrix
-
-  # Calculating the centralities
-  calculate.centralities(transition_matrix)
-
-  # Building a transition matrix from the sequence data without loops
-  transition_matrix0 <- tna_model$Matrix0
-
-  # Calculating the centralities for the matrix without loops
-  calculate.centralities(transition_matrix0)
-}
+# Centrality measures excluding loops in the network
+centralities(tna_model, loops = FALSE)
 
 }
 \references{

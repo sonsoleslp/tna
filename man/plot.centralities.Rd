@@ -4,37 +4,34 @@
 \alias{plot.centralities}
 \title{Plot Centralities for a Transition Matrix}
 \usage{
-\method{plot}{centralities}(x, ...)
+\method{plot}{centralities}(x, line_color = "black", line_size = 2, font_size = 3, ...)
 }
 \arguments{
 \item{x}{An object of class \code{centralities}.}
 
+\item{line_color}{\code{character}. Color of the lollipop 'stick'}
+
+\item{line_size}{\code{numeric}. Size of the lollipop 'stick'}
+
+\item{font_size}{A \code{numeric} value describing the font size.}
+
 \item{...}{Arguments passed to \code{\link[ggcharts:lollipop_chart]{ggcharts::lollipop_chart()}}.}
 }
 \value{
-A \code{ggplot} object displaying the lollipop charts for each centrality measure.
+A \code{ggplot} object displaying the lollipop charts for each centrality
+measure.
 }
 \description{
 Calculates several centrality measures using the \code{\link[=centralities]{centralities()}} method
 and then plots these measures using \code{\link[ggcharts:lollipop_chart]{ggcharts::lollipop_chart()}}.
-The resulting plot includes facets for each centrality measure, showing the values for each interaction.
-The returned plot is a \code{ggplot2} object, so it can be easily modified and styled.
-See \code{\link[=centralities]{centralities()}} for details on the centrality measures.
+The resulting plot includes facets for each centrality measure, showing the
+values for each interaction. The returned plot is a \code{ggplot2} object, so it
+can be easily modified and styled. See \code{\link[=centralities]{centralities()}} for details on the
+centrality measures.
 }
 \examples{
-\dontrun{
-  library(TraMineR)
-  data(biofam3c)
-
-  # Preparing the sequence data
-  seq_data <- seqdef(biofam3c$biofam)
-
-  # Building a transition matrix from the sequence data
-  tna_model <- build.tna(seq_data)
-  transition_matrix <- tna_model$Matrix
-
-  # Plotting the centralities
-  plot.centralities(transition_matrix)
-}
+tna_model <- build_tna(engagement)
+cm <- centralities(tna_model)
+plot(cm)
 
 }

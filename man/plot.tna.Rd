@@ -8,7 +8,8 @@
   x,
   pie = x$inits,
   labels = x$labels,
-  color = x$colors,
+  mar = rep(5, 4),
+  theme = "gray",
   edge.labels = TRUE,
   ...
 )
@@ -20,7 +21,9 @@
 
 \item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
@@ -30,21 +33,13 @@
 A \code{ggplot} of the transition network.
 }
 \description{
-This function plots a transition network analysis (TNA) model using the \code{qgraph} package.
-The nodes in the graph represent states, with node sizes corresponding to initial state probabilities.
-Edges between nodes represent transition probabilities, and the graph is colored according to the state colors specified in the model.
+This function plots a transition network analysis (TNA) model using
+the \code{qgraph} package. The nodes in the graph represent states, with node
+sizes corresponding to initial state probabilities. Edges between nodes
+represent transition probabilities.
 }
 \examples{
-\dontrun{
-  library("TraMineR")
-  data(biofam3c, package = "seqHMM")
-
-  # Preparing the sequence data
-  seq_data <- seqdef(biofam3c)
-
-  # Building a transition matrix from the sequence data
-  tna_model <- build_tna(seq_data)
-  plot(tna_model)
-}
+tna_model <- build_tna(engagement)
+plot(tna_model)
 
 }

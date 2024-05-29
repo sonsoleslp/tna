@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 ## Installation
 
-You can install the development version of tna from [GitHub](https://github.com/) with:
+You can install the development version of `tna` from [GitHub](https://github.com/) with:
 
 ```{r, eval = FALSE}
 # install.packages("devtools")
@@ -48,7 +48,7 @@ tna_model <- build_tna(engagement)
 
 Plot the transition network
 ```{r}
-plot(tna_model, mar = rep(5, 4))
+plot(tna_model)
 ```
 
 Calculate the centrality measures
