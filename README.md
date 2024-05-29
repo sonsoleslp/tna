@@ -39,7 +39,7 @@ tna_model <- build_tna(engagement)
 Plot the transition network
 
 ``` r
-plot(tna_model)
+plot(tna_model, mar = rep(5, 4))
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
