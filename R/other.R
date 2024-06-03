@@ -9,6 +9,33 @@ ranger <- function(x, na.rm = FALSE) {
   (x + mi) / (ma - mi)
 }
 
+#' Shorthand for `try(., silent = TRUE)`
+#'
+#' @param expr An \R expression to try.
+#' @noRd
+try_ <- function(expr) {
+  try(expr, silent = TRUE)
+}
+
+#' Check that argument is an object of class `"tna"`
+#'
+#' @param x An \R object.
+#' @noRd
+is_tna <- function(x) {
+  inherits(x, "tna")
+}
+
+#' Check that argument is an object of class `"centralities"`
+#'
+#' @param x An \R object.
+#' @noRd
+is_centralities <- function(x) {
+  inherits(x, "centralities")
+}
+
+# Functions borrowed from the `dynamite` package --------------------------
+# https://github.com/ropensci/dynamite
+
 #' Shorthand for `if (test) yes else no`
 #'
 #' @param test A `logical` value of the condition to evaluate.
@@ -23,7 +50,16 @@ ifelse_ <- function(test, yes, no) {
   }
 }
 
-#' Stop function execution unless condition is true
+#' Generate a Warning Message
+#'
+#' @param message See [cli::cli_warn()].
+#' @param ... See [cli::cli_warn()].
+#' @noRd
+warning_ <- function(message, ...) {
+  cli::cli_warn(message, ..., .envir = parent.frame())
+}
+
+#' Stop function execution unless a condition is true
 #'
 #' @param message See [cli::cli_abort()].
 #' @param ... See [cli::cli_abort()].

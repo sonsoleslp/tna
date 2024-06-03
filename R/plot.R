@@ -3,7 +3,7 @@
 #' This function plots a transition network analysis (TNA) model using
 #' the `qgraph` package. The nodes in the graph represent states, with node
 #' sizes corresponding to initial state probabilities. Edges between nodes
-#' represent transition probabilities.
+#' represent the transition probabilities.
 #'
 #' @export
 #' @param x A `tna` object from [tna::build_tna()].
@@ -21,6 +21,10 @@
 plot.tna <- function(x, pie = x$inits, labels = x$labels,
                      mar = rep(5, 4), theme = "gray",
                      edge.labels = TRUE, ...) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
   qgraph::qgraph(
     x$matrix,
     pie = pie,
@@ -55,7 +59,11 @@ plot.tna <- function(x, pie = x$inits, labels = x$labels,
 #'
 plot.centralities <- function(x, line_color = "black", line_size = 2,
                               font_size = 3, ...) {
-  x[-1] <- lapply(x[-1], ranger)
+  stopifnot_(
+    is_centralities(x),
+    "Argument {.arg x} must be a {.cls centralities} object."
+  )
+  x[-1L] <- lapply(x[-1L], ranger)
   x <- stats::reshape(
     as.data.frame(x),
     idvar = "Interaction",

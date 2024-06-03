@@ -36,7 +36,7 @@ A \code{ggplot} of the transition network.
 This function plots a transition network analysis (TNA) model using
 the \code{qgraph} package. The nodes in the graph represent states, with node
 sizes corresponding to initial state probabilities. Edges between nodes
-represent transition probabilities.
+represent the transition probabilities.
 }
 \examples{
 tna_model <- build_tna(engagement)

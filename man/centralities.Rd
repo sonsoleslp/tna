@@ -10,7 +10,7 @@ centralities(x, ...)
 
 \method{centralities}{tna}(x, loops = TRUE, ...)
 
-\method{centralities}{matrix}(x, ...)
+\method{centralities}{matrix}(x, loops = TRUE, ...)
 }
 \arguments{
 \item{x}{A square matrix representing transition probabilities or adjacency,
@@ -22,30 +22,41 @@ or a \code{tna} object.}
 network when computing the centrality measures (default is \code{TRUE}).}
 }
 \value{
-A \code{data.frame} containing centrality measures for each interaction.
+A \code{centralities} object which is a tibble (\code{tbl_df})
+containing centrality measures for each interaction.
 }
 \description{
-This function calculates the following centrality measures:
+This function calculates several centrality measures. See 'Details' for
+information about the measures.
 }
 \details{
+The following measures are provided:
 \itemize{
-\item \code{OutStrength} Outgoing strength centrality, calculated using \code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "out"}.
-It measures the total weight of the outgoing edges from each node.
-\item \code{InStrength} Incoming strength centrality, calculated using \code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "in"}.
-It measures the total weight of the incoming edges to each node.
-\item \code{ClosenessIn} Closeness centrality (incoming), calculated using \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "in"}.
-It measures how close a node is to all other nodes based on the incoming paths.
-\item \code{ClosenessOut} Closeness centrality (outgoing), calculated using \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "out"}.
-It measures how close a node is to all other nodes based on the outgoing paths.
-\item \code{Closeness} Closeness centrality (overall), calculated using \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "all"}.
-It measures how close a node is to all other nodes based on both incoming and outgoing paths.
-\item \code{Betweenness} Betweenness centrality based on randomized shortest paths (Kivimäki et al. 2014).
-It measures the extent to which a node lies on the shortest paths between other nodes.
-\item \code{Diffusion} Diffusion centrality of Banerjee et.al. (2014).
-It measures the influence of a node in spreading information through the network.
-\item \code{Clustering} Signed clustering coefficient of Zhang and Horvath (2005)
-based on the symmetric adjacency matrix (sum of the adjacency matrix and its transpose).
-It measures the degree to which nodes tend to cluster together.
+\item \code{OutStrength}\cr Outgoing strength centrality, calculated using
+\code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "out"}. It measures the total weight
+of the outgoing edges from each node.
+\item \code{InStrength}\cr Incoming strength centrality, calculated using
+\code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "in"}. It measures the total weight
+of the incoming edges to each node.
+\item \code{ClosenessIn}\cr Closeness centrality (incoming), calculated using
+\code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "in"}. It measures how close a node
+is to all other nodes based on the incoming paths.
+\item \code{ClosenessOut}\cr Closeness centrality (outgoing), calculated using
+\code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "out"}. It measures how close a node
+is to all other nodes based on the outgoing paths.
+\item \code{Closeness}\cr Closeness centrality (overall), calculated using
+\code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "all"}. It measures how close a node
+is to all other nodes based on both incoming and outgoing paths.
+\item \code{Betweenness}\cr Betweenness centrality based on randomized shortest
+paths (Kivimäki et al. 2014). It measures the extent to which a
+node lies on the shortest paths between other nodes.
+\item \code{Diffusion}\cr Diffusion centrality of Banerjee et.al. (2014).
+It measures the influence of a node in spreading information through
+the network.
+\item \code{Clustering}\cr Signed clustering coefficient of Zhang and Horvath (2005)
+based on the symmetric adjacency matrix (sum of the adjacency matrix
+and its transpose). It measures the degree to which nodes tend to
+cluster together.
 }
 }
 \examples{

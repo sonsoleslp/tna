@@ -2,13 +2,31 @@
 % Please edit documentation in R/build.R
 \name{build_tna}
 \alias{build_tna}
+\alias{build_tna.matrix}
+\alias{build_tna.stslist}
 \title{Build a Transition Network Analysis Model}
 \usage{
-build_tna(sequence)
+build_tna(x, ...)
+
+\method{build_tna}{matrix}(x, inits, ...)
+
+\method{build_tna}{stslist}(x, inits, ...)
 }
 \arguments{
-\item{sequence}{A sequence of events or states to be used for building
-the Markov model.}
+\item{x}{A \code{stslist} object created with \code{\link[seqHMM:TraMineR_imports]{seqHMM::seqdef()}}
+describing a sequence of events or states to be used for building
+the Markov model or a \code{matrix} of transition probabilities with column
+names describing the states. If \code{x} is a matrix, it is assumed that the
+element on row \code{i} and column \code{j} is the transition probability from
+state \code{i} to state \code{j}. For matrices, the elements of \code{x} will be scaled
+such that the column sums are all equal to one.}
+
+\item{...}{Additional arguments passed to \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}} when \code{x} is
+a \code{stslist} object.}
+
+\item{inits}{A \code{numeric} vector of initial state probabilities for each
+state. Should be provided only if \code{x} is a \code{matrix}. The elements will be
+scaled such that they sum to one.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
@@ -19,7 +37,6 @@ following elements:
 (the diagonal is set to zero).
 \item \code{inits}\cr A vector of initial state probabilities.
 \item \code{labels}\cr The labels of the states.
-\item \code{colors}\cr A color palette for the states.
 }
 }
 \description{
@@ -28,7 +45,8 @@ given sequence. It takes a sequence of events or states and builds a Markov
 model using \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}}. It extracts the transition probabilities
 and initial probabilities from the model and stores them in a \code{list} along
 with the state labels. Additionally, it creates a transition matrix with
-zero diagonal entries (without loops).
+zero diagonal entries (without loops). Also accepts matrices of transition
+probabilities and initial state probabilities directly.
 }
 \examples{
 tna_model <- build_tna(engagement)
