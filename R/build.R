@@ -36,7 +36,7 @@
 #' print(tna_model)
 #'
 build_tna <- function(x, ...) {
-  UseMethod("build_tna", x)
+  UseMethod("build_tna")
 }
 
 #' @export
@@ -105,7 +105,7 @@ build_tna.matrix <- function(x, inits, ...) {
 
 #' @export
 #' @rdname build_tna
-build_tna.stslist <- function(x, inits, ...) {
+build_tna.stslist <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."

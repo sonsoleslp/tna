@@ -66,18 +66,18 @@ plot.centralities <- function(x, line_color = "black", line_size = 2,
   x[-1L] <- lapply(x[-1L], ranger)
   x <- stats::reshape(
     as.data.frame(x),
-    idvar = "Interaction",
-    ids = x[["Interaction"]],
+    idvar = "State",
+    ids = x[["State"]],
     times = names(x)[-1L],
     timevar = "name",
-    drop = "Interaction",
+    drop = "State",
     varying = list(names(x)[-1L]),
     direction = "long",
     v.names = "value"
   )
   ggcharts::lollipop_chart(
       data = x,
-      x = !!rlang::sym("Interaction"),
+      x = !!rlang::sym("State"),
       y = !!rlang::sym("value"),
       facet = !!rlang::sym("name"),
       line_color = line_color,

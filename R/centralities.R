@@ -35,11 +35,15 @@
 #' @rdname centralities
 #' @param x A square matrix representing transition probabilities or adjacency,
 #'   or a `tna` object.
+#' @param measures A `character` vector indicating which centrality
+#'   measures should be computed. If `NULL`, all available measures are
+#'   returned. See 'Details' for available measures. The elements are partially
+#'   matched ignoring case.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `TRUE`).
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
-#'   containing centrality measures for each interaction.
+#'   containing centrality measures for each state.
 #' @references
 #' Banerjee, A., A. Chandrasekhar, E. Duflo, and M. Jackson (2014).
 #' Gossip: Identifying Central Individuals in a Social Network.
@@ -62,13 +66,13 @@
 #' # Centrality measures excluding loops in the network
 #' centralities(tna_model, loops = FALSE)
 #'
-centralities <- function(x, ...) {
-  UseMethod("centralities", x)
+centralities <- function(x, loops = TRUE, measures = NULL, ...) {
+  UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, loops = TRUE, ...) {
+centralities.tna <- function(x, loops = TRUE, measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -79,14 +83,14 @@ centralities.tna <- function(x, loops = TRUE, ...) {
   )
   ifelse_(
     loops,
-    centralities_(x$matrix),
-    centralities_(x$matrix0)
+    centralities_(x$matrix, measures),
+    centralities_(x$matrix0, measures)
   )
 }
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = TRUE, ...) {
+centralities.matrix <- function(x, loops = TRUE, measures = NULL, ...) {
   stopifnot_(
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
@@ -103,7 +107,39 @@ centralities.matrix <- function(x, loops = TRUE, ...) {
 #'
 #' @param mat An adjacency matrix of a directed weighted graph
 #' @noRd
-centralities_ <- function(mat) {
+centralities_ <- function(mat, measures) {
+  default_measures <- c(
+    "OutStrength",
+    "InStrength",
+    "ClosenessIn",
+    "ClosenessOut",
+    "Closeness",
+    "Betweenness",
+    "Diffusion",
+    "Clustering"
+  )
+  measures <- ifelse_(is.null(measures), default_measures, measures)
+  stopifnot_(
+    checkmate::test_character(
+      x = measures,
+      any.missing = FALSE,
+      unique = TRUE,
+    ),
+    "Argument {.arg measures} must be a {.cls character} vector."
+  )
+  lower_measures <- tolower(measures)
+  lower_defaults <- tolower(default_measures)
+  measures_match <- pmatch(lower_measures, lower_defaults)
+  no_match <- is.na(measures_match)
+  invalid_measures <- measures[no_match]
+  valid_measures <- measures_match[!no_match]
+  stopifnot_(
+    length(invalid_measures) == 0L,
+    c(
+      "Argument {.arg measures} contains invalid centrality measures:",
+      `x` = "Measure{?s} {.val {invalid_measures}} {?is/are} not recognized."
+    )
+  )
   g <- igraph::graph_from_adjacency_matrix(
     adjmatrix = mat,
     mode = "directed",
@@ -128,8 +164,8 @@ centralities_ <- function(mat) {
         Betweenness,
         Diffusion,
         Clustering
-      ),
-      "Interaction"
+      )[valid_measures],
+      "State"
     ),
     class = c("centralities", "tbl_df", "tbl", "data.frame")
   )

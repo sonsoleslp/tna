@@ -6,24 +6,29 @@
 \alias{centralities.matrix}
 \title{Calculate Centralities for a Transition Matrix}
 \usage{
-centralities(x, ...)
+centralities(x, loops = TRUE, measures = NULL, ...)
 
-\method{centralities}{tna}(x, loops = TRUE, ...)
+\method{centralities}{tna}(x, loops = TRUE, measures = NULL, ...)
 
-\method{centralities}{matrix}(x, loops = TRUE, ...)
+\method{centralities}{matrix}(x, loops = TRUE, measures = NULL, ...)
 }
 \arguments{
 \item{x}{A square matrix representing transition probabilities or adjacency,
 or a \code{tna} object.}
 
-\item{...}{Ignored.}
-
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{TRUE}).}
+
+\item{measures}{A \code{character} vector indicating which centrality
+measures should be computed. If \code{NULL}, all available measures are
+returned. See 'Details' for available measures. The elements are partially
+matched ignoring case.}
+
+\item{...}{Ignored.}
 }
 \value{
 A \code{centralities} object which is a tibble (\code{tbl_df})
-containing centrality measures for each interaction.
+containing centrality measures for each state.
 }
 \description{
 This function calculates several centrality measures. See 'Details' for

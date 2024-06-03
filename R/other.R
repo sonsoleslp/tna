@@ -50,6 +50,19 @@ ifelse_ <- function(test, yes, no) {
   }
 }
 
+#' Return `yes` if `test` is `TRUE`, otherwise return `NULL`
+#'
+#' @param test \[`logical(1)`] Condition to evaluate.
+#' @param yes An \R object to return when `test` evaluates to `TRUE`.
+#' @noRd
+onlyif <- function(test, yes) {
+  if (test) {
+    yes
+  } else {
+    NULL
+  }
+}
+
 #' Generate a Warning Message
 #'
 #' @param message See [cli::cli_warn()].

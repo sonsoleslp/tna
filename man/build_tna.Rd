@@ -10,7 +10,7 @@ build_tna(x, ...)
 
 \method{build_tna}{matrix}(x, inits, ...)
 
-\method{build_tna}{stslist}(x, inits, ...)
+\method{build_tna}{stslist}(x, ...)
 }
 \arguments{
 \item{x}{A \code{stslist} object created with \code{\link[seqHMM:TraMineR_imports]{seqHMM::seqdef()}}
