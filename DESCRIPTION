@@ -9,8 +9,8 @@ Authors@R: c(
   )
 Description: Provides tools for performing transition network analysis (TNA),
     including functions for building TNA models, plotting transition networks,
-    and calculating centrality measures. The package relies on the 'qgraph' and 
-    'igraph' packages for plotting networks and for computing centrality 
+    and calculating centrality measures. The package relies on the 'ggraph' and 
+    'tidygraph' packages for plotting networks and for computing centrality 
     measures.
 License: GPL-3
 URL: https://github.com/sonsoleslp/tna/
@@ -20,13 +20,15 @@ Depends:
 Imports:
     checkmate,
     cli,
-    ggcharts,
+    dplyr,
+    ggfittext,
+    ggforce,
     ggplot2,
-    igraph,
-    qgraph,
+    ggraph,
+    magrittr,
     rlang,
     seqHMM,
-    tibble
+    tidygraph
 Suggests: 
     knitr,
     rmarkdown,

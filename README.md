@@ -50,11 +50,11 @@ Calculate the centrality measures
 cm <- centralities(tna_model)
 cm
 #> # A tibble: 3 × 9
-#>   State    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
-#> * <chr>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 Active             1      0.871        2.90         2.11      3.52           4
-#> 2 Average            1      1.47         1.10         2.29      2.34          10
-#> 3 Disenga…           1      0.660        4.22         1.73      4.22           1
+#>   State    OutStrength InStrength ClosenessOut ClosenessIn Closeness Betweenness
+#> * <chr>          <dbl>      <dbl>        <dbl>       <dbl>     <dbl>       <dbl>
+#> 1 Active             1      0.871         2.11        2.90      3.52           4
+#> 2 Average            1      1.47          2.29        1.10      2.34          10
+#> 3 Disenga…           1      0.660         1.73        4.22      4.22           1
 #> # ℹ 2 more variables: Diffusion <dbl>, Clustering <dbl>
 ```
 

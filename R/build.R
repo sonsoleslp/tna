@@ -12,25 +12,16 @@
 #' @rdname build_tna
 #' @param x A `stslist` object created with [seqHMM::seqdef()]
 #'   describing a sequence of events or states to be used for building
-#'   the Markov model or a `matrix` of transition probabilities with column
-#'   names describing the states. If `x` is a matrix, it is assumed that the
-#'   element on row `i` and column `j` is the transition probability from
-#'   state `i` to state `j`. For matrices, the elements of `x` will be scaled
-#'   such that the column sums are all equal to one.
+#'   the Markov model or a tidy graph (`tbl_graph`) depicting the transition
+#'   network. The edge data should have a column named `weight` giving the
+#'   transition probabilities. The probabilities can be unnormalized.
 #' @param inits A `numeric` vector of initial state probabilities for each
-#'   state. Should be provided only if `x` is a `matrix`. The elements will be
-#'   scaled such that they sum to one.
+#'   state. Should be provided only if `x` is a tidy graph. The elements will
+#'   be scaled such that they sum to one.
 #' @param ... Additional arguments passed to [seqHMM::build_mm()] when `x` is
 #'   a `stslist` object.
-#' @return An object of class `tna` which is a `list` containing the
-#'   following elements:
-#'
-#'   * `matrix`\cr A matrix of transition probabilities.
-#'   * `matrix0`\cr A transition probability matrix without loops
-#'     (the diagonal is set to zero).
-#'   * `inits`\cr A vector of initial state probabilities.
-#'   * `labels`\cr The labels of the states.
-#'
+#' @return An object of class `tna` which is a tidy graph with an additional
+#'   node attribute `inits` describing the initial state probabilities
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' print(tna_model)
@@ -41,7 +32,7 @@ build_tna <- function(x, ...) {
 
 #' @export
 #' @rdname build_tna
-build_tna.matrix <- function(x, inits, ...) {
+build_tna.tbl_graph <- function(x, inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -50,36 +41,29 @@ build_tna.matrix <- function(x, inits, ...) {
     !missing(inits),
     "Argument {.arg inits} is missing."
   )
-  x <- try_(as.matrix(x))
   stopifnot_(
-    !inherits(x, "try-error"),
-    "Argument {.arg x} must be coercible to a {.cls matrix}."
+    tidygraph::with_graph(x, tidygraph::graph_is_directed()),
+    "Argument {.arg x} must be a directed graph."
   )
-  x <- try_(as.numeric(x))
+  edges <- data.frame(tidygraph::activate(x, "edges"))
   stopifnot_(
-    !inherits(x, "try-error"),
-    "Argument {.arg x} must be coercible to {.cls numeric}."
-  )
-  stopifnot_(
-    !is.null(colnames(x)),
-    "Argument {.arg x} must have column names."
-  )
-  nc <- ncol(x)
-  stopifnot_(
-    nc != nrow(x),
-    "Argument {.arg x} must be a square matrix."
+    !is.null(edges$weight),
+    "Argument {.arg x} must be have edge weights."
   )
   stopifnot_(
-    nc < 2L,
-    "Argument {.arg x} must have at least two columns."
+    all(edges$weight >= 0),
+    "All edge weights of {.arg x} must be non-negative."
   )
-  x <- x / .colSums(x, nc, nc)
+  x <- tidygraph::activate(x, "edges") %>%
+    dplyr::group_by(!!rlang::sym("from")) %>%
+    dplyr::mutate(
+      weight = !!rlang::sym("weight") / sum(!!rlang::sym("weight"))
+    ) %>%
+    dplyr::ungroup()
+  nodes <- data.frame(tidygraph::activate(x, "nodes"))
+  n <- nrow(nodes)
   stopifnot_(
-    all(x >= 0),
-    "Elements of {.arg x} must be non-negative."
-  )
-  stopifnot_(
-    length(inits) < nc,
+    length(inits) >= n,
     "Argument {.arg inits} must provide initial probabilities for all states."
   )
   inits <- try_(as.numeric(inits))
@@ -91,16 +75,20 @@ build_tna.matrix <- function(x, inits, ...) {
     all(inits >= 0),
     "Elements of {.arg inits} must be non-negative."
   )
-  if (length(inits) > ncol(x)) {
+  if (length(inits) > n) {
     warning_(
       c(
         "Argument {.arg inits} contains more values than the number of states.",
-        `i` = "Only the first {nc} values will be used."
+        `i` = "Only the first {n} values will be used."
       )
     )
-    inits <- inits[seq_len(nc)]
+    inits <- inits[seq_len(n)]
   }
-  build_tna_(x, inits)
+  structure(
+    tidygraph::activate(x, "nodes") %>%
+      dplyr::mutate(inits = inits),
+    class = c("tna", "tbl_graph", "igraph")
+  )
 }
 
 #' @export
@@ -111,25 +99,8 @@ build_tna.stslist <- function(x, ...) {
     "Argument {.arg x} is missing."
   )
   mkvmodel <- seqHMM::build_mm(x, ...)
-  build_tna_(mkvmodel$transition_probs, mkvmodel$initial_probs)
-}
-
-#' Build a Transition Network Analysis object
-#'
-#' @param transit_probs A `matrix` of transition probabilities.
-#' @param intiial_probs A `matrix` of initial state probabilities.
-#' @return A `tna` object
-#' @noRd
-build_tna_ <- function(transit_probs, initial_probs) {
-  transit_probs_loopless <- transit_probs
-  diag(transit_probs_loopless) <- 0
-  structure(
-    list(
-      matrix = transit_probs,
-      matrix0 = transit_probs_loopless,
-      inits = initial_probs,
-      labels = colnames(transit_probs)
-    ),
-    class = "tna"
+  build_tna(
+    x = tidygraph::as_tbl_graph(mkvmodel$transition_probs),
+    inits = mkvmodel$initial_probs
   )
 }

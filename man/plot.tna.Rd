@@ -4,30 +4,15 @@
 \alias{plot.tna}
 \title{Plot a Transition Network Analysis Model}
 \usage{
-\method{plot}{tna}(
-  x,
-  pie = x$inits,
-  labels = x$labels,
-  mar = rep(5, 4),
-  theme = "gray",
-  edge.labels = TRUE,
-  ...
-)
+\method{plot}{tna}(x, digits = 2, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
 
-\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{digits}{An \code{integer} defining how many digits to show for transition
+probabilities}
 
-\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{...}{Ignored.}
 }
 \value{
 A \code{ggplot} of the transition network.
