@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.centralities}
 \alias{print.centralities}
-\title{Print a \code{centralities} object}
+\title{Print Centrality Measures}
 \usage{
 \method{print}{centralities}(x, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{Ignored.}
 }
 \description{
-Print a \code{centralities} object
+Print Centrality Measures
 }

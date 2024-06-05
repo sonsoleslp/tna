@@ -3,14 +3,14 @@
 \name{centralities}
 \alias{centralities}
 \alias{centralities.tna}
-\alias{centralities.tbl_graph}
+\alias{centralities.matrix}
 \title{Calculate Centralities for a Transition Matrix}
 \usage{
 centralities(x, loops = TRUE, measures = NULL, ...)
 
 \method{centralities}{tna}(x, loops = TRUE, measures = NULL, ...)
 
-\method{centralities}{tbl_graph}(x, loops = TRUE, measures = NULL, ...)
+\method{centralities}{matrix}(x, loops = TRUE, measures = NULL, ...)
 }
 \arguments{
 \item{x}{A square matrix representing transition probabilities or adjacency,

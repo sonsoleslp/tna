@@ -1,13 +1,13 @@
-# #' Normalize `x` to the unit interval from 0 to 1.
-# #'
-# #' @param x A `numeric` vector.
-# #' @param na.rm A `logical` value indicating whether missing values should be removed.
-# #' @noRd
-#ranger <- function(x, na.rm = FALSE) {
-#  mi <- min(x, na.rm)
-#  ma <- max(x, na.rm)
-#  (x + mi) / (ma - mi)
-#}
+#' Normalize `x` to the unit interval from 0 to 1.
+#'
+#' @param x A `numeric` vector.
+#' @param na.rm A `logical` value indicating whether missing values should be removed.
+#' @noRd
+ranger <- function(x, na.rm = FALSE) {
+  mi <- min(x, na.rm)
+  ma <- max(x, na.rm)
+  (x + mi) / (ma - mi)
+}
 
 #' Shorthand for `try(., silent = TRUE)`
 #'
@@ -17,20 +17,20 @@ try_ <- function(expr) {
   try(expr, silent = TRUE)
 }
 
-#' Get the adjacency matrix of a `tna` object
+#' Check that argument is an object of class `"tna"`
 #'
-#' @param x A `tna` object.
+#' @param x An \R object.
 #' @noRd
-get_adjacency <- function(x) {
-  nodes <- data.frame(tidygraph::activate(x, "nodes"))
-  edges <- data.frame(tidygraph::activate(x, "edges"))
-  n <- nrow(nodes)
-  e <- nrow(edges)
-  out <- matrix(0, n, n)
-  for (i in seq_len(e)) {
-    out[edges$from[i], edges$to[i]] <- edges$weight[i]
-  }
-  out
+is_tna <- function(x) {
+  inherits(x, "tna")
+}
+
+#' Check that argument is an object of class `"centralities"`
+#'
+#' @param x An \R object.
+#' @noRd
+is_centralities <- function(x) {
+  inherits(x, "centralities")
 }
 
 # Functions borrowed from the `dynamite` package --------------------------

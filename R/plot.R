@@ -7,89 +7,49 @@
 #'
 #' @export
 #' @param x A `tna` object from [tna::build_tna()].
-#' @param digits An `integer` defining how many digits to show for transition
-#'   probabilities
-#' @param ... Ignored.
+#' @param pie See [qgraph::qgraph()].
+#' @param labels See [qgraph::qgraph()].
+#' @param mar See [qgraph::qgraph()].
+#' @param theme See [qgraph::qgraph()].
+#' @param edge.labels See [qgraph::qgraph()].
+#' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `ggplot` of the transition network.
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' plot(tna_model)
 #'
-plot.tna <- function(x, digits = 2, ...) {
-  xlen <- length(x)
-  ggraph::ggraph(x, layout = "circle") +
-    ggraph::geom_edge_arc(
-      ggplot2::aes(
-        label = round(!!rlang::sym("weight"), digits),
-        alpha = !!rlang::sym("weight"),
-        width = !!rlang::sym("weight")
-      ),
-      angle_calc = "along",
-      label_dodge = ggplot2::unit(0.025, "native"),
-      arrow = ggplot2::arrow(length = ggplot2::unit(0.025, "native")),
-      start_cap = ggraph::circle(0.18, unit = "native"),
-      end_cap = ggraph::circle(0.18, unit = "native"),
-      strength = 0.25,
-      show.legend = FALSE
-    ) +
-    ggraph::geom_edge_loop(
-      ggplot2::aes(
-        label = round(!!rlang::sym("weight"), 2),
-        direction = (!!rlang::sym("from") - 1) * 360 / xlen,
-        alpha = !!rlang::sym("weight"),
-        width = !!rlang::sym("weight"),
-        span = 100
-      ),
-      angle_calc = "along",
-      label_dodge = ggplot2::unit(0.025, "native"),
-      arrow = ggplot2::arrow(length = ggplot2::unit(0.025, "native")),
-      start_cap = ggraph::circle(0.18, unit = "native"),
-      end_cap = ggraph::circle(0.18, unit = "native"),
-      show.legend = FALSE
-    ) +
-    ggraph::geom_node_circle(ggplot2::aes(r = 0.18), fill = "white") +
-    ggraph::geom_node_circle(ggplot2::aes(r = 0.15)) +
-    ggforce::geom_arc_bar(
-      ggplot2::aes(
-        x0 = !!rlang::sym("x"),
-        y0 = !!rlang::sym("y"),
-        r0 = 0.15,
-        r = 0.18,
-        start = 0,
-        end = !!rlang::sym("inits") * base::pi * 2
-      ),
-      fill = "gray"
-    ) +
-    ggfittext::geom_fit_text(
-      ggplot2::aes(
-        label = !!rlang::sym("name"),
-        xmin = !!rlang::sym("x") - 0.14,
-        xmax = !!rlang::sym("x") + 0.14,
-        y = !!rlang::sym("y")
-      )
-    ) +
-    ggraph::scale_edge_width(range = c(0.5, 2)) +
-    ggraph::scale_edge_alpha(range = c(0.2, 1)) +
-    # ggplot2::guides(fill = guide_legend(title = "State")) +
-    ggplot2::coord_fixed() +
-    ggraph::theme_graph()
+plot.tna <- function(x, pie = x$inits, labels = x$labels,
+                     mar = rep(5, 4), theme = "gray",
+                     edge.labels = TRUE, ...) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  qgraph::qgraph(
+    x$matrix,
+    pie = pie,
+    labels = labels,
+    mar = mar,
+    theme = theme,
+    edge.labels = edge.labels,
+    ...
+  )
 }
 
 #' Plot Centralities for a Transition Matrix
 #'
 #' Calculates several centrality measures using the [centralities()] method
-#' and then plots these measures as a lollipop chart. The resulting plot
-#' includes facets for each centrality measure, showing the values for each
-#' interaction. The returned plot is a `ggplot2` object, so it can be easily
-#' modified and styled. See [centralities()] for details on the centrality
-#' measures.
+#' and then plots these measures using [ggcharts::lollipop_chart()].
+#' The resulting plot includes facets for each centrality measure, showing the
+#' values for each interaction. The returned plot is a `ggplot2` object, so it
+#' can be easily modified and styled. See [centralities()] for details on the
+#' centrality measures.
 #'
 #' @export
+#' @inheritParams ggcharts::lollipop_chart
 #' @param x An object of class `centralities`.
-#' @param ncol Number of columns to use for the facets.
-#' @param scales Either `"fixed"` or `"free"` to be used for the x-axis of the
-#'   facet scales.
-#' @param ... Ignored.
+#' @param font_size A `numeric` value describing the font size.
+#' @param ... Arguments passed to [ggcharts::lollipop_chart()].
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
 #' @examples
@@ -97,7 +57,13 @@ plot.tna <- function(x, digits = 2, ...) {
 #' cm <- centralities(tna_model)
 #' plot(cm)
 #'
-plot.centralities <- function(x, ncol = 3, scales = "free", ...) {
+plot.centralities <- function(x, line_color = "black", line_size = 2,
+                              font_size = 3, ...) {
+  stopifnot_(
+    is_centralities(x),
+    "Argument {.arg x} must be a {.cls centralities} object."
+  )
+  x[-1L] <- lapply(x[-1L], ranger)
   x <- stats::reshape(
     as.data.frame(x),
     idvar = "State",
@@ -109,29 +75,17 @@ plot.centralities <- function(x, ncol = 3, scales = "free", ...) {
     direction = "long",
     v.names = "value"
   )
-  ggplot2::ggplot(x) +
-    ggplot2::geom_segment(
-      ggplot2::aes(
-        x = !!rlang::sym("State"),
-        xend = !!rlang::sym("State"),
-        y = 0,
-        yend = !!rlang::sym("value")
-      )
-    ) +
-    ggplot2::geom_point(
-      ggplot2::aes(
-        x = !!rlang::sym("State"),
-        y = !!rlang::sym("value")),
-      size = 3
-    ) +
-    ggplot2::coord_flip()+
-    ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      panel.grid.major.y = ggplot2::element_blank(),
-      panel.grid.minor.y = ggplot2::element_blank(),
-      panel.grid.minor.x = ggplot2::element_blank()
-    ) +
+  ggcharts::lollipop_chart(
+      data = x,
+      x = !!rlang::sym("State"),
+      y = !!rlang::sym("value"),
+      facet = !!rlang::sym("name"),
+      line_color = line_color,
+      line_size = line_size,
+      font_size = font_size,
+      ...
+  ) +
+    ggplot2::theme(plot.background = ggplot2::element_rect(fill = "white")) +
     ggplot2::xlab("") +
     ggplot2::ylab("")
 }

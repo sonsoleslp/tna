@@ -35,12 +35,12 @@
 #' @rdname centralities
 #' @param x A square matrix representing transition probabilities or adjacency,
 #'   or a `tna` object.
-#' @param loops A `logical` value indicating whether to include loops in the
-#'   network when computing the centrality measures (default is `TRUE`).
 #' @param measures A `character` vector indicating which centrality
 #'   measures should be computed. If `NULL`, all available measures are
 #'   returned. See 'Details' for available measures. The elements are partially
 #'   matched ignoring case.
+#' @param loops A `logical` value indicating whether to include loops in the
+#'   network when computing the centrality measures (default is `TRUE`).
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
@@ -73,24 +73,41 @@ centralities <- function(x, loops = TRUE, measures = NULL, ...) {
 #' @export
 #' @rdname centralities
 centralities.tna <- function(x, loops = TRUE, measures = NULL, ...) {
-  centralities_(x, loops, measures)
-}
-
-#' @export
-#' @rdname centralities
-centralities.tbl_graph <- function(x, loops = TRUE, measures = NULL, ...) {
-  centralities_(x, loops, measures)
-}
-
-#' Internal function to calculate various centrality measures
-#'
-#' @inheritParams centralities
-#' @noRd
-centralities_ <- function(x, loops, measures) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
   stopifnot_(
     checkmate::test_flag(x = loops),
     "Argument {.arg loops} must be a single {.cls logical} value."
   )
+  ifelse_(
+    loops,
+    centralities_(x$matrix, measures),
+    centralities_(x$matrix0, measures)
+  )
+}
+
+#' @export
+#' @rdname centralities
+centralities.matrix <- function(x, loops = TRUE, measures = NULL, ...) {
+  stopifnot_(
+    is.matrix(x),
+    "Argument {.arg x} must be a {.cls matrix}."
+  )
+  if (loops) {
+    centralities_(x)
+  } else {
+    diag(x) <- 0
+    centralities_(x)
+  }
+}
+
+#' Internal function to calculate various centrality measures
+#'
+#' @param mat An adjacency matrix of a directed weighted graph
+#' @noRd
+centralities_ <- function(mat, measures) {
   default_measures <- c(
     "OutStrength",
     "InStrength",
@@ -123,39 +140,33 @@ centralities_ <- function(x, loops, measures) {
       `x` = "Measure{?s} {.val {invalid_measures}} {?is/are} not recognized."
     )
   )
-  if (!loops) {
-    x <- x %>%
-      tidygraph::activate("edges") |>
-      dplyr::filter(!!rlang::sym("from") != !!rlang::sym("to"))
-  }
-  adj <- get_adjacency(x)
-  out <- x %>%
-    tidygraph::activate("nodes") |>
-    dplyr::mutate(
-      OutStrength = tidygraph::centrality_degree(
-        weights = !!rlang::sym("weight"), mode = "out"
-      ),
-      InStrength = tidygraph::centrality_degree(
-        weights = !!rlang::sym("weight"), mode = "in"
-      ),
-      ClosenessOut = tidygraph::centrality_closeness(
-        weights = !!rlang::sym("weight"), mode = "out"
-      ),
-      ClosenessIn = tidygraph::centrality_closeness(
-        weights = !!rlang::sym("weight"), mode = "in"
-      ),
-      Closeness = tidygraph::centrality_closeness(
-        weights = !!rlang::sym("weight"), mode = "all"
-      ),
-      Betweenness = rsp_bet(adj),
-      Diffusion = diffusion(adj),
-      Clustering = wcc(adj + t(adj))
-    ) %>%
-    dplyr::select(!(!!rlang::sym("inits"))) %>%
-    dplyr::rename(State = !!rlang::sym("name")) %>%
-    data.frame()
+  g <- igraph::graph_from_adjacency_matrix(
+    adjmatrix = mat,
+    mode = "directed",
+    weighted = TRUE
+  )
+  OutStrength <- igraph::strength(g, mode = "out")
+  InStrength <- igraph::strength(g, mode = "in")
+  ClosenessIn <- igraph::closeness(g, mode = "in")
+  ClosenessOut <- igraph::closeness(g, mode = "out")
+  Closeness <- igraph::closeness(g, mode = "all")
+  Betweenness <- rsp_bet(mat)
+  Diffusion <- diffusion(mat)
+  Clustering <- wcc(mat + t(mat))
   structure(
-    out,
+    tibble::rownames_to_column(
+      data.frame(
+        OutStrength,
+        InStrength,
+        ClosenessIn,
+        ClosenessOut,
+        Closeness,
+        Betweenness,
+        Diffusion,
+        Clustering
+      )[valid_measures],
+      "State"
+    ),
     class = c("centralities", "tbl_df", "tbl", "data.frame")
   )
 }

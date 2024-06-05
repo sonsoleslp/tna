@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
+
 ## Installation
 
 You can install the development version of `tna` from [GitHub](https://github.com/) with:
@@ -46,7 +47,7 @@ tna_model <- build_tna(engagement)
 ```
 
 Plot the transition network
-```{r, fig.width=7, fig.height=7}
+```{r}
 plot(tna_model)
 ```
 

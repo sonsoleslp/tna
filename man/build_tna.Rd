@@ -2,33 +2,42 @@
 % Please edit documentation in R/build.R
 \name{build_tna}
 \alias{build_tna}
-\alias{build_tna.tbl_graph}
+\alias{build_tna.matrix}
 \alias{build_tna.stslist}
 \title{Build a Transition Network Analysis Model}
 \usage{
 build_tna(x, ...)
 
-\method{build_tna}{tbl_graph}(x, inits, ...)
+\method{build_tna}{matrix}(x, inits, ...)
 
 \method{build_tna}{stslist}(x, ...)
 }
 \arguments{
 \item{x}{A \code{stslist} object created with \code{\link[seqHMM:TraMineR_imports]{seqHMM::seqdef()}}
 describing a sequence of events or states to be used for building
-the Markov model or a tidy graph (\code{tbl_graph}) depicting the transition
-network. The edge data should have a column named \code{weight} giving the
-transition probabilities. The probabilities can be unnormalized.}
+the Markov model or a \code{matrix} of transition probabilities with column
+names describing the states. If \code{x} is a matrix, it is assumed that the
+element on row \code{i} and column \code{j} is the transition probability from
+state \code{i} to state \code{j}. For matrices, the elements of \code{x} will be scaled
+such that the column sums are all equal to one.}
 
 \item{...}{Additional arguments passed to \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}} when \code{x} is
 a \code{stslist} object.}
 
 \item{inits}{A \code{numeric} vector of initial state probabilities for each
-state. Should be provided only if \code{x} is a tidy graph. The elements will
-be scaled such that they sum to one.}
+state. Should be provided only if \code{x} is a \code{matrix}. The elements will be
+scaled such that they sum to one.}
 }
 \value{
-An object of class \code{tna} which is a tidy graph with an additional
-node attribute \code{inits} describing the initial state probabilities
+An object of class \code{tna} which is a \code{list} containing the
+following elements:
+\itemize{
+\item \code{matrix}\cr A matrix of transition probabilities.
+\item \code{matrix0}\cr A transition probability matrix without loops
+(the diagonal is set to zero).
+\item \code{inits}\cr A vector of initial state probabilities.
+\item \code{labels}\cr The labels of the states.
+}
 }
 \description{
 This function constructs a transition network analysis (TNA) model from a
