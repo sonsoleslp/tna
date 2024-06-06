@@ -6,26 +6,29 @@
 \usage{
 \method{plot}{tna}(
   x,
-  pie = x$inits,
-  labels = x$labels,
-  mar = rep(5, 4),
-  theme = "gray",
+  color = x$colors,
   edge.labels = TRUE,
+  labels = x$labels,
+  layout = "circle",
+  mar = rep(5, 4),
+  pie = x$inits,
   ...
 )
 }
 \arguments{
 \item{x}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
 
-\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
+\item{layout}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }

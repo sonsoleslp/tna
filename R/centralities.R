@@ -21,7 +21,7 @@
 #'     [igraph::closeness()] with `mode = "all"`. It measures how close a node
 #'     is to all other nodes based on both incoming and outgoing paths.
 #'   * `Betweenness`\cr Betweenness centrality based on randomized shortest
-#'     paths (Kivimäki et al. 2014). It measures the extent to which a
+#'     paths (Kivimäki et al. 2016). It measures the extent to which a
 #'     node lies on the shortest paths between other nodes.
 #'   * `Diffusion`\cr Diffusion centrality of Banerjee et.al. (2014).
 #'     It measures the influence of a node in spreading information through
@@ -77,15 +77,7 @@ centralities.tna <- function(x, loops = TRUE, measures = NULL, ...) {
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  stopifnot_(
-    checkmate::test_flag(x = loops),
-    "Argument {.arg loops} must be a single {.cls logical} value."
-  )
-  ifelse_(
-    loops,
-    centralities_(x$matrix, measures),
-    centralities_(x$matrix0, measures)
-  )
+  centralities_(x$adjacency, loops, measures)
 }
 
 #' @export
@@ -95,19 +87,18 @@ centralities.matrix <- function(x, loops = TRUE, measures = NULL, ...) {
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
   )
-  if (loops) {
-    centralities_(x)
-  } else {
-    diag(x) <- 0
-    centralities_(x)
-  }
+  centralities_(x, loops, measures)
 }
 
 #' Internal function to calculate various centrality measures
 #'
-#' @param mat An adjacency matrix of a directed weighted graph
+#' @param x An adjacency matrix of a directed weighted graph
 #' @noRd
-centralities_ <- function(mat, measures) {
+centralities_ <- function(x, loops, measures) {
+  stopifnot_(
+    checkmate::test_flag(x = loops),
+    "Argument {.arg loops} must be a single {.cls logical} value."
+  )
   default_measures <- c(
     "OutStrength",
     "InStrength",
@@ -140,8 +131,9 @@ centralities_ <- function(mat, measures) {
       `x` = "Measure{?s} {.val {invalid_measures}} {?is/are} not recognized."
     )
   )
+  diag(x) <- ifelse_(loops, diag(x), 0)
   g <- igraph::graph_from_adjacency_matrix(
-    adjmatrix = mat,
+    adjmatrix = x,
     mode = "directed",
     weighted = TRUE
   )
@@ -150,9 +142,9 @@ centralities_ <- function(mat, measures) {
   ClosenessIn <- igraph::closeness(g, mode = "in")
   ClosenessOut <- igraph::closeness(g, mode = "out")
   Closeness <- igraph::closeness(g, mode = "all")
-  Betweenness <- rsp_bet(mat)
-  Diffusion <- diffusion(mat)
-  Clustering <- wcc(mat + t(mat))
+  Betweenness <- rsp_bet(x)
+  Diffusion <- diffusion(x)
+  Clustering <- wcc(x + t(x))
   structure(
     tibble::rownames_to_column(
       data.frame(

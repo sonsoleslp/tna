@@ -2,11 +2,14 @@
 % Please edit documentation in R/build.R
 \name{build_tna}
 \alias{build_tna}
+\alias{build_tna.default}
 \alias{build_tna.matrix}
 \alias{build_tna.stslist}
 \title{Build a Transition Network Analysis Model}
 \usage{
 build_tna(x, ...)
+
+\method{build_tna}{default}(x, inits, ...)
 
 \method{build_tna}{matrix}(x, inits, ...)
 
@@ -17,26 +20,27 @@ build_tna(x, ...)
 describing a sequence of events or states to be used for building
 the Markov model or a \code{matrix} of transition probabilities with column
 names describing the states. If \code{x} is a matrix, it is assumed that the
-element on row \code{i} and column \code{j} is the transition probability from
-state \code{i} to state \code{j}. For matrices, the elements of \code{x} will be scaled
-such that the column sums are all equal to one.}
+element on row \code{i} and column \code{j} is the transition probability (or weight)
+from state \code{i} to state \code{j}.}
 
 \item{...}{Additional arguments passed to \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}} when \code{x} is
 a \code{stslist} object.}
 
-\item{inits}{A \code{numeric} vector of initial state probabilities for each
-state. Should be provided only if \code{x} is a \code{matrix}. The elements will be
-scaled such that they sum to one.}
+\item{inits}{An optional \code{numeric} vector of initial state probabilities
+for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
+be scaled to unity.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{matrix}\cr A matrix of transition probabilities.
-\item \code{matrix0}\cr A transition probability matrix without loops
-(the diagonal is set to zero).
-\item \code{inits}\cr A vector of initial state probabilities.
-\item \code{labels}\cr The labels of the states.
+\item \code{adjacency}\cr The adjacency matrix of the model with transition
+probabilities as the weights.
+\item \code{inits}\cr A vector of initial state probabilities. For matrcies,
+this element will be \code{NULL} if \code{inits} is not directly provided
+\item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if there
+are no labels.
+\item \code{colors}\cr A \code{character} vector of the state colors, or \code{NULL}.
 }
 }
 \description{

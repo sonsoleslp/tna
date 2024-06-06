@@ -53,7 +53,7 @@ is to all other nodes based on the outgoing paths.
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "all"}. It measures how close a node
 is to all other nodes based on both incoming and outgoing paths.
 \item \code{Betweenness}\cr Betweenness centrality based on randomized shortest
-paths (Kivimäki et al. 2014). It measures the extent to which a
+paths (Kivimäki et al. 2016). It measures the extent to which a
 node lies on the shortest paths between other nodes.
 \item \code{Diffusion}\cr Diffusion centrality of Banerjee et.al. (2014).
 It measures the influence of a node in spreading information through
