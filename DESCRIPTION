@@ -20,7 +20,6 @@ Depends:
 Imports:
     checkmate,
     cli,
-    ggcharts,
     ggplot2,
     igraph,
     qgraph,

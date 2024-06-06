@@ -5,6 +5,7 @@
 \alias{build_tna.default}
 \alias{build_tna.matrix}
 \alias{build_tna.stslist}
+\alias{build_tna.mhmm}
 \title{Build a Transition Network Analysis Model}
 \usage{
 build_tna(x, ...)
@@ -14,6 +15,8 @@ build_tna(x, ...)
 \method{build_tna}{matrix}(x, inits, ...)
 
 \method{build_tna}{stslist}(x, ...)
+
+\method{build_tna}{mhmm}(x, ...)
 }
 \arguments{
 \item{x}{A \code{stslist} object created with \code{\link[seqHMM:TraMineR_imports]{seqHMM::seqdef()}}
@@ -34,10 +37,11 @@ be scaled to unity.}
 An object of class \code{tna} which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{adjacency}\cr The adjacency matrix of the model with transition
-probabilities as the weights.
-\item \code{inits}\cr A vector of initial state probabilities. For matrcies,
-this element will be \code{NULL} if \code{inits} is not directly provided
+\item \code{transits}\cr A \code{list} of adjacency matrices of the model
+(transition matrices) for each cluster.
+\item \code{inits}\cr A \code{list} of initial state probability vectors for each
+cluster. For matrcies, this element will be \code{NULL} if \code{inits} is not
+directly provided
 \item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if there
 are no labels.
 \item \code{colors}\cr A \code{character} vector of the state colors, or \code{NULL}.

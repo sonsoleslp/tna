@@ -6,17 +6,27 @@
 \usage{
 \method{plot}{tna}(
   x,
+  cluster_a = 1,
+  cluster_b,
   color = x$colors,
   edge.labels = TRUE,
   labels = x$labels,
   layout = "circle",
   mar = rep(5, 4),
-  pie = x$inits,
+  pie = x$inits[[cluster_a]],
+  theme = "colorblind",
   ...
 )
 }
 \arguments{
 \item{x}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
+
+\item{cluster_a}{Index of the primary cluster to visualize.
+Defaults to the first cluster.}
+
+\item{cluster_b}{Optional index of the secondary cluster. If specified,
+The difference between the transition probabilities of \code{cluster_a} and
+\code{cluster_b} will be plotted.}
 
 \item{color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
@@ -29,6 +39,8 @@
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }

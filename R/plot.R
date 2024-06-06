@@ -7,43 +7,73 @@
 #'
 #' @export
 #' @param x A `tna` object from [tna::build_tna()].
+#' @param cluster_a Index of the primary cluster to visualize.
+#'   Defaults to the first cluster.
+#' @param cluster_b Optional index of the secondary cluster. If specified,
+#'   The difference between the transition probabilities of `cluster_a` and
+#'   `cluster_b` will be plotted.
 #' @param color See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param labels See [qgraph::qgraph()].
 #' @param layout See [qgraph::qgraph()].
 #' @param mar See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
+#' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `ggplot` of the transition network.
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' plot(tna_model)
 #'
-plot.tna <- function(x, color = x$colors, edge.labels = TRUE, labels = x$labels,
-                     layout = "circle", mar = rep(5, 4), pie = x$inits, ...) {
+plot.tna <- function(x, cluster_a = 1, cluster_b, color = x$colors,
+                     edge.labels = TRUE, labels = x$labels, layout = "circle",
+                     mar = rep(5, 4), pie = x$inits[[cluster_a]],
+                     theme = "colorblind", ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  dots <- list(...)
-  dots[["theme"]] <- ifelse_(
-    !"theme" %in% names(dots),
-    ifelse_(all(x$adjacency >= 0), "gray", "default"),
-    dots[["theme"]]
-  )
-  qgraph_args <- c(
-    list(
-      input = x$adjacency,
-      color = color,
-      edge.labels = edge.labels,
-      labels = labels,
-      layout = layout,
-      pie = pie,
-      mar = mar
+  stopifnot_(
+    checkmate::test_integerish(
+      x = cluster_a,
+      lower = 1,
+      upper = length(x$transits),
+      any.missing = FALSE,
+      len = 1,
+      null.ok = FALSE
     ),
-    dots
+    "Argument {.arg cluster_a} must be a single integer value between 1 and
+     the number of clusters."
   )
-  do.call(qgraph::qgraph, args = qgraph_args)
+  stopifnot_(
+    missing(cluster_b) || checkmate::test_integerish(
+      x = cluster_b,
+      lower = 1,
+      upper = length(x$transits),
+      any.missing = FALSE,
+      len = 1,
+      null.ok = FALSE
+    ),
+    "Argument {.arg cluster_b} must be a single integer value between 1 and
+     the number of clusters."
+  )
+  cluster_a <- as.integer(cluster_a)
+  cluster_b <- onlyif(!missing(cluster_b), as.integer(cluster_b))
+  qgraph::qgraph(
+    input = ifelse_(
+      is.null(cluster_b),
+      x$transits[[cluster_a]],
+      x$transits[[cluster_a]] - x$transits[[cluster_b]]
+    ),
+    color = color,
+    edge.labels = edge.labels,
+    labels = labels,
+    layout = layout,
+    pie = onlyif(missing(cluster_b), pie),
+    mar = mar,
+    theme = theme,
+    ...
+  )
 }
 
 #' Plot Centrality Measures

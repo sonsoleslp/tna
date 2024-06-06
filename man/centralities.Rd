@@ -8,7 +8,7 @@
 \usage{
 centralities(x, loops = TRUE, measures = NULL, ...)
 
-\method{centralities}{tna}(x, loops = TRUE, measures = NULL, ...)
+\method{centralities}{tna}(x, cluster = 1, loops = TRUE, measures = NULL, ...)
 
 \method{centralities}{matrix}(x, loops = TRUE, measures = NULL, ...)
 }
@@ -25,6 +25,8 @@ returned. See 'Details' for available measures. The elements are partially
 matched ignoring case.}
 
 \item{...}{Ignored.}
+
+\item{cluster}{Index of the cluster for which to compute the centralities.}
 }
 \value{
 A \code{centralities} object which is a tibble (\code{tbl_df})

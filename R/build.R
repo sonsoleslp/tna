@@ -24,10 +24,11 @@
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
-#'   * `adjacency`\cr The adjacency matrix of the model with transition
-#'     probabilities as the weights.
-#'   * `inits`\cr A vector of initial state probabilities. For matrcies,
-#'     this element will be `NULL` if `inits` is not directly provided
+#'   * `transits`\cr A `list` of adjacency matrices of the model
+#'     (transition matrices) for each cluster.
+#'   * `inits`\cr A `list` of initial state probability vectors for each
+#'     cluster. For matrcies, this element will be `NULL` if `inits` is not
+#'     directly provided
 #'   * `labels`\cr A `character` vector of the state labels, or `NULL` if there
 #'     are no labels.
 #'   * `colors`\cr A `character` vector of the state colors, or `NULL`.
@@ -101,7 +102,11 @@ build_tna.matrix <- function(x, inits, ...) {
       inits <- inits[seq_len(nc)]
     }
   }
-  build_tna_(x, inits)
+  build_tna_(
+    transition_probs = list(x),
+    initial_probs = list(inits),
+    labels = colnames(x)
+  )
 }
 
 #' @export
@@ -113,9 +118,29 @@ build_tna.stslist <- function(x, ...) {
   )
   mkvmodel <- seqHMM::build_mm(x, ...)
   build_tna_(
-    transit_probs = mkvmodel$transition_probs,
-    initial_probs = mkvmodel$initial_probs,
+    transit_probs = list(mkvmodel$transition_probs),
+    initial_probs = list(mkvmodel$initial_probs),
+    labels = attr(x, "labels"),
     colors = attr(x, "cpal")
+  )
+}
+
+#' @export
+#' @rdname build_tna
+build_tna.mhmm <- function(x, ...) {
+  stopifnot_(
+    !missing(x),
+    "Argument {.arg x} is missing."
+  )
+  stopifnot_(
+    attr(x, "type") == "mmm",
+    "Argument {.arg x} must be a mixed Markov model fit."
+  )
+  build_tna_(
+    transit_probs = x$transition_probs,
+    initial_probs = x$initial_probs,
+    labels = attr(x$observations, "labels"),
+    colors = attr(x$observations, "cpal")
   )
 }
 
@@ -123,15 +148,16 @@ build_tna.stslist <- function(x, ...) {
 #'
 #' @param transit_probs A `matrix` of transition probabilities.
 #' @param initial_probs A `matrix` of initial state probabilities.
+#' @param labels A `character` vector of state labels.
 #' @param colors A `character` vector of color values to use for the states.
 #' @return A `tna` object.
 #' @noRd
-build_tna_ <- function(transit_probs, initial_probs, colors) {
+build_tna_ <- function(transit_probs, initial_probs, labels, colors) {
   structure(
     list(
-      adjacency = transit_probs,
+      transits = transit_probs,
       inits = onlyif(!missing(initial_probs), initial_probs),
-      labels = colnames(transit_probs),
+      labels = labels,
       colors = onlyif(!missing(colors), colors)
     ),
     class = "tna"

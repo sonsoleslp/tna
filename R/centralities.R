@@ -41,6 +41,7 @@
 #'   matched ignoring case.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `TRUE`).
+#' @param cluster Index of the cluster for which to compute the centralities.
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
@@ -72,12 +73,13 @@ centralities <- function(x, loops = TRUE, measures = NULL, ...) {
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, loops = TRUE, measures = NULL, ...) {
+centralities.tna <- function(x, cluster = 1, loops = TRUE,
+                             measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  centralities_(x$adjacency, loops, measures)
+  centralities_(x$transits[[cluster]], loops, measures)
 }
 
 #' @export
