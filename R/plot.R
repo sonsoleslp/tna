@@ -7,11 +7,11 @@
 #'
 #' @export
 #' @param x A `tna` object from [tna::build_tna()].
-#' @param cluster_a Index of the primary cluster to visualize.
+#' @param cluster Index of the primary cluster to visualize.
 #'   Defaults to the first cluster.
-#' @param cluster_b Optional index of the secondary cluster. If specified,
-#'   The difference between the transition probabilities of `cluster_a` and
-#'   `cluster_b` will be plotted.
+#' @param cluster2 Optional index of the secondary cluster. If specified,
+#'   The difference between the transition probabilities of `cluster` and
+#'   `cluster2` will be plotted.
 #' @param color See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param labels See [qgraph::qgraph()].
@@ -25,9 +25,9 @@
 #' tna_model <- build_tna(engagement)
 #' plot(tna_model)
 #'
-plot.tna <- function(x, cluster_a = 1, cluster_b, color = x$colors,
+plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
                      edge.labels = TRUE, labels = x$labels, layout = "circle",
-                     mar = rep(5, 4), pie = x$inits[[cluster_a]],
+                     mar = rep(5, 4), pie = x$inits[[cluster]],
                      theme = "colorblind", ...) {
   stopifnot_(
     is_tna(x),
@@ -35,41 +35,41 @@ plot.tna <- function(x, cluster_a = 1, cluster_b, color = x$colors,
   )
   stopifnot_(
     checkmate::test_integerish(
-      x = cluster_a,
+      x = cluster,
       lower = 1,
       upper = length(x$transits),
       any.missing = FALSE,
       len = 1,
       null.ok = FALSE
     ),
-    "Argument {.arg cluster_a} must be a single integer value between 1 and
+    "Argument {.arg cluster} must be a single integer value between 1 and
      the number of clusters."
   )
   stopifnot_(
-    missing(cluster_b) || checkmate::test_integerish(
-      x = cluster_b,
+    missing(cluster2) || checkmate::test_integerish(
+      x = cluster2,
       lower = 1,
       upper = length(x$transits),
       any.missing = FALSE,
       len = 1,
       null.ok = FALSE
     ),
-    "Argument {.arg cluster_b} must be a single integer value between 1 and
+    "Argument {.arg cluster2} must be a single integer value between 1 and
      the number of clusters."
   )
-  cluster_a <- as.integer(cluster_a)
-  cluster_b <- onlyif(!missing(cluster_b), as.integer(cluster_b))
+  cluster <- as.integer(cluster)
+  cluster2 <- onlyif(!missing(cluster2), as.integer(cluster2))
   qgraph::qgraph(
     input = ifelse_(
-      is.null(cluster_b),
-      x$transits[[cluster_a]],
-      x$transits[[cluster_a]] - x$transits[[cluster_b]]
+      is.null(cluster2),
+      x$transits[[cluster]],
+      x$transits[[cluster]] - x$transits[[cluster2]]
     ),
     color = color,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,
-    pie = onlyif(missing(cluster_b), pie),
+    pie = onlyif(is.null(cluster2), pie),
     mar = mar,
     theme = theme,
     ...
