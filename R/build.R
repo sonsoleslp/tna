@@ -103,7 +103,7 @@ build_tna.matrix <- function(x, inits, ...) {
     }
   }
   build_tna_(
-    transition_probs = list(x),
+    transit_probs = list(x),
     initial_probs = list(inits),
     labels = colnames(x)
   )
