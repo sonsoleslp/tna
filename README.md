@@ -42,7 +42,7 @@ Plot the transition network
 plot(tna_model)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-tnaplot-1.png" width="100%" />
 
 Calculate the centrality measures
 
@@ -64,4 +64,4 @@ Plot the centrality measures
 plot(cm)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
+<img src="man/figures/README-centralitiesplot-1.png" width="100%" />

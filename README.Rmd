@@ -47,7 +47,7 @@ tna_model <- build_tna(engagement)
 ```
 
 Plot the transition network
-```{r}
+```{r tnaplot}
 plot(tna_model)
 ```
 
@@ -58,6 +58,6 @@ cm
 ```
 
 Plot the centrality measures
-```{r, fig.width=8, fig.height=6}
+```{r centralitiesplot, fig.width=8, fig.height=6}
 plot(cm)
 ```
