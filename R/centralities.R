@@ -40,7 +40,7 @@
 #'   returned. See 'Details' for available measures. The elements are partially
 #'   matched ignoring case.
 #' @param loops A `logical` value indicating whether to include loops in the
-#'   network when computing the centrality measures (default is `TRUE`).
+#'   network when computing the centrality measures (default is `FALSE`).
 #' @param cluster Index of the cluster for which to compute the centralities.
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
@@ -67,13 +67,13 @@
 #' # Centrality measures excluding loops in the network
 #' centralities(tna_model, loops = FALSE)
 #'
-centralities <- function(x, loops = TRUE, measures = NULL, ...) {
+centralities <- function(x, loops = FALSE, measures = NULL, ...) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, cluster = 1, loops = TRUE,
+centralities.tna <- function(x, cluster = 1, loops = FALSE,
                              measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
@@ -84,7 +84,7 @@ centralities.tna <- function(x, cluster = 1, loops = TRUE,
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = TRUE, measures = NULL, ...) {
+centralities.matrix <- function(x, loops = FALSE, measures = NULL, ...) {
   stopifnot_(
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
