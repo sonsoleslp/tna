@@ -41,6 +41,8 @@
 #'   matched ignoring case.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `FALSE`).
+#' @param normalize  A `logical` value indicating whether the centralities should
+#'   be normalized (default is `FALSE`).
 #' @param cluster Index of the cluster for which to compute the centralities.
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
@@ -67,39 +69,48 @@
 #' # Centrality measures excluding loops in the network
 #' centralities(tna_model, loops = FALSE)
 #'
-centralities <- function(x, loops = FALSE, measures = NULL, ...) {
+#' # Centrality measures normalized
+#' centralities(tna_model, normalize = FALSE)
+#'
+centralities <- function(x, loops = FALSE,
+                         normalize = FALSE, measures = NULL, ...) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
 centralities.tna <- function(x, cluster = 1, loops = FALSE,
-                             measures = NULL, ...) {
+                             normalize = FALSE, measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  centralities_(x$transits[[cluster]], loops, measures)
+  centralities_(x$transits[[cluster]], loops, normalize, measures)
 }
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = FALSE, measures = NULL, ...) {
+centralities.matrix <- function(x, loops = FALSE, normalize = FALSE,
+                                measures = NULL, ...) {
   stopifnot_(
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
   )
-  centralities_(x, loops, measures)
+  centralities_(x, loops, normalize, measures)
 }
 
 #' Internal function to calculate various centrality measures
 #'
 #' @param x An adjacency matrix of a directed weighted graph
 #' @noRd
-centralities_ <- function(x, loops, measures) {
+centralities_ <- function(x, loops, normalize, measures) {
   stopifnot_(
     checkmate::test_flag(x = loops),
     "Argument {.arg loops} must be a single {.cls logical} value."
+  )
+  stopifnot_(
+    checkmate::test_flag(x = normalize),
+    "Argument {.arg normalize} must be a single {.cls logical} value."
   )
   default_measures <- c(
     "OutStrength",
@@ -147,18 +158,23 @@ centralities_ <- function(x, loops, measures) {
   Betweenness <- rsp_bet(x)
   Diffusion <- diffusion(x)
   Clustering <- wcc(x + t(x))
+
+  df <- data.frame(
+          OutStrength,
+          InStrength,
+          ClosenessIn,
+          ClosenessOut,
+          Closeness,
+          Betweenness,
+          Diffusion,
+          Clustering
+        )[valid_measures]
+
+  if (normalize == T) {
+    df <- df |> dplyr::mutate_at(dplyr::vars(valid_measures), ranger)
+  }
   structure(
-    tibble::rownames_to_column(
-      data.frame(
-        OutStrength,
-        InStrength,
-        ClosenessIn,
-        ClosenessOut,
-        Closeness,
-        Betweenness,
-        Diffusion,
-        Clustering
-      )[valid_measures],
+    tibble::rownames_to_column(df,
       "State"
     ),
     class = c("centralities", "tbl_df", "tbl", "data.frame")

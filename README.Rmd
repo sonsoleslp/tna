@@ -54,10 +54,9 @@ plot(tna_model)
 Calculate the centrality measures
 ```{r}
 cm <- centralities(tna_model)
-cm
 ```
 
 Plot the centrality measures
-```{r centralitiesplot, fig.width=8, fig.height=6}
-plot(cm)
+```{r centralitiesplot, fig.width=5, fig.height=2}
+plot(cm, normalize = T)
 ```

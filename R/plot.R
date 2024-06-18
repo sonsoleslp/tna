@@ -18,6 +18,8 @@
 #' @param layout See [qgraph::qgraph()].
 #' @param mar See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
+#' @param cut See [qgraph::qgraph()].
+#' @param minimum See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `ggplot` of the transition network.
@@ -28,6 +30,7 @@
 plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
                      edge.labels = TRUE, labels = x$labels, layout = "circle",
                      mar = rep(5, 4), pie = x$inits[[cluster]],
+                     cut = 0.1, minimum = 0.05,
                      theme = "colorblind", ...) {
   stopifnot_(
     is_tna(x),
@@ -66,6 +69,8 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
       x$transits[[cluster]] - x$transits[[cluster2]]
     ),
     color = color,
+    minimum = minimum,
+    cut = cut,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,
@@ -90,6 +95,8 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' @param scales Either `"fixed"` or `"free"` (the default). If `"free"`, the
 #'   horizontal axis is scaled individually in each facet. If `"fixed"`, the
 #'   same values are used for all axes.
+#' @param line_color The color for the line segments (default is `black`)
+#' @param point_color The color for the dots (default is `black`).
 #' @param ... Ignored.
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
@@ -98,7 +105,8 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' cm <- centralities(tna_model)
 #' plot(cm)
 #'
-plot.centralities <- function(x, ncol = 3, scales = "free", ...) {
+plot.centralities <- function(x, ncol = 3, scales = "free",
+                              line_color = "black", point_color = "black",...) {
   stopifnot_(
     is_centralities(x),
     "Argument {.arg x} must be a {.cls centralities} object."
@@ -121,13 +129,15 @@ plot.centralities <- function(x, ncol = 3, scales = "free", ...) {
         xend = !!rlang::sym("State"),
         y = 0,
         yend = !!rlang::sym("value")
-      )
+      ),
+      color = line_color
     ) +
     ggplot2::geom_point(
       ggplot2::aes(
         x = !!rlang::sym("State"),
         y = !!rlang::sym("value")),
-      size = 3
+      size = 3,
+      color = point_color
     ) +
     ggplot2::coord_flip()+
     ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
