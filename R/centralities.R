@@ -171,7 +171,7 @@ centralities_ <- function(x, loops, normalize, measures) {
         )[valid_measures]
 
   if (normalize == T) {
-    df <- df |> dplyr::mutate_at(dplyr::vars(valid_measures), ranger)
+    df <- df |> dplyr::mutate_at(dplyr::vars(measures), ranger)
   }
   structure(
     tibble::rownames_to_column(df,
