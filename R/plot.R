@@ -22,7 +22,7 @@
 #' @param minimum See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
-#' @return A `ggplot` of the transition network.
+#' @return A `qgraph` plot of the transition network.
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' plot(tna_model)
@@ -123,7 +123,7 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
       "Diffusion",
       "Clustering"
     )
-    themeasures = names(x)[(names(x)%in% default_measures)]
+    themeasures = names(x)[(names(x) %in% default_measures)]
 
     mutate(x, Cluster = factor(Cluster))  |>
       data.frame() |>
@@ -188,3 +188,44 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
   }
 }
 
+#' Plot the difference network between two models
+#'
+#' Plots the difference network between model `x` and model `y`. The edges are
+#' computed from subtracting the two models. The pie chart is the difference in
+#' initial probabilities between model `x` and model `y`. Green color indicates
+#' that `x`is greater than `y`and red indicates otherwise.
+#'
+#' @export
+#' @param x An object of class `tna`. It will be the principal model
+#' @param y An object of class `tna`. It will be the model subtracted from the
+#' principal model
+#' @param ... Ignored.
+#' @return A `qgraph` object displaying the difference network between two models
+#' @examples
+#' tna_model_1 <- build_tna(engagement[,1]=="Active")
+#' tna_model_2 <- build_tna(engagement[,1]!="Active")
+#' plot(tna_model_1, tna_model_2)
+#'
+plot.compare.tna = function(x, y) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  stopifnot_(
+    is_tna(y),
+    "Argument {.arg y} must be a {.cls tna} object."
+  )
+
+  stopifnot_(
+    x$labels == y$labels,
+    "{.arg x} and {.arg y} must have the same labels."
+  )
+  pie = abs(x$inits[[1]] - y$inits[[1]])
+  piesign = ifelse(x$inits[[1]] > y$inits[[1]], "#009900","red")
+  posCol <- c("#009900", "darkgreen")
+  negCol <- c("#BF0000", "red")
+
+  diff <- build_tna(x$transits[[1]] - y$transits[[1]], pie)
+
+  plot(diff, pie = pie, pieColor = piesign, color = ifelse(!is.null(x$colors), x$colors, "white"))
+}
