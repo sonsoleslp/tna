@@ -91,13 +91,16 @@ centralities.tna <- function(x, cluster = NA, loops = FALSE,
     centralities_(x$transits[[cluster]], loops, normalize, measures)
   } else if ((length(x$transits) > 1)) {
     centrality_list = list()
+    clusternames <- names(x$transits)
+
     for (i in 1:length(x$transits)){
-      clusternames <- names(x$transits)
-      centrality_list[[i]] <- centralities_(x$transits[[i]], loops, normalize, measures)
+      centrality_list[[i]] <- centralities_(x$transits[[i]], loops, normalize,
+                                            measures)
       centrality_list[[i]]$Cluster = clusternames[i]
     }
     structure(
-      dplyr::bind_rows(centrality_list),
+      dplyr::bind_rows(centrality_list) |>
+        dplyr::mutate(Cluster = factor(Cluster, levels = clusternames)),
       class = c("centralities", "tbl_df", "tbl", "data.frame"))
   }
 }
