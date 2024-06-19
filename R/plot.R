@@ -111,43 +111,80 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
     is_centralities(x),
     "Argument {.arg x} must be a {.cls centralities} object."
   )
-  x <- stats::reshape(
-    as.data.frame(x),
-    idvar = "State",
-    ids = x[["State"]],
-    times = names(x)[-1L],
-    timevar = "name",
-    drop = "State",
-    varying = list(names(x)[-1L]),
-    direction = "long",
-    v.names = "value"
-  )
-  ggplot2::ggplot(x) +
-    ggplot2::geom_segment(
-      ggplot2::aes(
-        x = !!rlang::sym("State"),
-        xend = !!rlang::sym("State"),
-        y = 0,
-        yend = !!rlang::sym("value")
-      ),
-      color = line_color
-    ) +
-    ggplot2::geom_point(
-      ggplot2::aes(
-        x = !!rlang::sym("State"),
-        y = !!rlang::sym("value")),
-      size = 3,
-      color = point_color
-    ) +
-    ggplot2::coord_flip()+
-    ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
-    ggplot2::theme_minimal() +
-    ggplot2::theme(
-      panel.grid.major.y = ggplot2::element_blank(),
-      panel.grid.minor.y = ggplot2::element_blank(),
-      panel.grid.minor.x = ggplot2::element_blank(),
-      strip.text = element_text(face = "bold")
-    ) +
-    ggplot2::xlab("") +
-    ggplot2::ylab("")
+
+  if ("Cluster" %in% names(x)) {
+    default_measures <- c(
+      "OutStrength",
+      "InStrength",
+      "ClosenessIn",
+      "ClosenessOut",
+      "Closeness",
+      "Betweenness",
+      "Diffusion",
+      "Clustering"
+    )
+    themeasures = names(x)[(names(x)%in% default_measures)]
+
+    mutate(x, Cluster = factor(Cluster))  |>
+      data.frame() |>
+      stats::reshape(
+        varying = themeasures,
+        v.names = "value",
+        timevar = "name",
+        times = themeasures,
+        direction = "long"
+      ) |>
+      ggplot2::ggplot(ggplot2::aes(x=value, y = State,
+                                   color = Cluster, group = Cluster)) +
+      ggplot2::facet_wrap("name",ncol = 4) +
+      ggplot2::geom_path() +
+      ggplot2::geom_point() +
+      ggplot2::theme_minimal() +
+      ggplot2::xlab("Centrality") +
+      ggplot2::ylab("") +
+      ggplot2::theme(panel.spacing = ggplot2::unit(1, "lines"),
+                     legend.position = "bottom")
+
+  } else {
+    x <- stats::reshape(
+      as.data.frame(x),
+      idvar = "State",
+      ids = x[["State"]],
+      times = names(x)[-1L],
+      timevar = "name",
+      drop = "State",
+      varying = list(names(x)[-1L]),
+      direction = "long",
+      v.names = "value"
+    )
+    ggplot2::ggplot(x) +
+      ggplot2::geom_segment(
+        ggplot2::aes(
+          x = !!rlang::sym("State"),
+          xend = !!rlang::sym("State"),
+          y = 0,
+          yend = !!rlang::sym("value")
+        ),
+        color = line_color
+      ) +
+      ggplot2::geom_point(
+        ggplot2::aes(
+          x = !!rlang::sym("State"),
+          y = !!rlang::sym("value")),
+        size = 3,
+        color = point_color
+      ) +
+      ggplot2::coord_flip()+
+      ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+        panel.grid.major.y = ggplot2::element_blank(),
+        panel.grid.minor.y = ggplot2::element_blank(),
+        panel.grid.minor.x = ggplot2::element_blank(),
+        strip.text = element_text(face = "bold")
+      ) +
+      ggplot2::xlab("") +
+      ggplot2::ylab("")
+  }
 }
+
