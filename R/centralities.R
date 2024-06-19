@@ -72,20 +72,24 @@
 #' # Centrality measures normalized
 #' centralities(tna_model, normalize = FALSE)
 #'
-centralities <- function(x, loops = FALSE,
+centralities <- function(x, loops = FALSE, cluster = NA,
                          normalize = FALSE, measures = NULL, ...) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, cluster = 1, loops = FALSE,
+centralities.tna <- function(x, cluster = NA, loops = FALSE,
                              normalize = FALSE, measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  if (length(tna_model_clus$transits) > 1) {
+  if ((length(x$transits) == 1)) {
+    centralities_(x$transits[[1]], loops, normalize, measures)
+  } else if ((length(x$transits) > 1) & !is.na(cluster)) {
+    centralities_(x$transits[[cluster]], loops, normalize, measures)
+  } else if ((length(x$transits) > 1)) {
     centrality_list = list()
     for (i in 1:length(tna_model_clus$transits)){
       centrality_list[[i]] <- centralities_(x$transits[[i]], loops, normalize, measures)
@@ -94,8 +98,6 @@ centralities.tna <- function(x, cluster = 1, loops = FALSE,
     structure(
       dplyr::bind_rows(centrality_list),
       class = c("centralities", "tbl_df", "tbl", "data.frame"))
-  } else {
-    centralities_(x$transits[[cluster]], loops, normalize, measures)
   }
 }
 
