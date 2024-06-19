@@ -85,7 +85,18 @@ centralities.tna <- function(x, cluster = 1, loops = FALSE,
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  centralities_(x$transits[[cluster]], loops, normalize, measures)
+  if (length(tna_model_clus$transits) > 1) {
+    centrality_list = list()
+    for (i in 1:length(tna_model_clus$transits)){
+      centrality_list[[i]] <- centralities_(x$transits[[i]], loops, normalize, measures)
+      centrality_list[[i]]$Cluster = i
+    }
+    structure(
+      dplyr::bind_rows(centrality_list),
+      class = c("centralities", "tbl_df", "tbl", "data.frame"))
+  } else {
+    centralities_(x$transits[[cluster]], loops, normalize, measures)
+  }
 }
 
 #' @export
