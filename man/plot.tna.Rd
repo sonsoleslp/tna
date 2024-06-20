@@ -14,6 +14,8 @@
   layout = "circle",
   mar = rep(5, 4),
   pie = x$inits[[cluster]],
+  cut = 0.1,
+  minimum = 0.05,
   theme = "colorblind",
   ...
 )
@@ -40,12 +42,16 @@ The difference between the transition probabilities of \code{cluster} and
 
 \item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
+\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
-A \code{ggplot} of the transition network.
+A \code{qgraph} plot of the transition network.
 }
 \description{
 This function plots a transition network analysis (TNA) model using

@@ -4,7 +4,14 @@
 \alias{plot.centralities}
 \title{Plot Centrality Measures}
 \usage{
-\method{plot}{centralities}(x, ncol = 3, scales = "free", ...)
+\method{plot}{centralities}(
+  x,
+  ncol = 3,
+  scales = "free",
+  line_color = "black",
+  point_color = "black",
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class \code{centralities}.}
@@ -14,6 +21,10 @@
 \item{scales}{Either \code{"fixed"} or \code{"free"} (the default). If \code{"free"}, the
 horizontal axis is scaled individually in each facet. If \code{"fixed"}, the
 same values are used for all axes.}
+
+\item{line_color}{The color for the line segments (default is \code{black})}
+
+\item{point_color}{The color for the dots (default is \code{black}).}
 
 \item{...}{Ignored.}
 }

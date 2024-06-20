@@ -106,10 +106,22 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' plot(cm)
 #'
 plot.centralities <- function(x, ncol = 3, scales = "free",
-                              line_color = "black", point_color = "black",...) {
+                              line_color =  "black",
+                              point_color = "black", ...) {
   stopifnot_(
     is_centralities(x),
     "Argument {.arg x} must be a {.cls centralities} object."
+  )
+
+  stopifnot_(
+    (length(line_color) == 1) | (length(line_color) == 3),
+    "Argument {.arg line_color} must be a color or vector with
+    one color per state"
+  )
+  stopifnot_(
+    (length(point_color) == 1) | (length(point_color) == 3),
+    "Argument {.arg point_color} must be a color or vector with
+    one color per state"
   )
 
   if ("Cluster" %in% names(x)) {
@@ -134,9 +146,11 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
         times = themeasures,
         direction = "long"
       ) |>
-      ggplot2::ggplot(ggplot2::aes(x=value, y = State,
-                                   color = Cluster, group = Cluster)) +
-      ggplot2::facet_wrap("name",ncol = 4) +
+      ggplot2::ggplot(ggplot2::aes(x=!!rlang::sym("value"),
+                                   y = !!rlang::sym("State"),
+                                   color = !!rlang::sym("Cluster"),
+                                   group = !!rlang::sym("Cluster"))) +
+      ggplot2::facet_wrap("name", ncol = 4) +
       ggplot2::geom_path() +
       ggplot2::geom_point() +
       ggplot2::theme_minimal() +
@@ -157,31 +171,67 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
       direction = "long",
       v.names = "value"
     )
-    ggplot2::ggplot(x) +
-      ggplot2::geom_segment(
+    ggobj <- ggplot2::ggplot(x)
+
+    if (length(line_color) == 1) {
+    ggobj = ggobj + ggplot2::geom_segment(
         ggplot2::aes(
           x = !!rlang::sym("State"),
           xend = !!rlang::sym("State"),
           y = 0,
           yend = !!rlang::sym("value")
         ),
+        size = 1,
         color = line_color
-      ) +
-      ggplot2::geom_point(
+      )
+    } else {
+      ggobj = ggobj + ggplot2::geom_segment(
         ggplot2::aes(
           x = !!rlang::sym("State"),
+          xend = !!rlang::sym("State"),
+          y = 0,
+          yend = !!rlang::sym("value"),
+          color = !!rlang::sym("State")
+        ), size = 1
+      )  +
+      ggplot2::scale_color_manual(values = line_color)
+    }
+    if (length(point_color) == 1) {
+      ggobj = ggobj +  ggplot2::geom_point(
+          ggplot2::aes(
+            x = !!rlang::sym("State"),
+            y = !!rlang::sym("value")),
+          size = 4,
+          color = point_color
+      )
+    } else {
+      ggobj = ggobj +  ggplot2::geom_point(
+        ggplot2::aes(
+          color = !!rlang::sym("State"),
+          x = !!rlang::sym("State"),
           y = !!rlang::sym("value")),
-        size = 3,
-        color = point_color
-      ) +
+        size = 4
+      )
+      if (length(line_color) == 1) {
+        ggobj = ggobj + ggplot2::scale_color_manual(values = point_color)
+      }
+    }
+
+
+    ggobj +
       ggplot2::coord_flip()+
+      ggplot2::geom_text(ggplot2::aes(label = round(!!rlang::sym("value"), 2),
+                                      x = !!rlang::sym("State"),
+                                      y = !!rlang::sym("value")),
+                         vjust = 2, hjust = 0.8, size = 3) +
       ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
       ggplot2::theme_minimal() +
       ggplot2::theme(
+        legend.position = "none",
         panel.grid.major.y = ggplot2::element_blank(),
         panel.grid.minor.y = ggplot2::element_blank(),
         panel.grid.minor.x = ggplot2::element_blank(),
-        strip.text = element_text(face = "bold")
+        strip.text = ggplot2::element_text(face = "bold", size = 12)
       ) +
       ggplot2::xlab("") +
       ggplot2::ylab("")
@@ -196,17 +246,18 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
 #' that `x`is greater than `y`and red indicates otherwise.
 #'
 #' @export
-#' @param x An object of class `tna`. It will be the principal model
+#' @rdname plot_compare
+#' @param x An object of class `tna`. It will be the principal model.
 #' @param y An object of class `tna`. It will be the model subtracted from the
-#' principal model
-#' @param ... Ignored.
-#' @return A `qgraph` object displaying the difference network between two models
+#' principal model.
+#' @param ... Additional arguments passed to [qgraph::qgraph()].
+#' @return A `qgraph` object displaying the difference network between two models.
 #' @examples
-#' tna_model_1 <- build_tna(engagement[,1]=="Active")
-#' tna_model_2 <- build_tna(engagement[,1]!="Active")
-#' plot(tna_model_1, tna_model_2)
+#' tna_model_1 <- build_tna(engagement[engagement[,1]=="Active",])
+#' tna_model_2 <- build_tna(engagement[engagement[,1]!="Active",])
+#' plot_compare(tna_model_1, tna_model_2)
 #'
-plot.compare.tna = function(x, y) {
+plot_compare = function(x, y, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -217,15 +268,15 @@ plot.compare.tna = function(x, y) {
   )
 
   stopifnot_(
-    x$labels == y$labels,
+    all((x$labels == y$labels) == T),
     "{.arg x} and {.arg y} must have the same labels."
   )
   pie = abs(x$inits[[1]] - y$inits[[1]])
-  piesign = ifelse(x$inits[[1]] > y$inits[[1]], "#009900","red")
+  piesign = ifelse(x$inits[[1]] > y$inits[[1]], "#009900", "red")
   posCol <- c("#009900", "darkgreen")
   negCol <- c("#BF0000", "red")
 
   diff <- build_tna(x$transits[[1]] - y$transits[[1]], pie)
 
-  plot(diff, pie = pie, pieColor = piesign, color = ifelse(!is.null(x$colors), x$colors, "white"))
+  plot.tna(diff, pie = pie, pieColor = piesign, color = x$colors, ...)
 }

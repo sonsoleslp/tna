@@ -47,21 +47,31 @@ plot(tna_model)
 Calculate the centrality measures
 
 ``` r
-cm <- centralities(tna_model)
+cm <- centralities(tna_model, normalize = T)
 cm
 #> # A tibble: 3 × 9
 #>   State    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <chr>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 Active             1      0.871        2.90         2.11      3.52           4
-#> 2 Average            1      1.47         1.10         2.29      2.34          10
-#> 3 Disenga…           1      0.660        4.22         1.73      4.22           1
+#> 1 Active         0.823      0.381       0.686        0.920     0.835       0.333
+#> 2 Average        0.757      1           0.261        1         0.555       1    
+#> 3 Disenga…       1          0.261       1            0.757     1           0.333
 #> # ℹ 2 more variables: Diffusion <dbl>, Clustering <dbl>
 ```
 
 Plot the centrality measures
 
 ``` r
-plot(cm)
+plot(cm, ncol =  4, scales = "fixed",
+     line_color = tna_model$colors, point_color = tna_model$colors) 
 ```
 
 <img src="man/figures/README-centralitiesplot-1.png" width="100%" />
+Compare those who started as active with the rest
+
+``` r
+tna_model_start_active <- build_tna(engagement[engagement[,1]=="Active",])
+tna_model_start_other <- build_tna(engagement[engagement[,1]!="Active",])
+plot_compare(tna_model_start_active, tna_model_start_other)
+```
+
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
