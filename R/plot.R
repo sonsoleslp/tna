@@ -114,12 +114,12 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
   )
 
   stopifnot_(
-    (length(line_color) == 1) | (length(line_color) == unique(x$State)),
+    (length(line_color) == 1) | (length(line_color) == length(unique(x$State))),
     "Argument {.arg line_color} must be a color or vector with
     one color per state"
   )
   stopifnot_(
-    (length(point_color) == 1) | (length(point_color) == unique(x$State)),
+    (length(point_color) == 1) | (length(point_color) == length(unique(x$State))),
     "Argument {.arg point_color} must be a color or vector with
     one color per state"
   )
