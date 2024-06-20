@@ -137,7 +137,7 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
     )
     themeasures = names(x)[(names(x) %in% default_measures)]
 
-    mutate(x, Cluster = factor(Cluster))  |>
+    dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster")))  |>
       data.frame() |>
       stats::reshape(
         varying = themeasures,

@@ -11,6 +11,10 @@ An object of class \code{stslist} (inherits from \code{data.frame}) with 200 row
 engagement
 }
 \description{
-TODO explain more
+Students' engagement states (Active / Average / Disengaged)
+throuhgout a whole study program. The data was generated synthetically
+based on the article "The longitudinal association between engagement and
+achievement varies by time, students’ profiles, and achievement state:
+A full program study" (doi: 10.1016/j.compedu.2023.104787)
 }
 \keyword{datasets}

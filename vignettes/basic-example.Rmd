@@ -39,6 +39,6 @@ cm <- centralities(tna_model)
 cm
 ```
 
-```{r}
-plot(cm)
+```{r, fig.width=4, fig.height=2}
+plot(cm, ncol = 4, line_color = tna_model$colors, point_color = tna_model$colors)
 ```

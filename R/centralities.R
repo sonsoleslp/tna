@@ -100,7 +100,7 @@ centralities.tna <- function(x, cluster = NA, loops = FALSE,
     }
     structure(
       dplyr::bind_rows(centrality_list) |>
-        dplyr::mutate(Cluster = factor(Cluster, levels = clusternames)),
+        dplyr::mutate(Cluster = factor(!!rlang::sym("Cluster"), levels = clusternames)),
       class = c("centralities", "tbl_df", "tbl", "data.frame"))
   }
 }
