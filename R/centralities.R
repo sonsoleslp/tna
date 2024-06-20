@@ -86,16 +86,21 @@ centralities.tna <- function(x, cluster = NA, loops = FALSE,
     "Argument {.arg x} must be a {.cls tna} object."
   )
   if ((length(x$transits) == 1)) {
-    centralities_(x$transits[[1]], loops, normalize, measures)
+    centralities_(x$transits[[1]], loops = loops,
+                  normalize = normalize,
+                  measures = measures)
   } else if ((length(x$transits) > 1) & !is.na(cluster)) {
-    centralities_(x$transits[[cluster]], loops, normalize, measures)
+    centralities_(x$transits[[cluster]],loops = loops,
+                  normalize = normalize,
+                  measures = measures)
   } else if ((length(x$transits) > 1)) {
     centrality_list = list()
     clusternames <- names(x$transits)
 
     for (i in 1:length(x$transits)){
-      centrality_list[[i]] <- centralities_(x$transits[[i]], loops, normalize,
-                                            measures)
+      centrality_list[[i]] <- centralities_(x$transits[[i]], loops = loops,
+                                            normalize = normalize,
+                                            measures = measures)
       centrality_list[[i]]$Cluster = clusternames[i]
     }
     structure(
