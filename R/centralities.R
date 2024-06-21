@@ -198,7 +198,7 @@ centralities_ <- function(x, loops, normalize, measures) {
   structure(
     tibble::rownames_to_column(df,
       "State"
-    ),
+    )|> dplyr::mutate(State = factor(State, levels = rownames(df))),
     class = c("centralities", "tbl_df", "tbl", "data.frame")
   )
 }

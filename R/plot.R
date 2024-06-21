@@ -95,8 +95,12 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' @param scales Either `"fixed"` or `"free"` (the default). If `"free"`, the
 #'   horizontal axis is scaled individually in each facet. If `"fixed"`, the
 #'   same values are used for all axes.
+#' @param reorder Logical value indicating whether to reorder the values for
+#'   each centrality in descending order. The default is `FALSE`.
 #' @param line_color The color for the line segments (default is `black`)
 #' @param point_color The color for the dots (default is `black`).
+#' @param labels Logical indicating whether to show the centrality numeric
+#'   values. The default is `TRUE`.
 #' @param ... Ignored.
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
@@ -104,10 +108,11 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' tna_model <- build_tna(engagement)
 #' cm <- centralities(tna_model)
 #' plot(cm)
+#' plot(cm, ncol = 4, reorder = FALSE)
 #'
-plot.centralities <- function(x, ncol = 3, scales = "free",
-                              line_color =  "black",
-                              point_color = "black", ...) {
+plot.centralities <- function(x, ncol = 3, scales = "free", reorder = FALSE,
+                              line_color =  "black", point_color = "black",
+                              labels = TRUE,...) {
   stopifnot_(
     is_centralities(x),
     "Argument {.arg x} must be a {.cls centralities} object."
@@ -122,6 +127,11 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
     (length(point_color) == 1) | (length(point_color) == length(unique(x$State))),
     "Argument {.arg point_color} must be a color or vector with
     one color per state"
+  )
+
+  stopifnot_(
+    !(reorder == T & ((scales == "fixed") | (scales == "free_x"))),
+    "Argument {.arg reorder} is not compatible with {.arg reorder} = `fixed` or `free_x`"
   )
 
   if ("Cluster" %in% names(x)) {
@@ -170,14 +180,23 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
       varying = list(names(x)[-1L]),
       direction = "long",
       v.names = "value"
-    )
+    ) |> dplyr::group_by(!!rlang::sym("name"))
+    if(reorder) {
+      x <- dplyr::arrange(x, !!rlang::sym("name"), !!rlang::sym("value")) |>
+      dplyr::mutate(rank =dplyr::row_number())
+    } else {
+      x <- dplyr::arrange(x, name, dplyr::desc(!!rlang::sym("State"))) |>
+        dplyr::mutate(rank = dplyr::row_number())
+    }
+    x <- x |> dplyr::mutate(rank = paste0(!!rlang::sym("rank"),"_",!!rlang::sym("State"))) |>
+      dplyr::mutate(rank = factor(!!rlang::sym("rank"), levels = !!rlang::sym("rank")))
     ggobj <- ggplot2::ggplot(x)
 
     if (length(line_color) == 1) {
     ggobj = ggobj + ggplot2::geom_segment(
         ggplot2::aes(
-          x = !!rlang::sym("State"),
-          xend = !!rlang::sym("State"),
+          x = !!rlang::sym("rank"),
+          xend = !!rlang::sym("rank"),
           y = 0,
           yend = !!rlang::sym("value")
         ),
@@ -187,8 +206,8 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
     } else {
       ggobj = ggobj + ggplot2::geom_segment(
         ggplot2::aes(
-          x = !!rlang::sym("State"),
-          xend = !!rlang::sym("State"),
+          x = !!rlang::sym("rank"),
+          xend = !!rlang::sym("rank"),
           y = 0,
           yend = !!rlang::sym("value"),
           color = !!rlang::sym("State")
@@ -199,7 +218,7 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
     if (length(point_color) == 1) {
       ggobj = ggobj +  ggplot2::geom_point(
           ggplot2::aes(
-            x = !!rlang::sym("State"),
+            x = !!rlang::sym("rank"),
             y = !!rlang::sym("value")),
           size = 4,
           color = point_color
@@ -208,7 +227,7 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
       ggobj = ggobj +  ggplot2::geom_point(
         ggplot2::aes(
           color = !!rlang::sym("State"),
-          x = !!rlang::sym("State"),
+          x = !!rlang::sym("rank"),
           y = !!rlang::sym("value")),
         size = 4
       )
@@ -217,21 +236,25 @@ plot.centralities <- function(x, ncol = 3, scales = "free",
       }
     }
 
-
-    ggobj +
-      ggplot2::coord_flip()+
-      ggplot2::geom_text(ggplot2::aes(label = round(!!rlang::sym("value"), 2),
-                                      x = !!rlang::sym("State"),
+    ggobj <- ggobj +  ggplot2::coord_flip(clip = "off")
+    if (labels) {
+      ggobj <- ggobj + ggplot2::geom_text(ggplot2::aes(label = round(!!rlang::sym("value"), 2),
+                                      x = !!rlang::sym("rank"),
                                       y = !!rlang::sym("value")),
-                         vjust = 2, hjust = 0.8, size = 3) +
+                         vjust = 2, hjust = 0.8, size = 3)
+    }
+    ggobj +
       ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
+      ggplot2::scale_x_discrete(name=NULL, labels=function(x) sub('^.*_(.*)$', '\\1', x)) +
       ggplot2::theme_minimal() +
       ggplot2::theme(
         legend.position = "none",
         panel.grid.major.y = ggplot2::element_blank(),
         panel.grid.minor.y = ggplot2::element_blank(),
         panel.grid.minor.x = ggplot2::element_blank(),
-        strip.text = ggplot2::element_text(face = "bold", size = 12)
+        strip.text = ggplot2::element_text(face = "bold", size = 12),
+        axis.text.y = ggplot2::element_text(size=8),
+        panel.spacing = ggplot2::unit(2, "lines")
       ) +
       ggplot2::xlab("") +
       ggplot2::ylab("")

@@ -8,8 +8,10 @@
   x,
   ncol = 3,
   scales = "free",
+  reorder = FALSE,
   line_color = "black",
   point_color = "black",
+  labels = TRUE,
   ...
 )
 }
@@ -22,9 +24,15 @@
 horizontal axis is scaled individually in each facet. If \code{"fixed"}, the
 same values are used for all axes.}
 
+\item{reorder}{Logical value indicating whether to reorder the values for
+each centrality in descending order. The default is \code{FALSE}.}
+
 \item{line_color}{The color for the line segments (default is \code{black})}
 
 \item{point_color}{The color for the dots (default is \code{black}).}
+
+\item{labels}{Logical indicating whether to show the centrality numeric
+values. The default is \code{TRUE}.}
 
 \item{...}{Ignored.}
 }
@@ -43,5 +51,6 @@ centrality measures.
 tna_model <- build_tna(engagement)
 cm <- centralities(tna_model)
 plot(cm)
+plot(cm, ncol = 4, reorder = FALSE)
 
 }
