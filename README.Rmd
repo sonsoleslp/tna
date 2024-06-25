@@ -57,7 +57,7 @@ cm <- centralities(tna_model)
 ```
 
 ```{r, echo=F}
-cm |> gt::gt() |> gt::tab_options(table.font.size = 8)
+cm |> gt::gt() |> gt::tab_options(table.font.size = 8) |> gt::as_raw_html()
 ```
 
 Plot the centrality measures
