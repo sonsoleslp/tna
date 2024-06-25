@@ -35,8 +35,8 @@ network when computing the centrality measures (default is \code{FALSE}).}
 
 \item{cluster}{Index of the cluster for which to compute the centralities.}
 
-\item{normalize}{A \code{logical} value indicating whether the centralities should
-be normalized (default is \code{FALSE}).}
+\item{normalize}{A \code{logical} value indicating whether the centralities
+should be normalized (default is \code{FALSE}).}
 
 \item{measures}{A \code{character} vector indicating which centrality
 measures should be computed. If \code{NULL}, all available measures are
