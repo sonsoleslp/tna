@@ -56,7 +56,7 @@ Calculate the centrality measures
 cm <- centralities(tna_model)
 ```
 
-```{r, echo=F}
+```{r, echo=FALSE}
 cm |> gt::gt() |> gt::tab_options(table.font.size = 8) |> gt::as_raw_html()
 ```
 

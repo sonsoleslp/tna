@@ -30,8 +30,7 @@
 plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
                      edge.labels = TRUE, labels = x$labels, layout = "circle",
                      mar = rep(5, 4), pie = x$inits[[cluster]],
-                     cut = 0.1, minimum = 0.05,
-                     theme = "colorblind", ...) {
+                     cut = 0.1, minimum = 0.05, theme = "colorblind", ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -108,7 +107,7 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' tna_model <- build_tna(engagement)
 #' cm <- centralities(tna_model)
 #' plot(cm)
-#' plot(cm, ncol = 4, reorder = FALSE)
+#' plot(cm, ncol = 4, reorder = TRUE)
 #'
 plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
                               reorder = FALSE, line_color = "black",
@@ -125,25 +124,15 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
     checkmate::test_flag(x = labels),
     "Argument {.arg labels} must be a single {.cls logical} value."
   )
-  stopifnot_(
-    length(line_color) == 1L || length(line_color) == length(unique(x$State)),
-    "Argument {.arg line_color} must be a color or vector with
-    one color per state."
-  )
-  stopifnot_(
-    length(point_color) == 1L || length(point_color) == length(unique(x$State)),
-    "Argument {.arg point_color} must be a color or vector with
-    one color per state."
-  )
+  line_color <- rep(line_color, length.out = length(unique(x$State)))
+  point_color <- rep(point_color, length.out = length(unique(x$State)))
   scales <- onlyif(is.character(scales), tolower(scales))
   scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
   stopifnot_(
     !inherits(scales, "try-error"),
     "Argument {.arg scales} must be either {.val free_x} or {.val fixed}."
   )
-  if (reorder) {
-    scales <- ifelse_(scales == "free_x", "free", "free_y")
-  }
+  scales <- ifelse_(scales == "free_x", "free", "free_y")
   if ("Cluster" %in% names(x)) {
     default_measures <- c(
       "OutStrength",
@@ -156,7 +145,7 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
       "Clustering"
     )
     themeasures <- names(x)[names(x) %in% default_measures]
-    dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster")))  |>
+    dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
       data.frame() |>
       stats::reshape(
         varying = themeasures,
@@ -206,59 +195,32 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
       ) |>
         dplyr::mutate(rank = dplyr::row_number())
     }
-    ggobj <- ggplot2::ggplot(x)
-    if (length(line_color) == 1L) {
-      ggobj <- ggobj +
-        ggplot2::geom_segment(
-          ggplot2::aes(
-            x = !!rlang::sym("rank"),
-            xend = !!rlang::sym("rank"),
-            y = 0,
-            yend = !!rlang::sym("value")
-          ),
-          size = 1,
-          color = line_color
-        )
-    } else {
-      ggobj <- ggobj +
-        ggplot2::geom_segment(
-          ggplot2::aes(
-            x = !!rlang::sym("rank"),
-            xend = !!rlang::sym("rank"),
-            y = 0,
-            yend = !!rlang::sym("value"),
-            color = !!rlang::sym("State")
-          ),
-          size = 1
-        ) +
-        ggplot2::scale_color_manual(values = line_color)
-    }
-    if (length(point_color) == 1) {
-      ggobj <- ggobj + ggplot2::geom_point(
+    ggplot2::ggplot(x) +
+      ggplot2::geom_segment(
         ggplot2::aes(
+          x = !!rlang::sym("rank"),
+          xend = !!rlang::sym("rank"),
+          y = 0,
+          yend = !!rlang::sym("value"),
+          color = !!rlang::sym("State")
+        ),
+        size = 1
+      ) +
+      ggplot2::scale_color_manual(values = line_color) +
+      ggplot2::geom_point(
+        ggplot2::aes(
+          fill = !!rlang::sym("State"),
           x = !!rlang::sym("rank"),
           y = !!rlang::sym("value")
         ),
         size = 4,
-        color = point_color
-      )
-    } else {
-      ggobj = ggobj + ggplot2::geom_point(
-        ggplot2::aes(
-          color = !!rlang::sym("State"),
-          x = !!rlang::sym("rank"),
-          y = !!rlang::sym("value")
-        ),
-        size = 4
-      )
-      if (length(line_color) == 1) {
-        ggobj <- ggobj +
-          ggplot2::scale_color_manual(values = point_color)
-      }
-    }
-    ggobj <- ggobj + ggplot2::coord_flip(clip = "off")
-    if (labels) {
-      ggobj <- ggobj +
+        shape = 21,
+        stroke = NA
+      ) +
+      ggplot2::scale_fill_manual(values = point_color) +
+      ggplot2::coord_flip(clip = "off") +
+      onlyif(
+        labels,
         ggplot2::geom_text(
           ggplot2::aes(
             label = round(!!rlang::sym("value"), 2),
@@ -269,8 +231,7 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
           hjust = 0.8,
           size = 3
         )
-    }
-    ggobj +
+      ) +
       ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
       ggplot2::scale_x_continuous(
         name = NULL,
@@ -286,7 +247,8 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
         panel.grid.minor.x = ggplot2::element_blank(),
         strip.text = ggplot2::element_text(face = "bold", size = 12),
         axis.text.y = ggplot2::element_text(size = 8),
-        panel.spacing = ggplot2::unit(2, "lines")
+        panel.spacing = ggplot2::unit(2, "lines"),
+        plot.margin = ggplot2::margin(5.5, 11, 5.5, 5.5, "points")
       ) +
       ggplot2::xlab("") +
       ggplot2::ylab("")
@@ -304,9 +266,10 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
 #' @rdname plot_compare
 #' @param x An object of class `tna`. It will be the principal model.
 #' @param y An object of class `tna`. It will be the model subtracted from the
-#' principal model.
+#'   principal model.
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
-#' @return A `qgraph` object displaying the difference network between two models.
+#' @return A `qgraph` object displaying the difference network between the
+#'   two models.
 #' @examples
 #' tna_model_1 <- build_tna(engagement[engagement[, 1] == "Active", ])
 #' tna_model_2 <- build_tna(engagement[engagement[, 1] != "Active", ])

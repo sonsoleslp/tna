@@ -51,6 +51,6 @@ centrality measures.
 tna_model <- build_tna(engagement)
 cm <- centralities(tna_model)
 plot(cm)
-plot(cm, ncol = 4, reorder = FALSE)
+plot(cm, ncol = 4, reorder = TRUE)
 
 }

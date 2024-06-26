@@ -15,7 +15,8 @@ principal model.}
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
-A \code{qgraph} object displaying the difference network between two models.
+A \code{qgraph} object displaying the difference network between the
+two models.
 }
 \description{
 Plots the difference network between model \code{x} and model \code{y}. The edges are
