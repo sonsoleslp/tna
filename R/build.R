@@ -27,7 +27,7 @@
 #'   * `transits`\cr A `list` of adjacency matrices of the model
 #'     (transition matrices) for each cluster.
 #'   * `inits`\cr A `list` of initial state probability vectors for each
-#'     cluster. For matrcies, this element will be `NULL` if `inits` is not
+#'     cluster. For matrices, this element will be `NULL` if `inits` is not
 #'     directly provided
 #'   * `labels`\cr A `character` vector of the state labels, or `NULL` if there
 #'     are no labels.

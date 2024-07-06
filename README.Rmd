@@ -56,19 +56,19 @@ Calculate the centrality measures
 cm <- centralities(tna_model)
 ```
 
-```{r, echo=F}
-cm |> gt::gt() |> gt::tab_options(table.font.size = 8)
+```{r, echo=FALSE}
+cm |> gt::gt() |> gt::tab_options(table.font.size = 8) |> gt::as_raw_html()
 ```
 
 Plot the centrality measures
-```{r centralitiesplot ,fig.width=12}
-plot(cm, ncol =  4, reorder = T, line_color = tna_model$colors, point_color = tna_model$colors) 
+```{r centralitiesplot, fig.width=12}
+plot(cm, ncol = 4, reorder = TRUE, line_color = tna_model$colors, point_color = tna_model$colors) 
 ```
 
 Compare those who started as active with the rest
 ```{r}
-tna_model_start_active <- build_tna(engagement[engagement[,1]=="Active",])
-tna_model_start_other <- build_tna(engagement[engagement[,1]!="Active",])
+tna_model_start_active <- build_tna(engagement[engagement[, 1] == "Active", ])
+tna_model_start_other <- build_tna(engagement[engagement[, 1] != "Active", ])
 plot_compare(tna_model_start_active, tna_model_start_other)
 ```
 

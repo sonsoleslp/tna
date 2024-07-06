@@ -40,7 +40,7 @@ following elements:
 \item \code{transits}\cr A \code{list} of adjacency matrices of the model
 (transition matrices) for each cluster.
 \item \code{inits}\cr A \code{list} of initial state probability vectors for each
-cluster. For matrcies, this element will be \code{NULL} if \code{inits} is not
+cluster. For matrices, this element will be \code{NULL} if \code{inits} is not
 directly provided
 \item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if there
 are no labels.

@@ -9,7 +9,7 @@
 centralities(
   x,
   loops = FALSE,
-  cluster = NA,
+  cluster = NULL,
   normalize = FALSE,
   measures = NULL,
   ...
@@ -17,14 +17,21 @@ centralities(
 
 \method{centralities}{tna}(
   x,
-  cluster = NA,
   loops = FALSE,
+  cluster = NULL,
   normalize = FALSE,
   measures = NULL,
   ...
 )
 
-\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures = NULL, ...)
+\method{centralities}{matrix}(
+  x,
+  loops = FALSE,
+  cluster = NULL,
+  normalize = FALSE,
+  measures = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A square matrix representing transition probabilities or adjacency,
@@ -33,10 +40,12 @@ or a \code{tna} object.}
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{FALSE}).}
 
-\item{cluster}{Index of the cluster for which to compute the centralities.}
+\item{cluster}{Index of the cluster for which to compute the centralities or
+\code{NULL} if there are no clusters or if centralities should be computed for
+all clusters.}
 
-\item{normalize}{A \code{logical} value indicating whether the centralities should
-be normalized (default is \code{FALSE}).}
+\item{normalize}{A \code{logical} value indicating whether the centralities
+should be normalized (default is \code{FALSE}).}
 
 \item{measures}{A \code{character} vector indicating which centrality
 measures should be computed. If \code{NULL}, all available measures are
@@ -93,7 +102,7 @@ centralities(tna_model)
 centralities(tna_model, loops = FALSE)
 
 # Centrality measures normalized
-centralities(tna_model, normalize = FALSE)
+centralities(tna_model, normalize = TRUE)
 
 }
 \references{

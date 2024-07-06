@@ -41,9 +41,11 @@
 #'   matched ignoring case.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `FALSE`).
-#' @param normalize  A `logical` value indicating whether the centralities should
-#'   be normalized (default is `FALSE`).
-#' @param cluster Index of the cluster for which to compute the centralities.
+#' @param normalize  A `logical` value indicating whether the centralities
+#'   should be normalized (default is `FALSE`).
+#' @param cluster Index of the cluster for which to compute the centralities or
+#'   `NULL` if there are no clusters or if centralities should be computed for
+#'   all clusters.
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
@@ -70,50 +72,61 @@
 #' centralities(tna_model, loops = FALSE)
 #'
 #' # Centrality measures normalized
-#' centralities(tna_model, normalize = FALSE)
+#' centralities(tna_model, normalize = TRUE)
 #'
-centralities <- function(x, loops = FALSE, cluster = NA,
+centralities <- function(x, loops = FALSE, cluster = NULL,
                          normalize = FALSE, measures = NULL, ...) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, cluster = NA, loops = FALSE,
+centralities.tna <- function(x, loops = FALSE, cluster = NULL,
                              normalize = FALSE, measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  if ((length(x$transits) == 1)) {
-    centralities_(x$transits[[1]], loops = loops,
-                  normalize = normalize,
-                  measures = measures)
-  } else if ((length(x$transits) > 1) & !is.na(cluster)) {
-    centralities_(x$transits[[cluster]],loops = loops,
-                  normalize = normalize,
-                  measures = measures)
-  } else if ((length(x$transits) > 1)) {
-    centrality_list = list()
+  if (length(x$transits) == 1L) {
+    centralities_(
+      x$transits[[1]],
+      loops = loops,
+      normalize = normalize,
+      measures = measures
+    )
+  } else if (length(x$transits) > 1L && !is.null(cluster)) {
+    centralities_(
+      x$transits[[cluster]],
+      loops = loops,
+      normalize = normalize,
+      measures = measures
+    )
+  } else if (length(x$transits) > 1L) {
+    centrality_list <- list()
     clusternames <- names(x$transits)
-
-    for (i in 1:length(x$transits)){
-      centrality_list[[i]] <- centralities_(x$transits[[i]], loops = loops,
-                                            normalize = normalize,
-                                            measures = measures)
-      centrality_list[[i]]$Cluster = clusternames[i]
+    for (i in seq_along(x$transits)){
+      centrality_list[[i]] <- centralities_(
+        x$transits[[i]],
+        loops = loops,
+        normalize = normalize,
+        measures = measures
+      )
+      centrality_list[[i]]$Cluster <- clusternames[i]
     }
     structure(
       dplyr::bind_rows(centrality_list) |>
-        dplyr::mutate(Cluster = factor(!!rlang::sym("Cluster"), levels = clusternames)),
-      class = c("centralities", "tbl_df", "tbl", "data.frame"))
+        dplyr::mutate(
+          Cluster = factor(!!rlang::sym("Cluster"), levels = clusternames)
+        ),
+      class = c("centralities", "tbl_df", "tbl", "data.frame")
+    )
   }
 }
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = FALSE, normalize = FALSE,
-                                measures = NULL, ...) {
+centralities.matrix <- function(x, loops = FALSE, cluster = NULL,
+                                normalize = FALSE, measures = NULL, ...) {
   stopifnot_(
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
@@ -181,24 +194,26 @@ centralities_ <- function(x, loops, normalize, measures) {
   Diffusion <- diffusion(x)
   Clustering <- wcc(x + t(x))
 
-  df <- data.frame(
-          OutStrength,
-          InStrength,
-          ClosenessIn,
-          ClosenessOut,
-          Closeness,
-          Betweenness,
-          Diffusion,
-          Clustering
-        )[valid_measures]
+  out <- data.frame(
+    OutStrength,
+    InStrength,
+    ClosenessIn,
+    ClosenessOut,
+    Closeness,
+    Betweenness,
+    Diffusion,
+    Clustering
+  )[valid_measures]
 
-  if (normalize == T) {
-    df <- df |> dplyr::mutate_at(dplyr::vars(measures), ranger)
+  if (normalize) {
+    out <- out |>
+      dplyr::mutate_at(dplyr::vars(measures), ranger)
   }
   structure(
-    tibble::rownames_to_column(df,
-      "State"
-    )|> dplyr::mutate(State = factor(State, levels = rownames(df))),
+    tibble::rownames_to_column(out, "State") |>
+      dplyr::mutate(
+        State = factor(!!rlang::sym("State"), levels = rownames(out))
+      ),
     class = c("centralities", "tbl_df", "tbl", "data.frame")
   )
 }
