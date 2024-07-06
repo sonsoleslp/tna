@@ -203,6 +203,18 @@ centralities_ <- function(x, loops, normalize, measures) {
   )
 }
 
+
+#' Convert a dataframe to a centralities object
+#'
+#' @export
+#' @param df A dataframe.
+#' @rdname as_centralities
+as_centralities <- function(df) {
+  structure(df, class = c("centralities", "tbl_df", "tbl", "data.frame"))
+}
+
+
+
 #' Compute diffusion centrality measure
 #'
 #' @param mat A transition probability matrix.

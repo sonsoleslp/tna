@@ -183,7 +183,7 @@ plot.centralities <- function(x, ncol = 3, scales = "free", reorder = FALSE,
     ) |> dplyr::group_by(!!rlang::sym("name"))
     if(reorder) {
       x <- dplyr::arrange(x, !!rlang::sym("name"), !!rlang::sym("value")) |>
-      dplyr::mutate(rank =dplyr::row_number())
+      dplyr::mutate(rank = dplyr::row_number())
     } else {
       x <- dplyr::arrange(x, name, dplyr::desc(!!rlang::sym("State"))) |>
         dplyr::mutate(rank = dplyr::row_number())
@@ -253,7 +253,7 @@ plot.centralities <- function(x, ncol = 3, scales = "free", reorder = FALSE,
         panel.grid.minor.y = ggplot2::element_blank(),
         panel.grid.minor.x = ggplot2::element_blank(),
         strip.text = ggplot2::element_text(face = "bold", size = 12),
-        axis.text.y = ggplot2::element_text(size=8),
+        axis.text.y = ggplot2::element_text(size = 8),
         panel.spacing = ggplot2::unit(2, "lines")
       ) +
       ggplot2::xlab("") +
@@ -301,5 +301,5 @@ plot_compare = function(x, y, ...) {
 
   diff <- build_tna(x$transits[[1]] - y$transits[[1]], pie)
 
-  plot.tna(diff, pie = pie, pieColor = piesign, color = x$colors, ...)
+  plot.tna(diff, pie = pie, pieColor = piesign, color = x$colors, theme = NULL, palette = "colorblind", ...)
 }
