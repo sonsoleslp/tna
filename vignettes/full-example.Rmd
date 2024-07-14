@@ -1,0 +1,165 @@
+---
+title: "Full example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{full-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 10,
+  fig.height = 6,
+  out.width = "100%",
+  dpi = 300,
+  comment = "#>"
+)
+```
+
+```{r, warning = F,  message = FALSE, results = FALSE }
+library("tna")
+library("tibble")
+library("dplyr")
+library("gt")
+library("seqHMM")
+library("TraMineR")
+```
+
+Import the data
+```{r}
+data("engagement", package = "tna")
+```
+
+Build the model
+```{r}
+tna_model <- build_tna(engagement)
+```
+
+Plot the model
+```{r}
+plot(tna_model)
+```
+
+Initial probabilities
+```{r}
+data.frame(`Initial prob.` = tna_model$inits[[1]]) |> 
+  rownames_to_column("Engagement state") |> arrange(desc(`Initial.prob.`)) |> 
+  gt() |> fmt_percent()
+```
+
+Transition probabilities
+```{r}
+tna_model$transits[[1]] |> data.frame() |> 
+  rownames_to_column("From\\To") |> 
+  gt() |> fmt_percent()
+```
+
+Centrality measures
+```{r, fig.width=9,fig.height=6}
+centrality_measures = c("Betweenness", "Closeness", "InStrength", "OutStrength")
+
+cents_withoutloops <- centralities(tna_model, measures = centrality_measures, 
+                                   loops = FALSE, normalize = TRUE)
+
+plot(cents_withoutloops, ncol = 2, reorder = T,
+     point_color = tna_model$colors, line_color = tna_model$colors)  
+```
+
+
+# Clustering
+
+Initialization
+```{r, warning = F, cache = TRUE}
+set.seed(265)
+
+Nvar <- length(tna_model$labels)
+Nclusters <- 3
+trans_probs <- simulate_transition_probs(Nvar, Nclusters)
+init_probs <-list(c(0.70, 0.20, 0.10), 
+                  c(0.15, 0.70, 0.15), 
+                  c(0.10, 0.20, 0.70))
+```
+
+Building and fitting the model (this might take a while...)
+```{r, warning = F, cache = TRUE}
+set.seed(265)
+modelTrans <- build_mmm(engagement, transition_probs = trans_probs,
+ initial_probs = init_probs)
+
+controlEM = list(restart = list(times = 100, n_optimum = 101))
+
+fitModelTrans <- fit_model(
+ modelTrans, 
+ global_step = TRUE,
+ control_global = list(algorithm = "NLOPT_GD_STOGO_RAND"),
+ local_step = TRUE,
+ threads = 60,
+ control_em = controlEM)
+```
+
+Plotting each cluster sequence
+```{r, fig.width=9, fig.height=5}
+clusternames <- c("Cluster 1", "Cluster 2", "Cluster 3")
+
+cluster_names(fitModelTrans$model) <- clusternames
+sumamaryx <- summary(fitModelTrans$model)
+seqdplot(engagement, group = sumamaryx$most_probable_cluster, rows = 2, cols = 2)  
+seqIplot(engagement, group = sumamaryx$most_probable_cluster, rows = 2, cols = 2)   
+```
+
+
+
+Creating a new model with the cluster information
+```{r}
+tna_model_clus <- build_tna(fitModelTrans$model)
+```
+
+
+Initial probabilities
+```{r}
+data.frame(tna_model_clus$inits) |> 
+  rownames_to_column("Engagement state") |>  
+  gt() |> fmt_percent()
+```
+
+Transition probabilities
+
+```{r}
+tna_model_clus$transits[[1]] |> data.frame() |> 
+  rownames_to_column("From\\To") |> gt() |>
+  tab_header(title = names(tna_model_clus$transits)[1]) |>
+  fmt_percent()
+tna_model_clus$transits[[2]] |> data.frame() |> 
+  rownames_to_column("From\\To") |> gt() |>
+  tab_header(title = names(tna_model_clus$transits)[2]) |>
+  fmt_percent()
+tna_model_clus$transits[[3]] |> data.frame() |> 
+  rownames_to_column("From\\To") |> gt() |>
+  tab_header(title = names(tna_model_clus$transits)[3]) |>
+  fmt_percent()
+```
+
+ 
+
+Plotting the cluster transitions
+```{r, fig.width=10, fig.height=3.2}
+layout(t(1:3))
+
+plot(tna_model_clus, cluster = 1, edge.label.cex = 2, vsize = 18, 
+     title = clusternames[1], title.cex = 1.15)
+plot(tna_model_clus, cluster = 2, edge.label.cex = 2, vsize = 18, 
+     title = clusternames[2], title.cex = 1.15)
+plot(tna_model_clus, cluster = 3, edge.label.cex = 2, vsize = 18, 
+     title = clusternames[3], title.cex = 1.15)
+```
+
+
+Cluster centralities
+```{r, fig.width=9, fig.height=4}
+layout(t(1:2))
+centralities_per_cluster <- centralities(tna_model_clus, normalize = T, 
+                                         measures = centrality_measures) 
+plot(centralities_per_cluster, scales = "free")
+```

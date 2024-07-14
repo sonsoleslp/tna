@@ -28,6 +28,7 @@ Imports:
     seqHMM,
     tibble
 Suggests: 
+    gt,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
