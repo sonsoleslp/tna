@@ -85,7 +85,7 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
       cut_off <- threshold
       method <- "User-specified threshold"
     } else if (!is.null(percentile)) {
-      cut_off <- quantile(non_zero_edges, probs = percentile/100)
+      cut_off <- stats::quantile(non_zero_edges, probs = percentile/100)
       method <- paste("Lowest", percentile, "percentile of non-zero edges")
     } else if (!is.null(lowest_percent)) {
       sorted_edges <- sort(non_zero_edges)

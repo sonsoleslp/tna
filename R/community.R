@@ -45,10 +45,10 @@ community_detection <- function(x, cluster = NULL, Gamma = 1, color_palette = co
 #' The function iterates over the `transits` element of the `tna` object and generates plots for each using the specified community detection method. The `community_assignment` provides the mapping of nodes to communities, and colors are assigned based on the `community` parameter's chosen algorithm.
 #'
 #' @examples
-#' # Example usage:
+#' \dontrun{
 #' # Assuming 'x' is a tna object and 'community_assignment' holds the respective community labels
 #' plot_communities(x, community_assignment, "walktrap")
-#'
+#' }
 #' @export
 plot_communities <- function(x, community_assignment, community) {
   for(i in 1:length(x$transits)) {

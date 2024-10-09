@@ -29,8 +29,8 @@ This function visualizes the communities detected within a \code{tna} object bas
 The function iterates over the \code{transits} element of the \code{tna} object and generates plots for each using the specified community detection method. The \code{community_assignment} provides the mapping of nodes to communities, and colors are assigned based on the \code{community} parameter's chosen algorithm.
 }
 \examples{
-# Example usage:
+\dontrun{
 # Assuming 'x' is a tna object and 'community_assignment' holds the respective community labels
 plot_communities(x, community_assignment, "walktrap")
-
+}
 }
