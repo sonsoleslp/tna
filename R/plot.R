@@ -124,8 +124,8 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
     checkmate::test_flag(x = labels),
     "Argument {.arg labels} must be a single {.cls logical} value."
   )
-  line_color <- rep(line_color, length.out = length(unique(x$State)))
-  point_color <- rep(point_color, length.out = length(unique(x$State)))
+  line_colors <- rep(line_color, length.out = length(unique(x$State)))
+  point_colors <- rep(point_color, length.out = length(unique(x$State)))
   scales <- onlyif(is.character(scales), tolower(scales))
   scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
   stopifnot_(
@@ -145,7 +145,10 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
       "Clustering"
     )
     themeasures <- names(x)[names(x) %in% default_measures]
-    dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
+
+    n_clusters <- length(unique(x$Cluster))
+
+    ret <- dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
       data.frame() |>
       stats::reshape(
         varying = themeasures,
@@ -159,12 +162,30 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
           x = !!rlang::sym("value"),
           y = !!rlang::sym("State"),
           color = !!rlang::sym("Cluster"),
+          fill = !!rlang::sym("Cluster"),
           group = !!rlang::sym("Cluster")
         )
       ) +
       ggplot2::facet_wrap("name", ncol = 4) +
-      ggplot2::geom_path() +
-      ggplot2::geom_point() +
+      ggplot2::geom_path()
+    if (length(unique(line_colors)) == n_clusters) {
+      ret <- ret + ggplot2::scale_color_manual(values = line_colors)
+    } else {
+      ret <- ret + ggplot2::scale_color_discrete()
+    }
+
+    ret <- ret +
+      ggplot2::geom_point( size = 2,
+                           shape = 21,
+                           stroke = NA)
+
+    if (length(unique(point_colors)) == n_clusters) {
+      ret <- ret + ggplot2::scale_fill_manual(values = point_colors)
+    } else {
+      ret <- ret + ggplot2::scale_fill_discrete()
+    }
+
+    ret <- ret +
       ggplot2::theme_minimal() +
       ggplot2::xlab("Centrality") +
       ggplot2::ylab("") +
@@ -172,6 +193,7 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
         panel.spacing = ggplot2::unit(1, "lines"),
         legend.position = "bottom"
       )
+    ret
   } else {
     x <- stats::reshape(
       as.data.frame(x),
@@ -206,7 +228,7 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
         ),
         size = 1
       ) +
-      ggplot2::scale_color_manual(values = line_color) +
+      ggplot2::scale_color_manual(values = line_colors) +
       ggplot2::geom_point(
         ggplot2::aes(
           fill = !!rlang::sym("State"),
@@ -217,7 +239,7 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
         shape = 21,
         stroke = NA
       ) +
-      ggplot2::scale_fill_manual(values = point_color) +
+      ggplot2::scale_fill_manual(values = point_colors) +
       ggplot2::coord_flip(clip = "off") +
       onlyif(
         labels,

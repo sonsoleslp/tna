@@ -155,6 +155,25 @@ plot(tna_model_clus, cluster = 3, edge.label.cex = 2, vsize = 18,
      title = clusternames[3], title.cex = 1.15)
 ```
 
+Pruning rare transitions
+```{r}
+pruned_clus <- prune(tna_model_clus, threshold  = 0.1)
+tna_model_clus2 <- pruned_clus$pruned
+```
+
+Plotting the cluster transitions after pruning
+```{r, fig.width=10, fig.height=3.2, message = F}
+layout(t(1:3))
+
+plot(tna_model_clus2, cluster = 1, edge.label.cex = 2, vsize = 18, 
+     title = clusternames[1], title.cex = 1.15)
+plot(tna_model_clus2, cluster = 2, edge.label.cex = 2, vsize = 18, 
+     title = clusternames[2], title.cex = 1.15)
+plot(tna_model_clus2, cluster = 3, edge.label.cex = 2, vsize = 18, 
+     title = clusternames[3], title.cex = 1.15)
+```
+
+
 
 Cluster centralities
 ```{r, fig.width=9, fig.height=4}
@@ -163,3 +182,5 @@ centralities_per_cluster <- centralities(tna_model_clus, normalize = T,
                                          measures = centrality_measures) 
 plot(centralities_per_cluster, scales = "free")
 ```
+
+

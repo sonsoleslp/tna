@@ -45,6 +45,8 @@ directly provided
 \item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if there
 are no labels.
 \item \code{colors}\cr A \code{character} vector of the state colors, or \code{NULL}.
+\item \code{igraph_network}\cr A \code{list} of \code{igraph} directed graphs based on each
+transition probability matrix
 }
 }
 \description{

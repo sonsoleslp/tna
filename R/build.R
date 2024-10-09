@@ -32,6 +32,8 @@
 #'   * `labels`\cr A `character` vector of the state labels, or `NULL` if there
 #'     are no labels.
 #'   * `colors`\cr A `character` vector of the state colors, or `NULL`.
+#'   * `igraph_network`\cr A `list` of `igraph` directed graphs based on each
+#'      transition probability matrix
 #'
 #' @examples
 #' tna_model <- build_tna(engagement)
@@ -104,6 +106,7 @@ build_tna.matrix <- function(x, inits, ...) {
   }
   build_tna_(
     transit_probs = list(x),
+    igraph_network = list(igraph::graph_from_adjacency_matrix(x, mode = "directed", weighted = TRUE)),
     initial_probs = list(inits),
     labels = colnames(x)
   )
@@ -120,6 +123,7 @@ build_tna.stslist <- function(x, ...) {
   build_tna_(
     transit_probs = list(mkvmodel$transition_probs),
     initial_probs = list(mkvmodel$initial_probs),
+    igraph_network = list(igraph::graph_from_adjacency_matrix(mkvmodel$transition_probs, mode = "directed", weighted = TRUE)),
     labels = attr(x, "labels"),
     colors = attr(x, "cpal")
   )
@@ -136,9 +140,16 @@ build_tna.mhmm <- function(x, ...) {
     attr(x, "type") == "mmm",
     "Argument {.arg x} must be a mixed Markov model fit."
   )
+
+  igraph_network <- list()
+  for (i in names(x$transition_probs)) {
+    igraph_network[[i]] <- igraph::graph_from_adjacency_matrix(x$transition_probs[[i]], mode = "directed", weighted = TRUE)
+  }
+
   build_tna_(
     transit_probs = x$transition_probs,
     initial_probs = x$initial_probs,
+    igraph_network = igraph_network,
     labels = attr(x$observations, "labels"),
     colors = attr(x$observations, "cpal")
   )
@@ -146,18 +157,21 @@ build_tna.mhmm <- function(x, ...) {
 
 #' Build a Transition Network Analysis object
 #'
-#' @param transit_probs A `matrix` of transition probabilities.
-#' @param initial_probs A `matrix` of initial state probabilities.
+#' @param transit_probs A `list` of `matrix` of transition probabilities.
+#' @param initial_probs A `list` of `matrix` of initial state probabilities.
 #' @param labels A `character` vector of state labels.
+#' @param igraph_network A `list`  of `igraph` graphs for each transition matrix.
 #' @param colors A `character` vector of color values to use for the states.
 #' @return A `tna` object.
 #' @noRd
-build_tna_ <- function(transit_probs, initial_probs, labels, colors) {
+build_tna_ <- function(transit_probs, initial_probs, labels, igraph_network, colors) {
+
   structure(
     list(
       transits = transit_probs,
       inits = onlyif(!missing(initial_probs), initial_probs),
       labels = labels,
+      igraph_network = igraph_network,
       colors = onlyif(!missing(colors), colors)
     ),
     class = "tna"
