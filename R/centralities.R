@@ -61,7 +61,8 @@
 #' Zhang, B., & Horvath, S. (2005).
 #' A general framework for weighted gene co-expression network analysis.
 #' Statistical Applications in Genetics and Molecular Biology, 4(1).
-#'
+#' @author
+#' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 #' @examples
 #' tna_model <- build_tna(engagement)
 #'

@@ -125,7 +125,8 @@ build_tna.stslist <- function(x, ...) {
     initial_probs = list(mkvmodel$initial_probs),
     igraph_network = list(igraph::graph_from_adjacency_matrix(mkvmodel$transition_probs, mode = "directed", weighted = TRUE)),
     labels = attr(x, "labels"),
-    colors = attr(x, "cpal")
+    colors = attr(x, "cpal"),
+    seq = list(x)
   )
 }
 
@@ -142,14 +143,18 @@ build_tna.mhmm <- function(x, ...) {
   )
 
   igraph_network <- list()
+  seq <- list()
+  cluster_assignment <- summary(x)$most_probable_cluster
   for (i in names(x$transition_probs)) {
     igraph_network[[i]] <- igraph::graph_from_adjacency_matrix(x$transition_probs[[i]], mode = "directed", weighted = TRUE)
+    seq[[i]] <- x$observations[cluster_assignment == i,]
   }
 
   build_tna_(
     transit_probs = x$transition_probs,
     initial_probs = x$initial_probs,
     igraph_network = igraph_network,
+    seq = seq,
     labels = attr(x$observations, "labels"),
     colors = attr(x$observations, "cpal")
   )
@@ -164,7 +169,7 @@ build_tna.mhmm <- function(x, ...) {
 #' @param colors A `character` vector of color values to use for the states.
 #' @return A `tna` object.
 #' @noRd
-build_tna_ <- function(transit_probs, initial_probs, labels, igraph_network, colors) {
+build_tna_ <- function(transit_probs, initial_probs, labels, igraph_network, colors, seq = NULL) {
 
   structure(
     list(
@@ -172,7 +177,8 @@ build_tna_ <- function(transit_probs, initial_probs, labels, igraph_network, col
       inits = onlyif(!missing(initial_probs), initial_probs),
       labels = labels,
       igraph_network = igraph_network,
-      colors = onlyif(!missing(colors), colors)
+      colors = onlyif(!missing(colors), colors),
+      seq = seq
     ),
     class = "tna"
   )

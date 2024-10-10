@@ -172,3 +172,23 @@ map_to_color <- function(x, palette) {
     return(palette[scaled_values])
   }
 }
+
+
+#' Get the Model from TNA Results
+#'
+#' This function extracts and returns the `tna` model object from a  results list
+#' The `tna` model is typically stored within the results of an analysis
+#' conducted with the `tna` package.
+#'
+#' @param results An object containing the results of a network analysis,
+#'   including the model and other relevant information.
+#' @return The  `tna`  model object extracted from the results.
+#' @examples
+#' \dontrun{
+#' # Assuming `results` is a tna object
+#' model <- get_model(results)
+#' }
+#' @export
+get_model <- function(results) {
+  results$model
+}

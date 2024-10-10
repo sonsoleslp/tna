@@ -80,6 +80,38 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
   )
 }
 
+
+#' Plot Transition Networks for All Clusters
+#'
+#' This function plots the transition networks for each cluster in a `tna` object.
+#' It iterates through the transition matrices for each cluster and generates
+#' corresponding plots using the `plot.tna` function.
+#'
+#' @param x A `tna` object containing transition matrices for different clusters.
+#' @param ... Additional arguments to be passed to the `plot.tna` function.
+#'
+#' @return A series of plots showing the transition networks for each cluster.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `tna_model` is a tna object containing transition matrices
+#' plot_clusters(tna_model)
+#' }
+#' @export
+plot_clusters <- function(x, ...) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  result <- list()
+  matrices <- x$transits
+
+  for (clus in seq_along(matrices)) {
+    plot.tna(x, cluster = clus, ...)
+  }
+}
+
+
 #' Plot Centrality Measures
 #'
 #' Plots the centrality measures of a `centralities` object as a lollipop chart.

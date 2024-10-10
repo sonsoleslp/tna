@@ -2,10 +2,10 @@ Package: tna
 Title: Transition Network Analysis (TNA)
 Version: 0.1.0
 Authors@R: c(
+    person("Mohammed", "Saqr", role = "aut"),
     person("Sonsoles", "L\u00f3pez-Pernas", 
            email = "sonsoles.lopez@uef.fi", role = c("aut", "cre")), 
-    person("Santtu", "Tikka", role = "aut"),
-    person("Mohammed", "Saqr", role = "aut") 
+    person("Santtu", "Tikka", role = "aut")
   )
 Description: Provides tools for performing transition network analysis (TNA),
     including functions for building TNA models, plotting transition networks,
@@ -26,13 +26,15 @@ Imports:
     qgraph,
     rlang,
     seqHMM,
-    tibble
+    tibble,
+    stats,
+    TraMineR,
+    boot
 Suggests: 
     gt,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0),
-    TraMineR
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3

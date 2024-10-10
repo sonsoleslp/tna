@@ -45,5 +45,7 @@ The function uses a depth-first search to ensure the network remains weakly conn
   pruned_result <- prune(tna_model, percentile = 10)
   pruned_result <- prune(tna_model, lowest_percent = 5)
 }
-
+}
+\author{
+Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }

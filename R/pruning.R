@@ -36,7 +36,8 @@
 #'   pruned_result <- prune(tna_model, percentile = 10)
 #'   pruned_result <- prune(tna_model, lowest_percent = 5)
 #' }
-#'
+#' @author
+#' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 #' @export
 prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL) {
   stopifnot_(
@@ -52,15 +53,18 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
 
   # Validate input values
   stopifnot_(
-    is.null(threshold) || (is.numeric(threshold) && threshold >= 0),
+    is.null(threshold) ||
+      (is.numeric(threshold) && threshold >= 0),
     "Argument 'threshold' must be a non-negative numeric value."
   )
   stopifnot_(
-    is.null(percentile) || (is.numeric(percentile) && percentile > 0 && percentile < 100),
+    is.null(percentile) ||
+      (is.numeric(percentile) && percentile > 0 && percentile < 100),
     "Argument 'percentile' must be a numeric value between 0 and 100."
   )
   stopifnot_(
-    is.null(lowest_percent) || (is.numeric(lowest_percent) && lowest_percent > 0 && lowest_percent < 100),
+    is.null(lowest_percent) ||
+      (is.numeric(lowest_percent) && lowest_percent > 0 && lowest_percent < 100),
     "Argument 'lowest_percent' must be a numeric value between 0 and 100."
   )
 
@@ -116,7 +120,9 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
         pruned_matrix[row, col] <- temp_value
       } else {
         # Edge was successfully removed, add it to the list
-        removed_edges[[clus]] <- rbind(removed_edges[[clus]], data.frame(from = row, to = col, weight = temp_value))
+        removed_edges[[clus]] <- rbind(removed_edges[[clus]],
+                                       data.frame(from = row, to = col,
+                                                  weight = temp_value))
       }
     }
 
@@ -130,7 +136,7 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
       warning_("No edges were removed")
     } else {
       info_("\nRemoved edges: \n")
-      print(removed_edges[[clus]])
+      info_(removed_edges[[clus]])
     }
     if (length(matrices) > 1) {
       info_("------------------------\n")
