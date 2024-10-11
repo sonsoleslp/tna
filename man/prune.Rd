@@ -50,7 +50,7 @@ The function uses a depth-first search to ensure the network remains weakly conn
 Evaluation and validation functions
 \code{\link{bootstrap_tna}()},
 \code{\link{compare_tna_networks}()},
-\code{\link{disparity}()}
+\code{\link{tna_disparity}()}
 }
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})

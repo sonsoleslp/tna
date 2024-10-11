@@ -51,7 +51,8 @@ find_triads(tna_model, plot = TRUE)
 
 
 ```{r,}
-prune(tna_model, percentile = 25)
+prune_results <- prune(tna_model, percentile = 44)
+plot(prune_results$pruned)
 ```
 
 ```{r}

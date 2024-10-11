@@ -57,8 +57,8 @@ result <- compare_tna_networks(network1, network2, cluster1 = 1, cluster2 = 1, i
 \seealso{
 Evaluation and validation functions
 \code{\link{bootstrap_tna}()},
-\code{\link{disparity}()},
-\code{\link{prune}()}
+\code{\link{prune}()},
+\code{\link{tna_disparity}()}
 }
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})

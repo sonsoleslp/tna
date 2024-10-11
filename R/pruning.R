@@ -199,7 +199,7 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
 #' }
 #' @family evaluation
 #' @export
-disparity <- function(x, cluster = 1, alpha = 0.5) {
+tna_disparity <- function(x, cluster = 1, alpha = 0.5) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
