@@ -10,8 +10,9 @@ find_triads(
   weight_threshold = 0,
   directed = FALSE,
   sum_weights = FALSE,
-  minimum = 0.00001,
-  mar = c(20, 20, 20, 20),
+  plot = FALSE,
+  minimum = 0.05,
+  mar = rep(5, 4),
   ...
 )
 }
@@ -28,6 +29,8 @@ Defaults to \code{FALSE}.}
 
 \item{sum_weights}{A logical value specifying whether to sum weights for
 directed edges when calculating triangle weights. Defaults to \code{FALSE}.}
+
+\item{plot}{A logical value specifying whether to plot the triads or not}
 
 \item{minimum}{A numeric value for the minimum edge weight to be displayed
 in the visualization. Defaults to \code{0.00001}.}
@@ -77,7 +80,15 @@ triads <- find_triads(tna_model, cluster = 1)
 }
 \seealso{
 \code{qgraph}
+
+Pattern-finding functions
+\code{\link{community_detection}()},
+\code{\link{find_dyads}()},
+\code{\link{find_dyads_clusters}()},
+\code{\link{find_triads_clusters}()},
+\code{\link{plot_communities}()}
 }
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
+\concept{patterns}

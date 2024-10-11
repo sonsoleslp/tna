@@ -16,7 +16,9 @@ A list where each element contains the dyads identified for a specific
 cluster. Each cluster's result is the output of the \code{find_dyads} function.
 }
 \description{
-This function identifies dyads (sets of two nodes) in all transition matrices for each cluster within a \code{tna} object. It loops through each cluster and applies the \code{find_dyads} function to detect dyads.
+This function identifies dyads (sets of two nodes) in all transition matrices
+for each cluster within a \code{tna} object. It loops through each cluster and
+applies the \code{find_dyads} function to detect dyads.
 }
 \details{
 The function iterates over the transition matrices stored in the \code{tna} object
@@ -32,7 +34,15 @@ dyads_result <- find_dyads_clusters(tna_model)
 }
 \seealso{
 \code{find_dyads}
+
+Pattern-finding functions
+\code{\link{community_detection}()},
+\code{\link{find_dyads}()},
+\code{\link{find_triads}()},
+\code{\link{find_triads_clusters}()},
+\code{\link{plot_communities}()}
 }
 \author{
 Sonsoles López-Pernas (\email{sonsoles.lopez@uef.fi})
 }
+\concept{patterns}

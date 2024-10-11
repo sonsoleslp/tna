@@ -19,6 +19,7 @@
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
+#' @param colors List of colors to use as nodes of the network
 #' @param ... Additional arguments passed to [seqHMM::build_mm()] when `x` is
 #'   a `stslist` object.
 #' @return An object of class `tna` which is a `list` containing the
@@ -34,7 +35,7 @@
 #'   * `colors`\cr A `character` vector of the state colors, or `NULL`.
 #'   * `igraph_network`\cr A `list` of `igraph` directed graphs based on each
 #'      transition probability matrix
-#'
+#' @family core
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' print(tna_model)
@@ -60,7 +61,7 @@ build_tna.default <- function(x, inits, ...) {
 
 #' @export
 #' @rdname build_tna
-build_tna.matrix <- function(x, inits, ...) {
+build_tna.matrix <- function(x, inits, colors = rep("white", nrow(x)), ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -108,31 +109,36 @@ build_tna.matrix <- function(x, inits, ...) {
     transit_probs = list(x),
     igraph_network = list(igraph::graph_from_adjacency_matrix(x, mode = "directed", weighted = TRUE)),
     initial_probs = list(inits),
+    colors = colors,
     labels = colnames(x)
   )
 }
 
 #' @export
 #' @rdname build_tna
-build_tna.stslist <- function(x, ...) {
+build_tna.stslist <- function(x, colors, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   mkvmodel <- seqHMM::build_mm(x, ...)
+  cpal <- attr(x, "cpal")
+  if (!missing(colors)) {
+    cpal <- colors
+  }
   build_tna_(
     transit_probs = list(mkvmodel$transition_probs),
     initial_probs = list(mkvmodel$initial_probs),
     igraph_network = list(igraph::graph_from_adjacency_matrix(mkvmodel$transition_probs, mode = "directed", weighted = TRUE)),
     labels = attr(x, "labels"),
-    colors = attr(x, "cpal"),
+    colors = cpal,
     seq = list(x)
   )
 }
 
 #' @export
 #' @rdname build_tna
-build_tna.mhmm <- function(x, ...) {
+build_tna.mhmm <- function(x, colors, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -149,14 +155,17 @@ build_tna.mhmm <- function(x, ...) {
     igraph_network[[i]] <- igraph::graph_from_adjacency_matrix(x$transition_probs[[i]], mode = "directed", weighted = TRUE)
     seq[[i]] <- x$observations[cluster_assignment == i,]
   }
-
+  cpal <- attr(x$observations, "cpal")
+  if (!missing(colors)) {
+    cpal <- colors
+  }
   build_tna_(
     transit_probs = x$transition_probs,
     initial_probs = x$initial_probs,
     igraph_network = igraph_network,
     seq = seq,
     labels = attr(x$observations, "labels"),
-    colors = attr(x$observations, "cpal")
+    colors = cpal
   )
 }
 

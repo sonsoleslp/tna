@@ -26,6 +26,7 @@ color_vector <- c( "#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a718
 #' for a specific cluster. Each cluster's result is returned by the internal
 #' `find_communities` function, which provides community counts and assignments
 #' across different algorithms.
+#' @family patterns
 #' @author
 #' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 #' @examples
@@ -90,6 +91,7 @@ community_detection <- function(x, cluster = NULL, Gamma = 1, color_palette = co
 #' colors are assigned based on the `community` parameter's chosen algorithm.
 #' @author
 #' Sonsoles López-Pernas (\email{sonsoles.lopez@uef.fi})
+#' @family patterns
 #' @examples
 #' \dontrun{
 #' # Assuming 'tna_model' is a tna object and 'community_assignment'
@@ -199,11 +201,11 @@ find_communities <- function(g, Gamma = 1, color_palette = color_vector) {
 
   # Print the number of communities found by each algorithm
   info_("Number of communities found by each algorithm:\n")
-  info_(result$community_counts)
+  info_(paste(result$community_counts, collapse = ", "))
 
   # Display the community assignments dataframe
   info_("\nCommunity assignments:\n")
-  info_(result$community_assignments)
+  print_(result$community_assignments)
 
   # Return the result object
   return(result)

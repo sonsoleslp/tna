@@ -54,6 +54,12 @@ differences in transition probabilities, effect sizes, p-values, and confidence 
 result <- compare_tna_networks(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
 }
 }
+\seealso{
+Evaluation and validation functions
+\code{\link{bootstrap_tna}()},
+\code{\link{prune}()}
+}
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
+\concept{evaluation}

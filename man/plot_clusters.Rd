@@ -25,3 +25,12 @@ corresponding plots using the \code{plot.tna} function.
 plot_clusters(tna_model)
 }
 }
+\seealso{
+Core functions
+\code{\link{build_tna}()},
+\code{\link{centralities}()},
+\code{\link{plot.centralities}()},
+\code{\link{plot.tna}()},
+\code{\link{plot_compare}()}
+}
+\concept{core}

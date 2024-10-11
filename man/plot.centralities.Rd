@@ -54,3 +54,12 @@ plot(cm)
 plot(cm, ncol = 4, reorder = TRUE)
 
 }
+\seealso{
+Core functions
+\code{\link{build_tna}()},
+\code{\link{centralities}()},
+\code{\link{plot.tna}()},
+\code{\link{plot_clusters}()},
+\code{\link{plot_compare}()}
+}
+\concept{core}

@@ -46,6 +46,15 @@ communities <- community_detection(tna_model)
 communities <- community_detection(tna_model, cluster = 1)
 }
 }
+\seealso{
+Pattern-finding functions
+\code{\link{find_dyads}()},
+\code{\link{find_dyads_clusters}()},
+\code{\link{find_triads}()},
+\code{\link{find_triads_clusters}()},
+\code{\link{plot_communities}()}
+}
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
+\concept{patterns}

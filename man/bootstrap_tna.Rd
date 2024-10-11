@@ -4,7 +4,7 @@
 \alias{bootstrap_tna}
 \title{Bootstrap Transition Networks from Sequence Data}
 \usage{
-bootstrap_tna(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1)
+bootstrap_tna(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, seed)
 }
 \arguments{
 \item{x}{A \code{tna} object created from the sequence data.}
@@ -17,6 +17,8 @@ hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
 
 \item{cluster}{An integer specifying which cluster of the sequence data to
 use for bootstrapping. Defaults to \code{1}.}
+
+\item{seed}{Establish seed before bootstrapping}
 }
 \value{
 A list containing:
@@ -63,7 +65,12 @@ results <- bootstrap_tna(tna_model, n_bootstrap = 1000, sig_level = 0.05, cluste
 }
 \seealso{
 \code{TraMineR}, \code{boot}
+
+Evaluation and validation functions
+\code{\link{compare_tna_networks}()},
+\code{\link{prune}()}
 }
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
+\concept{evaluation}

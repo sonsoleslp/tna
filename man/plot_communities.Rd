@@ -44,6 +44,15 @@ holds the respective community labels
 plot_communities(tna_model, community_assignment, "walktrap")
 }
 }
+\seealso{
+Pattern-finding functions
+\code{\link{community_detection}()},
+\code{\link{find_dyads}()},
+\code{\link{find_dyads_clusters}()},
+\code{\link{find_triads}()},
+\code{\link{find_triads_clusters}()}
+}
 \author{
 Sonsoles López-Pernas (\email{sonsoles.lopez@uef.fi})
 }
+\concept{patterns}

@@ -12,11 +12,11 @@ build_tna(x, ...)
 
 \method{build_tna}{default}(x, inits, ...)
 
-\method{build_tna}{matrix}(x, inits, ...)
+\method{build_tna}{matrix}(x, inits, colors = rep("white", nrow(x)), ...)
 
-\method{build_tna}{stslist}(x, ...)
+\method{build_tna}{stslist}(x, colors, ...)
 
-\method{build_tna}{mhmm}(x, ...)
+\method{build_tna}{mhmm}(x, colors, ...)
 }
 \arguments{
 \item{x}{A \code{stslist} object created with \code{\link[seqHMM:TraMineR_imports]{seqHMM::seqdef()}}
@@ -32,6 +32,8 @@ a \code{stslist} object.}
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
 be scaled to unity.}
+
+\item{colors}{List of colors to use as nodes of the network}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
@@ -63,3 +65,12 @@ tna_model <- build_tna(engagement)
 print(tna_model)
 
 }
+\seealso{
+Core functions
+\code{\link{centralities}()},
+\code{\link{plot.centralities}()},
+\code{\link{plot.tna}()},
+\code{\link{plot_clusters}()},
+\code{\link{plot_compare}()}
+}
+\concept{core}

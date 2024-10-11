@@ -31,11 +31,18 @@ that cluster.
 # Find triads across all clusters in a `tna` object
 triads_result <- find_triads_clusters(tna_model)
 }
-
 }
 \seealso{
 \code{find_triads}
+
+Pattern-finding functions
+\code{\link{community_detection}()},
+\code{\link{find_dyads}()},
+\code{\link{find_dyads_clusters}()},
+\code{\link{find_triads}()},
+\code{\link{plot_communities}()}
 }
 \author{
 Sonsoles López-Pernas (\email{sonsoles.lopez@uef.fi})
 }
+\concept{patterns}

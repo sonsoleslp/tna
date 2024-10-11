@@ -12,11 +12,13 @@
 #' Defaults to `FALSE`.
 #' @param sum_weights A logical value specifying whether to sum weights for
 #' directed edges when calculating triangle weights. Defaults to `FALSE`.
+#' @param plot A logical value specifying whether to plot the dyads or not
+#' @param layout The network layout for `qgraph`.
 #' @param minimum A numeric value for the minimum edge weight to be displayed
-#' in the visualization. Defaults to `0.00001`.
+#' in the visualization. Defaults to `0.05`.
 #' @param mar A numeric vector specifying the margins for the visualization plot.
 #' @param ... Additional parameters passed to the `qgraph` function for plotting.
-#'
+#' @family patterns
 #' @details
 #' This function loops through all possible pairs of nodes in the network
 #' and checks whether the edges between them form a complete dyad
@@ -53,7 +55,8 @@
 #' @seealso `qgraph`
 #' @export
 find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
-                       sum_weights = FALSE, minimum = 0.00001, mar = c(10,10,10,10), ...) {
+                       plot = FALSE, layout = "spring", sum_weights = FALSE, minimum = 0.05,
+                       mar = c(10,10,10,10), ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -80,10 +83,12 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
         }
 
         nodes <- node_labels[c(i, j)]
+        dyad_colors <- node_colors[match(nodes, node_labels)]
 
         dyads[[dyad_count]] <- list(
           nodes = nodes,
           weights = weights,
+          model = build_tna(weighted_matrix[c(i,j), c(i,j)], inits = Pie[c(i, j)], colors = dyad_colors),
           matrix = weighted_matrix[c(i,j), c(i,j)],
           pie_values = Pie[c(i, j)]  # Extract the corresponding Pie values
         )
@@ -94,41 +99,24 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
   if (dyad_count == 0) {
     warning_("No mutual dyads found in the network.")
   } else {
-    info_("Number of mutual dyads:", dyad_count, "\n")
-    info_("Mutual Dyads:\n")
-
+    info_("Number of mutual dyads: ", dyad_count, "\n")
+    ol_(id = "dyads")
     for (i in 1:length(dyads)) {
-      info_("Dyad", i, ":\n")
-      info_("  Nodes:", dyads[[i]]$nodes, "\n")
-      info_("  Weights:", round(dyads[[i]]$weights, 3), "\n")
+      li_("Dyad ", i, "\n")
+      ul_(id = paste0("dyad ",i))
+      li_("Nodes: ", paste(dyads[[i]]$nodes, collapse = ", "), "\n")
+      li_("Weights: ", paste(round(dyads[[i]]$weights, 3), collapse = ", "), "\n")
 
-      # Extract the matrix for the dyad
-      dyad_matrix <- dyads[[i]]$matrix
-
-      # Match colors for the nodes in this dyad
-      dyad_colors <- node_colors[match(dyads[[i]]$nodes, node_labels)]
-
-      # Extract the Pie values for the nodes in this dyad
-      dyad_pie <- dyads[[i]]$pie_values
-
-      # Plot the dyad using qgraph with custom colors and Pie values
-      qgraph::qgraph(dyad_matrix, ...,
-             labels = dyads[[i]]$nodes,
-             edge.labels = TRUE,
-             # edge.label.cex = 3,
-             curve = 3,
-             directed = TRUE,
-             curveAll=TRUE,
-             mar = mar,
-             minimum = minimum,
-             theme = "colorblind",  # Apply colorblind-friendly theme
-             cut = 0.1,  # Set the cut-off threshold
-             # vsize = 40,   # Set the vertex size
-             color = dyad_colors,  # Use custom colors for the nodes
-             pie = dyad_pie  # Use Pie values specific to the dyad's nodes,
-
-      )
+      cli_end_(id = paste0("dyad ",i))
     }
+    cli_end_(id = "dyads")
+    if (plot){
+      for (i in 1:length(dyads)) {
+        # Plot the dyad using qgraph with custom colors and Pie values
+        plot(dyads[[i]]$model, layout = layout, ...)
+      }
+    }
+
   }
 
   return(list(count = dyad_count, dyads = dyads))
@@ -147,13 +135,14 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 #' edge to be considered. Edges below this threshold are ignored. Defaults to `0`.
 #' @param directed A logical value indicating whether the network is directed.
 #' Defaults to `FALSE`.
+#' @param plot A logical value specifying whether to plot the triads or not
 #' @param sum_weights A logical value specifying whether to sum weights for
 #' directed edges when calculating triangle weights. Defaults to `FALSE`.
 #' @param minimum A numeric value for the minimum edge weight to be displayed
 #' in the visualization. Defaults to `0.00001`.
 #' @param mar A numeric vector specifying the margins for the visualization plot.
 #' @param ... Additional parameters passed to the `qgraph` function for plotting.
-#'
+#' @family patterns
 #' @details
 #' This function loops through all possible sets of three nodes in the network
 #' and checks whether the edges between them form a complete triangle.
@@ -190,8 +179,8 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 #' @seealso `qgraph`
 #' @export
 find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
-                        sum_weights = FALSE, minimum = 0.00001,
-                        mar = c(20, 20, 20, 20), ...) {
+                        sum_weights = FALSE, plot = FALSE, minimum = 0.05,
+                        mar = rep(5, 4), ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -229,9 +218,12 @@ find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 
             nodes <- node_labels[c(i, j, k)]
 
+            triangle_colors <- node_colors[match(nodes, node_labels)]
+
             triangles[[triangle_count]] <- list(
               nodes = nodes,
               weights = weights,
+              model = build_tna(weighted_matrix[c(i,j,k), c(i,j,k)], inits = Pie[c(i, j, k)], colors = triangle_colors),
               matrix = weighted_matrix[c(i,j,k), c(i,j,k)],
               pie_values = Pie[c(i, j, k)]  # Extract the corresponding Pie values
             )
@@ -255,10 +247,12 @@ find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
             }
 
             nodes <- node_labels[c(i, j, k)]
+            triangle_colors <- node_colors[match(nodes, node_labels)]
 
             triangles[[triangle_count]] <- list(
               nodes = nodes,
               weights = weights,
+              model = build_tna(weighted_matrix[c(i,j,k), c(i,j,k)], inits = Pie[c(i, j, k)], colors = triangle_colors),
               matrix = weighted_matrix[c(i,j,k), c(i,j,k)],
               pie_values = Pie[c(i, j, k)]  # Extract the corresponding Pie values
             )
@@ -271,37 +265,22 @@ find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
   if (triangle_count == 0) {
     warning_("No triangles found in the network.")
   } else {
-    info_("Number of triangles:", triangle_count, "\n")
-    info_("Triangles:\n")
-
+    info_(paste0("Number of triangles: ", triangle_count, "\n"))
+    ol_(id = "triangles")
     for (i in 1:length(triangles)) {
-      info_("Triangle", i, ":\n")
-      info_("  Nodes:", triangles[[i]]$nodes, "\n")
-      info_("  Weights:", round(triangles[[i]]$weights, 3), "\n")
+      li_("Triangle", i, ":\n")
+      ul_(id = paste0("triangle_",i))
+      li_("Nodes: ", paste(triangles[[i]]$nodes, collapse = ", "), "\n")
+      li_("Weights: ", paste(round(triangles[[i]]$weights, 3), collapse = ", "), "\n")
 
-      # Extract the matrix for the triangle
-      triangle_matrix <- triangles[[i]]$matrix
-
-      # Match colors for the nodes in this triangle
-      triangle_colors <- node_colors[match(triangles[[i]]$nodes, node_labels)]
-
-      # Extract the Pie values for the nodes in this triangle
-      triangle_pie <- triangles[[i]]$pie_values
-
+      cli_end_(id = paste0("triangle_", i))
+    }
+    cli_end_(id = "triangles")
+    if (plot) {
       # Plot the triangle using qgraph with custom colors and Pie values
-      qgraph::qgraph(triangle_matrix, ...,
-             labels = triangles[[i]]$nodes,
-             edge.labels = TRUE,
-             directed = directed,
-             # edge.label.cex = 1.82,
-             mar = mar,
-             minimum = minimum,
-             theme = "colorblind",  # Apply colorblind-friendly theme
-             cut = 0.01,  # Set the cut-off threshold
-             # vsize = 25,   # Set the vertex size
-             color = triangle_colors,  # Use custom colors for the nodes
-             pie = triangle_pie # Use Pie values specific to the triangle's nodes
-      )
+      for (i in 1:length(triangles)) {
+        plot(triangles[[i]]$model, ...)
+      }
     }
   }
 
@@ -311,7 +290,9 @@ find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 
 #' Find Dyads Across All Clusters
 #'
-#' This function identifies dyads (sets of two nodes) in all transition matrices for each cluster within a `tna` object. It loops through each cluster and applies the `find_dyads` function to detect dyads.
+#' This function identifies dyads (sets of two nodes) in all transition matrices
+#' for each cluster within a `tna` object. It loops through each cluster and
+#' applies the `find_dyads` function to detect dyads.
 #'
 #' @param x A `tna` object containing transition matrices for multiple clusters.
 #' @param ... Additional arguments passed to the `find_dyads` function.
@@ -331,6 +312,7 @@ find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 #' dyads_result <- find_dyads_clusters(tna_model)
 #' }
 #' @seealso `find_dyads`
+#' @family patterns
 #' @author
 #' Sonsoles López-Pernas (\email{sonsoles.lopez@uef.fi})
 #' @export
@@ -339,7 +321,7 @@ find_dyads_clusters <- function(x, ...) {
   matrices <- x$transits
 
   for (clus in seq_along(matrices)) {
-    cli::cli_inform(paste0("Dyads for cluster ", clus,"\n"))
+    info_(paste0("Dyads for cluster ", clus,"\n"))
     result[[clus]] <- find_dyads(x, cluster = clus, ...)
   }
 }
@@ -368,7 +350,7 @@ find_dyads_clusters <- function(x, ...) {
 #' # Find triads across all clusters in a `tna` object
 #' triads_result <- find_triads_clusters(tna_model)
 #' }
-#'
+#' @family patterns
 #' @seealso `find_triads`
 #' @author
 #' Sonsoles López-Pernas (\email{sonsoles.lopez@uef.fi})
@@ -378,7 +360,7 @@ find_triads_clusters <- function(x, ...) {
   matrices <- x$transits
 
   for (clus in seq_along(matrices)) {
-    cli::cli_inform(paste0("Triads for cluster ", clus, "\n"))
+    info_(paste0("Triads for cluster ", clus, "\n"))
     result[[clus]] <- find_triads(x, cluster = clus, ...)
   }
 }

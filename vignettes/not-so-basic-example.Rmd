@@ -1,0 +1,56 @@
+---
+title: "Not so basic example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{not-so-basic-example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 10,
+  fig.height = 6,
+  out.width = "100%",
+  dpi = 300,
+  comment = "#>"
+)
+```
+
+
+```{r}
+library("tna")
+```
+
+```{r}
+data("engagement", package = "tna")
+```
+
+```{r}
+tna_model <- build_tna(engagement)
+print(tna_model)
+```
+
+```{r}
+plot(tna_model)
+```
+```{r, warning = FALSE}
+cd <- community_detection(tna_model)
+plot_communities(tna_model, cd, community = "leading_eigen")
+```
+
+
+
+```{r, figures-side, fig.show="hold", out.width="30%", fig.height=8, fig.width=4}
+find_dyads(tna_model, plot = TRUE)
+```
+```{r}
+find_triads(tna_model, plot = TRUE)
+```
+
+
+
+```{r}
+bs <- bootstrap_tna(tna_model)
+```

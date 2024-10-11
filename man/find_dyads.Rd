@@ -9,8 +9,10 @@ find_dyads(
   cluster = 1,
   weight_threshold = 0,
   directed = FALSE,
+  plot = FALSE,
+  layout = "spring",
   sum_weights = FALSE,
-  minimum = 0.00001,
+  minimum = 0.05,
   mar = c(10, 10, 10, 10),
   ...
 )
@@ -26,11 +28,15 @@ edge to be considered. Edges below this threshold are ignored. Defaults to \code
 \item{directed}{A logical value indicating whether the network is directed.
 Defaults to \code{FALSE}.}
 
+\item{plot}{A logical value specifying whether to plot the dyads or not}
+
+\item{layout}{The network layout for \code{qgraph}.}
+
 \item{sum_weights}{A logical value specifying whether to sum weights for
 directed edges when calculating triangle weights. Defaults to \code{FALSE}.}
 
 \item{minimum}{A numeric value for the minimum edge weight to be displayed
-in the visualization. Defaults to \code{0.00001}.}
+in the visualization. Defaults to \code{0.05}.}
 
 \item{mar}{A numeric vector specifying the margins for the visualization plot.}
 
@@ -77,7 +83,15 @@ dyads <- find_dyads(tna_model, cluster = 1)
 }
 \seealso{
 \code{qgraph}
+
+Pattern-finding functions
+\code{\link{community_detection}()},
+\code{\link{find_dyads_clusters}()},
+\code{\link{find_triads}()},
+\code{\link{find_triads_clusters}()},
+\code{\link{plot_communities}()}
 }
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
+\concept{patterns}

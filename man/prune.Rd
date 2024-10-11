@@ -46,6 +46,12 @@ The function uses a depth-first search to ensure the network remains weakly conn
   pruned_result <- prune(tna_model, lowest_percent = 5)
 }
 }
+\seealso{
+Evaluation and validation functions
+\code{\link{bootstrap_tna}()},
+\code{\link{compare_tna_networks}()}
+}
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
+\concept{evaluation}

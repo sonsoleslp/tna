@@ -116,6 +116,53 @@ info_ <- function(message, ...) {
   cli::cli_text(message, ..., .envir = parent.frame())
 }
 
+#' Generate a list element Message
+#'
+#' @param message See [cli::cli_li()].
+#' @param ... See [cli::cli_li()].
+#' @noRd
+li_ <- function(message, ...) {
+  cli::cli_li(paste(message, ... , collapse=""), .envir = parent.frame())
+}
+
+#' Print message
+#'
+#' @param message See [cli::cat_print()].
+#' @param ... See [cli::cat_print()].
+#' @noRd
+print_ <- function(message, ...) {
+  cli::cat_print(message, ...)
+}
+
+
+#' Generate a list Message
+#'
+#' @param message See [cli::cli_ul()].
+#' @param id See [cli::cli_ul()].
+#' @param ... See [cli::cli_ul()].
+#' @noRd
+ul_ <- function (id, ...) {
+  cli::cli_ul(id = id, ..., .envir = parent.frame())
+}
+
+#' Generate a numbered list Message
+#'
+#' @param message See [cli::cli_ol()].
+#' @param id See [cli::cli_ol()].
+#' @param ... See [cli::cli_ol()].
+#' @noRd
+ol_ <- function (id, ...) {
+  cli::cli_ol(id = id, ..., .envir = parent.frame())
+}
+
+#' End a list Message
+#'
+#' @param id See [cli::cli_end()].
+#' @param ... See [cli::cli_end()].
+#' @noRd
+cli_end_ <- function( id, ...) {
+  cli::cli_end(id = id)
+}
 
 #' Stop function execution unless a condition is true
 #'

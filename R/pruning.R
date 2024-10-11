@@ -6,7 +6,7 @@
 #' @param threshold A numeric value specifying the edge weight threshold. Edges with weights below or equal to this threshold will be considered for removal.
 #' @param percentile A numeric value specifying the percentile of non-zero edges. Edges with weights below or equal to this percentile will be considered for removal.
 #' @param lowest_percent A numeric value specifying the lowest percentage of non-zero edges. This percentage of edges with the lowest weights will be considered for removal.
-#'
+#' @family evaluation
 #' @return A list containing:
 #' \describe{
 #'   \item{\code{pruned}}{The pruned `tna` object with updated transition matrix.}

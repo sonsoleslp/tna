@@ -23,6 +23,7 @@
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
+#' @family core
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' plot(tna_model)
@@ -91,7 +92,7 @@ plot.tna <- function(x, cluster = 1, cluster2, color = x$colors,
 #' @param ... Additional arguments to be passed to the `plot.tna` function.
 #'
 #' @return A series of plots showing the transition networks for each cluster.
-#'
+#' @family core
 #' @examples
 #' \dontrun{
 #' # Assuming `tna_model` is a tna object containing transition matrices
@@ -133,6 +134,7 @@ plot_clusters <- function(x, ...) {
 #' @param labels A `logical` value indicating whether to show the centrality
 #'   numeric values. The default is `TRUE`.
 #' @param ... Ignored.
+#' @family core
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
 #' @examples
@@ -324,6 +326,7 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object displaying the difference network between the
 #'   two models.
+#' @family core
 #' @examples
 #' tna_model_1 <- build_tna(engagement[engagement[, 1] == "Active", ])
 #' tna_model_2 <- build_tna(engagement[engagement[, 1] != "Active", ])

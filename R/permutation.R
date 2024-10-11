@@ -36,6 +36,7 @@ create_line <- function(width = 80, char = "-") {
 #'   \item{statistics_summary}{A list of summary statistics including mean absolute differences and effect sizes.}
 #' @author
 #' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
+#' @family evaluation
 #' @examples
 #' \dontrun{
 #' # Assuming `network1` and `network2` are tna objects containing sequence data

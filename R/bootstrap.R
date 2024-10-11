@@ -96,6 +96,7 @@ bootstrapper <- function(x, new_matrix, cluster) {
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @param cluster An integer specifying which cluster of the sequence data to
 #' use for bootstrapping. Defaults to `1`.
+#' @param seed Establish seed before bootstrapping
 #'
 #' @details
 #' The function first computes the original transition matrix for the specified
@@ -126,7 +127,7 @@ bootstrapper <- function(x, new_matrix, cluster) {
 #'       \item `removed_edges_summary`: A list summarizing the number of removed edges (insignificant transitions), the mean and standard deviation of their weights, and the range of the removed edge weights.
 #'     }
 #' }
-#'
+#' @family evaluation
 #' @examples
 #' \dontrun{
 #' # Bootstrap transition networks for a cluster
@@ -136,13 +137,17 @@ bootstrapper <- function(x, new_matrix, cluster) {
 #' @author
 #' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 #' @export
-bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1) {
+bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, seed) {
   # Compute the original transition matrix
   sequence_stslist <- x$seq[[cluster]]
    stopifnot_(
     !is.null(x),
     "Argument {.arg x} must be a {.cls tna} object created from the `TraMineR` sequence object."
   )
+  # Bootstrapping process
+  if (!missing(seed)) {
+   set.seed(seed)
+  }
   original_trans_matrix <- suppressMessages(TraMineR::seqtrate(sequence_stslist)) # Original transition matrix
   colnames(original_trans_matrix) <- clean_string(colnames(original_trans_matrix))
   rownames(original_trans_matrix) <- clean_string(rownames(original_trans_matrix))
@@ -160,8 +165,7 @@ bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1) 
     resampled_stslist <- suppressMessages(TraMineR::seqdef(resampled_sequence)) # Define the sequence
     return(compute_transition_matrix(resampled_stslist, original_trans_matrix)) # Compute transition matrix
   }
-  # Bootstrapping process
-  set.seed(123)
+
   bootstrap_results <- boot::boot(
     data = as.data.frame(sequence_stslist),
     statistic = bootstrap_transitions,

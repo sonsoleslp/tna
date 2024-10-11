@@ -30,3 +30,12 @@ tna_model_2 <- build_tna(engagement[engagement[, 1] != "Active", ])
 plot_compare(tna_model_1, tna_model_2)
 
 }
+\seealso{
+Core functions
+\code{\link{build_tna}()},
+\code{\link{centralities}()},
+\code{\link{plot.centralities}()},
+\code{\link{plot.tna}()},
+\code{\link{plot_clusters}()}
+}
+\concept{core}
