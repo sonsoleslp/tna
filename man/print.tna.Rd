@@ -4,10 +4,12 @@
 \alias{print.tna}
 \title{Print \code{tna} object}
 \usage{
-\method{print}{tna}(x, generic = FALSE, ...)
+\method{print}{tna}(x, digits = 2, generic = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
+
+\item{digits}{Number of decimal digits to print. Defaults to 2.}
 
 \item{generic}{Use generic print. Defaults to \code{FALSE}}
 

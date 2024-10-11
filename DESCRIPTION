@@ -28,9 +28,10 @@ Imports:
     seqHMM,
     tibble,
     stats,
-    TraMineR,
-    boot
+    TraMineR
 Suggests: 
+    backbone,
+    boot,
     gt,
     knitr,
     rmarkdown,

@@ -105,6 +105,7 @@ build_tna.matrix <- function(x, inits, colors = rep("white", nrow(x)), ...) {
       inits <- inits[seq_len(nc)]
     }
   }
+  names(inits) <- colnames(x)
   build_tna_(
     transit_probs = list(x),
     igraph_network = list(igraph::graph_from_adjacency_matrix(x, mode = "directed", weighted = TRUE)),

@@ -50,6 +50,9 @@ find_triads(tna_model, plot = TRUE)
 ```
 
 
+```{r,}
+prune(tna_model, percentile = 25)
+```
 
 ```{r}
 bs <- bootstrap_tna(tna_model)

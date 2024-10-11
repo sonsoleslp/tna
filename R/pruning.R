@@ -105,7 +105,7 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
     edges_to_remove <- which(pruned_matrix > 0 & pruned_matrix <= cut_off, arr.ind = TRUE)
 
     removed_edges[[clus]] <- data.frame()
-
+    labels = x$labels
     # Check each edge for removal
     for (i in 1:nrow(edges_to_remove)) {
       row <- edges_to_remove[i, 1]
@@ -121,7 +121,7 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
       } else {
         # Edge was successfully removed, add it to the list
         removed_edges[[clus]] <- rbind(removed_edges[[clus]],
-                                       data.frame(from = row, to = col,
+                                       data.frame(from = labels[row], to = labels[col],
                                                   weight = temp_value))
       }
     }
@@ -135,8 +135,15 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
     if (nrow(removed_edges[[clus]]) == 0) {
       warning_("No edges were removed")
     } else {
-      info_("\nRemoved edges: \n")
-      info_(removed_edges[[clus]])
+      info_("\n**Removed edges:** \n")
+      matrix_data <- as.matrix(removed_edges[[clus]])
+      matrix_data[,"weight"] <- format(round(as.numeric(matrix_data[,"weight"]), 2),
+                                       nsmall = 2)
+      matrix_output <- utils::capture.output(print(matrix_data, digits = 2))
+
+      # Print the captured output using cli_verbatim
+      cli::cli_verbatim(matrix_output)
+
     }
     if (length(matrices) > 1) {
       info_("------------------------\n")
@@ -159,3 +166,57 @@ prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
   return(result)
 }
 
+
+
+#' Apply Disparity Filter to Transition Matrix in a tna Object
+#'
+#' The `disparity` function applies a disparity filter to the transition matrix
+#' of a specified cluster within a `tna` object and returns a modified `tna`
+#' object with the filtered transition matrix.
+#'
+#' @param x A `tna` object, which contains transition matrices and other relevant data.
+#' @param cluster A numeric value specifying the cluster for which the transition matrix
+#'   should be extracted and processed. Defaults to `1`.
+#' @param alpha A numeric value representing the significance level for the
+#'   disparity filter. Defaults to `0.5`.
+#'
+#' @details
+#' This function extracts the transition matrix of the specified cluster from
+#' the `tna` object, applies the disparity filter from the `backbone` package
+#' with the specified `alpha`, and then multiplies the filtered result with the
+#' original transition matrix. The result is returned as a new `tna` object with
+#' updated transition data.
+#'
+#' The function also uses the `onlyif` helper to conditionally pass the `colors`
+#' attribute of the `tna` object if it is not `NULL`.
+#'
+#' @return A modified `tna` object with the disparity-filtered transition matrix
+#'   for the specified cluster.
+#' @examples
+#' \dontrun{
+#' # Assuming 'tna_model' is a valid `tna` object
+#' modified_tna <- disparity(tna_model)
+#' }
+#' @family evaluation
+#' @export
+disparity <- function(x, cluster = 1, alpha = 0.5) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  # Extract the transition matrix from the specified cluster
+  transition_matrix <- x$transits[[cluster]]
+
+  # Apply the disparity filter
+  disparity_filtered <- backbone::disparity(transition_matrix, alpha)
+
+  # Multiply the disparity filter with the original transition matrix
+  modified_matrix <- disparity_filtered * transition_matrix
+  colnames(modified_matrix) <- colnames(transition_matrix)
+  rownames(modified_matrix) <- rownames(transition_matrix)
+  modified <- build_tna(modified_matrix,
+                        inits = x$inits[[cluster]],
+                        colors = onlyif(!is.null(x$colors),x$colors))
+
+  return(modified)
+}
