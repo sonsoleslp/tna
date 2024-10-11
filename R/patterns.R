@@ -9,7 +9,7 @@
 #' @param weight_threshold A numeric value that sets the minimum weight for an
 #' edge to be considered. Edges below this threshold are ignored. Defaults to `0`.
 #' @param directed A logical value indicating whether the network is directed.
-#' Defaults to `FALSE`.
+#' Defaults to `TRUE`.
 #' @param sum_weights A logical value specifying whether to sum weights for
 #' directed edges when calculating triangle weights. Defaults to `FALSE`.
 #' @param plot A logical value specifying whether to plot the dyads or not
@@ -54,7 +54,7 @@
 #'
 #' @seealso `qgraph`
 #' @export
-find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
+find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = TRUE,
                        plot = FALSE, layout = "spring", sum_weights = FALSE, minimum = 0.05,
                        mar = c(10,10,10,10), ...) {
   stopifnot_(
@@ -113,7 +113,8 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
     if (plot){
       for (i in 1:length(dyads)) {
         # Plot the dyad using qgraph with custom colors and Pie values
-        plot(dyads[[i]]$model, layout = layout, ...)
+        plot(dyads[[i]]$model, layout = layout, directed = directed,
+             minimum = minimum, mar = mar, ...)
       }
     }
 
@@ -134,7 +135,7 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 #' @param weight_threshold A numeric value that sets the minimum weight for an
 #' edge to be considered. Edges below this threshold are ignored. Defaults to `0`.
 #' @param directed A logical value indicating whether the network is directed.
-#' Defaults to `FALSE`.
+#' Defaults to `TRUE`.
 #' @param plot A logical value specifying whether to plot the triads or not
 #' @param sum_weights A logical value specifying whether to sum weights for
 #' directed edges when calculating triangle weights. Defaults to `FALSE`.
@@ -178,7 +179,7 @@ find_dyads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
 #'
 #' @seealso `qgraph`
 #' @export
-find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
+find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = TRUE,
                         sum_weights = FALSE, plot = FALSE, minimum = 0.05,
                         mar = rep(5, 4), ...) {
   stopifnot_(
@@ -279,7 +280,7 @@ find_triads <- function(x, cluster = 1, weight_threshold = 0, directed = FALSE,
     if (plot) {
       # Plot the triangle using qgraph with custom colors and Pie values
       for (i in 1:length(triangles)) {
-        plot(triangles[[i]]$model, ...)
+        plot(triangles[[i]]$model, directed = directed, minimum = minimum, mar = mar, ...)
       }
     }
   }
