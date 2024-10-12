@@ -46,20 +46,17 @@ clean_string <- function(string)
 
 # Function to compute the transition matrix for a given stslist object
 compute_transition_matrix <- function(sequence_stslist, original_trans_matrix) {
-  trans_matrix <- suppressMessages(TraMineR::seqtrate(sequence_stslist)) # Compute transition matrix
+  trans_matrix <- suppressMessages(TraMineR::seqtrate(sequence_stslist))  # Compute transition matrix
   colnames(trans_matrix) <- clean_string(colnames(trans_matrix))
   rownames(trans_matrix) <- clean_string(rownames(trans_matrix))
+  return(as.vector(trans_matrix))  # Convert to vector for easier manipulation
+}
 
-  # Ensure the matrix has the same states as the original
-  full_matrix <- matrix(0, nrow = nrow(original_trans_matrix), ncol = ncol(original_trans_matrix))
-  colnames(full_matrix) <- colnames(original_trans_matrix)
-  rownames(full_matrix) <- rownames(original_trans_matrix)
-
-  # Copy over the computed values, keeping the same structure as the original
-  common_states <- intersect(rownames(trans_matrix), rownames(full_matrix))
-  full_matrix[common_states, common_states] <- trans_matrix[common_states, common_states]
-
-  return(as.vector(full_matrix)) # Flatten the matrix for bootstrapping
+# Function to perform bootstrapping on resampled sequence data
+bootstrap_transitions <- function(data, indices) {
+  resampled_sequence <- data[indices, , drop = FALSE]  # Resample the data
+  resampled_stslist <- suppressMessages(TraMineR::seqdef(resampled_sequence))
+  return(compute_transition_matrix(resampled_stslist))  # Compute transition matrix for resampled data
 }
 
 
@@ -152,19 +149,6 @@ bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, 
   colnames(original_trans_matrix) <- clean_string(colnames(original_trans_matrix))
   rownames(original_trans_matrix) <- clean_string(rownames(original_trans_matrix))
   original_trans_matrix_vector <- as.vector(original_trans_matrix) # Flatten the matrix
-
-  # Function to perform bootstrapping on resampled sequence data
-  bootstrap_transitions <- function(data, indices) {
-    resampled_sequence <- data[indices, , drop = FALSE]
-
-    # Check if the resampled sequence contains enough data
-    if (nrow(resampled_sequence) < 2) {
-      return(rep(0, length(original_trans_matrix_vector))) # Return zeros if not enough data
-    }
-
-    resampled_stslist <- suppressMessages(TraMineR::seqdef(resampled_sequence)) # Define the sequence
-    return(compute_transition_matrix(resampled_stslist, original_trans_matrix)) # Compute transition matrix
-  }
 
   bootstrap_results <- boot::boot(
     data = as.data.frame(sequence_stslist),

@@ -177,9 +177,11 @@ plot(tna_model_clus2, cluster = 3, edge.label.cex = 2, vsize = 18,
 Cluster centralities
 ```{r, fig.width=9, fig.height=4}
 layout(t(1:2))
-centralities_per_cluster <- centralities(tna_model_clus, normalize = T, 
+centralities_per_cluster <- centralities(tna_model_clus, 
+                                         normalize = T, 
                                          measures = centrality_measures) 
-plot(centralities_per_cluster, colors = c("purple","orange","pink"),
+plot(centralities_per_cluster, 
+     colors = c("purple","orange","pink"),
      scales = "free")
 ```
 
