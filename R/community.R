@@ -12,8 +12,6 @@ color_vector <- c( "#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a718
 #' If `NULL`, the function will analyze all clusters in `x`.
 #' @param Gamma A numeric parameter that affects the behavior of certain algorithms
 #' like the Spin Glass method. Defaults to `1`.
-#' @param color_palette A vector of colors used for visualizing community assignments.
-#'
 #' @details
 #' If multiple transition matrices exist, the function iterates over each cluster
 #' in the `tna` object to find communities using different algorithms.
@@ -38,7 +36,7 @@ color_vector <- c( "#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a718
 #' communities <- community_detection(tna_model, cluster = 1)
 #' }
 #' @export
-community_detection <- function(x, cluster = NULL, Gamma = 1, color_palette = color_vector) {
+community_detection <- function(x, cluster = NULL, Gamma = 1) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -50,14 +48,14 @@ community_detection <- function(x, cluster = NULL, Gamma = 1, color_palette = co
     for(clus in names(x$transits)) {
         info_(paste0("Finding communities for ", clus))
         g <- igraph::graph_from_adjacency_matrix(x$transits[[clus]], mode = "directed", weighted = TRUE)
-        result_list[[clus]] <- find_communities(g, Gamma = Gamma, color_palette = color_palette)
+        result_list[[clus]] <- find_communities(g, Gamma = Gamma)
     }
   } else {
     clus <- ifelse(is.null(cluster), 1, cluster)
     info_(paste0("Finding communities for: ", clus))
     g <- igraph::graph_from_adjacency_matrix(x$transits[[clus]], mode = "directed", weighted = TRUE)
 
-    result_list[[clus]] <- find_communities(g, Gamma = Gamma, color_palette = color_palette)
+    result_list[[clus]] <- find_communities(g, Gamma = Gamma)
   }
   result_list
 }
@@ -83,6 +81,7 @@ community_detection <- function(x, cluster = NULL, Gamma = 1, color_palette = co
 #' - `edge_betweenness`: A method that uses edge betweenness to find communities.
 #' - `leading_eigen`: A method using the leading eigenvector of the modularity matrix.
 #' - `spinglass`: A method based on the spinglass model.
+#' @param color_palette A vector of colors used for visualizing community assignments.
 #'
 #' @details
 #' The function iterates over the `transits` element of the `tna` object and
@@ -99,10 +98,12 @@ community_detection <- function(x, cluster = NULL, Gamma = 1, color_palette = co
 #' plot_communities(tna_model, community_assignment, "walktrap")
 #' }
 #' @export
-plot_communities <- function(x, community_assignment, community) {
+plot_communities <- function(x, community_assignment, community, color_palette = color_vector) {
   for(i in 1:length(x$transits)) {
+    print((community_assignment[i][[1]]$community_assignments[,community]))
+    print(map_to_color(community_assignment[i][[1]]$community_assignments[,community], color_palette))
     plot(x, cluster = i,
-         color = community_assignment[i][[1]]$community_assignments[,community])
+         color = map_to_color(community_assignment[i][[1]]$community_assignments[,community], color_palette))
   }
 }
 
@@ -113,7 +114,6 @@ plot_communities <- function(x, community_assignment, community) {
 #'
 #' @param g An `igraph` object representing the transition network.
 #' @param Gamma A numeric parameter that influences the Spin Glass algorithm. Defaults to `1`.
-#' @param color_palette A vector of colors used for visualizing community assignments.
 #' @author
 #' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 #' @details
@@ -130,7 +130,7 @@ plot_communities <- function(x, community_assignment, community) {
 #'   community assignments.
 #' }
 #'
-find_communities <- function(g, Gamma = 1, color_palette = color_vector) {
+find_communities <- function(g, Gamma = 1) {
   # Find communities using different algorithms and assign to named objects
 
   # Walktrap algorithm
@@ -173,15 +173,15 @@ find_communities <- function(g, Gamma = 1, color_palette = color_vector) {
   # Create a dataframe with all community assignments
   community_assignments <- data.frame(
     node = igraph::V(g)$name,
-    walktrap = map_to_color(walktrap_mapping, color_palette),
-    fast_greedy = map_to_color(fast_greedy_mapping, color_palette),
-    label_prop = map_to_color(label_prop_mapping, color_palette),
-    infomap = map_to_color(infomap_mapping, color_palette),
-    edge_betweenness = map_to_color(edge_betweenness_mapping, color_palette),
-    leading_eigen = map_to_color(leading_eigen_mapping, color_palette),
-    spinglass = map_to_color(spinglass_mapping, color_palette)
+    walktrap = (walktrap_mapping),
+    fast_greedy = (fast_greedy_mapping),
+    label_prop = (label_prop_mapping),
+    infomap = (infomap_mapping),
+    edge_betweenness = (edge_betweenness_mapping),
+    leading_eigen = (leading_eigen_mapping),
+    spinglass = (spinglass_mapping)
   )
-
+  print(label_prop_mapping)
   # Create a list with the number of communities found by each algorithm
   community_counts <- list(
     walktrap = length(communities_walktrap),

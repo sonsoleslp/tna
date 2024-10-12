@@ -4,7 +4,12 @@
 \alias{plot_communities}
 \title{Plot Communities}
 \usage{
-plot_communities(x, community_assignment, community)
+plot_communities(
+  x,
+  community_assignment,
+  community,
+  color_palette = color_vector
+)
 }
 \arguments{
 \item{x}{A \code{tna} object, which represents a temporal network analysis object
@@ -26,6 +31,8 @@ plot. This can be one of the following:
 \item \code{leading_eigen}: A method using the leading eigenvector of the modularity matrix.
 \item \code{spinglass}: A method based on the spinglass model.
 }}
+
+\item{color_palette}{A vector of colors used for visualizing community assignments.}
 }
 \description{
 This function visualizes the communities detected within a \code{tna} object based

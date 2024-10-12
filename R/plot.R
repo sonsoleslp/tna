@@ -128,9 +128,10 @@ plot_clusters <- function(x, ...) {
 #'   the horizontal axis is scaled individually in each facet. If `"fixed"`,
 #'   the same values are used for all axes.
 #' @param reorder A `logical` value indicating whether to reorder the values
-#'   for each centrality in a descending order. The default is `FALSE`.
-#' @param line_color The color for the line segments (default is `"black"`)
-#' @param point_color The color for the dots (default is `"black"`).
+#'   for each centrality in a descending order. The default is `TRUE`.
+#' @param model An object of class `tna`.
+#' @param colors The colors for each node (default is the model colors
+#'  if the `tna` model object is passed, otherwise `"black"`).
 #' @param labels A `logical` value indicating whether to show the centrality
 #'   numeric values. The default is `TRUE`.
 #' @param ... Ignored.
@@ -144,8 +145,8 @@ plot_clusters <- function(x, ...) {
 #' plot(cm, ncol = 4, reorder = TRUE)
 #'
 plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
-                              reorder = FALSE, line_color = "black",
-                              point_color = "black", labels = TRUE, ...) {
+                              reorder = TRUE, model = NULL, colors = NULL,
+                              labels = TRUE, ...) {
   stopifnot_(
     is_centralities(x),
     "Argument {.arg x} must be a {.cls centralities} object."
@@ -158,8 +159,19 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
     checkmate::test_flag(x = labels),
     "Argument {.arg labels} must be a single {.cls logical} value."
   )
-  line_colors <- rep(line_color, length.out = length(unique(x$State)))
-  point_colors <- rep(point_color, length.out = length(unique(x$State)))
+  stopifnot_(
+    is.null(model) | is_tna(model),
+    "Argument {.arg modes} must be a single {.cls tna} model or empty."
+  )
+
+  if (is.null(colors) & is_tna(model) & !is.null(model$colors)) {
+    colors <- model$colors
+  } else if (is.null(colors)) {
+    colors = rep("black", length.out = length(unique(x$State)))
+  } else if (length(colors) == 1){
+    colors = rep(colors, length.out = length(unique(x$State)))
+  }
+
   scales <- onlyif(is.character(scales), tolower(scales))
   scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
   stopifnot_(
@@ -202,8 +214,8 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
       ) +
       ggplot2::facet_wrap("name", ncol = 4) +
       ggplot2::geom_path()
-    if (length(unique(line_colors)) == n_clusters) {
-      ret <- ret + ggplot2::scale_color_manual(values = line_colors)
+    if (length(unique(colors)) == n_clusters) {
+      ret <- ret + ggplot2::scale_color_manual(values = colors)
     } else {
       ret <- ret + ggplot2::scale_color_discrete()
     }
@@ -213,8 +225,8 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
                            shape = 21,
                            stroke = NA)
 
-    if (length(unique(point_colors)) == n_clusters) {
-      ret <- ret + ggplot2::scale_fill_manual(values = point_colors)
+    if (length(unique(colors)) == n_clusters) {
+      ret <- ret + ggplot2::scale_fill_manual(values = colors)
     } else {
       ret <- ret + ggplot2::scale_fill_discrete()
     }
@@ -252,28 +264,15 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
         dplyr::mutate(rank = dplyr::row_number())
     }
     ggplot2::ggplot(x) +
-      ggplot2::geom_segment(
-        ggplot2::aes(
-          x = !!rlang::sym("rank"),
-          xend = !!rlang::sym("rank"),
-          y = 0,
-          yend = !!rlang::sym("value"),
-          color = !!rlang::sym("State")
-        ),
-        size = 1
-      ) +
-      ggplot2::scale_color_manual(values = line_colors) +
-      ggplot2::geom_point(
+      ggplot2::scale_fill_manual(values = colors) +
+      ggplot2::geom_col(
         ggplot2::aes(
           fill = !!rlang::sym("State"),
           x = !!rlang::sym("rank"),
           y = !!rlang::sym("value")
         ),
-        size = 4,
-        shape = 21,
-        stroke = NA
+        size = 4
       ) +
-      ggplot2::scale_fill_manual(values = point_colors) +
       ggplot2::coord_flip(clip = "off") +
       onlyif(
         labels,
@@ -283,8 +282,8 @@ plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
             x = !!rlang::sym("rank"),
             y = !!rlang::sym("value")
           ),
-          vjust = 2,
-          hjust = 0.8,
+          # vjust = 2,
+          hjust = 1,
           size = 3
         )
       ) +

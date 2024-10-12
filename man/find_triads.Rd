@@ -8,7 +8,7 @@ find_triads(
   x,
   cluster = 1,
   weight_threshold = 0,
-  directed = FALSE,
+  directed = TRUE,
   sum_weights = FALSE,
   plot = FALSE,
   minimum = 0.05,
@@ -25,7 +25,7 @@ find_triads(
 edge to be considered. Edges below this threshold are ignored. Defaults to \code{0}.}
 
 \item{directed}{A logical value indicating whether the network is directed.
-Defaults to \code{FALSE}.}
+Defaults to \code{TRUE}.}
 
 \item{sum_weights}{A logical value specifying whether to sum weights for
 directed edges when calculating triangle weights. Defaults to \code{FALSE}.}

@@ -8,9 +8,9 @@
   x,
   ncol = 3,
   scales = c("free_x", "fixed"),
-  reorder = FALSE,
-  line_color = "black",
-  point_color = "black",
+  reorder = TRUE,
+  model = NULL,
+  colors = NULL,
   labels = TRUE,
   ...
 )
@@ -25,11 +25,12 @@ the horizontal axis is scaled individually in each facet. If \code{"fixed"},
 the same values are used for all axes.}
 
 \item{reorder}{A \code{logical} value indicating whether to reorder the values
-for each centrality in a descending order. The default is \code{FALSE}.}
+for each centrality in a descending order. The default is \code{TRUE}.}
 
-\item{line_color}{The color for the line segments (default is \code{"black"})}
+\item{model}{An object of class \code{tna}.}
 
-\item{point_color}{The color for the dots (default is \code{"black"}).}
+\item{colors}{The colors for each node (default is the model colors
+if the \code{tna} model object is passed, otherwise \code{"black"}).}
 
 \item{labels}{A \code{logical} value indicating whether to show the centrality
 numeric values. The default is \code{TRUE}.}

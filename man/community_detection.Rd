@@ -4,7 +4,7 @@
 \alias{community_detection}
 \title{Community Detection for Transition Networks}
 \usage{
-community_detection(x, cluster = NULL, Gamma = 1, color_palette = color_vector)
+community_detection(x, cluster = NULL, Gamma = 1)
 }
 \arguments{
 \item{x}{A \code{tna} object that contains transition matrices.}
@@ -14,8 +14,6 @@ If \code{NULL}, the function will analyze all clusters in \code{x}.}
 
 \item{Gamma}{A numeric parameter that affects the behavior of certain algorithms
 like the Spin Glass method. Defaults to \code{1}.}
-
-\item{color_palette}{A vector of colors used for visualizing community assignments.}
 }
 \value{
 A list where each element represents the result of community detection

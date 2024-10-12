@@ -4,14 +4,12 @@
 \alias{find_communities}
 \title{Internal Community Detection Function}
 \usage{
-find_communities(g, Gamma = 1, color_palette = color_vector)
+find_communities(g, Gamma = 1)
 }
 \arguments{
 \item{g}{An \code{igraph} object representing the transition network.}
 
 \item{Gamma}{A numeric parameter that influences the Spin Glass algorithm. Defaults to \code{1}.}
-
-\item{color_palette}{A vector of colors used for visualizing community assignments.}
 }
 \value{
 A list containing:

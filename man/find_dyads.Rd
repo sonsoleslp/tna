@@ -8,7 +8,7 @@ find_dyads(
   x,
   cluster = 1,
   weight_threshold = 0,
-  directed = FALSE,
+  directed = TRUE,
   plot = FALSE,
   layout = "spring",
   sum_weights = FALSE,
@@ -26,7 +26,7 @@ find_dyads(
 edge to be considered. Edges below this threshold are ignored. Defaults to \code{0}.}
 
 \item{directed}{A logical value indicating whether the network is directed.
-Defaults to \code{FALSE}.}
+Defaults to \code{TRUE}.}
 
 \item{plot}{A logical value specifying whether to plot the dyads or not}
 

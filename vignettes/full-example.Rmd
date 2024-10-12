@@ -57,14 +57,13 @@ tna_model$transits[[1]] |> data.frame() |>
 ```
 
 Centrality measures
-```{r, fig.width=9,fig.height=6}
+```{r}
 centrality_measures = c("Betweenness", "Closeness", "InStrength", "OutStrength")
 
 cents_withoutloops <- centralities(tna_model, measures = centrality_measures, 
                                    loops = FALSE, normalize = TRUE)
 
-plot(cents_withoutloops, ncol = 2, reorder = T,
-     point_color = tna_model$colors, line_color = tna_model$colors)  
+plot(cents_withoutloops, ncol = 2, model = tna_model)  
 ```
 
 
@@ -180,7 +179,8 @@ Cluster centralities
 layout(t(1:2))
 centralities_per_cluster <- centralities(tna_model_clus, normalize = T, 
                                          measures = centrality_measures) 
-plot(centralities_per_cluster, scales = "free")
+plot(centralities_per_cluster, colors = c("purple","orange","pink"),
+     scales = "free")
 ```
 
 
