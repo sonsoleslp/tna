@@ -6,10 +6,10 @@
 \usage{
 \method{plot}{centralities}(
   x,
+  model = NULL,
+  reorder = TRUE,
   ncol = 3,
   scales = c("free_x", "fixed"),
-  reorder = TRUE,
-  model = NULL,
   colors = NULL,
   labels = TRUE,
   ...
@@ -18,16 +18,16 @@
 \arguments{
 \item{x}{An object of class \code{centralities}.}
 
+\item{model}{An object of class \code{tna}.}
+
+\item{reorder}{A \code{logical} value indicating whether to reorder the values
+for each centrality in a descending order. The default is \code{TRUE}.}
+
 \item{ncol}{Number of columns to use for the facets. The default is 3.}
 
 \item{scales}{Either \code{"fixed"} or \code{"free_x"} (the default). If \code{"free_x"},
 the horizontal axis is scaled individually in each facet. If \code{"fixed"},
 the same values are used for all axes.}
-
-\item{reorder}{A \code{logical} value indicating whether to reorder the values
-for each centrality in a descending order. The default is \code{TRUE}.}
-
-\item{model}{An object of class \code{tna}.}
 
 \item{colors}{The colors for each node (default is the model colors
 if the \code{tna} model object is passed, otherwise \code{"black"}).}

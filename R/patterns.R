@@ -365,3 +365,159 @@ find_triads_clusters <- function(x, ...) {
     result[[clus]] <- find_triads(x, cluster = clus, ...)
   }
 }
+
+
+
+# Helper function to check if edge meets threshold criteria and ignore loops in computation
+meets_threshold <- function(weight1, weight2, i, j, sum_weights, weight_threshold) {
+  if (i == j) return(FALSE)  # Never consider loops in the computation
+  if (sum_weights) {
+    return(weight1 + weight2 > weight_threshold)
+  } else {
+    return(weight1 > weight_threshold && weight2 > weight_threshold)
+  }
+}
+
+# Helper function to check if a set of nodes forms a clique, excluding loops from the computation
+is_clique <- function(nodes, sum_weights, weighted_matrix, weight_threshold) {
+  for (i in 1:(length(nodes)-1)) {
+    for (j in (i+1):length(nodes)) {
+      if (!meets_threshold(weighted_matrix[nodes[i], nodes[j]],
+                           weighted_matrix[nodes[j], nodes[i]],
+                           nodes[i], nodes[j], sum_weights, weight_threshold)) {
+        return(FALSE)
+      }
+    }
+  }
+  return(TRUE)
+}
+
+#' Identify and Visualize Cliques in a Transition Network
+#'
+#' This function identifies cliques of a specified size in a weighted transition network within a `tna` object. It allows for customizable visualization of the cliques and can optionally display loops in the network.
+#'
+#' @param x An object of type `tna`
+#' @param cluster An integer specifying which cluster to analyze. Defaults to `1`.
+#' @param n An integer specifying the size of the cliques to identify. Defaults to `3` (triads).
+#' @param weight_threshold A numeric value that sets the minimum edge weight for an edge to be considered in the clique. Edges below this threshold are ignored. Defaults to `0`.
+#' @param sum_weights A logical value specifying whether to sum the weights of directed edges when determining cliques. Defaults to `FALSE`.
+#' @param minimum A numeric value for the minimum edge weight to be displayed in the visualization. Defaults to `0.00001`.
+#' @param mar A numeric vector specifying the margins for the visualization plot. Defaults to `c(5,5,5,5)`.
+#' @param plot A logical value indicating whether to visualize the identified cliques using the `qgraph` package. Defaults to `TRUE`.
+#' @param show_loops A logical value indicating whether self-loops (edges from a node to itself) should be displayed in the visualizations. Defaults to `FALSE`.
+#' @param ... Additional parameters passed to the `qgraph` plotting function for customization.
+#'
+#' @details
+#' This function searches for cliques—complete subgraphs where every pair of nodes is connected—of size `n` in the transition matrix for the specified cluster in the `tna` object. The function loops over all combinations of nodes, checking if they form a valid clique based on the edge weights and the provided threshold.
+#'
+#' If any cliques are found, the function can optionally visualize them using the `qgraph` package. The visualization can be customized with additional arguments passed through the `...` parameter, such as node sizes, edge thickness, and more. The function also allows controlling whether to display self-loops in the visualization with the `show_loops` parameter.
+#'
+#' @return A list with two elements:
+#' \itemize{
+#'   \item `count`: The total number of cliques found.
+#'   \item `cliques`: A list of detected cliques, where each element contains:
+#'     \itemize{
+#'       \item `matrix`: The submatrix representing the connections between the nodes in the clique.
+#'       \item `pie_values`: The initial state probabilities (`Pie` values) for the nodes in the clique.
+#'     }
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' # Find and visualize 3-cliques (triads) in the first cluster
+#' cliques_result <- cliques(my_tna_object, cluster = 1, n = 3)
+#'
+#' # Find and visualize 4-cliques in the second cluster without showing loops
+#' cliques_result <- cliques(my_tna_object, cluster = 2, n = 4, show_loops = FALSE)
+#' }
+#' @seealso `qgraph`
+#' @export
+cliques <- function(x, cluster = 1, n = 3, weight_threshold = 0,
+                    sum_weights = FALSE, minimum = 0.00001,
+                    mar = c(5,5,5,5), plot = TRUE, show_loops = FALSE, ...) {
+  # Extract necessary components from the Model
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+
+  weighted_matrix <- x$transits[[cluster]]
+  node_colors <- x$colors
+  node_labels <- x$labels
+  Pie <- x$inits[[cluster]]
+
+  num_nodes <- nrow(weighted_matrix)
+  cliques <- list()
+  clique_count <- 0
+
+
+  # Generate all possible n-combinations of nodes
+  node_combinations <- combn(1:num_nodes, n)
+
+  # Check each combination
+  for (i in 1:ncol(node_combinations)) {
+    nodes <- node_combinations[,i]
+    if (is_clique(nodes, sum_weights, weighted_matrix, weight_threshold)) {
+      clique_count <- clique_count + 1
+
+      # Extract submatrix for the clique
+      clique_matrix <- weighted_matrix[nodes, nodes]
+
+      # Optionally show loops in the plot, but never consider them in the computation
+      if (!show_loops) {
+        diag(clique_matrix) <- 0  # Remove self-loops from the matrix if show_loops is FALSE
+      }
+
+      # Set row and column names
+      rownames(clique_matrix) <- colnames(clique_matrix) <- node_labels[nodes]
+      clique_colors <- node_colors[match(rownames(clique_matrix), node_labels)]
+
+      cliques[[clique_count]] <- list(
+        matrix = clique_matrix,
+        # model = build_tna(clique_matrix, inits = Pie[nodes], colors = clique_colors),
+        pie_values = Pie[nodes]
+      )
+    }
+  }
+
+  if (clique_count == 0) {
+    warning_(paste("No", n, "-cliques found in the network."))
+  } else {
+    cat("Number of", n, "-cliques:", clique_count, "\n")
+    cat("Cliques:\n")
+
+    for (i in 1:length(cliques)) {
+      cat("\nClique", i, ":\n")
+      print(round(cliques[[i]]$matrix, 3))
+
+      if (plot) {
+        clique_matrix <- cliques[[i]]$matrix
+        clique_colors <- node_colors[match(rownames(clique_matrix), node_labels)]
+        clique_pie <- cliques[[i]]$pie_values
+
+        # Default plot parameters
+        plot_params <- list(
+          labels = colnames(clique_matrix),
+          edge.labels = TRUE,
+          directed = sum_weights,
+          edge.label.cex = 1.82,
+          mar = mar,
+          minimum = minimum,
+          theme = "colorblind",
+          cut = 0.01,
+          vsize = 25,
+          color = clique_colors,
+          pie = clique_pie
+        )
+
+        # Override default parameters with any provided in ...
+        plot_params <- modifyList(plot_params, list(...))
+
+        # Call qgraph with all parameters
+        do.call(qgraph::qgraph, c(list(clique_matrix), plot_params))
+      }
+    }
+  }
+
+  return(list(count = clique_count, cliques = cliques))
+}

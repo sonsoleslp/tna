@@ -144,9 +144,9 @@ plot_clusters <- function(x, ...) {
 #' plot(cm)
 #' plot(cm, ncol = 4, reorder = TRUE)
 #'
-plot.centralities <- function(x, ncol = 3, scales = c("free_x", "fixed"),
-                              reorder = TRUE, model = NULL, colors = NULL,
-                              labels = TRUE, ...) {
+plot.centralities <- function(x, model = NULL, reorder = TRUE,
+                              ncol = 3, scales = c("free_x", "fixed"),
+                              colors = NULL, labels = TRUE, ...) {
   stopifnot_(
     is_centralities(x),
     "Argument {.arg x} must be a {.cls centralities} object."
