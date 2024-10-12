@@ -177,7 +177,7 @@ compare_tna_networks <- function(x, y, cluster1 = 1, cluster2 = 1, it = 1000,
     col_indices <- (significant_indices - 1) %% ncol(significant_matrix) + 1
 
     for(i in seq_along(significant_indices)) {
-      significant_matrix[row_indices[i], col_indices[i]] <- edge_diffs_real_flat[significant_indices[i]]
+      significant_matrix[ col_indices[i], row_indices[i]] <- edge_diffs_real_flat[significant_indices[i]]
     }
   }
 
