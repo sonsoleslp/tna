@@ -193,3 +193,70 @@ build_tna_ <- function(transit_probs, initial_probs, labels, igraph_network, col
     class = "tna"
   )
 }
+
+#' Build and Visualize a Network with Edge Betweenness
+#'
+#' This function builds a network from a transition matrix in a `tna` object and computes edge betweenness for the network. Optionally, it visualizes the network using the `qgraph` package, with the edge thickness representing the edge betweenness values.
+#'
+#' @param x A `tna` object containing transition matrices and associated metadata.
+#' @param cluster An integer specifying which cluster to analyze. Defaults to `1`.
+#' @param layout A numeric matrix or character string specifying the layout of the network for the visualization. If `NULL`, a default layout is used. Defaults to `NULL`.
+#' @param plot A logical value indicating whether to visualize the network. Defaults to `TRUE`.
+#'
+#' @details
+#' The function first converts the transition matrix for the specified cluster into a directed graph using the `igraph` package. It then calculates the edge betweenness of the graph, which is a measure of how often an edge lies on the shortest paths between pairs of nodes.
+#'
+#' If `plot = TRUE`, the function uses `qgraph` to visualize the network, where edge thickness is proportional to edge betweenness, node colors are derived from the `tna` object, and `Pie` values from the `tna` object are displayed on the nodes.
+#'
+#' The layout of the network can be customized via the `layout` parameter, which can either be a predefined layout from `qgraph` or a user-specified matrix of node positions.
+#'
+#' @return A data frame where each row represents an edge, and columns include the source and target nodes, and the calculated edge betweenness.
+#'
+#' @examples
+#' # Build and visualize the network for the first cluster
+#' \dontrun{
+#' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model)
+#'
+#' # Build the network without visualization
+#' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model, plot = FALSE)
+#' }
+#' @seealso `qgraph`, `igraph`
+#' @export
+build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, plot = TRUE) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  adjacency_matrix <- x$transits[[cluster]]
+  init_values <- x$inits[[cluster]]
+  colors <- x$colors
+  # Create a graph from the adjacency matrix
+  bg <- igraph::graph_from_adjacency_matrix(adjacency_matrix, weighted = TRUE, mode = "directed")
+
+  # Calculate edge betweenness and prepare the edge data frame
+  Edge_betweeness <- cbind(igraph::as_data_frame(bg),
+                           Edge_betweenness = igraph::edge_betweenness(bg, directed = TRUE)) |>
+    dplyr::select(-weight) |>
+    dplyr::rename(weight = 3)
+
+  if(plot) {
+    # Plot the network with qgraph
+    print(qgraph::qgraph(
+      Edge_betweeness,
+      theme = "colorblind",
+      layout = onlyif(!is.null(layout), layout),
+      minimum = 0.03,
+      mar = c(4, 4, 4, 4),
+      cut = 5,
+      edge.labels = TRUE,
+      title = "",
+      colors = onlyif(!is.null(colors), colors),
+      pie = init_values,
+      pieBorder = 0.2,
+      edge.label.cex = 1.5,
+      maximum = 0.6,
+      vsize = 10
+    ))
+  }
+  return(Edge_betweeness)
+}
