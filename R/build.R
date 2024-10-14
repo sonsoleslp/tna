@@ -15,13 +15,14 @@
 #'   the Markov model or a `matrix` of transition probabilities with column
 #'   names describing the states. If `x` is a matrix, it is assumed that the
 #'   element on row `i` and column `j` is the transition probability (or weight)
-#'   from state `i` to state `j`.
+#'   from state `i` to state `j`. It also accepts a `data.frame` object in wide format
+#'.  (each column is a timepoint with no extra columns)
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
 #' @param colors List of colors to use as nodes of the network
 #' @param ... Additional arguments passed to [seqHMM::build_mm()] when `x` is
-#'   a `stslist` object.
+#'   a `stslist` object or `data.frame`.
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
@@ -134,6 +135,31 @@ build_tna.stslist <- function(x, colors, ...) {
     labels = attr(x, "labels"),
     colors = cpal,
     seq = list(x)
+  )
+}
+
+
+#' @export
+#' @rdname build_tna
+build_tna.data.frame <- function(x, colors, ...) {
+  stopifnot_(
+    !missing(x),
+    "Argument {.arg x} is missing."
+  )
+  sequ <- TraMineR::seqdef(x)
+  mkvmodel <- seqHMM::build_mm(sequ, ...)
+  cpal <- attr(sequ, "cpal")
+  if (!missing(colors)) {
+    cpal <- colors
+  }
+  build_tna_(
+    transit_probs = list(mkvmodel$transition_probs),
+    initial_probs = list(mkvmodel$initial_probs),
+    igraph_network = list(igraph::graph_from_adjacency_matrix(mkvmodel$transition_probs,
+                                                              mode = "directed", weighted = TRUE)),
+    labels = attr(sequ, "labels"),
+    colors = cpal,
+    seq = list(sequ)
   )
 }
 

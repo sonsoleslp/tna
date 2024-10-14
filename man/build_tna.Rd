@@ -5,6 +5,7 @@
 \alias{build_tna.default}
 \alias{build_tna.matrix}
 \alias{build_tna.stslist}
+\alias{build_tna.data.frame}
 \alias{build_tna.mhmm}
 \title{Build a Transition Network Analysis Model}
 \usage{
@@ -16,6 +17,8 @@ build_tna(x, ...)
 
 \method{build_tna}{stslist}(x, colors, ...)
 
+\method{build_tna}{data.frame}(x, colors, ...)
+
 \method{build_tna}{mhmm}(x, colors, ...)
 }
 \arguments{
@@ -24,10 +27,11 @@ describing a sequence of events or states to be used for building
 the Markov model or a \code{matrix} of transition probabilities with column
 names describing the states. If \code{x} is a matrix, it is assumed that the
 element on row \code{i} and column \code{j} is the transition probability (or weight)
-from state \code{i} to state \code{j}.}
+from state \code{i} to state \code{j}. It also accepts a \code{data.frame} object in wide format
+.  (each column is a timepoint with no extra columns)}
 
 \item{...}{Additional arguments passed to \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}} when \code{x} is
-a \code{stslist} object.}
+a \code{stslist} object or \code{data.frame}.}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
