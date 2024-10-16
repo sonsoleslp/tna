@@ -286,3 +286,26 @@ compare_tna_networks <- function(x, y, cluster1 = 1, cluster2 = 1, it = 1000,
   ))
 }
 
+
+
+
+#' @export
+tna_disparity <- function(x, alpha = 0.5, cluster = 1) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  # Extract the transition matrix from the specified cluster
+  transition_matrix <- x$transits[[cluster]]
+
+  # Apply the disparity filter
+  disparity_filtered <- backbone::disparity(transition_matrix, alpha)
+
+  # Multiply the disparity filter with the original transition matrix
+  modified_matrix <- disparity_filtered * transition_matrix
+
+  modified <- build_tna(modified_matrix, inits = x$inits[[cluster]], colors = x$colors)
+
+
+  return(modified)
+}

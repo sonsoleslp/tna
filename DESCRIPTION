@@ -21,6 +21,7 @@ Imports:
     checkmate,
     cli,
     dplyr,
+    foreach,
     ggplot2,
     igraph,
     qgraph,
@@ -31,6 +32,8 @@ Imports:
     TraMineR
 Suggests: 
     backbone,
+    parallel,
+    doParallel,
     boot,
     gt,
     knitr,
