@@ -18,4 +18,13 @@
 
 "engagement"
 
+#' Example data on group regulation
+#'
+#' Students' regulation during collaborative learning. Students' interactions
+#' were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
+#' "emotion", "monitor", "plan", "synthesis"
+#' The data was generated synthetically.
+
+"group_regulation"
+
 

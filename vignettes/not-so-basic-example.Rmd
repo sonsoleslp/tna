@@ -55,9 +55,3 @@ prune_results <- prune(tna_model, percentile = 44)
 plot(prune_results$pruned)
 ```
 
-
-
-
-
-
-
