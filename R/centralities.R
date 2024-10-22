@@ -306,11 +306,11 @@ wcc <- function(mat) {
 #' confidence intervals. The CS-coefficients are displayed in the plot's
 #' subtitle.
 #'
-#' @return A `stability` object which is a `list` containing the following
-#' components:
+#' @return A `tna_stability` object which is a `list` with an element for each
+#' `measure` with the following elements:
 #'
 #' * `cs_coefficient`: The centrality stability (CS) coefficient
-#'   for each measure.
+#'   of the measure.
 #' * `correlations`: A `matrix` of correlations between the original
 #'   centrality and the resampled centralities for each drop proportion.
 #' * `detailed_results`: A detailed data frame of the sampled correlations,
@@ -407,7 +407,12 @@ estimate_cs <- function(x, cluster = 1,
       correlations = stability[[measure]]
     )
   }
-  out
+  structure(
+    out,
+    class = "tna_stability",
+    drop_prop = drop_prop
+    threshold = threshold
+  )
 
     # # Check if results are empty
     # for (measure in measures) {

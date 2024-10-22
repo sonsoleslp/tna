@@ -34,7 +34,7 @@ plot_compare(tna_model_1, tna_model_2)
 Core functions
 \code{\link{build_tna}()},
 \code{\link{centralities}()},
-\code{\link{plot.centralities}()},
-\code{\link{plot.tna}()}
+\code{\link{plot.tna}()},
+\code{\link{plot.tna_centralities}()}
 }
 \concept{core}

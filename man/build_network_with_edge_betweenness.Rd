@@ -37,6 +37,3 @@ edge_betweenness_df <- build_network_with_edge_betweenness(tna_model)
 edge_betweenness_df <- build_network_with_edge_betweenness(tna_model, plot = FALSE)
 }
 }
-\seealso{
-\code{qgraph}, \code{igraph}
-}

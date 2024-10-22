@@ -15,28 +15,30 @@ find_communities(x, ...)
 \item{cluster}{An optional argument specifying which cluster to analyze.
 If \code{NULL}, the function will analyze all clusters in \code{x}.}
 
-\item{gamma}{A numeric parameter that affects the behavior of certain algorithms
-like the Spin Glass method. Defaults to \code{1}.}
+\item{gamma}{A numeric parameter that affects the behavior of certain
+algorithms like the Spin Glass method. Defaults to \code{1}.}
 }
 \value{
-A list where each element represents the result of community detection
-for a specific cluster. Each cluster's result is returned by the internal
-\code{find_communities} function, which provides community counts and assignments
-across different algorithms.
+An object of class \code{tna_communities} which is a \code{list} containing:
+\itemize{
+\item \code{counts}: A \code{list} with the number of communities found
+by each algorithm.
+\item \code{assignments}: A \code{data.frame} where each row corresponds to a
+node and each column to a community detection algorithm, with color-coded
+community assignments.
+}
 }
 \description{
-This function detects communities within the transition networks (represented
-by the \code{tna} object).
-It uses various algorithms to find communities in the graph representation of
-transitions and returns a list of communities for each cluster or a specified cluster.
-}
-\details{
-If multiple transition matrices exist, the function iterates over each cluster
-in the \code{tna} object to find communities using different algorithms.
-The function uses the \code{igraph} package to convert the transition matrices into
-graphs and then applies community detection algorithms (e.g., Walktrap, Fast
-Greedy, Label Propagation, Infomap, Edge Betweenness, Leading Eigenvector,
-and Spin Glass).
+This function detects communities within the transition networks
+(represented by the \code{tna} object).
+It uses various algorithms to find communities in the graph representation
+of transitions and returns a \code{list} of communities for each cluster or a
+specified cluster. If multiple transition matrices exist, the function
+iterates over each cluster in the \code{tna} object to find communities using
+different algorithms. The function uses the \code{igraph} package to convert
+the transition matrices into graphs and then applies community detection
+algorithms (e.g., Walktrap, Fast Greedy, Label Propagation, Infomap,
+Edge Betweenness, Leading Eigenvector, and Spin Glass).
 }
 \examples{
 \dontrun{
@@ -46,6 +48,7 @@ communities <- community_detection(tna_model)
 # Detect communities for a specific cluster
 communities <- community_detection(tna_model, cluster = 1)
 }
+
 }
 \seealso{
 Pattern-finding functions

@@ -11,8 +11,7 @@ permutation_test(
   cluster2 = 1,
   iter = 1000,
   paired = FALSE,
-  alpha = 0.05,
-  progressbar = TRUE
+  alpha = 0.05
 )
 }
 \arguments{
@@ -20,28 +19,36 @@ permutation_test(
 
 \item{y}{A \code{tna} object containing sequence data for the second \code{tna} model.}
 
-\item{cluster1}{An integer indicating the cluster to be used from the first \code{tna} model. Default is 1.}
+\item{cluster1}{An \code{integer} indicating the cluster to be used for
+the first \code{tna} model. Default is 1.}
 
-\item{cluster2}{An integer indicating the cluster to be used from the second \code{tna} model. Default is 1.}
+\item{cluster2}{An \code{integer} indicating the cluster to be used for
+the second \code{tna} model. Default is 1.}
 
 \item{iter}{The number of permutations to perform. Default is 1000.}
 
-\item{paired}{Logical. If \code{TRUE}, perform paired permutation tests; if \code{FALSE}, perform unpaired tests. Default is \code{FALSE}.}
+\item{paired}{Logical. If \code{TRUE}, perform paired permutation tests;
+if \code{FALSE}, perform unpaired tests. Default is \code{FALSE}.}
 
-\item{alpha}{The significance level for the permutation tests. Default is 0.05.}
-
-\item{progressbar}{Logical. If \code{TRUE}, display a progress bar during the permutation process. Default is \code{TRUE}.}
+\item{alpha}{The significance level for the permutation tests.
+The default is 0.05.}
 }
 \value{
-A list containing:
+A \code{list} containing:
 \itemize{
-\item \code{edge_statistics} A data frame with edge names, original differences, p-values, effect sizes, and confidence intervals.
-\item \code{original_matrix1} The transition probability matrix from the first \code{tna} model
-\item \code{original_matrix2} The transition probability matrix from the second \code{tna} model.
-\item \code{difference_matrix} The matrix of differences in transition probabilities.}
-\item \code{significant_matrix} A matrix showing the significant edges based on the permutation tests.
+\item \code{edge_statistics} A data frame with edge names, original differences,
+p-values, effect sizes, and confidence intervals.
+\item \code{original_matrix1} The transition probability matrix from
+the first \code{tna} model
+\item \code{original_matrix2} The transition probability matrix from
+the second \code{tna} model.
+\item \code{difference_matrix} The matrix of differences in transition
+probabilities.
+\item \code{significant_matrix} A matrix showing the significant edges
+based on the permutation tests.
 \item \code{significant_edges} A list of significant edges (p < alpha).
-\item \code{statistics_summary} A list of summary statistics including mean absolute differences and effect sizes.
+\item \code{statistics_summary} A list of summary statistics including
+mean absolute differences and effect sizes.
 }
 }
 \description{
@@ -52,8 +59,7 @@ differences in transition probabilities, effect sizes, p-values, and confidence 
 }
 \examples{
 \dontrun{
-# Assuming `network1` and `network2` are tna objects containing sequence data
-result <- compare_tna_networks(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
+result <- permutation_test(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
 }
 
 }

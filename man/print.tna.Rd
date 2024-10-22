@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.tna}
 \alias{print.tna}
-\title{Print \code{tna} object}
+\title{Print a \code{tna} object}
 \usage{
 \method{print}{tna}(x, digits = 2, generic = FALSE, ...)
 }
@@ -16,5 +16,5 @@
 \item{...}{Ignored.}
 }
 \description{
-Print \code{tna} object
+Print a \code{tna} object
 }

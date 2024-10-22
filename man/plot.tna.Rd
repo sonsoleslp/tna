@@ -68,7 +68,7 @@ plot(tna_model)
 Core functions
 \code{\link{build_tna}()},
 \code{\link{centralities}()},
-\code{\link{plot.centralities}()},
+\code{\link{plot.tna_centralities}()},
 \code{\link{plot_compare}()}
 }
 \concept{core}

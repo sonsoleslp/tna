@@ -11,15 +11,15 @@
 \usage{
 build_tna(x, ...)
 
-\method{build_tna}{default}(x, inits, ...)
+\method{build_tna}{default}(x, type = "prop", inits, ...)
 
-\method{build_tna}{matrix}(x, inits, ...)
+\method{build_tna}{matrix}(x, type = "prop", inits, ...)
 
-\method{build_tna}{stslist}(x, colors, ...)
+\method{build_tna}{stslist}(x, type = "prop", ...)
 
-\method{build_tna}{data.frame}(x, colors, ...)
+\method{build_tna}{data.frame}(x, type = "prop", ...)
 
-\method{build_tna}{mhmm}(x, colors, ...)
+\method{build_tna}{mhmm}(x, type = "prop", ...)
 }
 \arguments{
 \item{x}{A \code{stslist} object describing a sequence of events or states to
@@ -31,6 +31,10 @@ from state \code{i} to state \code{j}. It also accepts a \code{data.frame} objec
 .  (each column is a timepoint with no extra columns)}
 
 \item{...}{Ignored.}
+
+\item{type}{A \code{character} string describing the weight matrix type.
+Currently supports \code{"prop"} for proportions (probabilities) and
+\code{"freq"} for frequencies.}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
@@ -68,8 +72,8 @@ print(tna_model)
 \seealso{
 Core functions
 \code{\link{centralities}()},
-\code{\link{plot.centralities}()},
 \code{\link{plot.tna}()},
+\code{\link{plot.tna_centralities}()},
 \code{\link{plot_compare}()}
 }
 \concept{core}

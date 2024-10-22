@@ -121,11 +121,8 @@ Statistical Applications in Genetics and Molecular Biology, 4(1).
 \seealso{
 Core functions
 \code{\link{build_tna}()},
-\code{\link{plot.centralities}()},
 \code{\link{plot.tna}()},
+\code{\link{plot.tna_centralities}()},
 \code{\link{plot_compare}()}
-}
-\author{
-Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
 \concept{core}

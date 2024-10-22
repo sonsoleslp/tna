@@ -186,6 +186,7 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
   )
 }
 
+#' @export
 plot.tna_cliques <- function(x, ...) {
   stopifnot_(
     is_cliques(x),
@@ -211,10 +212,11 @@ plot.tna_cliques <- function(x, ...) {
 #' If no valid data is available for a centrality measure (e.g., missing or NA values), the function skips that measure with a warning.
 #'
 #' The plot includes:
-#' - The mean correlation for each centrality measure as a function of the proportion of dropped cases.
-#' - Shaded confidence intervals representing the 95% CIs for each centrality measure.
-#' - A horizontal dashed line at y = 0.7, indicating the typical threshold used for calculating the CS-coefficient.
-#' - A subtitle listing the CS-coefficients for each centrality measure.
+#'
+#' * The mean correlation for each centrality measure as a function of the proportion of dropped cases.
+#' * Shaded confidence intervals representing the 95% CIs for each centrality measure.
+#' * A horizontal dashed line at the threshold value used for calculating the CS-coefficient.
+#' * A subtitle listing the CS-coefficients for each centrality measure.
 #'
 #' @return A `ggplot` object displaying the stability analysis plot.
 #'
@@ -224,70 +226,66 @@ plot.tna_cliques <- function(x, ...) {
 #' plot_stability_results(stability_results)
 #' }
 #'
-plot.tna_stability <- function(stability_results) {
-  plot_data <- data.frame()  # Initialize an empty dataframe to store all results
-  cs_subtitle <- ""  # String to accumulate CS-coefficients for the subtitle
-
+plot.tna_stability <- function(x, ...) {
   # Iterate over all centrality measures, except detailed results
-  for (measure_name in names(stability_results)) {
-    if (measure_name != "detailed_results") {
-      measure_results <- stability_results[[measure_name]]$correlations
+  x$detailed_results <- NULL
+  x_names <- names(x)
+  drop_prop <- attr(x, "drop_prop")
+  threshold <- attr(x, "threshold")
+  measure_data <- vector(mode = "list", length = length(x))
+  cs_subtitle <- character(length(x))
+  for (i in seq_along(x)) {
+    measure <- x_names[i]
+    corr <- x[[measure]]$correlations
 
-      # Debugging step: check if measure_results has valid dimensions
-      if (is.null(dim(measure_results)) || nrow(measure_results) == 0 || ncol(measure_results) == 0) {
-        cat(sprintf("Warning: No valid data for measure '%s'. Skipping.\n", measure_name))
-        next
-      }
-
-      means <- apply(measure_results, 1, mean, na.rm = TRUE)
-      sds <- apply(measure_results, 1, sd, na.rm = TRUE)
-
-      # Check for NaN/NA values in the standard deviations
-      if (any(is.nan(sds)) || any(is.na(sds))) {
-        cat(sprintf("Warning: NA or NaN values detected in the standard deviations for '%s'.\n", measure_name))
-      }
-
-      proportions <- seq(0.1, 0.9, by = 0.1)
-
-      if (length(means) == length(proportions)) {
-        measure_data <- data.frame(
-          proportion = proportions,
-          correlation = means,
-          lower = means - 2 * sds,  # 95% CI lower bound
-          upper = means + 2 * sds,  # 95% CI upper bound
-          measure = measure_name
-        )
-
-        # Ensure no negative values for CIs
-        measure_data$lower <- pmax(measure_data$lower, 0)
-        measure_data$upper <- pmin(measure_data$upper, 1)
-
-        plot_data <- rbind(plot_data, measure_data)
-
-        # Collect CS-coefficients for the subtitle
-        cs_coef <- stability_results[[measure_name]]$cs_coefficient
-        cs_subtitle <- paste0(cs_subtitle, measure_name, ": CS = ", round(cs_coef, 2), "; ")
-      } else {
-        cat(sprintf("Warning: Length mismatch between means and proportions for '%s'.\n", measure_name))
-      }
+    # Debugging step: check if measure_results has valid dimensions
+    if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
+      warning_(
+        c("Warning: No valid data for measure ", measure, ". Skipping.")
+      )
+      next
     }
+    means <- apply(corr, 2, mean, na.rm = TRUE)
+    # TODO make level as arg
+    ci_lower <- apply(corr, 2, quantile, probs = 0.025)
+    ci_upper <- apply(corr, 2, quantile, probs = 0.975)
+    measure_data[[i]] <- data.frame(
+      measure = measure,
+      proportion = drop_prop,
+      correlation = means,
+      lower = ci_lower,
+      upper = ci_upper
+    )
+    # Collect CS-coefficients for the subtitle
+    cs_coef <- x[[measure]]$cs_coefficient
+    cs_subtitle[i] <- paste0(
+      measure,
+      " CS = ",
+      round(cs_coef, 2)
+    )
   }
-
-  if (nrow(plot_data) == 0) {
-    stop("Error: No valid data to plot.")
-  }
-
-  # Remove the trailing semicolon and space from the subtitle
-  cs_subtitle <- gsub("; $", "", cs_subtitle)
-
-  # Create the ggplot with CIs (geom_ribbon) and CS-coefficients in the subtitle
-  p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = proportion, y = correlation, color = measure)) +
-    ggplot2::geom_ribbon(ggplot2::aes(ymin = lower, ymax = upper, fill = measure), alpha = 0.2) +  # Confidence intervals
+  plot_data <- dplyr::bind_rows(measure_data)
+  stopifnot_(
+    nrow(plot_data) > 0,
+    "No valid data to plot."
+  )
+  cs_subtitle <- paste0(cs_subtitle, collapse = "; ")
+  ggplot2::ggplot(
+    plot_data,
+    ggplot2::aes(x = proportion, y = correlation, color = measure)
+  ) +
+    ggplot2::geom_ribbon(
+      ggplot2::aes(ymin = lower, ymax = upper, fill = measure), alpha = 0.2
+    ) +
     ggplot2::geom_line() +
-    ggplot2::geom_hline(yintercept = 0.7, linetype = "dashed", color = "gray50") +
+    ggplot2::geom_hline(
+      yintercept = threshold,
+      linetype = "dashed",
+      color = "gray50"
+    ) +
     ggplot2::labs(
       title = "Centrality Stability Analysis",
-      subtitle = paste("CS-Coeficients: ", cs_subtitle),  # Include CS-coefficients as a subtitle
+      subtitle = paste("CS-Coeficients: ", cs_subtitle),
       x = "Proportion of Cases Dropped",
       y = "Correlation with Original Centrality",
       color = "Centrality Measure",
@@ -295,9 +293,6 @@ plot.tna_stability <- function(stability_results) {
     ) +
     ggplot2::theme_minimal() +
     ggplot2::ylim(0, 1)
-
-  # Print the plot
-  print(p)
 }
 
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
