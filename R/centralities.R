@@ -148,7 +148,11 @@ centralities_ <- function(x, loops, normalize, measures) {
     checkmate::test_flag(x = normalize),
     "Argument {.arg normalize} must be a single {.cls logical} value."
   )
-  measures <- ifelse_(is.null(measures), valid_measures, measures)
+  measures <- ifelse_(
+    is.null(measures),
+    available_centrality_measures,
+    measures
+  )
   stopifnot_(
     checkmate::test_character(
       x = measures,
@@ -158,11 +162,11 @@ centralities_ <- function(x, loops, normalize, measures) {
     "Argument {.arg measures} must be a {.cls character} vector."
   )
   lower_measures <- tolower(measures)
-  lower_defaults <- tolower(valid_measures)
+  lower_defaults <- tolower(available_centrality_measures)
   measures_match <- pmatch(lower_measures, lower_defaults)
   no_match <- is.na(measures_match)
   invalid_measures <- measures[no_match]
-  valid_measures <- measures_match[!no_match]
+  valid_measures <- measures[!no_match]
   stopifnot_(
     length(invalid_measures) == 0L,
     c(
@@ -176,29 +180,17 @@ centralities_ <- function(x, loops, normalize, measures) {
     mode = "directed",
     weighted = TRUE
   )
-  OutStrength <- igraph::strength(g, mode = "out")
-  InStrength <- igraph::strength(g, mode = "in")
-  ClosenessIn <- igraph::closeness(g, mode = "in")
-  ClosenessOut <- igraph::closeness(g, mode = "out")
-  Closeness <- igraph::closeness(g, mode = "all")
-  Betweenness <- rsp_bet(x)
-  Diffusion <- diffusion(x)
-  Clustering <- wcc(x + t(x))
-
-  out <- data.frame(
-    OutStrength,
-    InStrength,
-    ClosenessIn,
-    ClosenessOut,
-    Closeness,
-    Betweenness,
-    Diffusion,
-    Clustering
-  )[valid_measures]
-
+  measures_out <- lapply(
+    valid_measures,
+    function(y) {
+      centrality_funs[[y]](g = g, x = x)
+    }
+  )
+  names(measures_out) <- valid_measures
+  out <- as.data.frame(measures_out)
   if (normalize) {
     out <- out |>
-      dplyr::mutate(dplyr::across(all_of(measures), ranger))
+      dplyr::mutate(dplyr::across(dplyr::all_of(measures), ranger))
   }
   structure(
     tibble::rownames_to_column(out, "State") |>
@@ -348,7 +340,10 @@ estimate_cs <- function(x, cluster = 1,
   d <- x$seq[[cluster]]
   model <- build_markov_model(d, transitions = TRUE)
   trans <- model$trans
+  a <- dim(trans)[2]
   n <- nrow(d)
+  n_prop <- length(drop_prop)
+  n_measures <- length(measures)
   type <- attr(x, "type")
   centralities_orig <- centralities(
     x,
@@ -356,16 +351,15 @@ estimate_cs <- function(x, cluster = 1,
     normalize = normalize,
     measures = measures
   )
-  n_measures <- length(measures)
-  stability <- vector(mode = "list", length = n_measures)
-  for (measure in measures) {
-    stability[[measure]] <- matrix(NA, nrow = length(drop_prop), ncol = iter)
-  }
-
-  # Run computations for each drop proportion
-  for (i in seq_along(drop_prop)) {
+  stability <- replicate(
+    n_measures,
+    matrix(NA, nrow = iter, ncol = n_prop),
+    simplify = FALSE
+  )
+  names(stability) <- measures
+  for (i in seq_len(n_prop)) {
     prop <- drop_prop[i]
-    n_drop <- floor(n_cases * prop)
+    n_drop <- floor(n * prop)
     if (n_drop == 0) {
       warning_("No cases dropped for proportion ", prop, " skipping...")
       next
@@ -374,14 +368,8 @@ estimate_cs <- function(x, cluster = 1,
     for (j in seq_len(iter)) {
       keep <- sample(seq_len(n), n - n_drop, replace = FALSE)
       trans_sub <- trans[keep, , ]
-      freq_sub <- apply(boot_trans, c(2, 3), sum)
-      # TODO weight function
-      weight_sub <- ifelse_(
-        type == "prop",
-        freq_sub / .rowSums(freq_sub, m = a, n = a),
-        freq_sub
-      )
-      corr_sub <- vapply(
+      weight_sub <- compute_weights(trans_sub, type, a)
+      corr_prop[j, ] <- vapply(
         measures,
         function(measure) {
           centrality_sub <- centralities(
@@ -396,44 +384,43 @@ estimate_cs <- function(x, cluster = 1,
             method = method,
             use = "complete.obs"
           )
-        }
+        },
         numeric(1L)
       )
     }
-
-
-
-      for (j in seq_along(measures)) {
-        measure <- measures[j]
-        stability_results[[measure]][i,] <- bootstrap_results[,j]
-      }
-
-  }
-
-    # Check if results are empty
-    for (measure in measures) {
-      if (all(is.na(stability_results[[measure]]))) {
-        cat(sprintf("Warning: All results for measure '%s' are NA.\n", measure))
-      }
+    for (k in seq_len(n_measures)) {
+      measure <- measures[k]
+      stability[[measure]][, i] <- corr_prop[, k]
     }
+  }
+  out <- list()
+  # TODO handle all NA case?
+  for (measure in measures) {
+    cs_coef <- calculate_cs(
+      stability[[measure]],
+      threshold,
+      certainty,
+      drop_prop
+    )
+    out[[measure]] <- list(
+      cs_coefficient = cs_coef,
+      correlations = stability[[measure]]
+    )
+  }
+  out
 
-    final_results <- list()
+    # # Check if results are empty
+    # for (measure in measures) {
+    #   if (all(is.na(stability_results[[measure]]))) {
+    #     cat(sprintf("Warning: All results for measure '%s' are NA.\n", measure))
+    #   }
+    # }
 
     #cat("\n=== Centrality Stability Analysis ===\n\n")
 
-    for (measure in measures) {
-      cs_coef <- calculate_cs_coefficient(stability_results[[measure]],
-                                          threshold = threshold,
-                                          drop_proportions = drop_proportions,
-                                          certainty = certainty)
 
-      final_results[[measure]] <- list(
-        cs_coefficient = cs_coef,
-        correlations = stability_results[[measure]]
-      )
+      #cat(sprintf("%s Centrality: CS-Coefficient = %.2f\n", measure, cs_coef))
 
-      cat(sprintf("%s Centrality: CS-Coefficient = %.2f\n", measure, cs_coef))
-    }
 
     #if (return_detailed) {
     #  detailed_df <- lapply(stability_results, function(res) {
@@ -461,26 +448,25 @@ estimate_cs <- function(x, cluster = 1,
   # })
 }
 
+#' @rdname estimate_cs
+#' @export
 estimate_centrality_stability <- estimate_cs
 
 
 calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
-  prop_above <- apply(corr_mat, 1, function(x) {
+  prop_above <- apply(corr_mat, 2, function(x) {
     mean(x >= threshold, na.rm = TRUE)
   })
-  valid_indices <- which(props_above >= certainty)
-  if (length(valid_indices) == 0) {
+  valid_indices <- which(prop_above >= certainty)
+  ifelse_(
+    length(valid_indices) > 0,
+    drop_prop[max(valid_indices)],
     0
-  } else {
-    drop_prop[max(valid_indices)])
-  }
+  )
 }
 
-
-
-
-# Valid centrality measures -----------------------------------------------
-valid_measures <- c(
+# Available centrality measures -----------------------------------------------
+available_centrality_measures <- c(
   "OutStrength",
   "InStrength",
   "ClosenessIn",
@@ -490,3 +476,40 @@ valid_measures <- c(
   "Diffusion",
   "Clustering"
 )
+
+
+# Centrality function wrappers --------------------------------------------
+
+centrality_funs <- list()
+
+centrality_funs$OutStrength <- function(g, ...) {
+  igraph::strength(g, mode = "out")
+}
+
+centrality_funs$InStrength <- function(g, ...) {
+  igraph::strength(g, mode = "in")
+}
+
+centrality_funs$ClosenessIn <- function(g, ...) {
+  igraph::closeness(g, mode = "in")
+}
+
+centrality_funs$ClosenessOut <- function(g, ...) {
+  igraph::closeness(g, mode = "out")
+}
+
+centrality_funs$Closeness <- function(g, ...) {
+  igraph::closeness(g, mode = "all")
+}
+
+centrality_funs$Betweenness <- function(x, ...) {
+  rsp_bet(x)
+}
+
+centrality_funs$Diffusion <- function(x, ...) {
+  diffusion(x)
+}
+
+centrality_funs$Clustering <- function(x, ...) {
+  wcc(x + t(x))
+}

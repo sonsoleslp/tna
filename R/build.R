@@ -335,9 +335,8 @@ build_markov_model <- function(x, type = c("prop"), transitions = FALSE) {
     new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
     trans[new_trans] <- trans[new_trans] + 1L
   }
-  weights <- apply(trans, c(2, 3), sum)
+  weights <- compute_weights(trans, type, a)
   if (type == "prop") {
-    weights <- weights / .rowSums(weights, m = a, n = a)
     inits <- inits / sum(inits)
   }
   dimnames(weights) <- list(alphabet, alphabet)
@@ -351,7 +350,7 @@ build_markov_model <- function(x, type = c("prop"), transitions = FALSE) {
 
 #' Check Transition Network Type for Validity
 #'
-#' @param type Type of the transition network
+#' @param type Type of the transition network.
 #' @noRd
 check_tna_type <- function(type) {
   type <- onlyif(is.character(type), tolower(type))
@@ -362,6 +361,11 @@ check_tna_type <- function(type) {
   )
 }
 
+#' Check Transition Network Initial Values for Validity
+#'
+#' @param inits A `numeric` vector of initial values.
+#' @param type Type of the transition network as a `character` string.
+#' @noRd
 check_tna_inits <- function(inits, type) {
   if (!missing(inits) && type == "prop") {
     stopifnot_(
@@ -370,4 +374,20 @@ check_tna_inits <- function(inits, type) {
       {.arg type} is {.val prop}."
     )
   }
+}
+
+#' Compute Network Weights Based On TNA Type
+#'
+#' @param transitions An `array` of the individual-level transitions.
+#' @param type Type of the transition network as a `character` string.
+#' @param s An `integer`, the number of states.
+#' @return A `matrix` of transition probabilities or frequencies,
+#' based on `type`.
+#' @noRd
+compute_weights <- function(transitions, type, s) {
+  weights <- apply(transitions, c(2, 3), sum)
+  if (type == "prop") {
+    weights <- weights / .rowSums(weights, m = s, n = s)
+  }
+  weights
 }

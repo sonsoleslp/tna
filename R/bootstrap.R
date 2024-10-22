@@ -78,21 +78,13 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
   dim_names <- list(alphabet, alphabet)
   n <- nrow(d)
   a <- length(alphabet)
-  weights <- apply(trans, c(2, 3), sum)
-  if (type = "prob") {
-    weights <- weights / .rowSums(weights, m = a, n = a)
-  }
+  weights <- compute_weights(trans, type, a)
   dimnames(weights) <- dim_names
   weights_boot <- array(0L, dim = c(b, a, a))
   p_values <- matrix(0, a, a)
   for (i in seq_len(b)) {
     trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
-    freq_boot <- apply(trans_boot, c(2, 3), sum)
-    if (type == "prob") {
-      weights_boot[i, , ] <- freq_boot / .rowSums(freq_boot, m = a, n = a)
-    } else {
-      weights_boot[i, , ] <- freq_boot
-    }
+    weights_boot[i, , ] <- compute_weights(trans_boot, type, a)
     p_values <- p_values + 1L * (weights_boot[i, , ] >= weights)
   }
   p_values <- p_values / b
