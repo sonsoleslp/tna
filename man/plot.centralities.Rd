@@ -2,7 +2,35 @@
 % Please edit documentation in R/plot.R
 \name{plot.centralities}
 \alias{plot.centralities}
-\title{Plot Centrality Measures}
+\title{#' Plot Transition Networks for All Clusters
+#'
+#' This function plots the transition networks for each cluster in a \code{tna} object.
+#' It iterates through the transition matrices for each cluster and generates
+#' corresponding plots using the \code{plot.tna} function.
+#'
+#' @param x A \code{tna} object containing transition matrices for different clusters.
+#' @param ... Additional arguments to be passed to the \code{plot.tna} function.
+#'
+#' @return A series of plots showing the transition networks for each cluster.
+#' @family core
+#' @examples
+#' \dontrun{
+#' # Assuming `tna_model` is a tna object containing transition matrices
+#' plot_clusters(tna_model)
+#' }
+#' @export
+plot_clusters <- function(x, ...) {
+stopifnot_(
+is_tna(x),
+"Argument {.arg x} must be a {.cls tna} object."
+)
+result <- list()
+matrices <- x$transits
+for (clus in seq_along(matrices)) {
+plot.tna(x, cluster = clus, ...)
+}
+}
+Plot Centrality Measures}
 \usage{
 \method{plot}{centralities}(
   x,
@@ -60,7 +88,6 @@ Core functions
 \code{\link{build_tna}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna}()},
-\code{\link{plot_clusters}()},
 \code{\link{plot_compare}()}
 }
 \concept{core}

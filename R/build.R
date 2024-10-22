@@ -36,6 +36,7 @@
 #'   * `colors`\cr A `character` vector of the state colors, or `NULL`.
 #'   * `igraph_network`\cr A `list` of `igraph` directed graphs based on each
 #'      transition probability matrix
+#'
 #' @family core
 #' @examples
 #' tna_model <- build_tna(engagement)
@@ -155,8 +156,13 @@ build_tna.data.frame <- function(x, colors, ...) {
   build_tna_(
     transit_probs = list(mkvmodel$transition_probs),
     initial_probs = list(mkvmodel$initial_probs),
-    igraph_network = list(igraph::graph_from_adjacency_matrix(mkvmodel$transition_probs,
-                                                              mode = "directed", weighted = TRUE)),
+    igraph_network = list(
+      igraph::graph_from_adjacency_matrix(
+        mkvmodel$transition_probs,
+        mode = "directed",
+        weighted = TRUE
+      )
+    ),
     labels = attr(sequ, "labels"),
     colors = cpal,
     seq = list(sequ)
@@ -286,3 +292,138 @@ build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, p
   }
   return(Edge_betweeness)
 }
+
+build_model <- function(observations, extract = "proportions", by_timepoint = FALSE, n_timepoints = NULL, with_missing = FALSE) {
+  # Function to get ordered unique values
+  ordered_unique <- function(x) {
+    ux <- unique(x)
+    ux[order(match(ux, x))]
+  }
+
+  # Validate input
+  if (!inherits(observations, "stslist") && !is.matrix(observations) && !is.data.frame(observations)) {
+    stop("Observations must be an stslist object from TraMineR or a wide-format data frame/matrix.")
+  }
+
+  # Convert to matrix if necessary
+  obs_matrix <- ifelse_(
+    is.matrix(observations),
+    observations,
+    as.matrix(observations)
+  )
+
+  # Handle n_timepoints
+  if (!is.null(n_timepoints)) {
+    if (n_timepoints > ncol(obs_matrix)) {
+      stop("n_timepoints cannot be greater than the number of columns in observations.")
+    }
+    obs_matrix <- obs_matrix[, seq_len(n_timepoints), drop = FALSE]
+  }
+
+  # Determine state names
+  all_state_names <- ordered_unique(as.vector(obs_matrix))
+
+  # If with.missing is FALSE, remove NA, NaN, and "%" from state names
+  if (!with_missing) {
+    all_state_names <- all_state_names[!is.na(all_state_names) & all_state_names != "%" & all_state_names != "NaN"]
+  }
+
+  # Calculate initial probabilities
+  initial_states <- factor(obs_matrix[, 1], levels = all_state_names)
+  initial_freq <- tabulate(initial_states, nbins = length(all_state_names))
+  initial_probs <- initial_freq / sum(initial_freq)
+
+  # Initialize transition matrices
+  n_states <- length(all_state_names)
+  transition_freq <- matrix(0, nrow = n_states, ncol = n_states, dimnames = list(all_state_names, all_state_names))
+  timepoint_matrices <- if(by_timepoint) vector("list", ncol(obs_matrix) - 1) else NULL
+
+  # Calculate transition frequencies
+  for (i in 1:(ncol(obs_matrix) - 1)) {
+    from_states <- obs_matrix[, i]
+    to_states <- obs_matrix[, i + 1]
+
+    if (!with.missing) {
+      valid_transitions <- from_states %in% all_state_names & to_states %in% all_state_names
+      from_states <- from_states[valid_transitions]
+      to_states <- to_states[valid_transitions]
+    }
+
+    from_states <- factor(from_states, levels = all_state_names)
+    to_states <- factor(to_states, levels = all_state_names)
+
+    transitions <- table(from_states, to_states)
+    transition_freq <- transition_freq + transitions
+
+    if (by_timepoint) {
+      timepoint_matrices[[i]] <- transitions
+    }
+  }
+
+  # Calculate transition probabilities
+  transition_probs <- transition_freq / rowSums(transition_freq)
+  transition_probs[is.nan(transition_probs)] <- 0
+
+  # Prepare result
+  result <- list(
+    state_names = all_state_names,
+    initial_probs = initial_probs
+  )
+
+  if (extract == "proportions") {
+    result$transition_probs <- transition_probs
+    result$freq_transition_probs <- transition_freq
+  } else if (extract == "frequencies") {
+    result$transition_probs <- transition_freq
+    result$prob_transition_probs <- transition_probs
+    result$freq_initial_probs <- initial_freq
+  }
+
+  if (by_timepoint) {
+    if (extract == "proportions") {
+      result$timepoint_matrices <- lapply(timepoint_matrices, function(x) {
+        probs <- x / rowSums(x)
+        probs[is.nan(probs)] <- 0
+        probs
+      })
+      result$freq_timepoint_matrices <- timepoint_matrices
+    } else if (extract == "frequencies") {
+      result$timepoint_matrices <- timepoint_matrices
+      result$prob_timepoint_matrices <- lapply(timepoint_matrices, function(x) {
+        probs <- x / rowSums(x)
+        probs[is.nan(probs)] <- 0
+        probs
+      })
+    }
+  }
+
+  # If with.missing is TRUE, remove NA, NaN, and "%" from final matrices
+  if (with.missing) {
+    valid_states <- !is.na(all_state_names) & all_state_names != "%" & all_state_names != "NaN"
+    result$state_names <- all_state_names[valid_states]
+    result$initial_probs <- result$initial_probs[valid_states]
+
+    if (extract == "proportions") {
+      result$transition_probs <- result$transition_probs[valid_states, valid_states]
+      result$freq_transition_probs <- result$freq_transition_probs[valid_states, valid_states]
+    } else if (extract == "frequencies") {
+      result$transition_probs <- result$transition_probs[valid_states, valid_states]
+      result$prob_transition_probs <- result$prob_transition_probs[valid_states, valid_states]
+      result$freq_initial_probs <- result$freq_initial_probs[valid_states]
+    }
+
+    if (by_timepoint) {
+      if (extract == "proportions") {
+        result$timepoint_matrices <- lapply(result$timepoint_matrices, function(x) x[valid_states, valid_states])
+        result$freq_timepoint_matrices <- lapply(result$freq_timepoint_matrices, function(x) x[valid_states, valid_states])
+      } else if (extract == "frequencies") {
+        result$timepoint_matrices <- lapply(result$timepoint_matrices, function(x) x[valid_states, valid_states])
+        result$prob_timepoint_matrices <- lapply(result$prob_timepoint_matrices, function(x) x[valid_states, valid_states])
+      }
+    }
+  }
+
+  return(result)
+}
+
+

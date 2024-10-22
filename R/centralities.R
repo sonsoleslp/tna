@@ -149,17 +149,7 @@ centralities_ <- function(x, loops, normalize, measures) {
     checkmate::test_flag(x = normalize),
     "Argument {.arg normalize} must be a single {.cls logical} value."
   )
-  default_measures <- c(
-    "OutStrength",
-    "InStrength",
-    "ClosenessIn",
-    "ClosenessOut",
-    "Closeness",
-    "Betweenness",
-    "Diffusion",
-    "Clustering"
-  )
-  measures <- ifelse_(is.null(measures), default_measures, measures)
+  measures <- ifelse_(is.null(measures), valid_measures, measures)
   stopifnot_(
     checkmate::test_character(
       x = measures,
@@ -169,7 +159,7 @@ centralities_ <- function(x, loops, normalize, measures) {
     "Argument {.arg measures} must be a {.cls character} vector."
   )
   lower_measures <- tolower(measures)
-  lower_defaults <- tolower(default_measures)
+  lower_defaults <- tolower(valid_measures)
   measures_match <- pmatch(lower_measures, lower_defaults)
   no_match <- is.na(measures_match)
   invalid_measures <- measures[no_match]
@@ -209,7 +199,7 @@ centralities_ <- function(x, loops, normalize, measures) {
 
   if (normalize) {
     out <- out |>
-      dplyr::mutate_at(dplyr::vars(measures), ranger)
+      dplyr::mutate(dplyr::across(all_of(measures), ranger))
   }
   structure(
     tibble::rownames_to_column(out, "State") |>
@@ -574,3 +564,16 @@ plot_stability_results <- function(stability_results) {
   # Print the plot
   print(p)
 }
+
+
+# Valid centrality measures -----------------------------------------------
+valid_measures <- c(
+  "OutStrength",
+  "InStrength",
+  "ClosenessIn",
+  "ClosenessOut",
+  "Closeness",
+  "Betweenness",
+  "Diffusion",
+  "Clustering"
+)

@@ -10,37 +10,37 @@ ranger <- function(x, na.rm = FALSE) {
   (x + mi) / (ma - mi)
 }
 
-
 #' Check Weak Connectivity of an Adjacency Matrix
 #'
-#' This function checks if an adjacency matrix represents a weakly connected graph. A graph is considered weakly connected if there is a path between any two vertices when ignoring the direction of edges.
+#' This function checks if an adjacency matrix represents a weakly connected
+#' graph. A graph is considered weakly connected if there is a path between
+#' any two vertices when ignoring the direction of edges.
 #'
-#' @param mat A square adjacency matrix representing the graph.
-#'
-#' @return A logical value indicating whether the graph is weakly connected (`TRUE`) or not (`FALSE`).
+#' @param mat A square adjacency `matrix` representing the graph.
+#' @return A `logical` value indicating whether the graph is
+#' weakly connected (`TRUE`) or not (`FALSE`).
 #' @noRd
 is_weakly_connected <- function(mat) {
   n <- nrow(mat)
-  visited <- rep(FALSE, n)
-  stack <- c(1)
-  visited[1] <- TRUE
-
-  while (length(stack) > 0) {
-    v <- stack[length(stack)]
-    stack <- stack[-length(stack)]
-
+  visited <- logical(n)
+  stack <- integer(n)
+  stack[1L] <- 1
+  visited[1L] <- TRUE
+  len <- 1L
+  while (len > 0) {
+    v <- stack[len]
+    len <- len - 1L
     neighbors <- which(mat[v, ] > 0 | mat[, v] > 0)
     for (u in neighbors) {
       if (!visited[u]) {
+        len <- len + 1L
         visited[u] <- TRUE
-        stack <- c(stack, u)
+        stack[len] <- u
       }
     }
   }
-
   all(visited)
 }
-
 
 
 #' Shorthand for `try(., silent = TRUE)`
@@ -65,6 +65,14 @@ is_tna <- function(x) {
 #' @noRd
 is_centralities <- function(x) {
   inherits(x, "centralities")
+}
+
+#' Check that argument is an object of class `"communities"`
+#'
+#' @param x An \R object.
+#' @noRd
+is_communities <- function(x) {
+  inherits(x, "communities")
 }
 
 # Functions borrowed from the `dynamite` package --------------------------
@@ -176,7 +184,6 @@ stopifnot_ <- function(cond, message, ..., call = rlang::caller_env()) {
   }
 }
 
-
 #' Map community assignments to a color palette.
 #'
 #' This function takes a vector of community assignments (numeric or categorical) and maps them to corresponding colors
@@ -209,15 +216,12 @@ stopifnot_ <- function(cond, message, ..., call = rlang::caller_env()) {
 #' @noRd
 map_to_color <- function(x, palette) {
   if (length(unique(x)) == 1) {
-    # Handle case where all values are the same
+    # Handle the case where all values are the same
     return(rep(palette[1], length(x)))  # Map to the first color in the palette
-  } else {
-    # Normalize the numeric values to a range from 1 to the length of the palette
-    min_val <- min(x)
-    max_val <- max(x)
-    scaled_values <- as.integer((x - min_val) / (max_val - min_val) * (length(palette) - 1)) + 1
-    return(palette[scaled_values])
   }
+  # Normalize the numeric values to a range from 1 to the length of the palette
+  scaled_values <- as.integer(ranger(x) * (length(palette) - 1L)) + 1L
+  palette[scaled_values]
 }
 
 

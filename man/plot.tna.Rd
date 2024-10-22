@@ -8,7 +8,7 @@
   x,
   cluster = 1,
   cluster2,
-  color = x$colors,
+  colors = x$colors,
   edge.labels = TRUE,
   labels = x$labels,
   layout = "circle",
@@ -30,7 +30,7 @@ Defaults to the first cluster.}
 The difference between the transition probabilities of \code{cluster} and
 \code{cluster2} will be plotted.}
 
-\item{color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
@@ -69,7 +69,6 @@ Core functions
 \code{\link{build_tna}()},
 \code{\link{centralities}()},
 \code{\link{plot.centralities}()},
-\code{\link{plot_clusters}()},
 \code{\link{plot_compare}()}
 }
 \concept{core}

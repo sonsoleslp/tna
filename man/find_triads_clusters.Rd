@@ -36,7 +36,7 @@ triads_result <- find_triads_clusters(tna_model)
 \code{find_triads}
 
 Pattern-finding functions
-\code{\link{community_detection}()},
+\code{\link{find_communities}()},
 \code{\link{find_dyads}()},
 \code{\link{find_dyads_clusters}()},
 \code{\link{find_triads}()},

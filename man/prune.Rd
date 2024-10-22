@@ -4,55 +4,59 @@
 \alias{prune}
 \title{Prune a \code{tna} network based on transition probabilities}
 \usage{
-prune(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
+prune(
+  x,
+  method = c("threshold", "lowest", "disparity"),
+  threshold = 0.1,
+  lowest = 0.05,
+  alpha = 0.5
+)
 }
 \arguments{
 \item{x}{An object of class \code{tna}}
 
-\item{threshold}{A numeric value specifying the edge weight threshold. Edges with weights below or equal to this threshold will be considered for removal.}
+\item{method}{A \code{character} string describing the pruning method.
+The available options are \code{"threshold"}, \code{"lowest"}, \code{"percentile"}, and
+\code{"disparity"}, corresponding to the methods listed in Details. The default
+is \code{"threshold"}.}
 
-\item{percentile}{A numeric value specifying the percentile of non-zero edges. Edges with weights below or equal to this percentile will be considered for removal.}
+\item{threshold}{A numeric value specifying the edge weight threshold.
+Edges with weights below or equal to this threshold will be considered for
+removal.}
 
-\item{lowest_percent}{A numeric value specifying the lowest percentage of non-zero edges. This percentage of edges with the lowest weights will be considered for removal.}
+\item{lowest}{A \code{numeric} value specifying the lowest percentage
+of non-zero edges. This percentage of edges with the lowest weights will be
+considered for removal. The default is \code{0.05}.}
+
+\item{alpha}{A \code{numeric} value representing the significance level for the
+disparity filter. Defaults to \code{0.5}.}
 }
 \value{
 A list containing:
-\describe{
-\item{\code{pruned}}{The pruned \code{tna} object with updated transition matrix.}
-\item{\code{removed_edges}}{A data frame of edges that were removed.}
-\item{\code{num_removed_edges}}{The number of edges removed.}
-\item{\code{threshold_used}}{The threshold value used for pruning.}
-\item{\code{method_used}}{The method used to determine the threshold.}
+\itemize{
+\item \code{pruned} The pruned \code{tna} object with updated transition matrix.
+\item \code{removed_edges} A data frame of edges that were removed.
+\item \code{num_removed_edges} The number of edges removed.
 }
 }
 \description{
-This function prunes a network represented by a \code{tna} object by removing edges based on a specified threshold, percentile, or lowest percent of non-zero edge weights. It ensures the network remains weakly connected.
-}
-\details{
-The function prunes the edges of the network(s) based on the specified threshold, percentile, or lowest percent of non-zero edge weights. It ensures that removing an edge does not disconnect the network (i.e., the network remains weakly connected).
-\describe{
-\item{\code{threshold}}{If specified, transition probabilities that are less than or equal to this value will be considered for removal.}
-\item{\code{percentile}}{If specified, transition probabilities below this percentile of non-zero edge weights will be considered for removal.}
-\item{\code{lowest_percent}}{If specified, the lowest percent of non-zero transition probabilities will be considered for removal.}
-\item{\code{Default threshold}}{If no threshold, percentile, or lowest percent is specified, a default threshold of 0.05 is used.}
-}
-The function uses a depth-first search to ensure the network remains weakly connected after pruning.
+This function prunes a network represented by a \code{tna} object by removing
+edges based on a specified threshold, lowest percent of non-zero edge
+weights, or the disparity algorithm TODO cite. It ensures the
+network remains weakly connected.
 }
 \examples{
+# TODO why dontrun
 \dontrun{
-  tna_model <- build_tna(engagement)
-  pruned_result <- prune(tna_model, threshold = 0.1)
-  pruned_result <- prune(tna_model, percentile = 10)
-  pruned_result <- prune(tna_model, lowest_percent = 5)
+  tna_model <- build(engagement)
+  pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
+  pruned_percentile <- prune(tna_model,method = "lowest", lowest = 0.05)
+  pruned_disparity <- prune(tna_model, "disparity", alpha = 0.5)
 }
 }
 \seealso{
 Evaluation and validation functions
 \code{\link{bootstrap_tna}()},
-\code{\link{compare_tna_networks}()},
-\code{\link{tna_disparity}()}
-}
-\author{
-Mohammed Saqr (\email{mohammed.saqr@uef.fi})
+\code{\link{compare_tna_networks}()}
 }
 \concept{evaluation}

@@ -68,8 +68,7 @@ results <- bootstrap_tna(tna_model, n_bootstrap = 1000, sig_level = 0.05, cluste
 
 Evaluation and validation functions
 \code{\link{compare_tna_networks}()},
-\code{\link{prune}()},
-\code{\link{tna_disparity}()}
+\code{\link{prune}()}
 }
 \author{
 Mohammed Saqr (\email{mohammed.saqr@uef.fi})

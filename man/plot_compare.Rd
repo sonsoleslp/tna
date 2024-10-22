@@ -35,7 +35,6 @@ Core functions
 \code{\link{build_tna}()},
 \code{\link{centralities}()},
 \code{\link{plot.centralities}()},
-\code{\link{plot.tna}()},
-\code{\link{plot_clusters}()}
+\code{\link{plot.tna}()}
 }
 \concept{core}

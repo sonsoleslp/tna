@@ -19,7 +19,7 @@ print.centralities <- function(x, ...) {
 print.tna <- function(x, digits = 2, generic = FALSE, ...) {
   if (generic) {
     NextMethod(generic = "print", object = x, ...)
-    return;
+    return()
   }
   # Print State Labels
   cat("\n**State Labels:**\n")
