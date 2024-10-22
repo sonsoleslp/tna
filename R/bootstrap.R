@@ -152,7 +152,7 @@ bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, 
   bootstrap_results <- boot::boot(
     data = sequence_stslist,
     statistic = bootstrap_transitions,
-    R = 1000
+    R = n_bootstrap
   )
 
   bootstrap_transitions <- bootstrap_results$t
@@ -162,8 +162,8 @@ bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, 
   sd_transitions <- apply(bootstrap_transitions, 2, stats::sd)
 
   # Confidence intervals
-  ci_lower <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = level / 2))
-  ci_upper <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = 1 - level / 2))
+  ci_lower <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = sig_level / 2))
+  ci_upper <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = 1 - sig_level / 2))
 
   # p-values for each transition
   p_values <- sapply(1:length(original_trans_matrix_vector), function(i) {
