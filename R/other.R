@@ -51,7 +51,7 @@ try_ <- function(expr) {
   try(expr, silent = TRUE)
 }
 
-#' Check that argument is an object of class `"tna"`
+#' Check that argument is an object of class `tna`
 #'
 #' @param x An \R object.
 #' @noRd
@@ -59,20 +59,151 @@ is_tna <- function(x) {
   inherits(x, "tna")
 }
 
-#' Check that argument is an object of class `"centralities"`
+#' Check that argument is an object of class `tna_centralities`
 #'
 #' @param x An \R object.
 #' @noRd
-is_centralities <- function(x) {
-  inherits(x, "centralities")
+is_tna_centralities <- function(x) {
+  inherits(x, "tna_centralities")
 }
 
-#' Check that argument is an object of class `"communities"`
+#' Check that argument is an object of class `tna_communities`
 #'
 #' @param x An \R object.
 #' @noRd
-is_communities <- function(x) {
-  inherits(x, "communities")
+is_tna_communities <- function(x) {
+  inherits(x, "tna_communities")
+}
+
+#' Check that argument is an object of class `tna_cliques`
+#'
+#' @param x An \R object.
+#' @noRd
+is_tna_cliques <- function(x) {
+  inherits(x, "tna_cliques")
+}
+
+#' Calculate Network Metrics for a Cluster
+#'
+#' This function calculates a variety of network metrics for a specified cluster
+#' in a transition network stored in a `tna` object. It computes key metrics such
+#' as node and edge counts, network density, mean distance, strength measures,
+#' degree centrality, and reciprocity. A histogram of edge weights is also plotted.
+#'
+#' @param x A `tna` object
+#' @param cluster An integer specifying which cluster to analyze. Defaults to `1`.
+#'
+#' @details
+#' The function extracts the `igraph` network for the specified cluster and computes the following network metrics:
+#' \itemize{
+#'   \item Node count: Total number of nodes in the network.
+#'   \item Edge count: Total number of edges in the network.
+#'   \item Network density: Proportion of possible edges that are present in the network.
+#'   \item Mean distance: The average shortest path length between nodes.
+#'   \item Mean and standard deviation of out-strength and in-strength: Measures of the total weight of outgoing and incoming edges for each node.
+#'   \item Mean and standard deviation of out-degree: The number of outgoing edges from each node.
+#'   \item Centralization of out-degree and in-degree: Measures of how centralized the network is based on the degrees of nodes.
+#'   \item Reciprocity: The proportion of edges that are reciprocated (i.e., mutual edges between nodes).
+#' }
+#'
+#' A summary of the metrics is printed to the console, and a histogram of edge weights (probabilities) is plotted.
+#'
+#' @return A named list containing the following network metrics:
+#' \itemize{
+#'   \item `Node_count`: The total number of nodes.
+#'   \item `Edge_count`: The total number of edges.
+#'   \item `Network_Density`: The density of the network.
+#'   \item `Mean_distance`: The mean shortest path length.
+#'   \item `Mean_out_strength`: The mean out-strength of nodes.
+#'   \item `SD_out_strength`: The standard deviation of out-strength.
+#'   \item `Mean_in_strength`: The mean in-strength of nodes.
+#'   \item `SD_in_strength`: The standard deviation of in-strength.
+#'   \item `Mean_out_degree`: The mean out-degree of nodes.
+#'   \item `SD_out_degree`: The standard deviation of out-degree.
+#'   \item `Centralization_out_degree`: The centralization of out-degree.
+#'   \item `Centralization_in_degree`: The centralization of in-degree.
+#'   \item `Reciprocity`: The reciprocity of the network.
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' # Calculate network metrics for the first cluster
+#' network_metrics <- calculate_network_metrics(tna_model, cluster = 1)
+#' }
+#' @seealso `igraph`
+#' @export
+calculate_network_metrics <- function(x, cluster = 1) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  network <- x$igraph_network[[cluster]]
+
+  # Node and Edge Counts
+  Node_count <- igraph::vcount(network)
+  Edge_count <- igraph::ecount(network)
+
+  # Network density and path length
+  Network_Density <- min(igraph::edge_density(network), 1)  # Ensure density does not exceed 1
+  Mean_distance <- igraph::mean_distance(network)
+
+  # Strength measures (for weighted networks) - Focus on out-strength and in-strength
+  Mean_out_strength <- mean(igraph::strength(network, mode = "out"), na.rm = TRUE)
+  SD_out_strength <- sd(igraph::strength(network, mode = "out"), na.rm = TRUE)
+  Mean_in_strength <- mean(igraph::strength(network, mode = "in"), na.rm = TRUE)
+  SD_in_strength <- sd(igraph::strength(network, mode = "in"), na.rm = TRUE)
+
+  # Degree measures (mean for out-degree)
+  Mean_out_degree <- mean(igraph::degree(network, mode = "out"))
+  SD_out_degree <- stats::sd(igraph::degree(network, mode = "out"))
+
+  # Centralization measures (out-degree and in-degree)
+  Centralization_out_degree <- igraph::centr_degree(network, mode = "out", loops = FALSE)$centralization
+  Centralization_in_degree <- igraph::centr_degree(network, mode = "in", loops = FALSE)$centralization
+
+  # Reciprocity (proportion of mutual edges)
+  Reciprocity <- igraph::reciprocity(network)
+
+  # Print important metrics with informative output (focusing on out and in measures)
+  cat("Network Metrics Summary (Out and In Measures):\n")
+  cat("--------------------------------------\n")
+  cat("Node Count: ", Node_count, "\n")
+  cat("Edge Count: ", Edge_count, "\n")
+  cat("Network Density: ", round(Network_Density, 4), "\n")
+  cat("Mean Distance: ", round(Mean_distance, 4), "\n")
+  cat("Mean Out-Strength: ", round(Mean_out_strength, 4), "\n")
+  cat("SD Out-Strength: ", round(SD_out_strength, 4), "\n")
+  cat("Mean In-Strength: ", round(Mean_in_strength, 4), "\n")
+  cat("SD In-Strength: ", round(SD_in_strength, 4), "\n")
+  cat("Mean Out-Degree: ", round(Mean_out_degree, 4), "\n")
+  cat("SD Out-Degree: ", round(SD_out_degree, 4), "\n")
+  cat("Centralization (Out-Degree): ", round(Centralization_out_degree, 4), "\n")
+  cat("Centralization (In-Degree): ", round(Centralization_in_degree, 4), "\n")
+  cat("Reciprocity: ", round(Reciprocity, 4), "\n")
+  cat("--------------------------------------\n\n")
+
+  # Plot histogram of edge weights
+  edge_weights <- igraph::E(network)$weight
+  hist(edge_weights, breaks = seq(0, 1, by=0.05), col = "lightblue",
+       main = "Histogram of Edge Weights", xlab = "Edge Weights (Probabilities)",
+       ylab = "Frequency", border = "white")
+
+  # Return the results in a named list for further use
+  return(list(
+    Node_count = Node_count,
+    Edge_count = Edge_count,
+    Network_Density = Network_Density,
+    Mean_distance = Mean_distance,
+    Mean_out_strength = Mean_out_strength,
+    SD_out_strength = SD_out_strength,
+    Mean_in_strength = Mean_in_strength,
+    SD_in_strength = SD_in_strength,
+    Mean_out_degree = Mean_out_degree,
+    SD_out_degree = SD_out_degree,
+    Centralization_out_degree = Centralization_out_degree,
+    Centralization_in_degree = Centralization_in_degree,
+    Reciprocity = Reciprocity
+  ))
 }
 
 # Functions borrowed from the `dynamite` package --------------------------
@@ -248,125 +379,4 @@ get_model <- function(results) {
   results$model
 }
 
-#' Calculate Network Metrics for a Cluster
-#'
-#' This function calculates a variety of network metrics for a specified cluster
-#' in a transition network stored in a `tna` object. It computes key metrics such
-#' as node and edge counts, network density, mean distance, strength measures,
-#' degree centrality, and reciprocity. A histogram of edge weights is also plotted.
-#'
-#' @param x A `tna` object
-#' @param cluster An integer specifying which cluster to analyze. Defaults to `1`.
-#'
-#' @details
-#' The function extracts the `igraph` network for the specified cluster and computes the following network metrics:
-#' \itemize{
-#'   \item Node count: Total number of nodes in the network.
-#'   \item Edge count: Total number of edges in the network.
-#'   \item Network density: Proportion of possible edges that are present in the network.
-#'   \item Mean distance: The average shortest path length between nodes.
-#'   \item Mean and standard deviation of out-strength and in-strength: Measures of the total weight of outgoing and incoming edges for each node.
-#'   \item Mean and standard deviation of out-degree: The number of outgoing edges from each node.
-#'   \item Centralization of out-degree and in-degree: Measures of how centralized the network is based on the degrees of nodes.
-#'   \item Reciprocity: The proportion of edges that are reciprocated (i.e., mutual edges between nodes).
-#' }
-#'
-#' A summary of the metrics is printed to the console, and a histogram of edge weights (probabilities) is plotted.
-#'
-#' @return A named list containing the following network metrics:
-#' \itemize{
-#'   \item `Node_count`: The total number of nodes.
-#'   \item `Edge_count`: The total number of edges.
-#'   \item `Network_Density`: The density of the network.
-#'   \item `Mean_distance`: The mean shortest path length.
-#'   \item `Mean_out_strength`: The mean out-strength of nodes.
-#'   \item `SD_out_strength`: The standard deviation of out-strength.
-#'   \item `Mean_in_strength`: The mean in-strength of nodes.
-#'   \item `SD_in_strength`: The standard deviation of in-strength.
-#'   \item `Mean_out_degree`: The mean out-degree of nodes.
-#'   \item `SD_out_degree`: The standard deviation of out-degree.
-#'   \item `Centralization_out_degree`: The centralization of out-degree.
-#'   \item `Centralization_in_degree`: The centralization of in-degree.
-#'   \item `Reciprocity`: The reciprocity of the network.
-#' }
-#'
-#' @examples
-#' \dontrun{
-#' # Calculate network metrics for the first cluster
-#' network_metrics <- calculate_network_metrics(tna_model, cluster = 1)
-#' }
-#' @seealso `igraph`
-#' @export
-calculate_network_metrics <- function(x, cluster = 1) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
-  network <- x$igraph_network[[cluster]]
 
-  # Node and Edge Counts
-  Node_count <- igraph::vcount(network)
-  Edge_count <- igraph::ecount(network)
-
-  # Network density and path length
-  Network_Density <- min(igraph::edge_density(network), 1)  # Ensure density does not exceed 1
-  Mean_distance <- igraph::mean_distance(network)
-
-  # Strength measures (for weighted networks) - Focus on out-strength and in-strength
-  Mean_out_strength <- mean(igraph::strength(network, mode = "out"), na.rm = TRUE)
-  SD_out_strength <- sd(igraph::strength(network, mode = "out"), na.rm = TRUE)
-  Mean_in_strength <- mean(igraph::strength(network, mode = "in"), na.rm = TRUE)
-  SD_in_strength <- sd(igraph::strength(network, mode = "in"), na.rm = TRUE)
-
-  # Degree measures (mean for out-degree)
-  Mean_out_degree <- mean(igraph::degree(network, mode = "out"))
-  SD_out_degree <- stats::sd(igraph::degree(network, mode = "out"))
-
-  # Centralization measures (out-degree and in-degree)
-  Centralization_out_degree <- igraph::centr_degree(network, mode = "out", loops = FALSE)$centralization
-  Centralization_in_degree <- igraph::centr_degree(network, mode = "in", loops = FALSE)$centralization
-
-  # Reciprocity (proportion of mutual edges)
-  Reciprocity <- igraph::reciprocity(network)
-
-  # Print important metrics with informative output (focusing on out and in measures)
-  cat("Network Metrics Summary (Out and In Measures):\n")
-  cat("--------------------------------------\n")
-  cat("Node Count: ", Node_count, "\n")
-  cat("Edge Count: ", Edge_count, "\n")
-  cat("Network Density: ", round(Network_Density, 4), "\n")
-  cat("Mean Distance: ", round(Mean_distance, 4), "\n")
-  cat("Mean Out-Strength: ", round(Mean_out_strength, 4), "\n")
-  cat("SD Out-Strength: ", round(SD_out_strength, 4), "\n")
-  cat("Mean In-Strength: ", round(Mean_in_strength, 4), "\n")
-  cat("SD In-Strength: ", round(SD_in_strength, 4), "\n")
-  cat("Mean Out-Degree: ", round(Mean_out_degree, 4), "\n")
-  cat("SD Out-Degree: ", round(SD_out_degree, 4), "\n")
-  cat("Centralization (Out-Degree): ", round(Centralization_out_degree, 4), "\n")
-  cat("Centralization (In-Degree): ", round(Centralization_in_degree, 4), "\n")
-  cat("Reciprocity: ", round(Reciprocity, 4), "\n")
-  cat("--------------------------------------\n\n")
-
-  # Plot histogram of edge weights
-  edge_weights <- igraph::E(network)$weight
-  hist(edge_weights, breaks = seq(0, 1, by=0.05), col = "lightblue",
-       main = "Histogram of Edge Weights", xlab = "Edge Weights (Probabilities)",
-       ylab = "Frequency", border = "white")
-
-  # Return the results in a named list for further use
-  return(list(
-    Node_count = Node_count,
-    Edge_count = Edge_count,
-    Network_Density = Network_Density,
-    Mean_distance = Mean_distance,
-    Mean_out_strength = Mean_out_strength,
-    SD_out_strength = SD_out_strength,
-    Mean_in_strength = Mean_in_strength,
-    SD_in_strength = SD_in_strength,
-    Mean_out_degree = Mean_out_degree,
-    SD_out_degree = SD_out_degree,
-    Centralization_out_degree = Centralization_out_degree,
-    Centralization_in_degree = Centralization_in_degree,
-    Reciprocity = Reciprocity
-  ))
-}

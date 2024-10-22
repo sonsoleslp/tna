@@ -60,19 +60,13 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
     "Argument {.arg cluster2} must be a single integer value between 1 and
      the number of clusters."
   )
-  # TODO replace this
-  transits <- ifelse_(
-    is.null(attr(x, "pruning")),
-    x$weights,
-    attr(x, "pruning")$transits
-  )
   cluster <- as.integer(cluster)
   cluster2 <- onlyif(!missing(cluster2), as.integer(cluster2))
   qgraph::qgraph(
     input = ifelse_(
       is.null(cluster2),
-      transits[[cluster]],
-      transits[[cluster]] - transits[[cluster2]]
+      x$weights[[cluster]],
+      x$weights[[cluster]] - x$weights[[cluster2]]
     ),
     color = colors,
     minimum = minimum,
@@ -120,14 +114,14 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
 
 #' Plot Centrality Measures
 #'
-#' Plots the centrality measures of a `centralities` object as a lollipop chart.
-#' The resulting plot includes facets for each centrality measure, showing the
-#' values for each state. The returned plot is a `ggplot2` object, so it can be
-#' easily modified and styled. See [centralities()] for details on the
-#' centrality measures.
+#' Plots the centrality measures of a `tna_centralities` object as a
+#' lollipop chart. The resulting plot includes facets for each centrality
+#' measure, showing the values for each state. The returned plot is a
+#' `ggplot2` object, so it can be easily modified and styled. See
+#' [centralities()] for details on the centrality measures.
 #'
 #' @export
-#' @param x An object of class `centralities`.
+#' @param x An object of class `tna_centralities`.
 #' @param ncol Number of columns to use for the facets. The default is 3.
 #' @param scales Either `"fixed"` or `"free_x"` (the default). If `"free_x"`,
 #'   the horizontal axis is scaled individually in each facet. If `"fixed"`,
@@ -149,12 +143,12 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
 #' plot(cm)
 #' plot(cm, ncol = 4, reorder = TRUE)
 #'
-plot.centralities <- function(x, model = NULL, reorder = TRUE,
+plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
                               ncol = 3, scales = c("free_x", "fixed"),
                               colors = NULL, labels = TRUE, ...) {
   stopifnot_(
     is_centralities(x),
-    "Argument {.arg x} must be a {.cls centralities} object."
+    "Argument {.arg x} must be a {.cls tna_centralities} object."
   )
   stopifnot_(
     checkmate::test_flag(x = reorder),
@@ -169,6 +163,8 @@ plot.centralities <- function(x, model = NULL, reorder = TRUE,
     "Argument {.arg modes} must be a single {.cls tna} model or empty."
   )
 
+  # TODO some default colors function here that computes them from seq
+  # without using seqHMM or TraMineR
   if (is.null(colors) & is_tna(model) & !is.null(model$colors)) {
     colors <- model$colors
   } else if (is.null(colors)) {
@@ -188,6 +184,120 @@ plot.centralities <- function(x, model = NULL, reorder = TRUE,
     plot_centralities_multiple(x, ncol, scales, colors, labels),
     plot_centralities_single(x, reorder, ncol, scales, colors, labels)
   )
+}
+
+plot.tna_cliques <- function(x, ...) {
+  stopifnot_(
+    is_cliques(x),
+    "Argument {.arg x} must be a {.cls tna_cliques} object."
+  )
+  # TODO
+}
+
+#' Plot Centrality Stability Results
+#'
+#' This function visualizes the centrality stability results produced by the
+#' `estimate_centrality_stability` function. It shows how different centrality
+#' measures' correlations change as varying proportions of cases are dropped, along with their confidence intervals (CIs).
+#'
+#' @export
+#' @param stability_results A list of stability results produced by `estimate_centrality_stability`. Each centrality measure contains:
+#' - `correlations`: A matrix of correlations between the original centralities and resampled centralities for different proportions of dropped cases.
+#' - `cs_coefficient`: The centrality stability (CS) coefficient, which represents the proportion of dropped cases where the correlation drops below the specified threshold.
+#'
+#' @details
+#' The function aggregates the results for each centrality measure across multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and calculates the mean and standard deviation for each proportion. The confidence intervals (CIs) are computed based on the standard deviations and displayed in the plot.
+#'
+#' If no valid data is available for a centrality measure (e.g., missing or NA values), the function skips that measure with a warning.
+#'
+#' The plot includes:
+#' - The mean correlation for each centrality measure as a function of the proportion of dropped cases.
+#' - Shaded confidence intervals representing the 95% CIs for each centrality measure.
+#' - A horizontal dashed line at y = 0.7, indicating the typical threshold used for calculating the CS-coefficient.
+#' - A subtitle listing the CS-coefficients for each centrality measure.
+#'
+#' @return A `ggplot` object displaying the stability analysis plot.
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming 'stability_results' is a list from estimate_centrality_stability()
+#' plot_stability_results(stability_results)
+#' }
+#'
+plot.tna_stability <- function(stability_results) {
+  plot_data <- data.frame()  # Initialize an empty dataframe to store all results
+  cs_subtitle <- ""  # String to accumulate CS-coefficients for the subtitle
+
+  # Iterate over all centrality measures, except detailed results
+  for (measure_name in names(stability_results)) {
+    if (measure_name != "detailed_results") {
+      measure_results <- stability_results[[measure_name]]$correlations
+
+      # Debugging step: check if measure_results has valid dimensions
+      if (is.null(dim(measure_results)) || nrow(measure_results) == 0 || ncol(measure_results) == 0) {
+        cat(sprintf("Warning: No valid data for measure '%s'. Skipping.\n", measure_name))
+        next
+      }
+
+      means <- apply(measure_results, 1, mean, na.rm = TRUE)
+      sds <- apply(measure_results, 1, sd, na.rm = TRUE)
+
+      # Check for NaN/NA values in the standard deviations
+      if (any(is.nan(sds)) || any(is.na(sds))) {
+        cat(sprintf("Warning: NA or NaN values detected in the standard deviations for '%s'.\n", measure_name))
+      }
+
+      proportions <- seq(0.1, 0.9, by = 0.1)
+
+      if (length(means) == length(proportions)) {
+        measure_data <- data.frame(
+          proportion = proportions,
+          correlation = means,
+          lower = means - 2 * sds,  # 95% CI lower bound
+          upper = means + 2 * sds,  # 95% CI upper bound
+          measure = measure_name
+        )
+
+        # Ensure no negative values for CIs
+        measure_data$lower <- pmax(measure_data$lower, 0)
+        measure_data$upper <- pmin(measure_data$upper, 1)
+
+        plot_data <- rbind(plot_data, measure_data)
+
+        # Collect CS-coefficients for the subtitle
+        cs_coef <- stability_results[[measure_name]]$cs_coefficient
+        cs_subtitle <- paste0(cs_subtitle, measure_name, ": CS = ", round(cs_coef, 2), "; ")
+      } else {
+        cat(sprintf("Warning: Length mismatch between means and proportions for '%s'.\n", measure_name))
+      }
+    }
+  }
+
+  if (nrow(plot_data) == 0) {
+    stop("Error: No valid data to plot.")
+  }
+
+  # Remove the trailing semicolon and space from the subtitle
+  cs_subtitle <- gsub("; $", "", cs_subtitle)
+
+  # Create the ggplot with CIs (geom_ribbon) and CS-coefficients in the subtitle
+  p <- ggplot2::ggplot(plot_data, ggplot2::aes(x = proportion, y = correlation, color = measure)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = lower, ymax = upper, fill = measure), alpha = 0.2) +  # Confidence intervals
+    ggplot2::geom_line() +
+    ggplot2::geom_hline(yintercept = 0.7, linetype = "dashed", color = "gray50") +
+    ggplot2::labs(
+      title = "Centrality Stability Analysis",
+      subtitle = paste("CS-Coeficients: ", cs_subtitle),  # Include CS-coefficients as a subtitle
+      x = "Proportion of Cases Dropped",
+      y = "Correlation with Original Centrality",
+      color = "Centrality Measure",
+      fill = "Centrality Measure"
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::ylim(0, 1)
+
+  # Print the plot
+  print(p)
 }
 
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
@@ -303,11 +413,13 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
 
 #' Plot Communities
 #'
-#' This function visualizes the communities detected within a `tna` object based
-#' on different community detection algorithms and their corresponding color mappings.
+#' This function visualizes the communities detected within a `tna` object
+#' based on different community detection algorithms and their corresponding
+#' color mappings.
 #'
+#' @export
 #' @param x A `tna` object, which represents a transition network analysis
-#' object containing data to be plotted. The object should include a component `transits`
+#' object containing data to be plotted. The object should include a component `weights`
 #' that can be iterated over to plot individual communities.
 #' @param y A `communities` object generated by the `find_communities` method.
 #' Each community detection method maps nodes or points in `x`  to specific
@@ -326,23 +438,15 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
 #' * `"leading_eigen"`: A method using the leading eigenvector of the
 #'   modularity matrix.
 #' * `"spinglass"`: A method based on the spinglass model.
+#'
 #' @param colors A `character` vector of color values used for visualizing
 #'   community assignments.
-#'
-#' @details
-#' The function iterates over the `transits` element of the `tna` object and
-#' generates plots for each using the specified community detection method. The
-#' `community_assignment` provides the mapping of nodes to communities, and
-#' colors are assigned based on the `community` parameter's chosen algorithm.
-#'
 #' @family patterns
 #' @examples
 #' \dontrun{
-#' # Assuming 'tna_model' is a tna object and 'community_assignment'
-#' holds the respective community labels
 #' plot_communities(tna_model, community_assignment, "walktrap")
 #' }
-#' @export
+#'
 plot_communities <- function(x, y, cluster = 1L, community, colors) {
     # print((community_assignment[i][[1]]$community_assignments[,community]))
     # print(map_to_color(community_assignment[i][[1]]$community_assignments[,community], color_palette))
@@ -403,12 +507,18 @@ plot_compare <- function(x, y, ...) {
   )
   pie <- abs(x$inits[[1]] - y$inits[[1]])
   piesign <- ifelse(x$inits[[1]] > y$inits[[1]], "#009900", "red")
-  posCol <- c("#009900", "darkgreen")
-  negCol <- c("#BF0000", "red")
-
-  diff <- build_tna(x$transits[[1]] - y$transits[[1]], pie)
-
-  plot.tna(diff, pie = pie, pieColor = piesign, color = x$colors, theme = NULL, palette = "colorblind", ...)
+  #pos_col <- c("#009900", "darkgreen")
+  #neg_col <- c("#BF0000", "red")
+  diff <- build_tna(x$weights[[1]] - y$weights[[1]], pie)
+  plot.tna(
+    diff,
+    pie = pie,
+    pieColor = piesign,
+    color = x$colors,
+    theme = NULL,
+    palette = "colorblind",
+    ...
+  )
 }
 
 # Default Colors ------------------------------------------------------------------

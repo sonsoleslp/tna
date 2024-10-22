@@ -61,16 +61,21 @@ prune <- function(x, method = c("threshold", "lowest", "disparity"),
     is.null(attr(x, "pruning")),
     "The model has already been pruned."
   )
+  # TODO No lables? when?
   labels <- ifelse_(
     is.null(x$labels),
-    seq_len(ncol(x$transits[[1]])),
+    seq_len(ncol(x$weights[[1]])),
     x$labels
   )
-  attr(x, "pruning") <- ifelse_(
+  tmp <- ifelse_(
     method == "disparity",
     prune_disparity(x, alpha, labels),
     prune_default(x, method, threshold, lowest, labels)
   )
+  tmp$original <- x$weights
+  tmp$active <- TRUE
+  x$weights <- tmp$weights
+  attr(x, "pruning") <- tmp
   #info_("\nNetwork Pruning Results: \n")
   #info_("------------------------\n")
 
@@ -87,7 +92,7 @@ prune <- function(x, method = c("threshold", "lowest", "disparity"),
 }
 
 prune_default <- function(x, method, threshold, lowest, labels) {
-  clusters <- x$transits
+  clusters <- x$weights
   n_clust <- length(clusters)
   cut_offs <- numeric(n_clust)
   removed_edges <- vector(mode = "list", length = n_clust)
@@ -122,39 +127,16 @@ prune_default <- function(x, method, threshold, lowest, labels) {
         removed_idx[i] <- TRUE
       }
     }
-
-    #if (length(matrices) > 1) {
-    #  info_(paste0("Cluster:", clus, "\n"))
-    #}
-    #info_(paste0("Method used: ", method, "\n"))
-    #info_(paste0("Number of edges removed: ", nrow(removed_edges[[clus]]), "\n"))
-    #info_(paste0("Number of edges retained: ", sum(pruned_matrix > 0), "\n"))
-    #if (nrow(removed_edges[[clus]]) == 0) {
-    #  warning_("No edges were removed")
-    #} else {
-    #  info_("\n**Removed edges:** \n")
-    #  matrix_data <- as.matrix(removed_edges[[clus]])
-    #  matrix_data[,"weight"] <- format(round(as.numeric(matrix_data[,"weight"]), 2),
-    #                                   nsmall = 2)
-    #  matrix_output <- utils::capture.output(print(matrix_data, digits = 2))
-#
-    #  # Print the captured output using cli_verbatim
-    #  cli::cli_verbatim(matrix_output)
-#
-    #}
-    #if (length(matrices) > 1) {
-    #  info_("------------------------\n")
-    #}
     clusters[[clust]] <- pruned_matrix
     cut_offs[clust] <- cut_off
     removed_edges[[clust]] <- to_remove_edges[removed_idx, ]
     num_removed_edges[clust] <- sum(removed_idx)
   }
   list(
-    transits = clusters,
+    weights = clusters,
     cut_offs = cut_offs,
-    removed_edges = removed_edges,
-    num_removed_edges = num_removed_edges,
+    removed = removed_edges,
+    num_removed = num_removed_edges,
     method = method
   )
 }
@@ -184,7 +166,7 @@ prune_default <- function(x, method, threshold, lowest, labels) {
 
 
 prune_disparity <- function(x, alpha, labels) {
-  clusters <- x$transits
+  clusters <- x$weights
   n_clust <- length(clusters)
   removed_edges <- vector(mode = "list", length = n_clust)
   num_removed_edges <- integer(n_clust)
@@ -204,14 +186,75 @@ prune_disparity <- function(x, alpha, labels) {
       to = labels[removed_idx[, 2]],
       weight = c(transition_matrix[removed_idx])
     )
-    #colnames(modified_matrix) <- colnames(transition_matrix)
-    #rownames(modified_matrix) <- rownames(transition_matrix)
   }
   list(
-    transits = clusters,
+    weights = clusters,
     alpha = alpha,
     removed_edges = removed_edges,
     num_removed_edges = num_removed_edges,
     method = "disparity"
   )
+}
+
+#' Restore a Pruned Transition Network Analysis Model
+#'
+#' @rdname deprune
+#' @export
+#' @param x A `tna` object.
+#' @param ... Ignored.
+deprune <- function(x, ...) {
+  UseMethod("deprune")
+}
+
+#' @rdname deprune
+#' @export
+deprune.tna <- function(x, ...) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  tmp <- attr(x, "pruning")
+  stopifnot_(
+    !is.null(tmp),
+    "Argument {.arg x} must have been pruned."
+  )
+  stopifnot_(
+    tmp$active,
+    "Pruning must be active for argument {.arg x}."
+  )
+  tmp <- attr(x, "pruning")
+  tmp$active <- FALSE
+  x$weights <- tmp$original
+  attr(x, "pruning") <- tmp
+}
+
+#' Restore Previous Pruning of a Transition Network Analysis Model
+#'
+#' @rdname reprune
+#' @export
+#' @param x A `tna` object.
+#' @param ... Ignored.
+reprune <- function(x, ...) {
+  UseMethod("reprune")
+}
+
+#' @rdname deprune
+#' @export
+reprune.tna <- function(x, ...) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  tmp <- attr(x, "pruning")
+  stopifnot_(
+    !is.null(tmp),
+    "Argument {.arg x} must have been pruned."
+  )
+  stopifnot_(
+    !tmp$active,
+    "Pruning must not be active for argument {.arg x}."
+  )
+  tmp$active <- TRUE
+  x$weights <- tmp$weights
+  attr(x, "pruning") <- tmp
 }

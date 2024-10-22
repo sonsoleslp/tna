@@ -7,7 +7,7 @@
 \usage{
 bootstrap(x, ...)
 
-\method{bootstrap}{tna}(x, b = 1000, level = 0.05, cluster = 1)
+\method{bootstrap}{tna}(x, b = 1000, level = 0.05, cluster = 1, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
@@ -77,7 +77,7 @@ results <- bootstrap(tna_model, v = 1000, level = 0.05, cluster = 1)
 }
 \seealso{
 Evaluation and validation functions
-\code{\link{compare_tna_networks}()},
+\code{\link{permutation_test}()},
 \code{\link{prune}()}
 }
 \concept{evaluation}

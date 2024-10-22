@@ -6,6 +6,7 @@
 #' of transitions with confidence intervals and significance testing.
 #'
 #' @export
+#' @family evaluation
 #' @param x A `tna` object created from sequence data.
 #' @param b An integer specifying the number of bootstrap samples to
 #' be generated. Defaults to `1000`.
@@ -51,7 +52,6 @@
 #'      (insignificant transitions), the mean and standard deviation of their
 #'      weights, and the range of the removed edge weights.
 #'
-#' @family evaluation
 #' @examples
 #' \dontrun{
 #' # Bootstrap transition networks for a cluster
@@ -59,59 +59,54 @@
 #' }
 #'
 bootstrap <- function(x, ...) {
-  UseMethod("bootstrap", ...)
+  UseMethod("bootstrap")
 }
 
 #' @rdname bootstrap
 #' @export
-bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1) {
+bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
   stopifnot_(
-    !is.null(x),
+    !is.null(x$seq),
     "Argument {.arg x} must be a {.cls tna} object
-    created from a `TraMineR` sequence object."
+    created from sequence data."
   )
   d <- x$seq[[cluster]]
+  model <- build_markov_model(d, transitions = TRUE)
+  trans <- model$trans
   alphabet <- attr(d, "alphabet")
+  type <- attr(x, "type")
   dim_names <- list(alphabet, alphabet)
-  obs_matrix <- as.data.frame(d) |>
-    mutate(across(everything(), ~ replace(.x, which(!.x %in% alphabet), NA))) |>
-    mutate(across(everything(), as.integer)) |>
-    as.matrix()
-  n <- nrow(obs_matrix)
-  p <- ncol(obs_matrix)
+  n <- nrow(d)
   a <- length(alphabet)
-  idx <- seq_len(n)
-  trans <- array(0L, dim = c(n, a, a))
-  for (i in seq_len(p - 1)) {
-    from <- obs_matrix[, i]
-    to <- obs_matrix[, i + 1L]
-    any_na <- is.na(from) | is.na(to)
-    new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-    trans[new_trans] <- trans[new_trans] + 1L
+  weights <- apply(trans, c(2, 3), sum)
+  if (type = "prob") {
+    weights <- weights / .rowSums(weights, m = a, n = a)
   }
-  probs <- apply(trans, c(2, 3), sum)
-  probs <- probs / .rowSums(probs, m = a, n = a)
-  dimnames(probs) <- dim_names
-  boot_probs <- array(0L, dim = c(b, a, a))
+  dimnames(weights) <- dim_names
+  weights_boot <- array(0L, dim = c(b, a, a))
   p_values <- matrix(0, a, a)
   for (i in seq_len(b)) {
-    boot_trans <- trans[sample(idx, n, replace = TRUE), , ]
-    boot_freq <- apply(boot_trans, c(2, 3), sum)
-    boot_probs[i, , ] <- boot_freq / .rowSums(boot_freq, m = a, n = a)
-    p_values <- p_values + 1L * (boot_probs[i, , ] >= probs)
+    trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
+    freq_boot <- apply(trans_boot, c(2, 3), sum)
+    if (type == "prob") {
+      weights_boot[i, , ] <- freq_boot / .rowSums(freq_boot, m = a, n = a)
+    } else {
+      weights_boot[i, , ] <- freq_boot
+    }
+    p_values <- p_values + 1L * (weights_boot[i, , ] >= weights)
   }
   p_values <- p_values / b
-  mean_trans <- apply(boot_probs, c(2, 3), mean)
-  sd_trans <- apply(boot_probs, c(2, 3), stats::sd)
-  ci_lower <- apply(boot_probs, c(2, 3), stats::quantile, probs = level / 2)
-  ci_upper <- apply(boot_probs, c(2, 3), stats::quantile, probs = 1 - level / 2)
-  sig_trans <- (p_values < level) * probs
-  removed <- c(probs[sig_trans == 0])
+  mean_weights <- apply(weights_boot, c(2, 3), mean)
+  sd_weights <- apply(weights_boot, c(2, 3), stats::sd)
+  ci_lower <- apply(weights_boot, c(2, 3), stats::quantile, probs = level / 2)
+  ci_upper <- apply(weights_boot, c(2, 3), stats::quantile, probs = 1 - level / 2)
+  sig_weights <- (p_values < level) * weights
+  removed <- c(weights[sig_trans == 0])
   n_removed <- length(removed)
   any_removed <- n_removed > 0
-  mean_removed <- ifelse_(any_removed, mean(removed_edges), NA)
-  sd_removed <- ifelse_(any_removed, stats::sd(removed_edges), NA)
-  range_removed <- ifelse_(any_removed, range(removed_edges), c(NA, NA))
+  mean_removed <- ifelse_(any_removed, mean(removed), NA)
+  sd_removed <- ifelse_(any_removed, stats::sd(removed), NA)
+  range_removed <- ifelse_(any_removed, range(removed), c(NA, NA))
   dimnames(p_values) <- dim_names
   dimnames(mean_trans) <- dim_names
   dimnames(sd_trans) <- dim_names
@@ -119,24 +114,22 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1) {
   dimnames(ci_upper) <- dim_names
   dimnames(sig_trans) <- dim_names
   combined <- data.frame(
-    From = rep(alphabet, each = a),
-    To = rep(alphabet, times = a),
-    Edge_Weight = as.vector(probs),
+    from = rep(alphabet, each = a),
+    to = rep(alphabet, times = a),
+    edge_weight = as.vector(weights),
     p_value = as.vector(p_values),
-    CI_Lower = as.vector(ci_lower),
-    CI_Upper = as.vector(ci_upper)
+    ci_Lower = as.vector(ci_lower),
+    ci_Upper = as.vector(ci_upper)
   )
-
   list(
-    model = new_model,
     results = list(
-      original_trans = probs,
-      mean_trans = mean_transitions,
-      sd_trans = sd_transitions,
+      original_weights = weights,
+      mean_weights = mean_weights,
+      sd_weights = sd_weights,
       ci_lower = ci_lower,
       ci_upper = ci_upper,
       p_values = p_values,
-      sig_trans = sig_trans,
+      sig_trans = sig_weights,
       combined = combined,
       removed_edges_summary = list(
         n_removed = n_removed,
@@ -147,4 +140,3 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1) {
     )
   )
 }
-

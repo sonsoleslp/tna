@@ -56,6 +56,6 @@ network remains weakly connected.
 \seealso{
 Evaluation and validation functions
 \code{\link{bootstrap}()},
-\code{\link{compare_tna_networks}()}
+\code{\link{permutation_test}()}
 }
 \concept{evaluation}

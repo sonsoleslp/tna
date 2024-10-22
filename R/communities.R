@@ -1,28 +1,31 @@
 #' Community Detection for Transition Networks
 #'
-#' This function detects communities within the transition networks (represented
-#' by the `tna` object).
-#' It uses various algorithms to find communities in the graph representation of
-#' transitions and returns a list of communities for each cluster or a specified cluster.
+#' This function detects communities within the transition networks
+#' (represented by the `tna` object).
+#' It uses various algorithms to find communities in the graph representation
+#' of transitions and returns a `list` of communities for each cluster or a
+#' specified cluster. If multiple transition matrices exist, the function
+#' iterates over each cluster in the `tna` object to find communities using
+#' different algorithms. The function uses the `igraph` package to convert
+#' the transition matrices into graphs and then applies community detection
+#' algorithms (e.g., Walktrap, Fast Greedy, Label Propagation, Infomap,
+#' Edge Betweenness, Leading Eigenvector, and Spin Glass).
 #'
+#' @export
+#' @family patterns
 #' @param x A `tna` object that contains transition matrices.
 #' @param cluster An optional argument specifying which cluster to analyze.
 #' If `NULL`, the function will analyze all clusters in `x`.
-#' @param gamma A numeric parameter that affects the behavior of certain algorithms
-#' like the Spin Glass method. Defaults to `1`.
-#' @details
-#' If multiple transition matrices exist, the function iterates over each cluster
-#' in the `tna` object to find communities using different algorithms.
-#' The function uses the `igraph` package to convert the transition matrices into
-#' graphs and then applies community detection algorithms (e.g., Walktrap, Fast
-#' Greedy, Label Propagation, Infomap, Edge Betweenness, Leading Eigenvector,
-#' and Spin Glass).
+#' @param gamma A numeric parameter that affects the behavior of certain
+#' algorithms like the Spin Glass method. Defaults to `1`.
+#' @return An object of class `tna_communities` which is a `list` containing:
 #'
-#' @return A list where each element represents the result of community detection
-#' for a specific cluster. Each cluster's result is returned by the internal
-#' `find_communities` function, which provides community counts and assignments
-#' across different algorithms.
-#' @family patterns
+#'   * `counts`: A `list` with the number of communities found
+#'   by each algorithm.
+#'   * `assignments`: A `data.frame` where each row corresponds to a
+#'   node and each column to a community detection algorithm, with color-coded
+#'   community assignments.
+#'
 #' @examples
 #' \dontrun{
 #' # Detect communities for all clusters
@@ -31,7 +34,7 @@
 #' # Detect communities for a specific cluster
 #' communities <- community_detection(tna_model, cluster = 1)
 #' }
-#' @export
+#'
 find_communities <- function(x, ...) {
   UseMethod("find_communities")
 }
@@ -47,17 +50,15 @@ find_communities.tna <- function(x, cluster, gamma = 1) {
   out <- vector(mode = "list", length = n_clust)
   if (n_clust > 1L & is.missing(cluster)) {
     for (clust in seq_len(n_clust)) {
-        #info_(paste0("Finding communities for ", clus))
-        g <- igraph::graph_from_adjacency_matrix(
-          x$weights[[clust]],
-          mode = "directed",
-          weighted = TRUE
-        )
-        out[[clust]] <- find_communities(g, gamma = gamma)
+      g <- igraph::graph_from_adjacency_matrix(
+        x$weights[[clust]],
+        mode = "directed",
+        weighted = TRUE
+      )
+      out[[clust]] <- find_communities_(g, gamma = gamma)
     }
   } else {
     clust <- ifelse_(is.missing(cluster), 1L, cluster)
-    #info_(paste0("Finding communities for: ", clus))
     g <- igraph::graph_from_adjacency_matrix(
       x$weights[[clus]],
       mode = "directed",
@@ -67,33 +68,14 @@ find_communities.tna <- function(x, cluster, gamma = 1) {
   }
   structure(
     out,
-    class = "communities"
+    class = "tna_communities"
   )
 }
 
 #' Internal Community Detection Function
 #'
-#' This function detects communities in a given graph using various algorithms
-#' provided by the `igraph` package.
-#'
-#' @param g An `igraph` object representing the transition network.
-#' @param gamma A numeric parameter that influences the Spin Glass algorithm. Defaults to `1`.
-
-#' @details
-#' This function applies multiple community detection algorithms (e.g., Walktrap,
-#' Fast Greedy, Label Propagation, Infomap, Edge Betweenness, Leading Eigenvector,
-#' and Spin Glass) to the input graph `g`. It then constructs a dataframe of
-#' community assignments and a list of the number of communities detected by each algorithm.
-#'
-#' @return A `list` containing:
-#'
-#'   * `community_counts`: A `list` with the number of communities found
-#'   by each algorithm.
-#'   * `community_assignments`: A `data.frame` where each row corresponds to a
-#'   node and each column to a community detection algorithm, with color-coded
-#'   community assignments.
-#' }
-#'
+#' @param g An `igraph` graph object
+#' @inheritParams find_communities
 #' @noRd
 find_communities_ <- function(g, gamma = 1) {
   # Find communities using different algorithms and assign to named objects

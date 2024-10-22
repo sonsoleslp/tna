@@ -13,7 +13,7 @@ build_tna(x, ...)
 
 \method{build_tna}{default}(x, inits, ...)
 
-\method{build_tna}{matrix}(x, inits, colors = rep("white", nrow(x)), ...)
+\method{build_tna}{matrix}(x, inits, ...)
 
 \method{build_tna}{stslist}(x, colors, ...)
 
@@ -22,43 +22,39 @@ build_tna(x, ...)
 \method{build_tna}{mhmm}(x, colors, ...)
 }
 \arguments{
-\item{x}{A \code{stslist} object created with \code{\link[seqHMM:TraMineR_imports]{seqHMM::seqdef()}}
-describing a sequence of events or states to be used for building
+\item{x}{A \code{stslist} object describing a sequence of events or states to
+be used for building
 the Markov model or a \code{matrix} of transition probabilities with column
 names describing the states. If \code{x} is a matrix, it is assumed that the
 element on row \code{i} and column \code{j} is the transition probability (or weight)
 from state \code{i} to state \code{j}. It also accepts a \code{data.frame} object in wide format
 .  (each column is a timepoint with no extra columns)}
 
-\item{...}{Additional arguments passed to \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}} when \code{x} is
-a \code{stslist} object or \code{data.frame}.}
+\item{...}{Ignored.}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
 be scaled to unity.}
-
-\item{colors}{List of colors to use as nodes of the network}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{transits}\cr A \code{list} of adjacency matrices of the model
-(transition matrices) for each cluster.
-\item \code{inits}\cr A \code{list} of initial state probability vectors for each
+\item \code{weights}\cr A \code{list} of adjacency matrices of the model
+(weight matrices) for each cluster.
+\item \code{inits}\cr A \code{list} of initial weight vectors for each
 cluster. For matrices, this element will be \code{NULL} if \code{inits} is not
 directly provided
 \item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if there
 are no labels.
-\item \code{colors}\cr A \code{character} vector of the state colors, or \code{NULL}.
-\item \code{igraph_network}\cr A \code{list} of \code{igraph} directed graphs based on each
-transition probability matrix
+\item \code{seq}\cr The original sequence data converted to an internal format
+used by the package when \code{x} is a \code{stslist} or a \code{data.frame} object.
 }
 }
 \description{
 This function constructs a transition network analysis (TNA) model from a
 given sequence. It takes a sequence of events or states and builds a Markov
-model using \code{\link[seqHMM:build_mm]{seqHMM::build_mm()}}. It extracts the transition probabilities
+model. It extracts the transition probabilities
 and initial probabilities from the model and stores them in a \code{list} along
 with the state labels. Additionally, it creates a transition matrix with
 zero diagonal entries (without loops). Also accepts matrices of transition

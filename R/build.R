@@ -9,6 +9,7 @@
 #' probabilities and initial state probabilities directly.
 #'
 #' @export
+#' @family core
 #' @rdname build_tna
 #' @param x A `stslist` object describing a sequence of events or states to
 #'   be used for building
@@ -17,6 +18,9 @@
 #'   element on row `i` and column `j` is the transition probability (or weight)
 #'   from state `i` to state `j`. It also accepts a `data.frame` object in wide format
 #'.  (each column is a timepoint with no extra columns)
+#' @param type A `character` string describing the weight matrix type.
+#'   Currently supports `"prop"` for proportions (probabilities) and
+#'   `"freq"` for frequencies.
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
@@ -34,7 +38,6 @@
 #'   * `seq`\cr The original sequence data converted to an internal format
 #'     used by the package when `x` is a `stslist` or a `data.frame` object.
 #'
-#' @family core
 #' @examples
 #' tna_model <- build_tna(engagement)
 #' print(tna_model)
@@ -45,7 +48,7 @@ build_tna <- function(x, ...) {
 
 #' @export
 #' @rdname build_tna
-build_tna.default <- function(x, inits, ...) {
+build_tna.default <- function(x, type = "prop", inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -55,12 +58,12 @@ build_tna.default <- function(x, inits, ...) {
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  build_tna.matrix(x, inits, ...)
+  build_tna.matrix(x, type, inits, ...)
 }
 
 #' @export
 #' @rdname build_tna
-build_tna.matrix <- function(x, inits, ...) {
+build_tna.matrix <- function(x, type = "prop", inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -82,7 +85,7 @@ build_tna.matrix <- function(x, inits, ...) {
   if (!missing(inits)) {
     stopifnot_(
       length(inits) >= nc,
-      "Argument {.arg inits} must provide initial probabilities for all states."
+      "Argument {.arg inits} must provide initial weights for all states."
     )
     inits <- try_(as.numeric(inits))
     stopifnot_(
@@ -105,51 +108,58 @@ build_tna.matrix <- function(x, inits, ...) {
     }
   }
   names(inits) <- colnames(x)
+  check_tna_type(type)
+  check_tna_inits(inits, type)
   build_tna_(
     weights = list(x),
     inits = list(inits),
-    labels = colnames(x)
+    labels = colnames(x),
+    type = type
   )
 }
 
 #' @export
 #' @rdname build_tna
-build_tna.stslist <- function(x, colors, ...) {
+build_tna.stslist <- function(x, type = "prop", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
+  check_tna_type(type)
   x <- create_seqdata(x)
-  model <- build_model(x, ...)
+  model <- build_markov_model(x, type, ...)
   build_tna_(
     weights = list(model$weights),
     inits = list(model$inits),
     labels = attr(x, "labels"),
-    seq = list(x)
+    type = type,
+    seq = list(x),
   )
 }
 
 
 #' @export
 #' @rdname build_tna
-build_tna.data.frame <- function(x, colors, ...) {
+build_tna.data.frame <- function(x, type = "prop", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
+  check_tna_type(type)
   x <- create_seqdata(x)
-  model <- build_model(x, ...)
+  model <- build_markov_model(x, type, ...)
   build_tna_(
     weights = list(model$weights),
     inits = list(model$inits),
     labels = model$labels,
+    type = type,
     seq = list(x)
   )
 }
 
 #' @export
 #' @rdname build_tna
-build_tna.mhmm <- function(x, colors, ...) {
+build_tna.mhmm <- function(x, type = "prop", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -158,18 +168,19 @@ build_tna.mhmm <- function(x, colors, ...) {
     attr(x, "type") == "mmm",
     "Argument {.arg x} must be a mixed Markov model fit."
   )
+  check_tna_type(type)
   clusters <- names(x$transition_probs)
   n_clust <- length(clusters)
   seq <- vector(mode = "list", length = n_clust)
   cluster_assignment <- summary(x)$most_probable_cluster
   for (i in clusters) {
-  #  igraph_network[[i]] <- igraph::graph_from_adjacency_matrix(x$transition_probs[[i]], mode = "directed", weighted = TRUE)
     seq[[i]] <- x$observations[cluster_assignment == i, ]
   }
   build_tna_(
     weights = x$transition_probs,
     inits = x$initial_probs,
     labels = attr(x$observations, "labels"),
+    type = type,
     seq = seq
   )
 }
@@ -179,10 +190,10 @@ build_tna.mhmm <- function(x, colors, ...) {
 #' @param weights A `list` of `matrix` of transition probabilities.
 #' @param inits A `list` of `matrix` of initial state probabilities.
 #' @param labels A `character` vector of state labels.
-#' @param seq A `list` of `tna_seqdata` objects when cretead from sequence data.
+#' @param seq A `list` of `tna_seqdata` objects when created from sequence data.
 #' @return A `tna` object.
 #' @noRd
-build_tna_ <- function(weights, inits, labels, seq = NULL) {
+build_tna_ <- function(weights, inits, labels, type, seq = NULL) {
   structure(
     list(
       weights = weights,
@@ -190,6 +201,7 @@ build_tna_ <- function(weights, inits, labels, seq = NULL) {
       labels = labels,
       seq = seq
     ),
+    type = type,
     class = "tna"
   )
 }
@@ -220,7 +232,6 @@ build_tna_ <- function(weights, inits, labels, seq = NULL) {
 #' # Build the network without visualization
 #' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model, plot = FALSE)
 #' }
-#' @seealso `qgraph`, `igraph`
 #' @export
 build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, plot = TRUE) {
   stopifnot_(
@@ -261,6 +272,10 @@ build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, p
   return(Edge_betweeness)
 }
 
+#' Convert Sequence Data to an Internal Format
+#'
+#' @param x A `data.frame` or a `stslist` object.
+#' @noRd
 create_seqdata <- function(x) {
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
@@ -280,25 +295,32 @@ create_seqdata <- function(x) {
         )
       )
   }
-  structure(
-    out,
-    alphabet = alphabet,
-    labels = labels,
-    colors = colors
-    class = "data.frame"
-  )
-}
-
-build_model <- function(x, extract = c("prop"), transitions = FALSE) {
-  alphabet <- attr(x, "alphabet")
-  labels <- attr(x, "labels")
-  x <- x |>
+  out <- out |>
     dplyr::mutate(
       dplyr::across(
         dplyr::everything(), ~ replace(.x, which(!.x %in% alphabet), NA)
       )
     ) |>
     dplyr::mutate(dplyr::across(dplyr::everything(), as.integer))
+  structure(
+    out,
+    alphabet = alphabet,
+    labels = labels,
+    colors = colors,
+    class = "data.frame"
+  )
+}
+
+#' Build a Markov Model from Sequence Data
+#'
+#' @param x A data object from `create_seqdata()`
+#' @param type The type of transition network model to build
+#' @param transitions Should the individual-level transitions also be returned?
+#' Defaults to `FALSE`.
+#' @noRd
+build_markov_model <- function(x, type = c("prop"), transitions = FALSE) {
+  alphabet <- attr(x, "alphabet")
+  labels <- attr(x, "labels")
   m <- as.matrix(x)
   n <- nrow(m)
   p <- ncol(m)
@@ -314,7 +336,7 @@ build_model <- function(x, extract = c("prop"), transitions = FALSE) {
     trans[new_trans] <- trans[new_trans] + 1L
   }
   weights <- apply(trans, c(2, 3), sum)
-  if (extract == "prop") {
+  if (type == "prop") {
     weights <- weights / .rowSums(weights, m = a, n = a)
     inits <- inits / sum(inits)
   }
@@ -325,4 +347,27 @@ build_model <- function(x, extract = c("prop"), transitions = FALSE) {
     labels = labels,
     trans = onlyif(transitions, trans)
   )
+}
+
+#' Check Transition Network Type for Validity
+#'
+#' @param type Type of the transition network
+#' @noRd
+check_tna_type <- function(type) {
+  type <- onlyif(is.character(type), tolower(type))
+  type <- try(match.arg(type, c("prop", "freq")), silent = TRUE)
+  stopifnot_(
+    !inherits(type, "try-error"),
+    "Argument {.arg type} must be either {.val prop} or {.val freq}."
+  )
+}
+
+check_tna_inits <- function(inits, type) {
+  if (!missing(inits) && type == "prop") {
+    stopifnot_(
+      all(inits <= 1),
+      "Argument {.arg inits} must contain numeric values between 0 and 1 when
+      {.arg type} is {.val prop}."
+    )
+  }
 }

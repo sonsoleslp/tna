@@ -36,28 +36,18 @@ modularity matrix.
 community assignments.}
 }
 \description{
-This function visualizes the communities detected within a \code{tna} object based
-on different community detection algorithms and their corresponding color mappings.
-}
-\details{
-The function iterates over the \code{transits} element of the \code{tna} object and
-generates plots for each using the specified community detection method. The
-\code{community_assignment} provides the mapping of nodes to communities, and
-colors are assigned based on the \code{community} parameter's chosen algorithm.
+This function visualizes the communities detected within a \code{tna} object
+based on different community detection algorithms and their corresponding
+color mappings.
 }
 \examples{
 \dontrun{
-# Assuming 'tna_model' is a tna object and 'community_assignment'
-holds the respective community labels
 plot_communities(tna_model, community_assignment, "walktrap")
 }
+
 }
 \seealso{
 Pattern-finding functions
-\code{\link{find_communities}()},
-\code{\link{find_dyads}()},
-\code{\link{find_dyads_clusters}()},
-\code{\link{find_triads}()},
-\code{\link{find_triads_clusters}()}
+\code{\link{find_communities}()}
 }
 \concept{patterns}

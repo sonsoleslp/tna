@@ -6,34 +6,41 @@
 #' differences in transition probabilities, effect sizes, p-values, and confidence intervals.
 #'
 #' @export
+#' @family evaluation
 #' @param x A `tna` object containing sequence data for the first `tna` model.
 #' @param y A `tna` object containing sequence data for the second `tna` model.
-#' @param cluster1 An integer indicating the cluster to be used from the first `tna` model. Default is 1.
-#' @param cluster2 An integer indicating the cluster to be used from the second `tna` model. Default is 1.
+#' @param cluster1 An `integer` indicating the cluster to be used for
+#' the first `tna` model. Default is 1.
+#' @param cluster2 An `integer` indicating the cluster to be used for
+#' the second `tna` model. Default is 1.
 #' @param iter The number of permutations to perform. Default is 1000.
-#' @param paired Logical. If `TRUE`, perform paired permutation tests; if `FALSE`, perform unpaired tests. Default is `FALSE`.
-#' @param alpha The significance level for the permutation tests. Default is 0.05.
-#' @param progressbar Logical. If `TRUE`, display a progress bar during the permutation process. Default is `TRUE`.
+#' @param paired Logical. If `TRUE`, perform paired permutation tests;
+#' if `FALSE`, perform unpaired tests. Default is `FALSE`.
+#' @param alpha The significance level for the permutation tests.
+#' The default is 0.05.
+#' @return A `list` containing:
 #'
-#' @return A list containing:
-#'   * `edge_statistics` A data frame with edge names, original differences, p-values, effect sizes, and confidence intervals.
-#'   * `original_matrix1` The transition probability matrix from the first `tna` model
-#'   * `original_matrix2` The transition probability matrix from the second `tna` model.
-#'   * `difference_matrix` The matrix of differences in transition probabilities.}
-#'   * `significant_matrix` A matrix showing the significant edges based on the permutation tests.
+#'   * `edge_statistics` A data frame with edge names, original differences,
+#'   p-values, effect sizes, and confidence intervals.
+#'   * `original_matrix1` The transition probability matrix from
+#'   the first `tna` model
+#'   * `original_matrix2` The transition probability matrix from
+#'   the second `tna` model.
+#'   * `difference_matrix` The matrix of differences in transition
+#'   probabilities.
+#'   * `significant_matrix` A matrix showing the significant edges
+#'   based on the permutation tests.
 #'   * `significant_edges` A list of significant edges (p < alpha).
-#'   * `statistics_summary` A list of summary statistics including mean absolute differences and effect sizes.
+#'   * `statistics_summary` A list of summary statistics including
+#'   mean absolute differences and effect sizes.
 #'
-#' @family evaluation
 #' @examples
 #' \dontrun{
-#' # Assuming `network1` and `network2` are tna objects containing sequence data
-#' result <- compare_tna_networks(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
+#' result <- permutation_test(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
 #' }
 #'
 permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
-                                 paired = FALSE, alpha = 0.05,
-                                 progressbar = TRUE) {
+                             paired = FALSE, alpha = 0.05) {
   stopifnot_(
     !is.null(x),
     "Argument {.arg x} must be a {.cls tna} object created from the `TraMineR` sequence object."
@@ -56,13 +63,10 @@ permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
   n_combined <- n_seq1 + nrow(seq2)
   perm1 <- seq_len(n_seq1)
   perm2 <- seq(n_seq1 + 1L, n_combined)
-  combined_model <- build_model(combined_seq, transitions = TRUE)
+  combined_model <- build_markov_model(combined_seq, transitions = TRUE)
   combined_trans <- combined_model$trans
   perm_diffs <- array(0L, dim = c(iter, a, a))
   p_values <- matrix(0L, a, a)
-  #if (progressbar) {
-  #  pb <- utils::txtProgressBar(min = 0, max = iter, style = 3)
-  #}
   for (i in seq_len(iter)) {
     if (paired) {
       # For paired data, permute within pairs
@@ -81,13 +85,7 @@ permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
     perm_probs2 <- perm_probs2 / .rowSums(perm_probs2, m = a, n = a)
     perm_diffs[i, , ] <- perm_probs1 - perm_probs2
     p_values <- p_values + 1L * (abs(perm_diffs[i, , ]) >= true_diffs_abs)
-    #if (progressbar) {
-    #  utils::setTxtProgressBar(pb, i)
-    #}
   }
-  #if (progressbar) {
-  #  close(pb)
-  #}
   p_values <- p_values / iter
   edge_stats <- data.frame(
     edge_name = edge_names,
@@ -95,7 +93,6 @@ permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
     p_values = c(p_values),
     stringsAsFactors = FALSE
   )
-
   edge_stats
 
   # Calculate confidence intervals
