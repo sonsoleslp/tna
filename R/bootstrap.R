@@ -54,8 +54,7 @@ compute_transition_matrix <- function(sequence_stslist, original_trans_matrix) {
 
 # Function to perform bootstrapping on resampled sequence data
 bootstrap_transitions <- function(data, indices) {
-  resampled_sequence <- data[indices, , drop = FALSE]  # Resample the data
-  resampled_stslist <- suppressMessages(TraMineR::seqdef(resampled_sequence))
+  resampled_stslist <- data[indices, , drop = FALSE]  # Resample the data
   return(compute_transition_matrix(resampled_stslist))  # Compute transition matrix for resampled data
 }
 
@@ -151,9 +150,9 @@ bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, 
   original_trans_matrix_vector <- as.vector(original_trans_matrix) # Flatten the matrix
 
   bootstrap_results <- boot::boot(
-    data = as.data.frame(sequence_stslist),
+    data = sequence_stslist,
     statistic = bootstrap_transitions,
-    R = n_bootstrap
+    R = 1000
   )
 
   bootstrap_transitions <- bootstrap_results$t
@@ -163,8 +162,8 @@ bootstrap_tna <- function(x, n_bootstrap = 1000, sig_level = 0.05, cluster = 1, 
   sd_transitions <- apply(bootstrap_transitions, 2, stats::sd)
 
   # Confidence intervals
-  ci_lower <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = sig_level / 2))
-  ci_upper <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = 1 - sig_level / 2))
+  ci_lower <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = level / 2))
+  ci_upper <- apply(bootstrap_transitions, 2, function(x) stats::quantile(x, probs = 1 - level / 2))
 
   # p-values for each transition
   p_values <- sapply(1:length(original_trans_matrix_vector), function(i) {
