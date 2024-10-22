@@ -342,6 +342,7 @@ estimate_cs <- function(x, cluster = 1,
   trans <- model$trans
   a <- dim(trans)[2]
   n <- nrow(d)
+  n_seq <- seq_len(n)
   n_prop <- length(drop_prop)
   n_measures <- length(measures)
   type <- attr(x, "type")
@@ -366,7 +367,7 @@ estimate_cs <- function(x, cluster = 1,
     }
     corr_prop <- matrix(nrow = iter, ncol = n_measures)
     for (j in seq_len(iter)) {
-      keep <- sample(seq_len(n), n - n_drop, replace = FALSE)
+      keep <- sample(n_seq, n - n_drop, replace = FALSE)
       trans_sub <- trans[keep, , ]
       weight_sub <- compute_weights(trans_sub, type, a)
       corr_prop[j, ] <- vapply(
@@ -410,7 +411,7 @@ estimate_cs <- function(x, cluster = 1,
   structure(
     out,
     class = "tna_stability",
-    drop_prop = drop_prop
+    drop_prop = drop_prop,
     threshold = threshold
   )
 

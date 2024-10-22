@@ -162,7 +162,6 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
     is.null(model) | is_tna(model),
     "Argument {.arg modes} must be a single {.cls tna} model or empty."
   )
-
   # TODO some default colors function here that computes them from seq
   # without using seqHMM or TraMineR
   if (is.null(colors) & is_tna(model) & !is.null(model$colors)) {
@@ -199,35 +198,40 @@ plot.tna_cliques <- function(x, ...) {
 #'
 #' This function visualizes the centrality stability results produced by the
 #' `estimate_centrality_stability` function. It shows how different centrality
-#' measures' correlations change as varying proportions of cases are dropped, along with their confidence intervals (CIs).
+#' measures' correlations change as varying proportions of cases are dropped,
+#' along with their confidence intervals (CIs).
 #'
 #' @export
-#' @param stability_results A list of stability results produced by `estimate_centrality_stability`. Each centrality measure contains:
-#' - `correlations`: A matrix of correlations between the original centralities and resampled centralities for different proportions of dropped cases.
-#' - `cs_coefficient`: The centrality stability (CS) coefficient, which represents the proportion of dropped cases where the correlation drops below the specified threshold.
+#' @param x A `tna_stability` object produced by `estimate_cs`.
+#' @param level A `numeric` value representing the significance level for
+#' the confidence intervals. Defaults to `0.05`.
 #'
 #' @details
-#' The function aggregates the results for each centrality measure across multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and calculates the mean and standard deviation for each proportion. The confidence intervals (CIs) are computed based on the standard deviations and displayed in the plot.
+#' The function aggregates the results for each centrality measure across
+#' multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and
+#' calculates the mean and the desired quantiles for each proportion.
+#' The confidence intervals (CIs) are computed based on the quantiles
+#' and displayed in the plot.
 #'
-#' If no valid data is available for a centrality measure (e.g., missing or NA values), the function skips that measure with a warning.
+#' If no valid data is available for a centrality measure
+#' (e.g., missing or NA values), the function skips that measure with a warning.
 #'
 #' The plot includes:
 #'
-#' * The mean correlation for each centrality measure as a function of the proportion of dropped cases.
-#' * Shaded confidence intervals representing the 95% CIs for each centrality measure.
-#' * A horizontal dashed line at the threshold value used for calculating the CS-coefficient.
+#' * The mean correlation for each centrality measure as a function of the
+#'   proportion of dropped cases.
+#' * Shaded confidence intervals representing CIs for each centrality measure.
+#' * A horizontal dashed line at the threshold value used for calculating
+#'   the CS-coefficient.
 #' * A subtitle listing the CS-coefficients for each centrality measure.
 #'
 #' @return A `ggplot` object displaying the stability analysis plot.
-#'
 #' @examples
 #' \dontrun{
-#' # Assuming 'stability_results' is a list from estimate_centrality_stability()
 #' plot_stability_results(stability_results)
 #' }
 #'
-plot.tna_stability <- function(x, ...) {
-  # Iterate over all centrality measures, except detailed results
+plot.tna_stability <- function(x, level = 0.05, ...) {
   x$detailed_results <- NULL
   x_names <- names(x)
   drop_prop <- attr(x, "drop_prop")
@@ -237,8 +241,7 @@ plot.tna_stability <- function(x, ...) {
   for (i in seq_along(x)) {
     measure <- x_names[i]
     corr <- x[[measure]]$correlations
-
-    # Debugging step: check if measure_results has valid dimensions
+    # Check if measure_results has valid dimensions
     if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
       warning_(
         c("Warning: No valid data for measure ", measure, ". Skipping.")
@@ -247,8 +250,8 @@ plot.tna_stability <- function(x, ...) {
     }
     means <- apply(corr, 2, mean, na.rm = TRUE)
     # TODO make level as arg
-    ci_lower <- apply(corr, 2, quantile, probs = 0.025)
-    ci_upper <- apply(corr, 2, quantile, probs = 0.975)
+    ci_lower <- apply(corr, 2, quantile, probs = level / 2)
+    ci_upper <- apply(corr, 2, quantile, probs = 1 - level / 2)
     measure_data[[i]] <- data.frame(
       measure = measure,
       proportion = drop_prop,
@@ -283,6 +286,11 @@ plot.tna_stability <- function(x, ...) {
       linetype = "dashed",
       color = "gray50"
     ) +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      linetype = "solid",
+      color = "gray25"
+    ) +
     ggplot2::labs(
       title = "Centrality Stability Analysis",
       subtitle = paste("CS-Coeficients: ", cs_subtitle),
@@ -291,8 +299,9 @@ plot.tna_stability <- function(x, ...) {
       color = "Centrality Measure",
       fill = "Centrality Measure"
     ) +
+    ggplot2::scale_x_continuous(breaks = drop_prop) +
     ggplot2::theme_minimal() +
-    ggplot2::ylim(0, 1)
+    ggplot2::ylim(-1, 1)
 }
 
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
