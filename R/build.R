@@ -2,7 +2,7 @@
 #'
 #' This function constructs a transition network analysis (TNA) model from a
 #' given sequence. It takes a sequence of events or states and builds a Markov
-#' model using [seqHMM::build_mm()]. It extracts the transition probabilities
+#' model. It extracts the transition probabilities
 #' and initial probabilities from the model and stores them in a `list` along
 #' with the state labels. Additionally, it creates a transition matrix with
 #' zero diagonal entries (without loops). Also accepts matrices of transition
@@ -10,8 +10,8 @@
 #'
 #' @export
 #' @rdname build_tna
-#' @param x A `stslist` object created with [seqHMM::seqdef()]
-#'   describing a sequence of events or states to be used for building
+#' @param x A `stslist` object describing a sequence of events or states to
+#'   be used for building
 #'   the Markov model or a `matrix` of transition probabilities with column
 #'   names describing the states. If `x` is a matrix, it is assumed that the
 #'   element on row `i` and column `j` is the transition probability (or weight)
@@ -20,22 +20,19 @@
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
-#' @param colors List of colors to use as nodes of the network
-#' @param ... Additional arguments passed to [seqHMM::build_mm()] when `x` is
-#'   a `stslist` object or `data.frame`.
+#' @param ... Ignored.
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
-#'   * `transits`\cr A `list` of adjacency matrices of the model
-#'     (transition matrices) for each cluster.
-#'   * `inits`\cr A `list` of initial state probability vectors for each
+#'   * `weights`\cr A `list` of adjacency matrices of the model
+#'     (weight matrices) for each cluster.
+#'   * `inits`\cr A `list` of initial weight vectors for each
 #'     cluster. For matrices, this element will be `NULL` if `inits` is not
 #'     directly provided
 #'   * `labels`\cr A `character` vector of the state labels, or `NULL` if there
 #'     are no labels.
-#'   * `colors`\cr A `character` vector of the state colors, or `NULL`.
-#'   * `igraph_network`\cr A `list` of `igraph` directed graphs based on each
-#'      transition probability matrix
+#'   * `seq`\cr The original sequence data converted to an internal format
+#'     used by the package when `x` is a `stslist` or a `data.frame` object.
 #'
 #' @family core
 #' @examples
@@ -63,7 +60,7 @@ build_tna.default <- function(x, inits, ...) {
 
 #' @export
 #' @rdname build_tna
-build_tna.matrix <- function(x, inits, colors = rep("white", nrow(x)), ...) {
+build_tna.matrix <- function(x, inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -109,10 +106,8 @@ build_tna.matrix <- function(x, inits, colors = rep("white", nrow(x)), ...) {
   }
   names(inits) <- colnames(x)
   build_tna_(
-    transit_probs = list(x),
-    igraph_network = list(igraph::graph_from_adjacency_matrix(x, mode = "directed", weighted = TRUE)),
-    initial_probs = list(inits),
-    colors = colors,
+    weights = list(x),
+    inits = list(inits),
     labels = colnames(x)
   )
 }
@@ -124,17 +119,12 @@ build_tna.stslist <- function(x, colors, ...) {
     !missing(x),
     "Argument {.arg x} is missing."
   )
-  mkvmodel <- seqHMM::build_mm(x, ...)
-  cpal <- attr(x, "cpal")
-  if (!missing(colors)) {
-    cpal <- colors
-  }
+  x <- create_seqdata(x)
+  model <- build_model(x, ...)
   build_tna_(
-    transit_probs = list(mkvmodel$transition_probs),
-    initial_probs = list(mkvmodel$initial_probs),
-    igraph_network = list(igraph::graph_from_adjacency_matrix(mkvmodel$transition_probs, mode = "directed", weighted = TRUE)),
+    weights = list(model$weights),
+    inits = list(model$inits),
     labels = attr(x, "labels"),
-    colors = cpal,
     seq = list(x)
   )
 }
@@ -147,25 +137,13 @@ build_tna.data.frame <- function(x, colors, ...) {
     !missing(x),
     "Argument {.arg x} is missing."
   )
-  sequ <- TraMineR::seqdef(x)
-  mkvmodel <- seqHMM::build_mm(sequ, ...)
-  cpal <- attr(sequ, "cpal")
-  if (!missing(colors)) {
-    cpal <- colors
-  }
+  x <- create_seqdata(x)
+  model <- build_model(x, ...)
   build_tna_(
-    transit_probs = list(mkvmodel$transition_probs),
-    initial_probs = list(mkvmodel$initial_probs),
-    igraph_network = list(
-      igraph::graph_from_adjacency_matrix(
-        mkvmodel$transition_probs,
-        mode = "directed",
-        weighted = TRUE
-      )
-    ),
-    labels = attr(sequ, "labels"),
-    colors = cpal,
-    seq = list(sequ)
+    weights = list(model$weights),
+    inits = list(model$inits),
+    labels = model$labels,
+    seq = list(x)
   )
 }
 
@@ -180,46 +158,36 @@ build_tna.mhmm <- function(x, colors, ...) {
     attr(x, "type") == "mmm",
     "Argument {.arg x} must be a mixed Markov model fit."
   )
-
-  igraph_network <- list()
-  seq <- list()
+  clusters <- names(x$transition_probs)
+  n_clust <- length(clusters)
+  seq <- vector(mode = "list", length = n_clust)
   cluster_assignment <- summary(x)$most_probable_cluster
-  for (i in names(x$transition_probs)) {
-    igraph_network[[i]] <- igraph::graph_from_adjacency_matrix(x$transition_probs[[i]], mode = "directed", weighted = TRUE)
-    seq[[i]] <- x$observations[cluster_assignment == i,]
-  }
-  cpal <- attr(x$observations, "cpal")
-  if (!missing(colors)) {
-    cpal <- colors
+  for (i in clusters) {
+  #  igraph_network[[i]] <- igraph::graph_from_adjacency_matrix(x$transition_probs[[i]], mode = "directed", weighted = TRUE)
+    seq[[i]] <- x$observations[cluster_assignment == i, ]
   }
   build_tna_(
-    transit_probs = x$transition_probs,
-    initial_probs = x$initial_probs,
-    igraph_network = igraph_network,
-    seq = seq,
+    weights = x$transition_probs,
+    inits = x$initial_probs,
     labels = attr(x$observations, "labels"),
-    colors = cpal
+    seq = seq
   )
 }
 
 #' Build a Transition Network Analysis object
 #'
-#' @param transit_probs A `list` of `matrix` of transition probabilities.
-#' @param initial_probs A `list` of `matrix` of initial state probabilities.
+#' @param weights A `list` of `matrix` of transition probabilities.
+#' @param inits A `list` of `matrix` of initial state probabilities.
 #' @param labels A `character` vector of state labels.
-#' @param igraph_network A `list`  of `igraph` graphs for each transition matrix.
-#' @param colors A `character` vector of color values to use for the states.
+#' @param seq A `list` of `tna_seqdata` objects when cretead from sequence data.
 #' @return A `tna` object.
 #' @noRd
-build_tna_ <- function(transit_probs, initial_probs, labels, igraph_network, colors, seq = NULL) {
-
+build_tna_ <- function(weights, inits, labels, seq = NULL) {
   structure(
     list(
-      transits = transit_probs,
-      inits = onlyif(!missing(initial_probs), initial_probs),
+      weights = weights,
+      inits = onlyif(!missing(inits), inits),
       labels = labels,
-      igraph_network = igraph_network,
-      colors = onlyif(!missing(colors), colors),
       seq = seq
     ),
     class = "tna"
@@ -259,7 +227,7 @@ build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, p
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  adjacency_matrix <- x$transits[[cluster]]
+  adjacency_matrix <- x$weights[[cluster]]
   init_values <- x$inits[[cluster]]
   colors <- x$colors
   # Create a graph from the adjacency matrix
@@ -293,137 +261,68 @@ build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, p
   return(Edge_betweeness)
 }
 
-build_model <- function(observations, extract = "proportions", by_timepoint = FALSE, n_timepoints = NULL, with_missing = FALSE) {
-  # Function to get ordered unique values
-  ordered_unique <- function(x) {
-    ux <- unique(x)
-    ux[order(match(ux, x))]
+create_seqdata <- function(x) {
+  if (inherits(x, "stslist")) {
+    alphabet <- attr(x, "alphabet")
+    labels <- attr(x, "labels")
+    colors <- attr(x, "cpal")
+    out <- as.data.frame(x)
+  } else if (is.data.frame(x)) {
+    vals <- sort(unique(unlist(x)))
+    alphabet <- labels <- vals[!is.na(vals)]
+    # TODO default colors for data.frame
+    colors <- NULL
+    out <- x |>
+      dplyr::mutate(
+        dplyr::across(
+          dplyr::everything(),
+          ~ factor(.x, levels = vals)
+        )
+      )
   }
-
-  # Validate input
-  if (!inherits(observations, "stslist") && !is.matrix(observations) && !is.data.frame(observations)) {
-    stop("Observations must be an stslist object from TraMineR or a wide-format data frame/matrix.")
-  }
-
-  # Convert to matrix if necessary
-  obs_matrix <- ifelse_(
-    is.matrix(observations),
-    observations,
-    as.matrix(observations)
+  structure(
+    out,
+    alphabet = alphabet,
+    labels = labels,
+    colors = colors
+    class = "data.frame"
   )
-
-  # Handle n_timepoints
-  if (!is.null(n_timepoints)) {
-    if (n_timepoints > ncol(obs_matrix)) {
-      stop("n_timepoints cannot be greater than the number of columns in observations.")
-    }
-    obs_matrix <- obs_matrix[, seq_len(n_timepoints), drop = FALSE]
-  }
-
-  # Determine state names
-  all_state_names <- ordered_unique(as.vector(obs_matrix))
-
-  # If with.missing is FALSE, remove NA, NaN, and "%" from state names
-  if (!with_missing) {
-    all_state_names <- all_state_names[!is.na(all_state_names) & all_state_names != "%" & all_state_names != "NaN"]
-  }
-
-  # Calculate initial probabilities
-  initial_states <- factor(obs_matrix[, 1], levels = all_state_names)
-  initial_freq <- tabulate(initial_states, nbins = length(all_state_names))
-  initial_probs <- initial_freq / sum(initial_freq)
-
-  # Initialize transition matrices
-  n_states <- length(all_state_names)
-  transition_freq <- matrix(0, nrow = n_states, ncol = n_states, dimnames = list(all_state_names, all_state_names))
-  timepoint_matrices <- if(by_timepoint) vector("list", ncol(obs_matrix) - 1) else NULL
-
-  # Calculate transition frequencies
-  for (i in 1:(ncol(obs_matrix) - 1)) {
-    from_states <- obs_matrix[, i]
-    to_states <- obs_matrix[, i + 1]
-
-    if (!with.missing) {
-      valid_transitions <- from_states %in% all_state_names & to_states %in% all_state_names
-      from_states <- from_states[valid_transitions]
-      to_states <- to_states[valid_transitions]
-    }
-
-    from_states <- factor(from_states, levels = all_state_names)
-    to_states <- factor(to_states, levels = all_state_names)
-
-    transitions <- table(from_states, to_states)
-    transition_freq <- transition_freq + transitions
-
-    if (by_timepoint) {
-      timepoint_matrices[[i]] <- transitions
-    }
-  }
-
-  # Calculate transition probabilities
-  transition_probs <- transition_freq / rowSums(transition_freq)
-  transition_probs[is.nan(transition_probs)] <- 0
-
-  # Prepare result
-  result <- list(
-    state_names = all_state_names,
-    initial_probs = initial_probs
-  )
-
-  if (extract == "proportions") {
-    result$transition_probs <- transition_probs
-    result$freq_transition_probs <- transition_freq
-  } else if (extract == "frequencies") {
-    result$transition_probs <- transition_freq
-    result$prob_transition_probs <- transition_probs
-    result$freq_initial_probs <- initial_freq
-  }
-
-  if (by_timepoint) {
-    if (extract == "proportions") {
-      result$timepoint_matrices <- lapply(timepoint_matrices, function(x) {
-        probs <- x / rowSums(x)
-        probs[is.nan(probs)] <- 0
-        probs
-      })
-      result$freq_timepoint_matrices <- timepoint_matrices
-    } else if (extract == "frequencies") {
-      result$timepoint_matrices <- timepoint_matrices
-      result$prob_timepoint_matrices <- lapply(timepoint_matrices, function(x) {
-        probs <- x / rowSums(x)
-        probs[is.nan(probs)] <- 0
-        probs
-      })
-    }
-  }
-
-  # If with.missing is TRUE, remove NA, NaN, and "%" from final matrices
-  if (with.missing) {
-    valid_states <- !is.na(all_state_names) & all_state_names != "%" & all_state_names != "NaN"
-    result$state_names <- all_state_names[valid_states]
-    result$initial_probs <- result$initial_probs[valid_states]
-
-    if (extract == "proportions") {
-      result$transition_probs <- result$transition_probs[valid_states, valid_states]
-      result$freq_transition_probs <- result$freq_transition_probs[valid_states, valid_states]
-    } else if (extract == "frequencies") {
-      result$transition_probs <- result$transition_probs[valid_states, valid_states]
-      result$prob_transition_probs <- result$prob_transition_probs[valid_states, valid_states]
-      result$freq_initial_probs <- result$freq_initial_probs[valid_states]
-    }
-
-    if (by_timepoint) {
-      if (extract == "proportions") {
-        result$timepoint_matrices <- lapply(result$timepoint_matrices, function(x) x[valid_states, valid_states])
-        result$freq_timepoint_matrices <- lapply(result$freq_timepoint_matrices, function(x) x[valid_states, valid_states])
-      } else if (extract == "frequencies") {
-        result$timepoint_matrices <- lapply(result$timepoint_matrices, function(x) x[valid_states, valid_states])
-        result$prob_timepoint_matrices <- lapply(result$prob_timepoint_matrices, function(x) x[valid_states, valid_states])
-      }
-    }
-  }
-
-  return(result)
 }
 
-
+build_model <- function(x, extract = c("prop"), transitions = FALSE) {
+  alphabet <- attr(x, "alphabet")
+  labels <- attr(x, "labels")
+  x <- x |>
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::everything(), ~ replace(.x, which(!.x %in% alphabet), NA)
+      )
+    ) |>
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.integer))
+  m <- as.matrix(x)
+  n <- nrow(m)
+  p <- ncol(m)
+  a <- length(alphabet)
+  idx <- seq_len(n)
+  trans <- array(0L, dim = c(n, a, a))
+  inits <- table(m[, 1L])
+  for (i in seq_len(p - 1)) {
+    from <- m[, i]
+    to <- m[, i + 1L]
+    any_na <- is.na(from) | is.na(to)
+    new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+    trans[new_trans] <- trans[new_trans] + 1L
+  }
+  weights <- apply(trans, c(2, 3), sum)
+  if (extract == "prop") {
+    weights <- weights / .rowSums(weights, m = a, n = a)
+    inits <- inits / sum(inits)
+  }
+  dimnames(weights) <- list(alphabet, alphabet)
+  list(
+    weights = weights,
+    inits = inits,
+    labels = labels,
+    trans = onlyif(transitions, trans)
+  )
+}

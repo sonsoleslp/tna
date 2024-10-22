@@ -40,7 +40,7 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
     checkmate::test_integerish(
       x = cluster,
       lower = 1,
-      upper = length(x$transits),
+      upper = length(x$weights),
       any.missing = FALSE,
       len = 1,
       null.ok = FALSE
@@ -52,7 +52,7 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
     missing(cluster2) || checkmate::test_integerish(
       x = cluster2,
       lower = 1,
-      upper = length(x$transits),
+      upper = length(x$weights),
       any.missing = FALSE,
       len = 1,
       null.ok = FALSE
@@ -60,9 +60,10 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
     "Argument {.arg cluster2} must be a single integer value between 1 and
      the number of clusters."
   )
+  # TODO replace this
   transits <- ifelse_(
     is.null(attr(x, "pruning")),
-    x$transits,
+    x$weights,
     attr(x, "pruning")$transits
   )
   cluster <- as.integer(cluster)

@@ -89,26 +89,26 @@ centralities.tna <- function(x, loops = FALSE, cluster = NULL,
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  if (length(x$transits) == 1L) {
+  if (length(x$weights) == 1L) {
     centralities_(
-      x$transits[[1]],
+      x$weights[[1]],
       loops = loops,
       normalize = normalize,
       measures = measures
     )
-  } else if (length(x$transits) > 1L && !is.null(cluster)) {
+  } else if (length(x$weights) > 1L && !is.null(cluster)) {
     centralities_(
-      x$transits[[cluster]],
+      x$weights[[cluster]],
       loops = loops,
       normalize = normalize,
       measures = measures
     )
-  } else if (length(x$transits) > 1L) {
+  } else if (length(x$weights) > 1L) {
     centrality_list <- list()
-    clusternames <- names(x$transits)
-    for (i in seq_along(x$transits)){
+    clusternames <- names(x$weights)
+    for (i in seq_along(x$weights)){
       centrality_list[[i]] <- centralities_(
-        x$transits[[i]],
+        x$weights[[i]],
         loops = loops,
         normalize = normalize,
         measures = measures
@@ -210,7 +210,6 @@ centralities_ <- function(x, loops, normalize, measures) {
   )
 }
 
-
 #' Convert a dataframe to a centralities object
 #'
 #' @export
@@ -219,8 +218,6 @@ centralities_ <- function(x, loops, normalize, measures) {
 as_centralities <- function(df) {
   structure(df, class = c("centralities", "tbl_df", "tbl", "data.frame"))
 }
-
-
 
 #' Compute diffusion centrality measure
 #'

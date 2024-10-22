@@ -9,7 +9,7 @@ compare_tna_networks(
   y,
   cluster1 = 1,
   cluster2 = 1,
-  it = 1000,
+  iter = 1000,
   paired = FALSE,
   alpha = 0.05,
   progressbar = TRUE
@@ -24,7 +24,7 @@ compare_tna_networks(
 
 \item{cluster2}{An integer indicating the cluster to be used from the second \code{tna} model. Default is 1.}
 
-\item{it}{The number of permutations to perform. Default is 1000.}
+\item{iter}{The number of permutations to perform. Default is 1000.}
 
 \item{paired}{Logical. If \code{TRUE}, perform paired permutation tests; if \code{FALSE}, perform unpaired tests. Default is \code{FALSE}.}
 
@@ -34,13 +34,15 @@ compare_tna_networks(
 }
 \value{
 A list containing:
-\item{edge_statistics}{A data frame with edge names, original differences, p-values, effect sizes, and confidence intervals.}
-\item{original_matrix1}{The transition probability matrix from the first \code{tna} model}
-\item{original_matrix2}{The transition probability matrix from the second \code{tna} model.}
-\item{difference_matrix}{The matrix of differences in transition probabilities.}
-\item{significant_matrix}{A matrix showing the significant edges based on the permutation tests.}
-\item{significant_edges}{A list of significant edges (p < alpha).}
-\item{statistics_summary}{A list of summary statistics including mean absolute differences and effect sizes.}
+\itemize{
+\item \code{edge_statistics} A data frame with edge names, original differences, p-values, effect sizes, and confidence intervals.
+\item \code{original_matrix1} The transition probability matrix from the first \code{tna} model
+\item \code{original_matrix2} The transition probability matrix from the second \code{tna} model.
+\item \code{difference_matrix} The matrix of differences in transition probabilities.}
+\item \code{significant_matrix} A matrix showing the significant edges based on the permutation tests.
+\item \code{significant_edges} A list of significant edges (p < alpha).
+\item \code{statistics_summary} A list of summary statistics including mean absolute differences and effect sizes.
+}
 }
 \description{
 This function compares two networks built from sequence data using permutation tests.
@@ -53,13 +55,11 @@ differences in transition probabilities, effect sizes, p-values, and confidence 
 # Assuming `network1` and `network2` are tna objects containing sequence data
 result <- compare_tna_networks(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
 }
+
 }
 \seealso{
 Evaluation and validation functions
-\code{\link{bootstrap_tna}()},
+\code{\link{bootstrap}()},
 \code{\link{prune}()}
-}
-\author{
-Mohammed Saqr (\email{mohammed.saqr@uef.fi})
 }
 \concept{evaluation}

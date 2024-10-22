@@ -26,16 +26,17 @@ test_that("non-coercible arguments fail", {
   )
 })
 
-test_that("build_tna works with sequence data", {
-  seq_data <- TraMineR::seqdef(seqHMM::biofam3c$married)
-  tna_model <- build_tna(seq_data)
-
-  expect_s3_class(tna_model, "tna")
-  expect_true(is.list(tna_model$transits))
-  expect_true(is.list(tna_model$inits))
-  expect_true(is.character(tna_model$labels))
-  expect_true(is.character(tna_model$colors))
-})
+# TODO internal sequence data
+#test_that("build_tna works with sequence data", {
+#  seq_data <- TraMineR::seqdef(seqHMM::biofam3c$married)
+#  tna_model <- build_tna(seq_data)
+#
+#  expect_s3_class(tna_model, "tna")
+#  expect_true(is.list(tna_model$transits))
+#  expect_true(is.list(tna_model$inits))
+#  expect_true(is.character(tna_model$labels))
+#  expect_true(is.character(tna_model$colors))
+#})
 
 # test_that("build_tna works with matrix data without inits", {
 #   trans_matrix <- create_mock_matrix()

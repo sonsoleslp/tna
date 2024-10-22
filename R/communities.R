@@ -43,13 +43,13 @@ find_communities.tna <- function(x, cluster, gamma = 1) {
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  n_clust <- length(x$transits)
+  n_clust <- length(x$weights)
   out <- vector(mode = "list", length = n_clust)
   if (n_clust > 1L & is.missing(cluster)) {
     for (clust in seq_len(n_clust)) {
         #info_(paste0("Finding communities for ", clus))
         g <- igraph::graph_from_adjacency_matrix(
-          x$transits[[clust]],
+          x$weights[[clust]],
           mode = "directed",
           weighted = TRUE
         )
@@ -59,7 +59,7 @@ find_communities.tna <- function(x, cluster, gamma = 1) {
     clust <- ifelse_(is.missing(cluster), 1L, cluster)
     #info_(paste0("Finding communities for: ", clus))
     g <- igraph::graph_from_adjacency_matrix(
-      x$transits[[clus]],
+      x$weights[[clus]],
       mode = "directed",
       weighted = TRUE
     )

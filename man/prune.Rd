@@ -46,7 +46,6 @@ weights, or the disparity algorithm TODO cite. It ensures the
 network remains weakly connected.
 }
 \examples{
-# TODO why dontrun
 \dontrun{
   tna_model <- build(engagement)
   pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
@@ -56,7 +55,7 @@ network remains weakly connected.
 }
 \seealso{
 Evaluation and validation functions
-\code{\link{bootstrap_tna}()},
+\code{\link{bootstrap}()},
 \code{\link{compare_tna_networks}()}
 }
 \concept{evaluation}

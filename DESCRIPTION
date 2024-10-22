@@ -26,15 +26,12 @@ Imports:
     igraph,
     qgraph,
     rlang,
-    seqHMM,
     tibble,
     stats,
-    TraMineR
 Suggests: 
     backbone,
     parallel,
     doParallel,
-    boot,
     gt,
     knitr,
     rmarkdown,
