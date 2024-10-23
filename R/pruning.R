@@ -7,7 +7,7 @@
 #'
 #' @param x An object of class `tna`
 #' @param method A `character` string describing the pruning method.
-#' The available options are `"threshold"`, `"lowest"`, `"percentile"`, and
+#' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
 #' `"disparity"`, corresponding to the methods listed in Details. The default
 #' is `"threshold"`.
 #' @param threshold A numeric value specifying the edge weight threshold.
@@ -18,6 +18,10 @@
 #' considered for removal. The default is `0.05`.
 #' @param alpha A `numeric` value representing the significance level for the
 #' disparity filter. Defaults to `0.5`.
+#' @param boot A `tna_bootstrap` object to be used for pruning with method
+#' `"boot"`. The method argument is ignored if this argument is supplied.
+#' @param ... Arguments passeed to [bootstrap()] when
+#' using `metod = "bootstrap"` and when a `tna_bootstrap` is not supplied.
 #' @family evaluation
 #' @return A list containing:
 #'
@@ -33,21 +37,21 @@
 #'   pruned_disparity <- prune(tna_model, "disparity", alpha = 0.5)
 #' }
 #' @export
-prune <- function(x, method = c("threshold", "lowest", "disparity"),
-                  threshold = 0.1, lowest = 0.05, alpha = 0.5) {
+prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
+                  alpha = 0.5, boot = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
   method <- onlyif(is.character(method), tolower(method))
   method <- try(
-    match.arg(method, c("threshold", "lowest", "disparity")),
+    match.arg(method, c("threshold", "lowest", "bootstrap", "disparity")),
     silent = TRUE
   )
   stopifnot_(
     !inherits(method, "try-error"),
-    "Argument {.arg scales} must be either {.val threshold}, {.val lowest},
-     or {.val disparity}."
+    "Argument {.arg method} must be either {.val threshold}, {.val lowest},
+     {.val bootstrap}, or {.val disparity}."
   )
   stopifnot_(
     is.numeric(threshold) && threshold > 0,
@@ -67,82 +71,91 @@ prune <- function(x, method = c("threshold", "lowest", "disparity"),
     seq_len(ncol(x$weights[[1]])),
     x$labels
   )
-  tmp <- ifelse_(
-    method == "disparity",
-    prune_disparity(x, alpha, labels),
+  tmp <- switch(
+    method,
+    bootstrap = prune_bootstrap(x, boot, ...),
+    disparity = prune_disparity(x, alpha, labels),
     prune_default(x, method, threshold, lowest, labels)
   )
   tmp$original <- x$weights
   tmp$active <- TRUE
   x$weights <- tmp$weights
   attr(x, "pruning") <- tmp
-  #info_("\nNetwork Pruning Results: \n")
-  #info_("------------------------\n")
-
-  # Prepare the result
-  # result <- list(
-  #   pruned = x,
-  #   removed_edges = removed_edges,
-  #   num_removed_edges =  sapply(removed_edges,nrow),
-  #   threshold_used = cut_offs,
-  #   method_used = methods
-  # )
-
   x
 }
 
 prune_default <- function(x, method, threshold, lowest, labels) {
-  clusters <- x$weights
-  n_clust <- length(clusters)
+  n_clust <- length(x$weights)
   cut_offs <- numeric(n_clust)
-  removed_edges <- vector(mode = "list", length = n_clust)
-  num_removed_edges <- integer(n_clust)
-  for (clust in seq_len(n_clust)) {
-    pruned_matrix <- clusters[[clust]]
-    pos_edges_idx <- pruned_matrix > 0
-    pos_edges <- pruned_matrix[pos_edges_idx]
+  removed <- vector(mode = "list", length = n_clust)
+  pruned <- vector(mode = "list", length = n_clust)
+  num_removed <- integer(n_clust)
+  num_retained <- integer(n_clust)
+  for (i in seq_len(n_clust)) {
+    weights <- x$weights[[i]]
+    pos_edges_idx <- weights > 0
+    n_edges <- sum(pos_edges_idx)
+    pos_edges <- weights[pos_edges_idx]
     cut_off <- switch(
       method,
       threshold = threshold,
       lowest = stats::quantile(pos_edges, probs = lowest)
     )
     to_remove_idx <- which(
-      pos_edges_idx & pruned_matrix <= cut_off,
+      pos_edges_idx & weights <= cut_off,
       arr.ind = TRUE
     )
     n_remove <- nrow(to_remove_idx)
-    to_remove_edges <- data.frame(
+    to_remove <- data.frame(
       from = labels[to_remove_idx[, 1]],
       to = labels[to_remove_idx[, 2]],
-      weight = pruned_matrix[to_remove_idx]
+      weight = weights[to_remove_idx]
     )
     removed_idx <- logical(n_remove)
-    for (i in seq_len(n_remove)) {
-      row <- to_remove_idx[i, 1]
-      col <- to_remove_idx[i, 2]
-      tmp <- pruned_matrix
+    for (j in seq_len(n_remove)) {
+      row <- to_remove_idx[j, 1]
+      col <- to_remove_idx[j, 2]
+      tmp <- weights
       tmp[row, col] <- 0
       if (is_weakly_connected(tmp)) {
-        pruned_matrix <- tmp
-        removed_idx[i] <- TRUE
+        weights <- tmp
+        removed_idx[j] <- TRUE
       }
     }
-    clusters[[clust]] <- pruned_matrix
-    cut_offs[clust] <- cut_off
-    removed_edges[[clust]] <- to_remove_edges[removed_idx, ]
-    num_removed_edges[clust] <- sum(removed_idx)
+    pruned[[i]] <- weights
+    cut_offs[i] <- cut_off
+    removed[[i]] <- to_remove[removed_idx, ]
+    num_removed[i] <- sum(removed_idx)
+    num_retained[i] <- n_edges - num_removed[i]
   }
   list(
-    weights = clusters,
+    weights = pruned,
+    method = method,
+    threshold = threshold,
+    lowest = lowest,
     cut_offs = cut_offs,
-    removed = removed_edges,
-    num_removed = num_removed_edges,
-    method = method
+    removed = removed,
+    num_removed = num_removed,
+    num_retained = num_retained
+  )
+}
+
+prune_bootstrap <- function(x, boot, ...) {
+  # TODO multiple clusters for bootstrap
+  if (is.null(boot)) {
+    boot <- bootstrap(x, ...)
+  }
+  list(
+    weights = list(boot$sig_weights),
+    method = "bootstrap",
+    removed = boot$combined,
+    num_removed = boot$removed_edges_summary$num_removed,
+    num_retained = boot$removed_edges_summary$num_retained
   )
 }
 
 
-# TODO integrate to pruning
+# TODO integrate documentation to pruning docs
 # #' Apply Disparity Filter to Transition Matrix in a tna Object
 # #'
 # #' The `disparity` function applies a disparity filter to the transition matrix
@@ -166,35 +179,87 @@ prune_default <- function(x, method, threshold, lowest, labels) {
 
 
 prune_disparity <- function(x, alpha, labels) {
-  clusters <- x$weights
-  n_clust <- length(clusters)
-  removed_edges <- vector(mode = "list", length = n_clust)
-  num_removed_edges <- integer(n_clust)
-  for (clust in seq_len(n_clust)) {
-    transition_matrix <- clusters[[clust]]
-    disparity_filtered <- backbone::disparity(transition_matrix, alpha)
-    pruned_matrix <- disparity_filtered * transition_matrix
-    dimnames(pruned_matrix) <- dimnames(transition_matrix)
-    clusters[[clust]] <- pruned_matrix
+  n_clust <- length(x$weights)
+  removed <- vector(mode = "list", length = n_clust)
+  pruned <- vector(mode = "list", length = n_clust)
+  num_removed <- integer(n_clust)
+  num_retained <- integer(n_clust)
+  for (i in seq_len(n_clust)) {
+    weights <- x$weights[[i]]
+    n_edges <- sum(weights > 0)
+    disparity_filtered <- backbone::disparity(weights, alpha)
+    weights_pruned <- disparity_filtered * weights
+    dimnames(weights_pruned) <- dimnames(weights)
+    pruned[[i]] <- weights_pruned
     removed_idx <- which(
-      pruned_matrix == 0 & transition_matrix != 0,
+      weights_pruned == 0 & weights != 0,
       arr.ind = TRUE
     )
-    num_removed_edges[clust] <- nrow(removed_idx)
-    removed_edges[[clust]] <- data.frame(
+    num_removed[i] <- nrow(removed_idx)
+    num_retained[i] <- n_edges - num_removed[i]
+    removed[[i]] <- data.frame(
       from = labels[removed_idx[, 1]],
       to = labels[removed_idx[, 2]],
-      weight = c(transition_matrix[removed_idx])
+      weight = c(weights[removed_idx])
     )
   }
   list(
-    weights = clusters,
+    weights = pruned,
+    method = "disparity",
     alpha = alpha,
-    removed_edges = removed_edges,
-    num_removed_edges = num_removed_edges,
-    method = "disparity"
+    removed = removed,
+    num_removed = num_removed,
+    num_retained = num_retained
   )
 }
+
+#' Print Detailed Information on the Pruning Results
+#'
+#' @rdname pruning_details
+#' @export
+#' @param x A `tna` object.
+#' @param removed_edges Should a `data.frame` of removed edges be printed?
+#' The default is `FALSE`.
+#' @param ... Ignored.
+pruning_details <- function(x, ...) {
+  UseMethod("pruning_details")
+}
+
+#' @rdname pruning_details
+#' @export
+pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
+  pruning <- attr(x, "pruning")
+  stopifnot_(
+    !is.null(pruning),
+    "Argument {.arg x} must have been pruned."
+  )
+  method_txt <- switch(
+    pruning$method,
+    threshold = paste0("User-specified threshold (", pruning$threshold, ")"),
+    lowest = paste0("Lowest ", pruning$lowest * 100, "% of non-zero edges"),
+    bootstrap = "Bootstrapping",
+    disparity = paste0("Disparity filter (alpha = ", pruning$alpha, ")")
+  )
+  cat("**Pruning Details**\n")
+  cat("\nMethod used:", method_txt)
+  cat("\nNumber of removed edges:", cs(pruning$num_removed))
+  cat("\nNumber of retained edges:", cs(pruning$num_retained))
+  n_clust <- length(x$weights)
+  has_clust <- n_clust > 1
+  clust_names <- names(x$weights)
+  cat(
+    "\n\n**Removed edges",
+    onlyif(has_clust, " by cluster"),
+    "**\n\n",
+    sep = ""
+  )
+  for (i in seq_along(n_clust)) {
+    onlyif(has_clust, cat(paste0(clust_names[i], ":\n")))
+    print(pruning$removed[[i]])
+    onlyif(has_clust, cat("\n"))
+  }
+}
+
 
 #' Restore a Pruned Transition Network Analysis Model
 #'

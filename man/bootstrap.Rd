@@ -22,28 +22,25 @@ hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
 use for bootstrapping. Defaults to \code{1}.}
 }
 \value{
-A \code{list} containing:
+A \code{tna_bootstrap} object which is a \code{list} containing the
+following elements:
 \itemize{
-\item \code{model}: A new \code{tna} object based on the significant transition matrix.
-\item \code{results}: A list containing the following elements:
-\itemize{
-\item \code{original_trans}: The original transition \code{matrix} for the selected
+\item \code{original_weights}: The original weights \code{matrix} for the selected
 cluster.
-\item \code{mean_trans}: The mean transition \code{matrix} from the bootstrap samples.
-\item \code{sd_trans}: The standard deviation \code{matrix} from the bootstrap samples.
+\item \code{mean_weights}: The mean weight \code{matrix} from the bootstrap samples.
+\item \code{sd_weights}: The standard deviation \code{matrix} from the bootstrap samples.
 \item \code{ci_lower}: The lower bound \code{matrix} of the confidence intervals for
 the transitions.
 \item \code{ci_upper}: The upper bound \code{matrix} of the confidence intervals for
 the transitions.
 \item \code{p_values}: The \code{matrix} of p-values for the transitions.
-\item \code{sig_trans}: The \code{matrix} of significant transitions
+\item \code{sig_weight}: The \code{matrix} of significant transitions
 (those with p-values below the significance level).
 \item \code{combined}: A \code{data.frame} summarizing the transitions, their weights,
 p-values, and confidence intervals.
 \item \code{removed_edges_summary}: A list summarizing the number of removed edges
 (insignificant transitions), the mean and standard deviation of their
 weights, and the range of the removed edge weights.
-}
 }
 }
 \description{

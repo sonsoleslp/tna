@@ -133,7 +133,7 @@ build_tna.stslist <- function(x, type = "prop", ...) {
     inits = list(model$inits),
     labels = attr(x, "labels"),
     type = type,
-    seq = list(x),
+    seq = list(x)
   )
 }
 
@@ -208,8 +208,12 @@ build_tna_ <- function(weights, inits, labels, type, seq = NULL) {
 
 #' Build and Visualize a Network with Edge Betweenness
 #'
-#' This function builds a network from a transition matrix in a `tna` object and computes edge betweenness for the network. Optionally, it visualizes the network using the `qgraph` package, with the edge thickness representing the edge betweenness values.
+#' This function builds a network from a transition matrix in a `tna` object
+#' and computes edge betweenness for the network. Optionally, it visualizes the
+#' network using the `qgraph` package, with the edge thickness representing the
+#' edge betweenness values.
 #'
+#' @export
 #' @param x A `tna` object containing transition matrices and associated metadata.
 #' @param cluster An integer specifying which cluster to analyze. Defaults to `1`.
 #' @param layout A numeric matrix or character string specifying the layout of the network for the visualization. If `NULL`, a default layout is used. Defaults to `NULL`.
@@ -222,54 +226,60 @@ build_tna_ <- function(weights, inits, labels, type, seq = NULL) {
 #'
 #' The layout of the network can be customized via the `layout` parameter, which can either be a predefined layout from `qgraph` or a user-specified matrix of node positions.
 #'
-#' @return A data frame where each row represents an edge, and columns include the source and target nodes, and the calculated edge betweenness.
+#' @return A `tna` object where edge betweenness represents the edge weights.
 #'
 #' @examples
-#' # Build and visualize the network for the first cluster
 #' \dontrun{
+#' # Build and visualize the network for the first cluster
 #' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model)
 #'
 #' # Build the network without visualization
 #' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model, plot = FALSE)
 #' }
+betweenness_network <- function(x, ...) {
+  UseMethod("betweenness_network")
+}
+
+#' @rdname betweenness_network
 #' @export
-build_network_with_edge_betweenness <- function(x, cluster = 1, layout = NULL, plot = TRUE) {
+betweenness_network.tna <- function(x, cluster = 1, layout = NULL) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  adjacency_matrix <- x$weights[[cluster]]
-  init_values <- x$inits[[cluster]]
-  colors <- x$colors
-  # Create a graph from the adjacency matrix
-  bg <- igraph::graph_from_adjacency_matrix(adjacency_matrix, weighted = TRUE, mode = "directed")
+  weights <- x$weights[[cluster]]
+  seq <- onlyif(!is.null(x$seq), x$seq[[cluster]])
+  g <- as.igraph(x, cluster = cluster)
+  betweenness <- igraph::edge_betweenness(g, directed = TRUE)
+  weights[weights > 0] <- betweenness
+  build_tna_(
+    weights = list(weights),
+    inits = x$inits[cluster],
+    labels = x$labels,
+    type = "betweenness",
+    seq = list(seq)
+  )
 
-  # Calculate edge betweenness and prepare the edge data frame
-  Edge_betweeness <- cbind(igraph::as_data_frame(bg),
-                           Edge_betweenness = igraph::edge_betweenness(bg, directed = TRUE)) |>
-    dplyr::select(-weight) |>
-    dplyr::rename(weight = 3)
-
-  if(plot) {
-    # Plot the network with qgraph
-    print(qgraph::qgraph(
-      Edge_betweeness,
-      theme = "colorblind",
-      layout = onlyif(!is.null(layout), layout),
-      minimum = 0.03,
-      mar = c(4, 4, 4, 4),
-      cut = 5,
-      edge.labels = TRUE,
-      title = "",
-      colors = onlyif(!is.null(colors), colors),
-      pie = init_values,
-      pieBorder = 0.2,
-      edge.label.cex = 1.5,
-      maximum = 0.6,
-      vsize = 10
-    ))
-  }
-  return(Edge_betweeness)
+  # if(plot) {
+  #   # Plot the network with qgraph
+  #   print(qgraph::qgraph(
+  #     Edge_betweeness,
+  #     theme = "colorblind",
+  #     layout = onlyif(!is.null(layout), layout),
+  #     minimum = 0.03,
+  #     mar = c(4, 4, 4, 4),
+  #     cut = 5,
+  #     edge.labels = TRUE,
+  #     title = "",
+  #     colors = onlyif(!is.null(colors), colors),
+  #     pie = init_values,
+  #     pieBorder = 0.2,
+  #     edge.label.cex = 1.5,
+  #     maximum = 0.6,
+  #     vsize = 10
+  #   ))
+  # }
+  # return(Edge_betweeness)
 }
 
 #' Convert Sequence Data to an Internal Format
@@ -281,12 +291,12 @@ create_seqdata <- function(x) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
     colors <- attr(x, "cpal")
+    colors <- ifelse_(is.null(colors), color_palette(length(labels)), colors)
     out <- as.data.frame(x)
   } else if (is.data.frame(x)) {
     vals <- sort(unique(unlist(x)))
     alphabet <- labels <- vals[!is.na(vals)]
-    # TODO default colors for data.frame
-    colors <- NULL
+    colors <- color_palette(length(labels))
     out <- x |>
       dplyr::mutate(
         dplyr::across(

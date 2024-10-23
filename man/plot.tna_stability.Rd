@@ -4,14 +4,13 @@
 \alias{plot.tna_stability}
 \title{Plot Centrality Stability Results}
 \usage{
-\method{plot}{tna_stability}(x, ...)
+\method{plot}{tna_stability}(x, level = 0.05, ...)
 }
 \arguments{
-\item{stability_results}{A list of stability results produced by \code{estimate_centrality_stability}. Each centrality measure contains:
-\itemize{
-\item \code{correlations}: A matrix of correlations between the original centralities and resampled centralities for different proportions of dropped cases.
-\item \code{cs_coefficient}: The centrality stability (CS) coefficient, which represents the proportion of dropped cases where the correlation drops below the specified threshold.
-}}
+\item{x}{A \code{tna_stability} object produced by \code{estimate_cs}.}
+
+\item{level}{A \code{numeric} value representing the significance level for
+the confidence intervals. Defaults to \code{0.05}.}
 }
 \value{
 A \code{ggplot} object displaying the stability analysis plot.
@@ -19,24 +18,31 @@ A \code{ggplot} object displaying the stability analysis plot.
 \description{
 This function visualizes the centrality stability results produced by the
 \code{estimate_centrality_stability} function. It shows how different centrality
-measures' correlations change as varying proportions of cases are dropped, along with their confidence intervals (CIs).
+measures' correlations change as varying proportions of cases are dropped,
+along with their confidence intervals (CIs).
 }
 \details{
-The function aggregates the results for each centrality measure across multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and calculates the mean and standard deviation for each proportion. The confidence intervals (CIs) are computed based on the standard deviations and displayed in the plot.
+The function aggregates the results for each centrality measure across
+multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and
+calculates the mean and the desired quantiles for each proportion.
+The confidence intervals (CIs) are computed based on the quantiles
+and displayed in the plot.
 
-If no valid data is available for a centrality measure (e.g., missing or NA values), the function skips that measure with a warning.
+If no valid data is available for a centrality measure
+(e.g., missing or NA values), the function skips that measure with a warning.
 
 The plot includes:
 \itemize{
-\item The mean correlation for each centrality measure as a function of the proportion of dropped cases.
-\item Shaded confidence intervals representing the 95\% CIs for each centrality measure.
-\item A horizontal dashed line at y = 0.7, indicating the typical threshold used for calculating the CS-coefficient.
+\item The mean correlation for each centrality measure as a function of the
+proportion of dropped cases.
+\item Shaded confidence intervals representing CIs for each centrality measure.
+\item A horizontal dashed line at the threshold value used for calculating
+the CS-coefficient.
 \item A subtitle listing the CS-coefficients for each centrality measure.
 }
 }
 \examples{
 \dontrun{
-# Assuming 'stability_results' is a list from estimate_centrality_stability()
 plot_stability_results(stability_results)
 }
 

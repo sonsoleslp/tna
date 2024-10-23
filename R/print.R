@@ -19,23 +19,59 @@ print.tna_communities <- function(x, ...) {
     is_tna_communities(x),
     "Argument {.arg x} must be a {.cls tna_communities} object."
   )
-  # TODO
-  print(x)
+  n_clust <- length(x)
+  has_clust <- n_clust > 1
+  for (i in seq_len(n_clust)) {
+    onlyif(has_clust, cat("Cluster", i, "\n"))
+    cat("Number of communities found by each algorithm:\n")
+    print(x[[i]]$counts)
+    cat("\nCommunity assignments:\n")
+    print(x[[i]]$assignments)
+    onlyif(has_clust, cat("\n"))
+  }
+  invisible(x)
 }
 
 #' Print Found Cliques
 #'
 #' @param x A `tna_cliques` object.
+#' @param n An `integer` defining the maximum number of cliques to show.
+#' The defaults is 6.
+#' @param first An `integer` giving the index of the first clique to show.
+#' The default index is 1.
+#' @param digits An `integer` giving the number of digits to show for the edge
+#' weights in the cliques. The default is 3.
 #' @param ... Ignored.
 #' @export
 #'
-print.tna_cliques <- function(x, ...) {
+print.tna_cliques <- function(x, n = 6, first = 1, digits = 3, ...) {
   stopifnot_(
     is_tna_cliques(x),
     "Argument {.arg x} must be a {.cls cliques} object."
   )
-  # TODO
-  print(x)
+  n_cliques <- length(x$weights)
+  size <- attr(x, "size")
+  if (n_cliques == 0) {
+    cat("No ", size, "-cliques were found in the network.", sep = "")
+    return(invisible(x))
+  }
+  threshold <- attr(x, "threshold")
+  cluster <- attr(x, "cluster")
+  cat(
+    "Number of ", size, "-cliques: ", n_cliques, " ",
+    "(weight threshold = ", threshold, ", cluster = ", cluster, ")\n",
+    sep = ""
+  )
+  max_cliques <- min(first + n - 1L, n_cliques)
+  cat(
+    "Showing ", max_cliques, " cliques starting from clique number ", first,
+    sep = ""
+  )
+  cat("\n")
+  for (i in seq(first, max_cliques)) {
+    cat("\nClique ", i, ":\n", sep = "")
+    print(round(x$weights[[i]], digits))
+  }
 }
 
 
@@ -57,28 +93,36 @@ print.tna <- function(x, digits = 2, generic = FALSE, ...) {
     return()
   }
   type <- attr(x, "type")
-  mat_type <- ifelse_(type == "prop", "Probability", "Frequency")
-  init_type <- ifelse_(type == "prop", "Probabilities", "Frequencies")
-  cat("\n**State Labels:**\n")
+  mat_type <- switch(
+    type,
+    prop = "Transition Probability",
+    freq = "Transition Frequency",
+    betweenness = "Edge Betweenness"
+  )
+  # TODO what to do for init with betweenness
+  init_type <- ifelse_(
+    type %in% c("prop", "betweenness"),
+    "Probabilities",
+    "Frequencies"
+  )
+  cat("State Labels\n\n")
   cat(paste(x$labels, collapse = ", "), "\n")
-  cat("\n**", mat_type, " Matrix:**\n", sep = "")
-  if (length(x$weights) == 1) {
-    print(x$weights[[1]], digits = digits)
-  } else {
-    for (i in names(x$weights)) {
-      cat(paste0(i, ":\n"))
-      print(x$weights[[i]], digits = digits)
-      cat("\n")
-    }
+  cat("\n", mat_type, " Matrix\n\n", sep = "")
+  n_clust <- length(x$weights)
+  has_clust <- n_clust > 1
+  clust_names <- names(x$weights)
+  for (i in seq_len(n_clust)) {
+    onlyif(has_clust, cat(paste0(clust_names[i], ":\n")))
+    print(x$weights[[i]])
+    onlyif(has_clust, cat("\n"))
   }
-  cat("\n**Initial ", init_type, ":**\n", sep = "")
-  if (length(x$inits) == 1) {
-    print(x$inits[[1]], digits = digits)
-  } else {
-    for (i in names(x$inits)) {
-      cat(paste0(i, ":\n"))
-      print(x$inits[[i]], digits = digits)
-      cat("\n")
-    }
+  cat("\nInitial ", init_type, "\n\n", sep = "")
+  for (i in seq_len(n_clust)) {
+    init <- x$inits[[i]]
+    names(init) <- x$labels
+    onlyif(has_clust, cat(paste0(clust_names[i], ":\n")))
+    print(init)
+    onlyif(has_clust, cat("\n"))
   }
+  invisible(x)
 }

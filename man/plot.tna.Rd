@@ -8,12 +8,12 @@
   x,
   cluster = 1,
   cluster2,
-  colors = x$colors,
+  labels,
+  colors,
+  pie,
   edge.labels = TRUE,
-  labels = x$labels,
   layout = "circle",
   mar = rep(5, 4),
-  pie = x$inits[[cluster]],
   cut = 0.1,
   minimum = 0.05,
   theme = "colorblind",
@@ -30,17 +30,17 @@ Defaults to the first cluster.}
 The difference between the transition probabilities of \code{cluster} and
 \code{cluster2} will be plotted.}
 
+\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{layout}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 

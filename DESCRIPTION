@@ -18,21 +18,19 @@ BugReports: https://github.com/sonsoleslp/tna/issues/
 Depends:
     R (>= 3.6.0)
 Imports:
+    backbone,
     checkmate,
     cli,
+    colorspace,
     dplyr,
-    foreach,
     ggplot2,
     igraph,
     qgraph,
+    RColorBrewer,
     rlang,
     tibble,
-    stats,
+    stats
 Suggests: 
-    backbone,
-    parallel,
-    doParallel,
-    gt,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

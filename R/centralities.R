@@ -88,40 +88,43 @@ centralities.tna <- function(x, loops = FALSE, cluster = NULL,
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  if (length(x$weights) == 1L) {
-    centralities_(
-      x$weights[[1]],
-      loops = loops,
-      normalize = normalize,
-      measures = measures
-    )
-  } else if (length(x$weights) > 1L && !is.null(cluster)) {
-    centralities_(
+  colors <- NULL
+  if (length(x$weights) == 1L || !is.null(cluster)) {
+    cluster <- ifelse_(is.null(cluster), 1, cluster)
+    out <- centralities_(
       x$weights[[cluster]],
       loops = loops,
       normalize = normalize,
       measures = measures
     )
-  } else if (length(x$weights) > 1L) {
-    centrality_list <- list()
-    clusternames <- names(x$weights)
-    for (i in seq_along(x$weights)){
-      centrality_list[[i]] <- centralities_(
-        x$weights[[i]],
-        loops = loops,
-        normalize = normalize,
-        measures = measures
-      )
-      centrality_list[[i]]$Cluster <- clusternames[i]
+    if (!is.null(x$seq)) {
+      attr(out, "colors") <- attr(x$seq[[cluster]], "colors")
     }
-    structure(
-      dplyr::bind_rows(centrality_list) |>
-        dplyr::mutate(
-          Cluster = factor(!!rlang::sym("Cluster"), levels = clusternames)
-        ),
-      class = c("tna_centralities", "tbl_df", "tbl", "data.frame")
-    )
+    return(out)
   }
+  centrality_list <- list()
+  color_list <- list()
+  cluster_names <- names(x$weights)
+  for (i in seq_along(x$weights)){
+    centrality_list[[i]] <- centralities_(
+      x$weights[[i]],
+      loops = loops,
+      normalize = normalize,
+      measures = measures
+    )
+    centrality_list[[i]]$Cluster <- cluster_names[i]
+    if (!is.null(x$seq)) {
+      color_list[[i]] <- attr(x$seq[[i]], "colors")
+    }
+  }
+  structure(
+    dplyr::bind_rows(centrality_list) |>
+      dplyr::mutate(
+        Cluster = factor(!!rlang::sym("Cluster"), levels = cluster_names)
+      ),
+    class = c("tna_centralities", "tbl_df", "tbl", "data.frame"),
+    color = color_list
+  )
 }
 
 #' @export
@@ -197,7 +200,7 @@ centralities_ <- function(x, loops, normalize, measures) {
       dplyr::mutate(
         State = factor(!!rlang::sym("State"), levels = rownames(out))
       ),
-    class = c("centralities", "tbl_df", "tbl", "data.frame")
+    class = c("tna_centralities", "tbl_df", "tbl", "data.frame")
   )
 }
 

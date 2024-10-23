@@ -6,17 +6,19 @@
 \usage{
 prune(
   x,
-  method = c("threshold", "lowest", "disparity"),
+  method = "threshold",
   threshold = 0.1,
   lowest = 0.05,
-  alpha = 0.5
+  alpha = 0.5,
+  boot = NULL,
+  ...
 )
 }
 \arguments{
 \item{x}{An object of class \code{tna}}
 
 \item{method}{A \code{character} string describing the pruning method.
-The available options are \code{"threshold"}, \code{"lowest"}, \code{"percentile"}, and
+The available options are \code{"threshold"}, \code{"lowest"}, \code{"bootstrap"} and
 \code{"disparity"}, corresponding to the methods listed in Details. The default
 is \code{"threshold"}.}
 
@@ -30,6 +32,12 @@ considered for removal. The default is \code{0.05}.}
 
 \item{alpha}{A \code{numeric} value representing the significance level for the
 disparity filter. Defaults to \code{0.5}.}
+
+\item{boot}{A \code{tna_bootstrap} object to be used for pruning with method
+\code{"boot"}. The method argument is ignored if this argument is supplied.}
+
+\item{...}{Arguments passeed to \code{\link[=bootstrap]{bootstrap()}} when
+using \code{metod = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.}
 }
 \value{
 A list containing:

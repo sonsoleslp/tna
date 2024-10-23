@@ -7,7 +7,7 @@
 \usage{
 find_communities(x, ...)
 
-\method{find_communities}{tna}(x, cluster, gamma = 1)
+\method{find_communities}{tna}(x, cluster = NULL, gamma = 1)
 }
 \arguments{
 \item{x}{A \code{tna} object that contains transition matrices.}
@@ -19,7 +19,8 @@ If \code{NULL}, the function will analyze all clusters in \code{x}.}
 algorithms like the Spin Glass method. Defaults to \code{1}.}
 }
 \value{
-An object of class \code{tna_communities} which is a \code{list} containing:
+An object of class \code{tna_communities} which is a \code{list} with an
+element for each cluster containing:
 \itemize{
 \item \code{counts}: A \code{list} with the number of communities found
 by each algorithm.
@@ -52,6 +53,6 @@ communities <- community_detection(tna_model, cluster = 1)
 }
 \seealso{
 Pattern-finding functions
-\code{\link{plot_communities}()}
+\code{\link{plot.tna_communities}()}
 }
 \concept{patterns}

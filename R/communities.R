@@ -18,7 +18,8 @@
 #' If `NULL`, the function will analyze all clusters in `x`.
 #' @param gamma A numeric parameter that affects the behavior of certain
 #' algorithms like the Spin Glass method. Defaults to `1`.
-#' @return An object of class `tna_communities` which is a `list` containing:
+#' @return An object of class `tna_communities` which is a `list` with an
+#'   element for each cluster containing:
 #'
 #'   * `counts`: A `list` with the number of communities found
 #'   by each algorithm.
@@ -41,34 +42,36 @@ find_communities <- function(x, ...) {
 
 #' @rdname find_communities
 #' @export
-find_communities.tna <- function(x, cluster, gamma = 1) {
+find_communities.tna <- function(x, cluster = NULL, gamma = 1) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
   n_clust <- length(x$weights)
   out <- vector(mode = "list", length = n_clust)
-  if (n_clust > 1L & is.missing(cluster)) {
-    for (clust in seq_len(n_clust)) {
+  if (n_clust > 1L & missing(cluster)) {
+    for (i in seq_len(n_clust)) {
       g <- igraph::graph_from_adjacency_matrix(
-        x$weights[[clust]],
+        x$weights[[i]],
         mode = "directed",
         weighted = TRUE
       )
-      out[[clust]] <- find_communities_(g, gamma = gamma)
+      out[[i]] <- find_communities_(g, gamma = gamma)
     }
   } else {
-    clust <- ifelse_(is.missing(cluster), 1L, cluster)
+    cluster <- ifelse_(is.null(cluster), 1L, cluster)
     g <- igraph::graph_from_adjacency_matrix(
-      x$weights[[clus]],
+      x$weights[[cluster]],
       mode = "directed",
       weighted = TRUE
     )
-    out[[clust]] <- find_communities_(g, gamma = gamma)
+    out[[1]] <- find_communities_(g, gamma = gamma)
   }
   structure(
     out,
-    class = "tna_communities"
+    class = "tna_communities",
+    cluster = cluster,
+    tna = x
   )
 }
 
@@ -114,11 +117,13 @@ find_communities_ <- function(g, gamma = 1) {
   # Infomap algorithm
   communities$infomap <- igraph::cluster_infomap(
     g,
-    e.weights = igraph::E(g)$weight)
+    e.weights = igraph::E(g)$weight
+  )
   mapping$infomap <- igraph::membership(communities$infomap) |>
     as.numeric()
 
   # Edge betweenness algorithm
+  # TODO warning?
   communities$edge_betweenness <- igraph::cluster_edge_betweenness(
     g,
     weights = igraph::E(g)$weight
@@ -128,9 +133,11 @@ find_communities_ <- function(g, gamma = 1) {
     as.numeric()
 
   # Leading eigenvector algorithm
+  # TODO how should the graph be converted to undirected
+  g_un <- igraph::as.undirected(g, mode = "collapse")
   communities$leading_eigen <- igraph::cluster_leading_eigen(
-    g,
-    weights = igraph::E(g)$weight
+    g_un,
+    weights = igraph::E(g_un)$weight
   )
   mapping$leading_eigen <- igraph::membership(communities$leading_eigen) |>
     as.numeric()
@@ -153,13 +160,5 @@ find_communities_ <- function(g, gamma = 1) {
       )
     )
   )
-
-  # Print the number of communities found by each algorithm
-  # info_("Number of communities found by each algorithm:\n")
-  # info_(paste(result$community_counts, collapse = ", "))
-
-  # Display the community assignments dataframe
-  # info_("\nCommunity assignments:\n")
-  # print_(result$community_assignments)
 
 }

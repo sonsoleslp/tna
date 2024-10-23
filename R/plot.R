@@ -1,3 +1,37 @@
+#' Plot a Histogram of Edge Weights in the Network
+#'
+#' @inheritParams graphics::hist
+#' @export
+hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
+                     main = "Histogram of Edge Weights",
+                     xlab, border = "white", ...) {
+  w <- c(x$weights[[cluster]])
+  type <- attr(x, "type")
+  if (missing(xlab)) {
+    xlab <- paste0(
+      "Edge Weights (",
+      ifelse_(type == "prop", "Probabilities", "Frequencies"),
+      ")"
+    )
+  }
+  if (missing(breaks)) {
+    breaks <- ifelse_(
+      type == "prop",
+      seq(0, 1, length.out = 20),
+      seq(0, max(w), length.out = 20)
+    )
+  }
+  hist(
+    x = w,
+    breaks = breaks,
+    col = col,
+    main = main,
+    xlab = xlab,
+    border = border,
+    ...
+  )
+}
+
 #' Plot a Transition Network Analysis Model
 #'
 #' This function plots a transition network analysis (TNA) model using
@@ -28,10 +62,10 @@
 #' tna_model <- build_tna(engagement)
 #' plot(tna_model)
 #'
-plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
-                     edge.labels = TRUE, labels = x$labels, layout = "circle",
-                     mar = rep(5, 4), pie = x$inits[[cluster]],
-                     cut = 0.1, minimum = 0.05, theme = "colorblind", ...) {
+plot.tna <- function(x, cluster = 1, cluster2, labels, colors, pie,
+                     edge.labels = TRUE, layout = "circle",
+                     mar = rep(5, 4), cut = 0.1, minimum = 0.05,
+                     theme = "colorblind", ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -60,6 +94,19 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
     "Argument {.arg cluster2} must be a single integer value between 1 and
      the number of clusters."
   )
+  if (missing(pie)) {
+    pie <- x$inits[[cluster]]
+  }
+  if (missing(labels)) {
+    labels <- x$labels
+  }
+  if (missing(colors)) {
+    colors <- ifelse_(
+      is.null(x$seq[[cluster]]),
+      color_palette(length(x$labels)),
+      attr(x$seq[[cluster]], "colors")
+    )
+  }
   cluster <- as.integer(cluster)
   cluster2 <- onlyif(!missing(cluster2), as.integer(cluster2))
   qgraph::qgraph(
@@ -79,37 +126,38 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
     theme = theme,
     ...
   )
+  invisible(x)
 }
 
 # TODO is this needed
-#' #' Plot Transition Networks for All Clusters
-#' #'
-#' #' This function plots the transition networks for each cluster in a `tna` object.
-#' #' It iterates through the transition matrices for each cluster and generates
-#' #' corresponding plots using the `plot.tna` function.
-#' #'
-#' #' @param x A `tna` object containing transition matrices for different clusters.
-#' #' @param ... Additional arguments to be passed to the `plot.tna` function.
-#' #'
-#' #' @return A series of plots showing the transition networks for each cluster.
-#' #' @family core
-#' #' @examples
-#' #' \dontrun{
-#' #' # Assuming `tna_model` is a tna object containing transition matrices
-#' #' plot_clusters(tna_model)
-#' #' }
-#' #' @export
-#' plot_clusters <- function(x, ...) {
-#'   stopifnot_(
-#'     is_tna(x),
-#'     "Argument {.arg x} must be a {.cls tna} object."
-#'   )
-#'   result <- list()
-#'   matrices <- x$transits
-#'   for (clus in seq_along(matrices)) {
-#'     plot.tna(x, cluster = clus, ...)
-#'   }
-#' }
+# #' Plot Transition Networks for All Clusters
+# #'
+# #' This function plots the transition networks for each cluster in a `tna` object.
+# #' It iterates through the transition matrices for each cluster and generates
+# #' corresponding plots using the `plot.tna` function.
+# #'
+# #' @param x A `tna` object containing transition matrices for different clusters.
+# #' @param ... Additional arguments to be passed to the `plot.tna` function.
+# #'
+# #' @return A series of plots showing the transition networks for each cluster.
+# #' @family core
+# #' @examples
+# #' \dontrun{
+# #' # Assuming `tna_model` is a tna object containing transition matrices
+# #' plot_clusters(tna_model)
+# #' }
+# #' @export
+# plot_clusters <- function(x, ...) {
+#   stopifnot_(
+#     is_tna(x),
+#     "Argument {.arg x} must be a {.cls tna} object."
+#   )
+#   result <- list()
+#   matrices <- x$transits
+#   for (clus in seq_along(matrices)) {
+#     plot.tna(x, cluster = clus, ...)
+#   }
+# }
 
 
 #' Plot Centrality Measures
@@ -121,6 +169,7 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
 #' [centralities()] for details on the centrality measures.
 #'
 #' @export
+#' @family core
 #' @param x An object of class `tna_centralities`.
 #' @param ncol Number of columns to use for the facets. The default is 3.
 #' @param scales Either `"fixed"` or `"free_x"` (the default). If `"free_x"`,
@@ -134,7 +183,6 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
 #' @param labels A `logical` value indicating whether to show the centrality
 #'   numeric values. The default is `TRUE`.
 #' @param ... Ignored.
-#' @family core
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
 #' @examples
@@ -144,10 +192,10 @@ plot.tna <- function(x, cluster = 1, cluster2, colors = x$colors,
 #' plot(cm, ncol = 4, reorder = TRUE)
 #'
 plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
-                              ncol = 3, scales = c("free_x", "fixed"),
-                              colors = NULL, labels = TRUE, ...) {
+                                  ncol = 3, scales = c("free_x", "fixed"),
+                                  colors = NULL, labels = TRUE, ...) {
   stopifnot_(
-    is_centralities(x),
+    is_tna_centralities(x),
     "Argument {.arg x} must be a {.cls tna_centralities} object."
   )
   stopifnot_(
@@ -162,14 +210,13 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
     is.null(model) | is_tna(model),
     "Argument {.arg modes} must be a single {.cls tna} model or empty."
   )
-  # TODO some default colors function here that computes them from seq
-  # without using seqHMM or TraMineR
-  if (is.null(colors) & is_tna(model) & !is.null(model$colors)) {
-    colors <- model$colors
-  } else if (is.null(colors)) {
-    colors = rep("black", length.out = length(unique(x$State)))
-  } else if (length(colors) == 1){
-    colors = rep(colors, length.out = length(unique(x$State)))
+  if (is.null(colors)) {
+    colors <- attr(x, "colors")
+  }
+  if (is.null(colors)) {
+    colors <- rep("black", length.out = length(unique(x$State)))
+  } else if (!is.list(colors) && length(colors) == 1) {
+    colors <- rep(colors, length.out = length(unique(x$State)))
   }
   scales <- onlyif(is.character(scales), tolower(scales))
   scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
@@ -185,13 +232,58 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
   )
 }
 
+#' Plot Cliques of a TNA Network
+#'
+#' @inheritParams print.tna_cliques
+#' @inheritParams plot.tna
+#' @param show_loops A `logical` value indicating whether to include loops
+#' in the plots or not.
+#' @param minimum See [qgraph::qgraph()].
 #' @export
-plot.tna_cliques <- function(x, ...) {
+plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
+                             show_loops = FALSE, minimum = 0.00001, ...) {
   stopifnot_(
-    is_cliques(x),
+    is_tna_cliques(x),
     "Argument {.arg x} must be a {.cls tna_cliques} object."
   )
-  # TODO
+  n_cliques <- length(x$weights)
+  size <- attr(x, "size")
+  if (n_cliques > 0) {
+    warning_("No {size}-cliques were found in the network.")
+  }
+  colors <- attr(x, "colors")
+  labels <- attr(x, "labels")
+  max_cliques <- min(first + n - 1L, n_cliques)
+  if (interactive()) {
+    op <- par(ask = TRUE)
+    on.exit(par(op))
+  }
+  for (i in seq(first, max_cliques)) {
+    clique_weights <- x$weights[[i]]
+    diag(clique_weights) <- ifelse_(
+      show_loops,
+      diag(clique_weights),
+      0
+    )
+    plot_args <- list(
+      input = clique_weights,
+      labels = colnames(clique_weights),
+      edge.labels = TRUE,
+      # sum weights?
+      directed = TRUE,
+      #edge.label.cex = 1.82,
+      mar = mar,
+      minimum = minimum,
+      theme = "colorblind",
+      cut = 0.01,
+      normalize = TRUE,
+      layout = "circle",
+      color = colors[match(rownames(clique_weights), labels)],
+      pie = x$inits[[i]]
+    )
+    plot_args <- modifyList(plot_args, list(...))
+    do.call(qgraph::qgraph, args = plot_args)
+  }
 }
 
 #' Plot Centrality Stability Results
@@ -304,6 +396,58 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     ggplot2::ylim(-1, 1)
 }
 
+#' Plot Communities
+#'
+#' This function visualizes the communities detected within a `tna` object
+#' based on different community detection algorithms and their corresponding
+#' color mappings.
+#'
+#' @export
+#' @family patterns
+#' @param x A `communities` object generated by the `find_communities` method.
+#' Each community detection method maps nodes or points in to a specific
+#' communities.
+#' @param cluster An `integer` index of the cluster for which to produce the
+#' plot. Defaults to the first cluster.
+#' @param colors A `character` vector of color values used for visualizing
+#' community assignments.
+#' @param method A `character` string naming a community detection method to
+#' use for coloring the plot. This can be one of the following:
+#'
+#' * `"walktrap"`: A community detection method using short random walks.
+#' * `"fast_greedy"`: A method based on modularity optimization.
+#' * `"label_prop"`: A method that uses label propagation.
+#' * `"infomap"`: A method that uses information flow to detect communities.
+#' * `"edge_betweenness"`: A method that uses edge betweenness to find
+#'   communities.
+#' * `"leading_eigen"`: A method using the leading eigenvector of the
+#'   modularity matrix.
+#' * `"spinglass"`: A method based on the spinglass model.
+#'
+#' @examples
+#' \dontrun{
+#' plot_communities(tna_model, community_assignment, "walktrap")
+#' }
+#'
+plot.tna_communities <- function(x, cluster = 1L, colors,
+                                 method = "spinglass") {
+  stopifnot_(
+    is_tna_communities(x),
+    "Argument {.arg x} must be a {.cls tna_communities} object."
+  )
+  y <- attr(x, "tna")
+  colors <- ifelse_(
+    missing(colors),
+    default_colors,
+    colors
+  )
+  plot(
+    y,
+    cluster = cluster,
+    colors = map_to_color(x[[cluster]]$assignment[, method], colors)
+  )
+}
+
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
   x <- stats::reshape(
     as.data.frame(x),
@@ -373,15 +517,16 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 }
 
 plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
+  # TODO handle colors and test
   measures <- names(x)[names(x) %in% valid_measures]
   n_clusters <- length(unique(x$Cluster))
   dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
     data.frame() |>
     stats::reshape(
-      varying = themeasures,
+      varying = measures,
       v.names = "value",
       timevar = "name",
-      times = themeasures,
+      times = measures,
       direction = "long"
     ) |>
     ggplot2::ggplot(
@@ -413,66 +558,6 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
       panel.spacing = ggplot2::unit(1, "lines"),
       legend.position = "bottom"
     )
-}
-
-#' Plot Communities
-#'
-#' This function visualizes the communities detected within a `tna` object
-#' based on different community detection algorithms and their corresponding
-#' color mappings.
-#'
-#' @export
-#' @param x A `tna` object, which represents a transition network analysis
-#' object containing data to be plotted. The object should include a component `weights`
-#' that can be iterated over to plot individual communities.
-#' @param y A `communities` object generated by the `find_communities` method.
-#' Each community detection method maps nodes or points in `x`  to specific
-#' communities.
-#' @param cluster Index of the cluster for which to produce the plot. Defaults
-#' to the first cluster.
-#' @param community A `character` string naming a community detection method to
-#' use for coloring the plot. This can be one of the following:
-#'
-#' * `"walktrap"`: A community detection method using short random walks.
-#' * `"fast_greedy"`: A method based on modularity optimization.
-#' * `"label_prop"`: A method that uses label propagation.
-#' * `"infomap"`: A method that uses information flow to detect communities.
-#' * `"edge_betweenness"`: A method that uses edge betweenness to find
-#'   communities.
-#' * `"leading_eigen"`: A method using the leading eigenvector of the
-#'   modularity matrix.
-#' * `"spinglass"`: A method based on the spinglass model.
-#'
-#' @param colors A `character` vector of color values used for visualizing
-#'   community assignments.
-#' @family patterns
-#' @examples
-#' \dontrun{
-#' plot_communities(tna_model, community_assignment, "walktrap")
-#' }
-#'
-plot_communities <- function(x, y, cluster = 1L, community, colors) {
-    # print((community_assignment[i][[1]]$community_assignments[,community]))
-    # print(map_to_color(community_assignment[i][[1]]$community_assignments[,community], color_palette))
-  # TODO for loop?, wont work with qplot
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
-  stopifnot_(
-    is_communities(y),
-    "Argument {.arg y} must be a {.cls communities} object."
-  )
-  colors <- ifelse_(
-    is.missing(colors),
-    default_colors,
-    colors
-  )
-  plot(
-    x,
-    cluster = cluster,
-    colors = map_to_color(y[[cluster]]$assignment[, community], colors)
-  )
 }
 
 #' Plot the difference network between two models
@@ -525,5 +610,3 @@ plot_compare <- function(x, y, ...) {
   )
 }
 
-# Default Colors ------------------------------------------------------------------
-default_colors <- c("#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a7184d", "#3c02a6",  "#fd9a01", "#0392ce")

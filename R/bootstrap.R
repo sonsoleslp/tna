@@ -31,26 +31,25 @@
 #' estimates, and summary statistics for removed edges, are returned in a
 #' structured list.
 #'
-#' @return A `list` containing:
-#'
-#' * `model`: A new `tna` object based on the significant transition matrix.
-#' * `results`: A list containing the following elements:
-#'    * `original_trans`: The original transition `matrix` for the selected
-#'    cluster.
-#'    * `mean_trans`: The mean transition `matrix` from the bootstrap samples.
-#'    * `sd_trans`: The standard deviation `matrix` from the bootstrap samples.
-#'    * `ci_lower`: The lower bound `matrix` of the confidence intervals for
-#'    the transitions.
-#'    * `ci_upper`: The upper bound `matrix` of the confidence intervals for
-#'    the transitions.
-#'    * `p_values`: The `matrix` of p-values for the transitions.
-#'    * `sig_trans`: The `matrix` of significant transitions
-#'      (those with p-values below the significance level).
-#'    * `combined`: A `data.frame` summarizing the transitions, their weights,
-#'      p-values, and confidence intervals.
-#'    * `removed_edges_summary`: A list summarizing the number of removed edges
-#'      (insignificant transitions), the mean and standard deviation of their
-#'      weights, and the range of the removed edge weights.
+#' @return A `tna_bootstrap` object which is a `list` containing the
+#' following elements:
+#
+#'   * `original_weights`: The original weights `matrix` for the selected
+#'   cluster.
+#'   * `mean_weights`: The mean weight `matrix` from the bootstrap samples.
+#'   * `sd_weights`: The standard deviation `matrix` from the bootstrap samples.
+#'   * `ci_lower`: The lower bound `matrix` of the confidence intervals for
+#'   the transitions.
+#'   * `ci_upper`: The upper bound `matrix` of the confidence intervals for
+#'   the transitions.
+#'   * `p_values`: The `matrix` of p-values for the transitions.
+#'   * `sig_weight`: The `matrix` of significant transitions
+#'     (those with p-values below the significance level).
+#'   * `combined`: A `data.frame` summarizing the transitions, their weights,
+#'     p-values, and confidence intervals.
+#'   * `removed_edges_summary`: A list summarizing the number of removed edges
+#'     (insignificant transitions), the mean and standard deviation of their
+#'     weights, and the range of the removed edge weights.
 #'
 #' @examples
 #' \dontrun{
@@ -82,6 +81,7 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
   dimnames(weights) <- dim_names
   weights_boot <- array(0L, dim = c(b, a, a))
   p_values <- matrix(0, a, a)
+  idx <- seq_len(n)
   for (i in seq_len(b)) {
     trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
     weights_boot[i, , ] <- compute_weights(trans_boot, type, a)
@@ -93,18 +93,19 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
   ci_lower <- apply(weights_boot, c(2, 3), stats::quantile, probs = level / 2)
   ci_upper <- apply(weights_boot, c(2, 3), stats::quantile, probs = 1 - level / 2)
   sig_weights <- (p_values < level) * weights
-  removed <- c(weights[sig_trans == 0])
+  removed <- c(weights[sig_weights == 0 & weights != 0])
   n_removed <- length(removed)
+  n_retained <- sum(weights > 0) - n_removed
   any_removed <- n_removed > 0
   mean_removed <- ifelse_(any_removed, mean(removed), NA)
   sd_removed <- ifelse_(any_removed, stats::sd(removed), NA)
   range_removed <- ifelse_(any_removed, range(removed), c(NA, NA))
   dimnames(p_values) <- dim_names
-  dimnames(mean_trans) <- dim_names
-  dimnames(sd_trans) <- dim_names
+  dimnames(mean_weights) <- dim_names
+  dimnames(sd_weights) <- dim_names
   dimnames(ci_lower) <- dim_names
   dimnames(ci_upper) <- dim_names
-  dimnames(sig_trans) <- dim_names
+  dimnames(sig_weights) <- dim_names
   combined <- data.frame(
     from = rep(alphabet, each = a),
     to = rep(alphabet, times = a),
@@ -113,22 +114,25 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
     ci_Lower = as.vector(ci_lower),
     ci_Upper = as.vector(ci_upper)
   )
-  list(
-    results = list(
+  structure(
+    list(
       original_weights = weights,
       mean_weights = mean_weights,
       sd_weights = sd_weights,
       ci_lower = ci_lower,
       ci_upper = ci_upper,
       p_values = p_values,
-      sig_trans = sig_weights,
+      sig_weights = sig_weights,
       combined = combined,
       removed_edges_summary = list(
-        n_removed = n_removed,
+        num_removed = n_removed,
+        num_retained = n_retained,
         mean_removed = mean_removed,
         sd_removed = sd_removed,
         range_removed = range_removed
       )
-    )
+    ),
+    class = "tna_bootstrap",
+    cluster = cluster
   )
 }
