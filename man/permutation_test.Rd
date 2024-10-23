@@ -11,7 +11,7 @@ permutation_test(
   cluster2 = 1,
   iter = 1000,
   paired = FALSE,
-  alpha = 0.05
+  level = 0.05
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ the second \code{tna} model. Default is 1.}
 \item{paired}{Logical. If \code{TRUE}, perform paired permutation tests;
 if \code{FALSE}, perform unpaired tests. Default is \code{FALSE}.}
 
-\item{alpha}{The significance level for the permutation tests.
+\item{level}{The significance level for the permutation tests.
 The default is 0.05.}
 }
 \value{

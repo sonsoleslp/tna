@@ -16,7 +16,7 @@
 #' @param iter The number of permutations to perform. Default is 1000.
 #' @param paired Logical. If `TRUE`, perform paired permutation tests;
 #' if `FALSE`, perform unpaired tests. Default is `FALSE`.
-#' @param alpha The significance level for the permutation tests.
+#' @param level The significance level for the permutation tests.
 #' The default is 0.05.
 #' @return A `list` containing:
 #'
@@ -36,7 +36,7 @@
 #' }
 #'
 permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
-                             paired = FALSE, alpha = 0.05) {
+                             paired = FALSE, level = 0.05) {
   stopifnot_(
     !is.null(x),
     "Argument {.arg x} must be a {.cls tna} object created from the `TraMineR` sequence object."
@@ -82,12 +82,11 @@ permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
     p_values <- p_values + 1L * (abs(diffs_perm[i, , ]) >= diffs_true_abs)
   }
   p_values <- p_values / iter
-  sig_diffs <- diffs_true
-  sig_diffs[p_values < alpha] <- 0
+  sig_diffs <- diffs_true * (p_values < level)
   edge_stats <- data.frame(
     edge_name = edge_names,
     diff_true = c(diffs_true),
-    p_values = c(p_values),
+    p_value = c(p_values),
     stringsAsFactors = FALSE
   )
   list(

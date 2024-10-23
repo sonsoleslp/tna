@@ -250,6 +250,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
   size <- attr(x, "size")
   if (n_cliques == 0) {
     warning_("No {size}-cliques were found in the network.")
+    return()
   }
   colors <- attr(x, "colors")
   labels <- attr(x, "labels")
