@@ -8,12 +8,13 @@
 #' @export
 #' @family evaluation
 #' @param x A `tna` object created from sequence data.
+#' @param cluster An integer specifying which cluster of the sequence data to
+#' use for bootstrapping. Defaults to `1`.
 #' @param b An integer specifying the number of bootstrap samples to
 #' be generated. Defaults to `1000`.
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
-#' @param cluster An integer specifying which cluster of the sequence data to
-#' use for bootstrapping. Defaults to `1`.
+#' @param threshold A `numeric` value to compare edge weights against.
 #'
 #' @details
 #' The function first computes the original transition matrix for the specified
@@ -63,7 +64,8 @@ bootstrap <- function(x, ...) {
 
 #' @rdname bootstrap
 #' @export
-bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
+bootstrap.tna <- function(x, cluster = 1, b = 1000, level = 0.05,
+                          threshold = 0.05, ...) {
   stopifnot_(
     !is.null(x$seq),
     "Argument {.arg x} must be a {.cls tna} object
@@ -79,13 +81,18 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
   a <- length(alphabet)
   weights <- compute_weights(trans, type, a)
   dimnames(weights) <- dim_names
+  threshold <- ifelse_(
+    missing(threshold),
+    weights,
+    threshold
+  )
   weights_boot <- array(0L, dim = c(b, a, a))
   p_values <- matrix(0, a, a)
   idx <- seq_len(n)
   for (i in seq_len(b)) {
     trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
     weights_boot[i, , ] <- compute_weights(trans_boot, type, a)
-    p_values <- p_values + 1L * (weights_boot[i, , ] >= weights)
+    p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
   }
   p_values <- p_values / b
   mean_weights <- apply(weights_boot, c(2, 3), mean)

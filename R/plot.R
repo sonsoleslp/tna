@@ -109,6 +109,7 @@ plot.tna <- function(x, cluster = 1, cluster2, labels, colors, pie,
   }
   cluster <- as.integer(cluster)
   cluster2 <- onlyif(!missing(cluster2), as.integer(cluster2))
+  # TODO qgraph produces error if no edges are above cut/minimum, check
   qgraph::qgraph(
     input = ifelse_(
       is.null(cluster2),
