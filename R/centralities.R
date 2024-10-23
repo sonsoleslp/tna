@@ -64,7 +64,7 @@
 #' Statistical Applications in Genetics and Molecular Biology, 4(1).
 
 #' @examples
-#' tna_model <- build_tna(engagement)
+#' tna_model <- tna(engagement)
 #'
 #' # Centrality measures including loops in the network
 #' centralities(tna_model)
@@ -341,7 +341,7 @@ estimate_cs <- function(x, cluster = 1,
     "Argument {.arg x} must be a {.cls tna} object created from sequence data."
   )
   d <- x$seq[[cluster]]
-  model <- build_markov_model(d, transitions = TRUE)
+  model <- markov_model(d, transitions = TRUE)
   trans <- model$trans
   a <- dim(trans)[2]
   n <- nrow(d)

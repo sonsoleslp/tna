@@ -18,12 +18,17 @@
 #'
 #'   * Node count: Total number of nodes in the network.
 #'   * Edge count: Total number of edges in the network.
-#'   * Network density: Proportion of possible edges that are present in the network.
+#'   * Network density: Proportion of possible edges that
+#'     are present in the network.
 #'   * Mean distance: The average shortest path length between nodes.
-#'   * Mean and standard deviation of out-strength and in-strength: Measures of the total weight of outgoing and incoming edges for each node.
-#'   * Mean and standard deviation of out-degree: The number of outgoing edges from each node.
-#'   * Centralization of out-degree and in-degree: Measures of how centralized the network is based on the degrees of nodes.
-#'   * Reciprocity: The proportion of edges that are reciprocated (i.e., mutual edges between nodes).
+#'   * Mean and standard deviation of out-strength and in-strength: Measures
+#'     of the total weight of outgoing and incoming edges for each node.
+#'   * Mean and standard deviation of out-degree: The number of outgoing
+#'     edges from each node.
+#'   * Centralization of out-degree and in-degree: Measures of how
+#'     centralized the network is based on the degrees of nodes.
+#'   * Reciprocity: The proportion of edges that are reciprocated
+#'     (i.e., mutual edges between nodes).
 #'
 #' A summary of the metrics is printed to the console.
 #'
@@ -42,22 +47,20 @@
 #'   * `centralization_out_degree`: The centralization of out-degree.
 #'   * `centralization_in_degree`: The centralization of in-degree.
 #'   * `reciprocity`: The reciprocity of the network.
-#' }
 #'
 #' @examples
 #' \dontrun{
 #' # Calculate network metrics for the first cluster
-#' network_metrics <- calculate_network_metrics(tna_model, cluster = 1)
+#' metrics <- network_metrics(tna_model, cluster = 1)
 #' }
 #'
-calculate_network_metrics <- function(x, ...) {
-  UseMethod("calculate_network_metrics")
+network_metrics <- function(x, ...) {
+  UseMethod("network_metrics")
 }
 
-# TODO Change the name? long...
-#' @rdname calculate_network_metrics
+#' @rdname network_metrics
 #' @export
-calculate_network_metrics.tna <- function(x, cluster = 1, digits = 4, ...) {
+network_metrics.tna <- function(x, cluster = 1, digits = 4, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -102,6 +105,5 @@ calculate_network_metrics.tna <- function(x, cluster = 1, digits = 4, ...) {
   out <- tibble::as_tibble(
     data.frame(metric = out_names, value = round(out, digits))
   )
-  print(out)
-  invisible(out)
+  out
 }

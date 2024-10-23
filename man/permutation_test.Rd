@@ -37,18 +37,14 @@ The default is 0.05.}
 A \code{list} containing:
 \itemize{
 \item \code{edge_statistics} A data frame with edge names, original differences,
-p-values, effect sizes, and confidence intervals.
-\item \code{original_matrix1} The transition probability matrix from
+and p-values.
+\item \code{original_weights1} The transition probability matrix from
 the first \code{tna} model
-\item \code{original_matrix2} The transition probability matrix from
+\item \code{original_weights2} The transition probability matrix from
 the second \code{tna} model.
-\item \code{difference_matrix} The matrix of differences in transition
-probabilities.
-\item \code{significant_matrix} A matrix showing the significant edges
-based on the permutation tests.
-\item \code{significant_edges} A list of significant edges (p < alpha).
-\item \code{statistics_summary} A list of summary statistics including
-mean absolute differences and effect sizes.
+\item \code{true_diffs} The matrix of differences in weights.
+\item \code{sig_diffs} A matrix showing the significant differences
+based on the permutation test.
 }
 }
 \description{

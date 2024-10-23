@@ -70,7 +70,7 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, cluster = 1, ...) {
     created from sequence data."
   )
   d <- x$seq[[cluster]]
-  model <- build_markov_model(d, transitions = TRUE)
+  model <- markov_model(d, transitions = TRUE)
   trans <- model$trans
   alphabet <- attr(d, "alphabet")
   type <- attr(x, "type")

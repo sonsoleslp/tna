@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @family core
-#' @rdname build_tna
+#' @rdname tna
 #' @param x A `stslist` object describing a sequence of events or states to
 #'   be used for building
 #'   the Markov model or a `matrix` of transition probabilities with column
@@ -39,16 +39,16 @@
 #'     used by the package when `x` is a `stslist` or a `data.frame` object.
 #'
 #' @examples
-#' tna_model <- build_tna(engagement)
+#' tna_model <- tna(engagement)
 #' print(tna_model)
 #'
-build_tna <- function(x, ...) {
-  UseMethod("build_tna")
+tna <- function(x, ...) {
+  UseMethod("tna")
 }
 
 #' @export
-#' @rdname build_tna
-build_tna.default <- function(x, type = "prop", inits, ...) {
+#' @rdname tna
+tna.default <- function(x, type = "prop", inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -58,12 +58,12 @@ build_tna.default <- function(x, type = "prop", inits, ...) {
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  build_tna.matrix(x, type, inits, ...)
+  tna.matrix(x, type, inits, ...)
 }
 
 #' @export
-#' @rdname build_tna
-build_tna.matrix <- function(x, type = "prop", inits, ...) {
+#' @rdname tna
+tna.matrix <- function(x, type = "prop", inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -110,7 +110,7 @@ build_tna.matrix <- function(x, type = "prop", inits, ...) {
   names(inits) <- colnames(x)
   check_tna_type(type)
   check_tna_inits(inits, type)
-  build_tna_(
+  tna_(
     weights = list(x),
     inits = list(inits),
     labels = colnames(x),
@@ -119,16 +119,16 @@ build_tna.matrix <- function(x, type = "prop", inits, ...) {
 }
 
 #' @export
-#' @rdname build_tna
-build_tna.stslist <- function(x, type = "prop", ...) {
+#' @rdname tna
+tna.stslist <- function(x, type = "prop", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   check_tna_type(type)
   x <- create_seqdata(x)
-  model <- build_markov_model(x, type, ...)
-  build_tna_(
+  model <- markov_model(x, type, ...)
+  tna_(
     weights = list(model$weights),
     inits = list(model$inits),
     labels = attr(x, "labels"),
@@ -139,16 +139,16 @@ build_tna.stslist <- function(x, type = "prop", ...) {
 
 
 #' @export
-#' @rdname build_tna
-build_tna.data.frame <- function(x, type = "prop", ...) {
+#' @rdname tna
+tna.data.frame <- function(x, type = "prop", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   check_tna_type(type)
   x <- create_seqdata(x)
-  model <- build_markov_model(x, type, ...)
-  build_tna_(
+  model <- markov_model(x, type, ...)
+  tna_(
     weights = list(model$weights),
     inits = list(model$inits),
     labels = model$labels,
@@ -158,8 +158,8 @@ build_tna.data.frame <- function(x, type = "prop", ...) {
 }
 
 #' @export
-#' @rdname build_tna
-build_tna.mhmm <- function(x, type = "prop", ...) {
+#' @rdname tna
+tna.mhmm <- function(x, type = "prop", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -176,7 +176,7 @@ build_tna.mhmm <- function(x, type = "prop", ...) {
   for (i in clusters) {
     seq[[i]] <- x$observations[cluster_assignment == i, ]
   }
-  build_tna_(
+  tna_(
     weights = x$transition_probs,
     inits = x$initial_probs,
     labels = attr(x$observations, "labels"),
@@ -193,7 +193,7 @@ build_tna.mhmm <- function(x, type = "prop", ...) {
 #' @param seq A `list` of `tna_seqdata` objects when created from sequence data.
 #' @return A `tna` object.
 #' @noRd
-build_tna_ <- function(weights, inits, labels, type, seq = NULL) {
+tna_ <- function(weights, inits, labels, type, seq = NULL) {
   structure(
     list(
       weights = weights,
@@ -231,10 +231,7 @@ build_tna_ <- function(weights, inits, labels, type, seq = NULL) {
 #' @examples
 #' \dontrun{
 #' # Build and visualize the network for the first cluster
-#' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model)
-#'
-#' # Build the network without visualization
-#' edge_betweenness_df <- build_network_with_edge_betweenness(tna_model, plot = FALSE)
+#' edge_betweenness_df <- betweenness_network(tna_model)
 #' }
 betweenness_network <- function(x, ...) {
   UseMethod("betweenness_network")
@@ -252,7 +249,7 @@ betweenness_network.tna <- function(x, cluster = 1, layout = NULL) {
   g <- as.igraph(x, cluster = cluster)
   betweenness <- igraph::edge_betweenness(g, directed = TRUE)
   weights[weights > 0] <- betweenness
-  build_tna_(
+  tna_(
     weights = list(weights),
     inits = x$inits[cluster],
     labels = x$labels,
@@ -328,7 +325,7 @@ create_seqdata <- function(x) {
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
-build_markov_model <- function(x, type = c("prop"), transitions = FALSE) {
+markov_model <- function(x, type = c("prop"), transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
   m <- as.matrix(x)

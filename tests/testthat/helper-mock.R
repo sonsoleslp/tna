@@ -33,7 +33,7 @@ create_sample_tna <- function() {
     ncol = 4,
     byrow = TRUE
   )
-  build_tna(mat, inits = c(0.3, 0.2, 0.3, 0.2))
+  tna(mat, inits = c(0.3, 0.2, 0.3, 0.2))
 }
 
 # Helper function to create a mock transition matrix

@@ -40,7 +40,7 @@ hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
 #' represent the transition probabilities.
 #'
 #' @export
-#' @param x A `tna` object from [tna::build_tna()].
+#' @param x A `tna` object from [tna()].
 #' @param cluster Index of the primary cluster to visualize.
 #'   Defaults to the first cluster.
 #' @param cluster2 Optional index of the secondary cluster. If specified,
@@ -59,7 +59,7 @@ hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
 #' @return A `qgraph` plot of the transition network.
 #' @family core
 #' @examples
-#' tna_model <- build_tna(engagement)
+#' tna_model <- tna(engagement)
 #' plot(tna_model)
 #'
 plot.tna <- function(x, cluster = 1, cluster2, labels, colors, pie,
@@ -186,7 +186,7 @@ plot.tna <- function(x, cluster = 1, cluster2, labels, colors, pie,
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
 #' @examples
-#' tna_model <- build_tna(engagement)
+#' tna_model <- tna(engagement)
 #' cm <- centralities(tna_model)
 #' plot(cm)
 #' plot(cm, ncol = 4, reorder = TRUE)
@@ -248,7 +248,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
   )
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
-  if (n_cliques > 0) {
+  if (n_cliques == 0) {
     warning_("No {size}-cliques were found in the network.")
   }
   colors <- attr(x, "colors")
@@ -577,8 +577,8 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
 #'   two models.
 #' @family core
 #' @examples
-#' tna_model_1 <- build_tna(engagement[engagement[, 1] == "Active", ])
-#' tna_model_2 <- build_tna(engagement[engagement[, 1] != "Active", ])
+#' tna_model_1 <- tna(engagement[engagement[, 1] == "Active", ])
+#' tna_model_2 <- tna(engagement[engagement[, 1] != "Active", ])
 #' plot_compare(tna_model_1, tna_model_2)
 #'
 plot_compare <- function(x, y, ...) {
@@ -598,7 +598,7 @@ plot_compare <- function(x, y, ...) {
   piesign <- ifelse(x$inits[[1]] > y$inits[[1]], "#009900", "red")
   #pos_col <- c("#009900", "darkgreen")
   #neg_col <- c("#BF0000", "red")
-  diff <- build_tna(x$weights[[1]] - y$weights[[1]], pie)
+  diff <- tna(x$weights[[1]] - y$weights[[1]], pie)
   plot.tna(
     diff,
     pie = pie,

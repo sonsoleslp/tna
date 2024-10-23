@@ -55,7 +55,7 @@ network remains weakly connected.
 }
 \examples{
 \dontrun{
-  tna_model <- build(engagement)
+  tna_model <- tna(engagement)
   pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
   pruned_percentile <- prune(tna_model,method = "lowest", lowest = 0.05)
   pruned_disparity <- prune(tna_model, "disparity", alpha = 0.5)

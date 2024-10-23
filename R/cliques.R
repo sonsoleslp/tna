@@ -28,7 +28,17 @@
 #' cliques_result <- cliques(my_tna_object, cluster = 2, size = 4)
 #' }
 #'
-cliques <- function(x, cluster = 1, size = 3, threshold = 0) {
+cliques <- function(x, ...) {
+  UseMethod("cliques")
+}
+
+#' @rdname cliques
+#' @export
+cliques.tna <- function(x, cluster = 1, size = 3, threshold = 0) {
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
   weights <- x$weights[[cluster]]
   labels <- x$labels
   inits <- x$inits[[cluster]]

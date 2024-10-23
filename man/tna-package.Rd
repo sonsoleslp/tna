@@ -2,7 +2,6 @@
 % Please edit documentation in R/tna-package.R
 \docType{package}
 \name{tna-package}
-\alias{tna}
 \alias{tna-package}
 \title{The \code{tna} package.}
 \description{

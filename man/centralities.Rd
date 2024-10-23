@@ -93,7 +93,7 @@ cluster together.
 }
 }
 \examples{
-tna_model <- build_tna(engagement)
+tna_model <- tna(engagement)
 
 # Centrality measures including loops in the network
 centralities(tna_model)
@@ -120,9 +120,9 @@ Statistical Applications in Genetics and Molecular Biology, 4(1).
 }
 \seealso{
 Core functions
-\code{\link{build_tna}()},
 \code{\link{plot.tna}()},
 \code{\link{plot.tna_centralities}()},
-\code{\link{plot_compare}()}
+\code{\link{plot_compare}()},
+\code{\link{tna}()}
 }
 \concept{core}

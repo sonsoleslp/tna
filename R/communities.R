@@ -30,19 +30,19 @@
 #' @examples
 #' \dontrun{
 #' # Detect communities for all clusters
-#' communities <- community_detection(tna_model)
+#' comm <- communities(tna_model)
 #'
 #' # Detect communities for a specific cluster
-#' communities <- community_detection(tna_model, cluster = 1)
+#' comm <- communities(tna_model, cluster = 1)
 #' }
 #'
-find_communities <- function(x, ...) {
-  UseMethod("find_communities")
+communities <- function(x, ...) {
+  UseMethod("communities")
 }
 
-#' @rdname find_communities
+#' @rdname communities
 #' @export
-find_communities.tna <- function(x, cluster = NULL, gamma = 1) {
+communities.tna <- function(x, cluster = NULL, gamma = 1) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."

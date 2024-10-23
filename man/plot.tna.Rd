@@ -21,7 +21,7 @@
 )
 }
 \arguments{
-\item{x}{A \code{tna} object from \code{\link[=build_tna]{build_tna()}}.}
+\item{x}{A \code{tna} object from \code{\link[=tna]{tna()}}.}
 
 \item{cluster}{Index of the primary cluster to visualize.
 Defaults to the first cluster.}
@@ -60,15 +60,15 @@ sizes corresponding to initial state probabilities. Edges between nodes
 represent the transition probabilities.
 }
 \examples{
-tna_model <- build_tna(engagement)
+tna_model <- tna(engagement)
 plot(tna_model)
 
 }
 \seealso{
 Core functions
-\code{\link{build_tna}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna_centralities}()},
-\code{\link{plot_compare}()}
+\code{\link{plot_compare}()},
+\code{\link{tna}()}
 }
 \concept{core}

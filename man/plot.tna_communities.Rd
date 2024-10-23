@@ -44,6 +44,6 @@ plot_communities(tna_model, community_assignment, "walktrap")
 }
 \seealso{
 Pattern-finding functions
-\code{\link{find_communities}()}
+\code{\link{communities}()}
 }
 \concept{patterns}

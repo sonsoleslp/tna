@@ -2,9 +2,12 @@
 % Please edit documentation in R/cliques.R
 \name{cliques}
 \alias{cliques}
+\alias{cliques.tna}
 \title{Identify Cliques in a Transition Network}
 \usage{
-cliques(x, cluster = 1, size = 3, threshold = 0)
+cliques(x, ...)
+
+\method{cliques}{tna}(x, cluster = 1, size = 3, threshold = 0)
 }
 \arguments{
 \item{x}{An object of type \code{tna}}

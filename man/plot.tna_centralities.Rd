@@ -49,7 +49,7 @@ measure, showing the values for each state. The returned plot is a
 \code{\link[=centralities]{centralities()}} for details on the centrality measures.
 }
 \examples{
-tna_model <- build_tna(engagement)
+tna_model <- tna(engagement)
 cm <- centralities(tna_model)
 plot(cm)
 plot(cm, ncol = 4, reorder = TRUE)
@@ -57,9 +57,9 @@ plot(cm, ncol = 4, reorder = TRUE)
 }
 \seealso{
 Core functions
-\code{\link{build_tna}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna}()},
-\code{\link{plot_compare}()}
+\code{\link{plot_compare}()},
+\code{\link{tna}()}
 }
 \concept{core}
