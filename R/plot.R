@@ -3,21 +3,28 @@
 #' @inheritParams graphics::hist
 #' @export
 hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
-                     main = "Histogram of Edge Weights",
-                     xlab, border = "white", ...) {
+                     main, xlab, border = "white", ...) {
   w <- c(x$weights[[cluster]])
   type <- attr(x, "type")
-  if (missing(xlab)) {
+  xlab_missing <- missing(xlab)
+  if (xlab_missing) {
     xlab <- paste0(
       "Edge Weights (",
       switch(
         type,
         relative = "Probabilities",
         scaled = "Scaled Frequencies",
-        ranked = "Scaled Ranks of Frequency",
+        ranked = "Scaled Frequency Ranks",
         absolute = "Frequencies"
       ),
       ")"
+    )
+  }
+  if (missing(main)) {
+    main <- ifelse_(
+      xlab_missing,
+      paste0("Histogram of ", xlab),
+      "Histogram of Edge Weights"
     )
   }
   if (missing(breaks)) {
