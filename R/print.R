@@ -97,7 +97,7 @@ print.tna <- function(x, digits = 2, generic = FALSE, ...) {
     type,
     relative = "Transition Probability",
     scaled = "Scaled Transition Frequency",
-    ranked = "Transition Frequency Scaled Rank",
+    ranked = "Scaled Transition Frequency Rank",
     absolute = "Transition Frequency",
     betweenness = "Edge Betweenness"
   )
