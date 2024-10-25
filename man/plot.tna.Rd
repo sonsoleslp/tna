@@ -6,8 +6,6 @@
 \usage{
 \method{plot}{tna}(
   x,
-  cluster = 1,
-  cluster2,
   labels,
   colors,
   pie,
@@ -22,13 +20,6 @@
 }
 \arguments{
 \item{x}{A \code{tna} object from \code{\link[=tna]{tna()}}.}
-
-\item{cluster}{Index of the primary cluster to visualize.
-Defaults to the first cluster.}
-
-\item{cluster2}{Optional index of the secondary cluster. If specified,
-The difference between the transition probabilities of \code{cluster} and
-\code{cluster2} will be plotted.}
 
 \item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
@@ -56,8 +47,8 @@ A \code{qgraph} plot of the transition network.
 \description{
 This function plots a transition network analysis (TNA) model using
 the \code{qgraph} package. The nodes in the graph represent states, with node
-sizes corresponding to initial state probabilities. Edges between nodes
-represent the transition probabilities.
+sizes corresponding to initial state probabilities. Edge labels represent
+the edge weights of the network.
 }
 \examples{
 tna_model <- tna(engagement)

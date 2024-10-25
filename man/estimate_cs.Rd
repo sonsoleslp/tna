@@ -7,7 +7,6 @@
 \usage{
 estimate_cs(
   x,
-  cluster = 1,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   normalize = FALSE,
   iter = 1000,
@@ -20,7 +19,6 @@ estimate_cs(
 
 estimate_centrality_stability(
   x,
-  cluster = 1,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   normalize = FALSE,
   iter = 1000,
@@ -35,9 +33,6 @@ estimate_centrality_stability(
 \item{x}{A \code{tna} object representing the temporal network analysis data.
 The object should be created from a sequence datad object.}
 
-\item{cluster}{An \code{integer} specifying the cluster of the \code{tna} object
-to analyze. Default is 1.}
-
 \item{measures}{A \code{character} vector of centrality measures to estimate.
 The default measures are \code{"InStrength"}, \code{"OutStrength"},
 and \code{"Betweenness"}.}
@@ -49,7 +44,7 @@ the centrality measures. The default is \code{FALSE}.}
 The default is 1000.}
 
 \item{method}{A \code{character} string indicating the correlation coefficient
-type. The default is \code{"pearson"}. See \code{\link[=stats:cor]{stats:cor()}} for details.}
+type. The default is \code{"pearson"}. See \code{\link[stats:cor]{stats::cor()}} for details.}
 
 \item{drop_prop}{A \code{numeric} vector specifying the proportions of
 cases to drop in each sampling iteration. Default is a sequence from 0.1 to
@@ -98,9 +93,7 @@ confidence intervals. The CS-coefficients are displayed in the plot's
 subtitle.
 }
 \examples{
-\dontrun{
-# Assuming 'x' is a tna object
-results <- estimate_cs(x, measures = c("InStrength", "OutStrength"))
-}
+model <- tna(engagement)
+estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 10)
 
 }

@@ -1,19 +1,27 @@
 #' Map community assignments to a color palette.
 #'
-#' This function takes a vector of community assignments (numeric or categorical) and maps them to corresponding colors
-#' from a provided palette. If all values in the input vector are the same, the function maps all of them to the first
-#' color in the palette. Otherwise, it normalizes the values to ensure they span across the entire palette.
+#' This function takes a vector of community assignments
+#' (numeric or categorical) and maps them to corresponding colors
+#' from a provided palette. If all values in the input vector are the same,
+#' the function maps all of them to the first
+#' color in the palette. Otherwise, it normalizes the values to ensure they
+#' span across the entire palette.
 #'
-#' @param x A numeric vector representing the community assignments.
-#' @param palette A vector of colors to be used for mapping. The length of the palette defines the range of possible colors.
+#' @param x A `numeric` vector representing the community assignments.
+#' @param palette A `character` vector of colors to be used for mapping.
+#' The length of  the palette defines the range of possible colors.
 #'
-#' @return A vector of colors corresponding to the input values, either a single color or a gradient of colors based on
-#' the values in the input vector.
+#' @return A vector of colors corresponding to the input values, either
+#' a single color or a gradient of colors based on the values in
+#' the input vector.
 #'
 #' @details
-#' - If the input vector `x` contains only one unique value, all elements will be mapped to the first color in the palette.
-#' - If the input vector `x` contains multiple unique values, these values are scaled linearly to cover the entire range of
-#'   the provided palette, ensuring that higher values in the input correspond to later colors in the palette.
+#' - If the input vector `x` contains only one unique value,
+#'   all elements will be mapped to the first color in the palette.
+#' - If the input vector `x` contains multiple unique values,
+#'   these values are scaled linearly to cover the entire range of
+#'   the provided palette, ensuring that higher values in
+#'   the input correspond to later colors in the palette.
 #' - The scaling formula used for normalization is:
 #'   \deqn{scaled\_values = \left\lfloor \frac{(x - \text{min}(x))}{(\text{max}(x) - \text{min}(x))} \times (\text{length}(palette) - 1) \right\rfloor + 1}
 #'
@@ -58,7 +66,6 @@ color_palette <- function(n_states) {
     colorspace::qualitative_hcl(n = n_states, palette = "Set 3")
   )
 }
-
 
 # Default Community Colors ------------------------------------------------
 

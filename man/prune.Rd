@@ -54,12 +54,11 @@ weights, or the disparity algorithm TODO cite. It ensures the
 network remains weakly connected.
 }
 \examples{
-\dontrun{
-  tna_model <- tna(engagement)
-  pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
-  pruned_percentile <- prune(tna_model,method = "lowest", lowest = 0.05)
-  pruned_disparity <- prune(tna_model, "disparity", alpha = 0.5)
-}
+model <- tna(group_regulation)
+pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
+pruned_percentile <- prune(tna_model,method = "lowest", lowest = 0.05)
+pruned_disparity <- prune(tna_model, method = "disparity", alpha = 0.5)
+
 }
 \seealso{
 Evaluation and validation functions

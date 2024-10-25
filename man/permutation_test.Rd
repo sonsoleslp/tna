@@ -4,44 +4,31 @@
 \alias{permutation_test}
 \title{Compare Two Networks from Sequence Data Using Permutation Tests}
 \usage{
-permutation_test(
-  x,
-  y,
-  cluster1 = 1,
-  cluster2 = 1,
-  iter = 1000,
-  paired = FALSE,
-  level = 0.05
-)
+permutation_test(x, y, iter = 1000, paired = FALSE, level = 0.05)
 }
 \arguments{
 \item{x}{A \code{tna} object containing sequence data for the first \code{tna} model.}
 
 \item{y}{A \code{tna} object containing sequence data for the second \code{tna} model.}
 
-\item{cluster1}{An \code{integer} indicating the cluster to be used for
-the first \code{tna} model. Default is 1.}
+\item{iter}{An \code{integer} gicing the number of permutations to perform.
+The default is 1000.}
 
-\item{cluster2}{An \code{integer} indicating the cluster to be used for
-the second \code{tna} model. Default is 1.}
+\item{paired}{A \code{logical} value. If \code{TRUE}, perform paired permutation tests;
+if \code{FALSE}, perform unpaired tests. The default is \code{FALSE}.}
 
-\item{iter}{The number of permutations to perform. Default is 1000.}
-
-\item{paired}{Logical. If \code{TRUE}, perform paired permutation tests;
-if \code{FALSE}, perform unpaired tests. Default is \code{FALSE}.}
-
-\item{level}{The significance level for the permutation tests.
-The default is 0.05.}
+\item{level}{A \code{numeric} value gicing the significance level for the
+permutation tests. The default is 0.05.}
 }
 \value{
 A \code{list} containing:
 \itemize{
 \item \code{edge_statistics} A data frame with edge names, original differences,
 and p-values.
-\item \code{original_weights1} The transition probability matrix from
-the first \code{tna} model
-\item \code{original_weights2} The transition probability matrix from
-the second \code{tna} model.
+\item \code{original_weights_x} The edge weight matrix from
+the first \code{tna} model \code{x}.
+\item \code{original_weights_y} The edge weight matrix from
+the second \code{tna} model \code{y}.
 \item \code{true_diffs} The matrix of differences in weights.
 \item \code{sig_diffs} A matrix showing the significant differences
 based on the permutation test.
@@ -54,9 +41,10 @@ probabilities, and compares them by performing permutation tests. It returns the
 differences in transition probabilities, effect sizes, p-values, and confidence intervals.
 }
 \examples{
-\dontrun{
-result <- permutation_test(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
-}
+model_x <- tna(group_regulation[1:1000,])
+model_y <- tna(group_regulation[1001:2000,])
+# Small number of iterations for CRAN
+permutation_test(x, y, iter = 100)
 
 }
 \seealso{

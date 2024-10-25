@@ -15,7 +15,6 @@
 #' based on the article "The longitudinal association between engagement and
 #' achievement varies by time, students’ profiles, and achievement state:
 #' A full program study" (doi: 10.1016/j.compedu.2023.104787)
-
 "engagement"
 
 #' Example data on group regulation
@@ -24,7 +23,4 @@
 #' were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
 #' "emotion", "monitor", "plan", "synthesis"
 #' The data was generated synthetically.
-
 "group_regulation"
-
-

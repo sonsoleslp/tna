@@ -19,16 +19,10 @@ print.tna_communities <- function(x, ...) {
     is_tna_communities(x),
     "Argument {.arg x} must be a {.cls tna_communities} object."
   )
-  n_clust <- length(x)
-  has_clust <- n_clust > 1
-  for (i in seq_len(n_clust)) {
-    onlyif(has_clust, cat("Cluster", i, "\n"))
-    cat("Number of communities found by each algorithm:\n")
-    print(x[[i]]$counts)
-    cat("\nCommunity assignments:\n")
-    print(x[[i]]$assignments)
-    onlyif(has_clust, cat("\n"))
-  }
+  cat("Number of communities found by each algorithm:\n")
+  print(x$counts)
+  cat("\nCommunity assignments:\n")
+  print(x$assignments)
   invisible(x)
 }
 
@@ -104,21 +98,10 @@ print.tna <- function(x, digits = 2, generic = FALSE, ...) {
   cat("State Labels\n\n")
   cat(paste(x$labels, collapse = ", "), "\n")
   cat("\n", mat_type, " Matrix\n\n", sep = "")
-  n_clust <- length(x$weights)
-  has_clust <- n_clust > 1
-  clust_names <- names(x$weights)
-  for (i in seq_len(n_clust)) {
-    onlyif(has_clust, cat(paste0(clust_names[i], ":\n")))
-    print(x$weights[[i]])
-    onlyif(has_clust, cat("\n"))
-  }
+  print(x$weights)
   cat("\nInitial Probabilities\n\n", sep = "")
-  for (i in seq_len(n_clust)) {
-    init <- x$inits[[i]]
-    names(init) <- x$labels
-    onlyif(has_clust, cat(paste0(clust_names[i], ":\n")))
-    print(init)
-    onlyif(has_clust, cat("\n"))
-  }
+  #init <- x$inits
+  #names(init) <- x$labels
+  print(x$inits)
   invisible(x)
 }

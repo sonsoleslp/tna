@@ -7,16 +7,13 @@
 \usage{
 betweenness_network(x, ...)
 
-\method{betweenness_network}{tna}(x, cluster = 1, layout = NULL)
+\method{betweenness_network}{tna}(x, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object containing transition matrices and associated metadata.}
+\item{x}{A \code{tna} object containing transition matrices and
+associated metadata.}
 
-\item{cluster}{An integer specifying which cluster to analyze. Defaults to \code{1}.}
-
-\item{layout}{A numeric matrix or character string specifying the layout of the network for the visualization. If \code{NULL}, a default layout is used. Defaults to \code{NULL}.}
-
-\item{plot}{A logical value indicating whether to visualize the network. Defaults to \code{TRUE}.}
+\item{...}{Ignored.}
 }
 \value{
 A \code{tna} object where edge betweenness represents the edge weights.
@@ -28,15 +25,22 @@ network using the \code{qgraph} package, with the edge thickness representing th
 edge betweenness values.
 }
 \details{
-The function first converts the transition matrix for the specified cluster into a directed graph using the \code{igraph} package. It then calculates the edge betweenness of the graph, which is a measure of how often an edge lies on the shortest paths between pairs of nodes.
+The function first converts the transition matrix for the specified cluster
+into a directed graph using the \code{igraph} package. It then calculates the
+edge betweenness of the graph, which is a measure of how often an edge lies
+on the shortest paths between pairs of nodes.
 
-If \code{plot = TRUE}, the function uses \code{qgraph} to visualize the network, where edge thickness is proportional to edge betweenness, node colors are derived from the \code{tna} object, and \code{Pie} values from the \code{tna} object are displayed on the nodes.
+If \code{plot = TRUE}, the function uses \code{qgraph} to visualize the network,
+where edge thickness is proportional to edge betweenness, node colors are
+derived from the \code{tna} object, and \code{Pie} values from the \code{tna} object are
+displayed on the nodes.
 
-The layout of the network can be customized via the \code{layout} parameter, which can either be a predefined layout from \code{qgraph} or a user-specified matrix of node positions.
+The layout of the network can be customized via the \code{layout} parameter,
+which can either be a predefined layout from \code{qgraph} or a user-specified
+matrix of node positions.
 }
 \examples{
-\dontrun{
-# Build and visualize the network for the first cluster
-edge_betweenness_df <- betweenness_network(tna_model)
-}
+model <- tna(group_regulation)
+betweenness_network(model)
+
 }

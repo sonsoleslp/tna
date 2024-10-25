@@ -1,10 +1,17 @@
 #' Plot a Histogram of Edge Weights in the Network
 #'
 #' @inheritParams graphics::hist
+#' @param ... Additional arguments passed to [graphics::hist()].
+#' @param main A `character` string defining the title of the plot.
+#' @param xlab A `character` string defining the vertical axis label.
 #' @export
-hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
+hist.tna <- function(x, breaks, col = "lightblue",
                      main, xlab, border = "white", ...) {
-  w <- c(x$weights[[cluster]])
+  stopifnot_(
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
+  )
+  w <- c(x$weights)
   type <- attr(x, "type")
   xlab_missing <- missing(xlab)
   if (xlab_missing) {
@@ -34,7 +41,7 @@ hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
       seq(0, 1, length.out = 20)
     )
   }
-  hist(
+  graphics::hist(
     x = w,
     breaks = breaks,
     col = col,
@@ -49,16 +56,11 @@ hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
 #'
 #' This function plots a transition network analysis (TNA) model using
 #' the `qgraph` package. The nodes in the graph represent states, with node
-#' sizes corresponding to initial state probabilities. Edges between nodes
-#' represent the transition probabilities.
+#' sizes corresponding to initial state probabilities. Edge labels represent
+#' the edge weights of the network.
 #'
 #' @export
 #' @param x A `tna` object from [tna()].
-#' @param cluster Index of the primary cluster to visualize.
-#'   Defaults to the first cluster.
-#' @param cluster2 Optional index of the secondary cluster. If specified,
-#'   The difference between the transition probabilities of `cluster` and
-#'   `cluster2` will be plotted.
 #' @param colors See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param labels See [qgraph::qgraph()].
@@ -75,7 +77,7 @@ hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
 #' tna_model <- tna(engagement)
 #' plot(tna_model)
 #'
-plot.tna <- function(x, cluster = 1, cluster2, labels, colors, pie,
+plot.tna <- function(x, labels, colors, pie,
                      edge.labels = TRUE, layout = "circle",
                      mar = rep(5, 4), cut = 0.1, minimum = 0.05,
                      theme = "colorblind", ...) {
@@ -83,59 +85,29 @@ plot.tna <- function(x, cluster = 1, cluster2, labels, colors, pie,
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  stopifnot_(
-    checkmate::test_integerish(
-      x = cluster,
-      lower = 1,
-      upper = length(x$weights),
-      any.missing = FALSE,
-      len = 1,
-      null.ok = FALSE
-    ),
-    "Argument {.arg cluster} must be a single integer value between 1 and
-     the number of clusters."
-  )
-  stopifnot_(
-    missing(cluster2) || checkmate::test_integerish(
-      x = cluster2,
-      lower = 1,
-      upper = length(x$weights),
-      any.missing = FALSE,
-      len = 1,
-      null.ok = FALSE
-    ),
-    "Argument {.arg cluster2} must be a single integer value between 1 and
-     the number of clusters."
-  )
   if (missing(pie)) {
-    pie <- x$inits[[cluster]]
+    pie <- x$inits
   }
   if (missing(labels)) {
     labels <- x$labels
   }
   if (missing(colors)) {
     colors <- ifelse_(
-      is.null(x$seq[[cluster]]),
+      is.null(x$data),
       color_palette(length(x$labels)),
-      attr(x$seq[[cluster]], "colors")
+      attr(x$data, "colors")
     )
   }
-  cluster <- as.integer(cluster)
-  cluster2 <- onlyif(!missing(cluster2), as.integer(cluster2))
   # TODO qgraph produces error if no edges are above cut/minimum, check
   qgraph::qgraph(
-    input = ifelse_(
-      is.null(cluster2),
-      x$weights[[cluster]],
-      x$weights[[cluster]] - x$weights[[cluster2]]
-    ),
+    input = x$weights,
     color = colors,
     minimum = minimum,
     cut = cut,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,
-    pie = onlyif(is.null(cluster2), pie),
+    pie = pie,
     mar = mar,
     theme = theme,
     ...
@@ -254,8 +226,8 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
 #' in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
 #' @export
-plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
-                             show_loops = FALSE, minimum = 0.00001, ...) {
+plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
+                             minimum = 0.00001, mar = rep(5, 4), ...) {
   stopifnot_(
     is_tna_cliques(x),
     "Argument {.arg x} must be a {.cls tna_cliques} object."
@@ -270,8 +242,8 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
   labels <- attr(x, "labels")
   max_cliques <- min(first + n - 1L, n_cliques)
   if (interactive()) {
-    op <- par(ask = TRUE)
-    on.exit(par(op))
+    op <- graphics::par(ask = TRUE)
+    on.exit(graphics::par(op))
   }
   for (i in seq(first, max_cliques)) {
     clique_weights <- x$weights[[i]]
@@ -284,8 +256,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
       input = clique_weights,
       labels = colnames(clique_weights),
       edge.labels = TRUE,
-      # sum weights?
-      directed = TRUE,
+      directed = attr(x, "sum_weights"),
       #edge.label.cex = 1.82,
       mar = mar,
       minimum = minimum,
@@ -296,7 +267,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
       color = colors[match(rownames(clique_weights), labels)],
       pie = x$inits[[i]]
     )
-    plot_args <- modifyList(plot_args, list(...))
+    plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
   }
 }
@@ -312,6 +283,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
 #' @param x A `tna_stability` object produced by `estimate_cs`.
 #' @param level A `numeric` value representing the significance level for
 #' the confidence intervals. Defaults to `0.05`.
+#' @param ... Ignored.
 #'
 #' @details
 #' The function aggregates the results for each centrality measure across
@@ -334,9 +306,9 @@ plot.tna_cliques <- function(x, n = 6, first = 1, mar = rep(5, 4),
 #'
 #' @return A `ggplot` object displaying the stability analysis plot.
 #' @examples
-#' \dontrun{
-#' plot_stability_results(stability_results)
-#' }
+#' model <- tna(engagement)
+#' cs <- estimate_cs(model, iter = 10)
+#' plot(cs)
 #'
 plot.tna_stability <- function(x, level = 0.05, ...) {
   x$detailed_results <- NULL
@@ -356,9 +328,8 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
       next
     }
     means <- apply(corr, 2, mean, na.rm = TRUE)
-    # TODO make level as arg
-    ci_lower <- apply(corr, 2, quantile, probs = level / 2)
-    ci_upper <- apply(corr, 2, quantile, probs = 1 - level / 2)
+    ci_lower <- apply(corr, 2, stats::quantile, probs = level / 2)
+    ci_upper <- apply(corr, 2, stats::quantile, probs = 1 - level / 2)
     measure_data[[i]] <- data.frame(
       measure = measure,
       proportion = drop_prop,
@@ -366,7 +337,6 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
       lower = ci_lower,
       upper = ci_upper
     )
-    # Collect CS-coefficients for the subtitle
     cs_coef <- x[[measure]]$cs_coefficient
     cs_subtitle[i] <- paste0(
       measure,
@@ -382,10 +352,19 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
   cs_subtitle <- paste0(cs_subtitle, collapse = "; ")
   ggplot2::ggplot(
     plot_data,
-    ggplot2::aes(x = proportion, y = correlation, color = measure)
+    ggplot2::aes(
+      x = !!rlang::sym("proportion"),
+      y = !!rlang::sym("correlation"),
+      color = !!rlang::sym("measure")
+    )
   ) +
     ggplot2::geom_ribbon(
-      ggplot2::aes(ymin = lower, ymax = upper, fill = measure), alpha = 0.2
+      ggplot2::aes(
+        ymin = !!rlang::sym("lower"),
+        ymax = !!rlang::sym("upper"),
+        fill = !!rlang::sym("measure")
+      ),
+      alpha = 0.2
     ) +
     ggplot2::geom_line() +
     ggplot2::geom_hline(
@@ -400,7 +379,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     ) +
     ggplot2::labs(
       title = "Centrality Stability Analysis",
-      subtitle = paste("CS-Coeficients: ", cs_subtitle),
+      subtitle = paste0("CS-Coeficients: ", cs_subtitle),
       x = "Proportion of Cases Dropped",
       y = "Correlation with Original Centrality",
       color = "Centrality Measure",
@@ -428,6 +407,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' community assignments.
 #' @param method A `character` string naming a community detection method to
 #' use for coloring the plot. This can be one of the following:
+#' @param ... Additional arguments passed to [qgraph::qgraph].
 #'
 #' * `"walktrap"`: A community detection method using short random walks.
 #' * `"fast_greedy"`: A method based on modularity optimization.
@@ -440,12 +420,12 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' * `"spinglass"`: A method based on the spinglass model.
 #'
 #' @examples
-#' \dontrun{
-#' plot_communities(tna_model, community_assignment, "walktrap")
-#' }
+#' model <- tna(group_regulation)
+#' comm <- communities(model)
+#' plot(comm, method = "leading_eigen")
 #'
 plot.tna_communities <- function(x, cluster = 1L, colors,
-                                 method = "spinglass") {
+                                 method = "spinglass", ...) {
   stopifnot_(
     is_tna_communities(x),
     "Argument {.arg x} must be a {.cls tna_communities} object."
@@ -456,11 +436,7 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
     default_colors,
     colors
   )
-  plot(
-    y,
-    cluster = cluster,
-    colors = map_to_color(x[[cluster]]$assignment[, method], colors)
-  )
+  plot(y, colors = map_to_color(x$assignment[, method], colors), ...)
 }
 
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
@@ -485,6 +461,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     )
   ) |>
     dplyr::mutate(rank = dplyr::row_number())
+
   ggplot2::ggplot(x) +
     ggplot2::scale_fill_manual(values = colors) +
     ggplot2::geom_col(
@@ -533,7 +510,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 
 plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
   # TODO handle colors and test
-  measures <- names(x)[names(x) %in% valid_measures]
+  measures <- names(x)
   n_clusters <- length(unique(x$Cluster))
   dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
     data.frame() |>
@@ -583,18 +560,17 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
 #' that `x`is greater than `y`and red indicates otherwise.
 #'
 #' @export
-#' @rdname plot_compare
+#' @family core
 #' @param x An object of class `tna`. It will be the principal model.
 #' @param y An object of class `tna`. It will be the model subtracted from the
 #'   principal model.
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object displaying the difference network between the
 #'   two models.
-#' @family core
 #' @examples
-#' tna_model_1 <- tna(engagement[engagement[, 1] == "Active", ])
-#' tna_model_2 <- tna(engagement[engagement[, 1] != "Active", ])
-#' plot_compare(tna_model_1, tna_model_2)
+#' model_x <- tna(engagement[engagement[, 1] == "Active", ])
+#' model_u <- tna(engagement[engagement[, 1] != "Active", ])
+#' plot_compare(model_x, model_y)
 #'
 plot_compare <- function(x, y, ...) {
   stopifnot_(
@@ -609,16 +585,16 @@ plot_compare <- function(x, y, ...) {
     all(x$labels == y$labels),
     "{.arg x} and {.arg y} must have the same labels."
   )
-  pie <- abs(x$inits[[1]] - y$inits[[1]])
-  piesign <- ifelse(x$inits[[1]] > y$inits[[1]], "#009900", "red")
+  pie <- abs(x$inits - y$inits)
+  piesign <- ifelse(x$inits > y$inits, "#009900", "red")
   #pos_col <- c("#009900", "darkgreen")
   #neg_col <- c("#BF0000", "red")
-  diff <- tna(x$weights[[1]] - y$weights[[1]], pie)
+  diff <- tna(x$weights - y$weights, pie)
   plot.tna(
     diff,
     pie = pie,
     pieColor = piesign,
-    color = x$colors,
+    colors = x$colors,
     theme = NULL,
     palette = "colorblind",
     ...

@@ -7,13 +7,12 @@
 \usage{
 cliques(x, ...)
 
-\method{cliques}{tna}(x, cluster = 1, size = 3, threshold = 0)
+\method{cliques}{tna}(x, size = 3, threshold = 0, sum_weights = FALSE, ...)
 }
 \arguments{
-\item{x}{An object of type \code{tna}}
+\item{x}{A \code{tna} object.}
 
-\item{cluster}{An integer specifying which cluster to analyze.
-Defaults to \code{1}.}
+\item{...}{Ignored.}
 
 \item{size}{An \code{integer} specifying the size of the cliques to identify.
 Defaults to \code{3} (triads).}
@@ -21,9 +20,13 @@ Defaults to \code{3} (triads).}
 \item{threshold}{A \code{numeric} value that sets the minimum edge weight
 for an edge to be considered in the clique. Edges below this value
 are ignored. Defaults to \code{0}.}
+
+\item{sum_weights}{A \code{logical} value specifying whether the sum of the
+weights should be above the \code{threshold} instead of individual weights of the
+directed edges. Defaults to \code{FALSE}.}
 }
 \value{
-A \code{cliques} object which is a \code{list} of two elements:
+A \code{tna_cliques} object which is a \code{list} of two elements:
 \itemize{
 \item \code{weights} is a \code{matrix} of the edge weights in the clique.
 \item \code{inits} is a \code{numeric} vector of initial weights for the clique.
@@ -36,12 +39,9 @@ connected—of size \code{n} in the transition matrix for the specified cluster
 in the \code{tna} object.
 }
 \examples{
-\dontrun{
-# Find  3-cliques (triads) in the first cluster
-cliques_result <- cliques(my_tna_object, cluster = 1, size = 3)
+model <- tna(engagement)
 
-# Find 4-cliques in the second cluster
-cliques_result <- cliques(my_tna_object, cluster = 2, size = 4)
-}
+# Find  2-cliques (dyads)
+cliq <- cliques(model, size = 2)
 
 }

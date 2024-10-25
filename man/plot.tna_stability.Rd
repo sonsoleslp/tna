@@ -11,6 +11,8 @@
 
 \item{level}{A \code{numeric} value representing the significance level for
 the confidence intervals. Defaults to \code{0.05}.}
+
+\item{...}{Ignored.}
 }
 \value{
 A \code{ggplot} object displaying the stability analysis plot.
@@ -42,8 +44,8 @@ the CS-coefficient.
 }
 }
 \examples{
-\dontrun{
-plot_stability_results(stability_results)
-}
+model <- tna(engagement)
+cs <- estimate_cs(model, iter = 10)
+plot(cs)
 
 }

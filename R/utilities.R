@@ -42,7 +42,6 @@ is_weakly_connected <- function(mat) {
   all(visited)
 }
 
-
 #' Shorthand for `try(., silent = TRUE)`
 #'
 #' @param expr An \R expression to try.
@@ -91,39 +90,14 @@ igraph::as.igraph
 #'
 #' @export
 #' @inheritParams igraph::as.igraph
-#' @param cluster An `integer` specifying which cluster to coerce.
 #' @return An `igraph` object.
-as.igraph.tna <- function(x, cluster = 1, ...) {
+as.igraph.tna <- function(x, ...) {
   igraph::graph_from_adjacency_matrix(
-    adjmatrix = x$weights[[cluster]],
+    adjmatrix = x$weights,
     mode = "directed",
     weighted = TRUE
   )
 }
-
-#
-# #' Get the Model from TNA Results
-# #'
-# #' This function extracts and returns the `tna` model object from a  results list
-# #' The `tna` model is typically stored within the results of an analysis
-# #' conducted with the `tna` package.
-# #'
-# #' @param results An object containing the results of a network analysis,
-# #'   including the model and other relevant information.
-# #' @return The  `tna`  model object extracted from the results.
-# #' @examples
-# #' \dontrun{
-# #' # Assuming `results` is a tna object
-# #' model <- get_model(results)
-# #' }
-# #' @export
-# get_model <- function(results) {
-#   stopifnot_(
-#     is_tna(results$model),
-#     "The argument {.arg results} must contain a property named model that is a {.cls tna} object."
-#   )
-#   results$model
-# }
 
 # Functions borrowed from the `dynamite` package --------------------------
 # https://github.com/ropensci/dynamite

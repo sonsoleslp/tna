@@ -6,9 +6,7 @@
 #' in the `tna` object.
 #'
 #' @export
-#' @param x An object of type `tna`
-#' @param cluster An integer specifying which cluster to analyze.
-#' Defaults to `1`.
+#' @param x A `tna` object.
 #' @param size An `integer` specifying the size of the cliques to identify.
 #' Defaults to `3` (triads).
 #' @param threshold A `numeric` value that sets the minimum edge weight
@@ -17,19 +15,17 @@
 #' @param sum_weights A `logical` value specifying whether the sum of the
 #' weights should be above the `threshold` instead of individual weights of the
 #' directed edges. Defaults to `FALSE`.
-#' @return A `cliques` object which is a `list` of two elements:
+#' @param ... Ignored.
+#' @return A `tna_cliques` object which is a `list` of two elements:
 #'
 #'   * `weights` is a `matrix` of the edge weights in the clique.
 #'   * `inits` is a `numeric` vector of initial weights for the clique.
 #'
 #' @examples
-#' \dontrun{
-#' # Find  3-cliques (triads) in the first cluster
-#' cliques_result <- cliques(my_tna_object, cluster = 1, size = 3)
+#' model <- tna(engagement)
 #'
-#' # Find 4-cliques in the second cluster
-#' cliques_result <- cliques(my_tna_object, cluster = 2, size = 4)
-#' }
+#' # Find  2-cliques (dyads)
+#' cliq <- cliques(model, size = 2)
 #'
 cliques <- function(x, ...) {
   UseMethod("cliques")
@@ -37,15 +33,14 @@ cliques <- function(x, ...) {
 
 #' @rdname cliques
 #' @export
-cliques.tna <- function(x, cluster = 1, size = 3,
-                        threshold = 0, sum_weights = FALSE) {
+cliques.tna <- function(x, size = 3, threshold = 0, sum_weights = FALSE, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  weights <- x$weights[[cluster]]
+  weights <- x$weights
   labels <- x$labels
-  inits <- x$inits[[cluster]]
+  inits <- x$inits
   clique_idx <- integer(0)
   if (sum_weights) {
     mat <- weights + t(weights)
@@ -89,10 +84,10 @@ cliques.tna <- function(x, cluster = 1, size = 3,
       )
     ),
     class = "tna_cliques",
+    size = size,
     labels = labels,
     threshold = threshold,
-    cluster = cluster,
-    size = size,
-    colors = attr(x$seq[[cluster]], "colors")
+    sum_weights = sum_weights,
+    colors = attr(x$data, "colors")
   )
 }

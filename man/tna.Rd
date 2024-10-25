@@ -6,35 +6,34 @@
 \alias{tna.matrix}
 \alias{tna.stslist}
 \alias{tna.data.frame}
-\alias{tna.mhmm}
 \title{Build a Transition Network Analysis Model}
 \usage{
 tna(x, ...)
 
-\method{tna}{default}(x, type = "prop", inits, ...)
+\method{tna}{default}(x, type = "relative", inits, ...)
 
-\method{tna}{matrix}(x, type = "prop", inits, ...)
+\method{tna}{matrix}(x, type = "relative", inits, ...)
 
-\method{tna}{stslist}(x, type = "prop", ...)
+\method{tna}{stslist}(x, type = "relative", ...)
 
-\method{tna}{data.frame}(x, type = "prop", ...)
-
-\method{tna}{mhmm}(x, type = "prop", ...)
+\method{tna}{data.frame}(x, type = "relative", ...)
 }
 \arguments{
-\item{x}{A \code{stslist} object describing a sequence of events or states to
-be used for building
-the Markov model or a \code{matrix} of transition probabilities with column
+\item{x}{An \code{stslist} object describing a sequence of events or states to
+be used for building the Markov model or a \code{matrix} of weights with column
 names describing the states. If \code{x} is a matrix, it is assumed that the
-element on row \code{i} and column \code{j} is the transition probability (or weight)
-from state \code{i} to state \code{j}. It also accepts a \code{data.frame} object in wide format
-.  (each column is a timepoint with no extra columns)}
+element on row \code{i} and column \code{j} is the weight of the edge representing
+the transition from state \code{i} to state \code{j}. The argument \code{x} also accepts
+a \code{data.frame} object in wide format
+.  (each column is a timepoint with no extra columns).}
 
 \item{...}{Ignored.}
 
 \item{type}{A \code{character} string describing the weight matrix type.
-Currently supports \code{"prop"} for proportions (probabilities) and
-\code{"freq"} for frequencies.}
+Currently supports \code{"relative"} for relative frequencies
+(probabilities, the default), \code{"scaled"} for frequencies scaled to the
+unit interval, \code{"ranked"} for ranks of the weights scaled to the unit
+interval, and \code{"absolute"} for frequencies.}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
@@ -44,15 +43,15 @@ be scaled to unity.}
 An object of class \code{tna} which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{weights}\cr A \code{list} of adjacency matrices of the model
-(weight matrices) for each cluster.
-\item \code{inits}\cr A \code{list} of initial weight vectors for each
-cluster. For matrices, this element will be \code{NULL} if \code{inits} is not
+\item \code{weights}\cr An adjacency \code{matrix} of the model (weight matrix).
+\item \code{inits}\cr A \code{numeric} vector of initial values for each state.
+For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
 directly provided
-\item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if there
-are no labels.
-\item \code{seq}\cr The original sequence data converted to an internal format
-used by the package when \code{x} is a \code{stslist} or a \code{data.frame} object.
+\item \code{labels}\cr A \code{character} vector of the state labels, or \code{NULL} if
+there are no labels.
+\item \code{data}\cr The original sequence data that has been converted to an
+internal format used by the package when \code{x} is a \code{stslist} or a
+\code{data.frame} object. Otherwise \code{NULL}.
 }
 }
 \description{
@@ -65,7 +64,7 @@ zero diagonal entries (without loops). Also accepts matrices of transition
 probabilities and initial state probabilities directly.
 }
 \examples{
-tna_model <- tna(engagement)
+model <- tna(engagement)
 print(tna_model)
 
 }

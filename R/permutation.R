@@ -9,58 +9,67 @@
 #' @family evaluation
 #' @param x A `tna` object containing sequence data for the first `tna` model.
 #' @param y A `tna` object containing sequence data for the second `tna` model.
-#' @param cluster1 An `integer` indicating the cluster to be used for
-#' the first `tna` model. Default is 1.
-#' @param cluster2 An `integer` indicating the cluster to be used for
-#' the second `tna` model. Default is 1.
-#' @param iter The number of permutations to perform. Default is 1000.
-#' @param paired Logical. If `TRUE`, perform paired permutation tests;
-#' if `FALSE`, perform unpaired tests. Default is `FALSE`.
-#' @param level The significance level for the permutation tests.
-#' The default is 0.05.
+#' @param iter An `integer` gicing the number of permutations to perform.
+#' The default is 1000.
+#' @param paired A `logical` value. If `TRUE`, perform paired permutation tests;
+#' if `FALSE`, perform unpaired tests. The default is `FALSE`.
+#' @param level A `numeric` value gicing the significance level for the
+#' permutation tests. The default is 0.05.
 #' @return A `list` containing:
 #'
 #'   * `edge_statistics` A data frame with edge names, original differences,
-#'   and p-values.
-#'   * `original_weights1` The transition probability matrix from
-#'   the first `tna` model
-#'   * `original_weights2` The transition probability matrix from
-#'   the second `tna` model.
+#'     and p-values.
+#'   * `original_weights_x` The edge weight matrix from
+#'     the first `tna` model `x`.
+#'   * `original_weights_y` The edge weight matrix from
+#'     the second `tna` model `y`.
 #'   * `true_diffs` The matrix of differences in weights.
 #'   * `sig_diffs` A matrix showing the significant differences
-#'   based on the permutation test.
+#'     based on the permutation test.
 #'
 #' @examples
-#' \dontrun{
-#' result <- permutation_test(network1, network2, cluster1 = 1, cluster2 = 1, it = 1000)
-#' }
+#' model_x <- tna(group_regulation[1:1000,])
+#' model_y <- tna(group_regulation[1001:2000,])
+#' # Small number of iterations for CRAN
+#' permutation_test(x, y, iter = 100)
 #'
-permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
-                             paired = FALSE, level = 0.05) {
+permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05) {
   stopifnot_(
-    !is.null(x),
-    "Argument {.arg x} must be a {.cls tna} object created from the `TraMineR` sequence object."
+    is_tna(x),
+    "Argument {.arg x} must be a {.cls tna} object."
   )
   stopifnot_(
-    !is.null(y),
-    "Argument {.arg y} must be a {.cls tna} object created from the `TraMineR` sequence object."
+    is_tna(y),
+    "Argument {.arg y} must be a {.cls tna} object."
   )
-  seq1 <- x$seq[[cluster1]]
-  seq2 <- y$seq[[cluster2]]
-  weights1 <- x$weights[[cluster1]]
-  weights2 <- y$weights[[cluster2]]
-  a <- length(attr(seq1, "alphabet"))
+  stopifnot_(
+    !is.null(x$data),
+    "Argument {.arg x} must be a {.cls tna} object created from sequence data."
+  )
+  stopifnot_(
+    !is.null(y$data),
+    "Argument {.arg y} must be a {.cls tna} object created from sequence data."
+  )
+  # TODO check that networks can be compared
+  data_x <- x$data
+  data_y <- y$data
+  weights_x <- x$weights
+  weights_y <- y$weights
+  a <- length(attr(data_x, "alphabet"))
   type <- attr(x, "type")
-  diffs_true <- weights1 - weights2
+  diffs_true <- weights_x - weights_y
   diffs_true_abs <- abs(diffs_true)
-  edge_names <- expand.grid(from = rownames(weights1), to = colnames(weights2))
+  edge_names <- expand.grid(
+    from = rownames(weights_x),
+    to = colnames(weights_y)
+  )
   edge_names <- paste0(edge_names$from, " -> ", edge_names$to)
-  combined_seq <- rbind(seq1, seq2)
-  n_seq1 <- nrow(seq1)
-  n_combined <- n_seq1 + nrow(seq2)
-  perm1 <- seq_len(n_seq1)
-  perm2 <- seq(n_seq1 + 1L, n_combined)
-  combined_model <- markov_model(combined_seq, transitions = TRUE)
+  combined_data <- rbind(data_x, data_y)
+  n_data_x <- nrow(data_x)
+  n_combined <- n_data_x + nrow(data_y)
+  perm_x <- seq_len(n_data_x)
+  perm_y <- seq(n_data_x + 1L, n_combined)
+  combined_model <- markov_model(combined_data, transitions = TRUE)
   combined_trans <- combined_model$trans
   diffs_perm <- array(0L, dim = c(iter, a, a))
   p_values <- matrix(0L, a, a)
@@ -74,11 +83,11 @@ permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
       # For unpaired data, perform complete randomization
       perm_idx <- sample(n_combined)
     }
-    trans1_perm <- combined_trans[perm_idx[perm1], , ]
-    trans2_perm <- combined_trans[perm_idx[perm2], , ]
-    weights1_perm <- compute_weights(trans1_perm, type, s = a)
-    weights2_perm <- compute_weights(trans2_perm, type, s = a)
-    diffs_perm[i, , ] <- weights1_perm - weights2_perm
+    trans_perm_x <- combined_trans[perm_idx[perm_x], , ]
+    trans_perm_y <- combined_trans[perm_idx[perm_y], , ]
+    weights_perm_x <- compute_weights(trans_perm_x, type, s = a)
+    weights_perm_y <- compute_weights(trans_perm_y, type, s = a)
+    diffs_perm[i, , ] <- weights_perm_x - weights_perm_y
     p_values <- p_values + 1L * (abs(diffs_perm[i, , ]) >= diffs_true_abs)
   }
   p_values <- p_values / iter
@@ -91,8 +100,8 @@ permutation_test <- function(x, y, cluster1 = 1, cluster2 = 1, iter = 1000,
   )
   list(
     edge_statistics = edge_stats,
-    original_weights1 = weights1,
-    original_weights2 = weights2,
+    original_weights_x = weights_x,
+    original_weights_y = weights_y,
     true_diffs = diffs_true,
     sig_diffs = sig_diffs
   )

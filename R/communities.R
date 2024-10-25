@@ -14,27 +14,21 @@
 #' @export
 #' @family patterns
 #' @param x A `tna` object that contains transition matrices.
-#' @param cluster An optional argument specifying which cluster to analyze.
-#' If `NULL`, the function will analyze all clusters in `x`.
 #' @param gamma A numeric parameter that affects the behavior of certain
 #' algorithms like the Spin Glass method. Defaults to `1`.
+#' @param ... Ignored.
 #' @return An object of class `tna_communities` which is a `list` with an
 #'   element for each cluster containing:
 #'
 #'   * `counts`: A `list` with the number of communities found
-#'   by each algorithm.
+#'     by each algorithm.
 #'   * `assignments`: A `data.frame` where each row corresponds to a
-#'   node and each column to a community detection algorithm, with color-coded
-#'   community assignments.
+#'     node and each column to a community detection algorithm,
+#'     with color-coded community assignments.
 #'
 #' @examples
-#' \dontrun{
-#' # Detect communities for all clusters
+#' model <- tna(engagement)
 #' comm <- communities(tna_model)
-#'
-#' # Detect communities for a specific cluster
-#' comm <- communities(tna_model, cluster = 1)
-#' }
 #'
 communities <- function(x, ...) {
   UseMethod("communities")
@@ -42,46 +36,17 @@ communities <- function(x, ...) {
 
 #' @rdname communities
 #' @export
-communities.tna <- function(x, cluster = NULL, gamma = 1) {
+communities.tna <- function(x, gamma = 1, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  n_clust <- length(x$weights)
-  out <- vector(mode = "list", length = n_clust)
-  if (n_clust > 1L & missing(cluster)) {
-    for (i in seq_len(n_clust)) {
-      g <- igraph::graph_from_adjacency_matrix(
-        x$weights[[i]],
-        mode = "directed",
-        weighted = TRUE
-      )
-      out[[i]] <- find_communities_(g, gamma = gamma)
-    }
-  } else {
-    cluster <- ifelse_(is.null(cluster), 1L, cluster)
-    g <- igraph::graph_from_adjacency_matrix(
-      x$weights[[cluster]],
-      mode = "directed",
-      weighted = TRUE
-    )
-    out[[1]] <- find_communities_(g, gamma = gamma)
-  }
-  structure(
-    out,
-    class = "tna_communities",
-    cluster = cluster,
-    tna = x
+  g <- as.igraph(x)
+  g_un <- igraph::as.undirected(
+    g,
+    mode = "collapse",
+    edge.attr.comb = list(weight = "sum")
   )
-}
-
-#' Internal Community Detection Function
-#'
-#' @param g An `igraph` graph object
-#' @inheritParams find_communities
-#' @noRd
-find_communities_ <- function(g, gamma = 1) {
-  # Find communities using different algorithms and assign to named objects
   communities <- list()
   mapping <- list()
 
@@ -94,14 +59,10 @@ find_communities_ <- function(g, gamma = 1) {
     as.numeric()
 
   # Fast greedy algorithm (requires undirected graph)
-  g_undirected <- igraph::as.undirected(
-    g,
-    mode = "collapse",
-    edge.attr.comb = list(weight = "sum")
-  )
+
   communities$fast_greedy <- igraph::cluster_fast_greedy(
-    g_undirected,
-    weights = igraph::E(g_undirected)$weight
+    g_un,
+    weights = igraph::E(g_un)$weight
   )
   mapping$fast_greedy <- igraph::membership(communities$fast_greedy) |>
     as.numeric()
@@ -123,18 +84,16 @@ find_communities_ <- function(g, gamma = 1) {
     as.numeric()
 
   # Edge betweenness algorithm
-  # TODO warning?
-  communities$edge_betweenness <- igraph::cluster_edge_betweenness(
+  # TODO warning? supressing for now...
+  communities$edge_betweenness <- suppressWarnings(igraph::cluster_edge_betweenness(
     g,
     weights = igraph::E(g)$weight
-  )
+  ))
   mapping$edge_betweenness <-
     igraph::membership(communities$edge_betweenness) |>
     as.numeric()
 
   # Leading eigenvector algorithm
-  # TODO how should the graph be converted to undirected
-  g_un <- igraph::as.undirected(g, mode = "collapse")
   communities$leading_eigen <- igraph::cluster_leading_eigen(
     g_un,
     weights = igraph::E(g_un)$weight
@@ -144,21 +103,24 @@ find_communities_ <- function(g, gamma = 1) {
 
   # Spin glass algorithm (requires undirected graph)
   communities$spinglass <- igraph::cluster_spinglass(
-    g_undirected,
-    weights = igraph::E(g_undirected)$weight,
+    g_un,
+    weights = igraph::E(g_un)$weight,
     gamma = gamma
   )
   mapping$spinglass <- igraph::membership(communities$spinglass) |>
     as.numeric()
 
-  list(
-    counts = lengths(communities),
-    assignments = as.data.frame(
-      c(
-        list(node = igraph::V(g)$name),
-        mapping
+  structure(
+    list(
+      counts = lengths(communities),
+      assignments = as.data.frame(
+        c(
+          list(node = igraph::V(g)$name),
+          mapping
+        )
       )
-    )
+    ),
+    class = "tna_communities",
+    tna = x
   )
-
 }

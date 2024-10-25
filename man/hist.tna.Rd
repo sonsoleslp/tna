@@ -4,16 +4,7 @@
 \alias{hist.tna}
 \title{Plot a Histogram of Edge Weights in the Network}
 \usage{
-\method{hist}{tna}(
-  x,
-  cluster = 1,
-  breaks,
-  col = "lightblue",
-  main = "Histogram of Edge Weights",
-  xlab,
-  border = "white",
-  ...
-)
+\method{hist}{tna}(x, breaks, col = "lightblue", main, xlab, border = "white", ...)
 }
 \arguments{
 \item{x}{a vector of values for which the histogram is desired.}
@@ -37,12 +28,14 @@
 
 \item{col}{a colour to be used to fill the bars.}
 
+\item{main}{A \code{character} string defining the title of the plot.}
+
+\item{xlab}{A \code{character} string defining the vertical axis label.}
+
 \item{border}{the color of the border around the bars.  The default
     is to use the standard foreground color.}
 
-\item{...}{further arguments and \link[graphics]{graphical parameters} passed to
-    \code{\link[graphics]{plot.histogram}} and thence to \code{\link[graphics]{title}} and
-    \code{\link[graphics]{axis}} (if \code{plot = TRUE}).}
+\item{...}{Additional arguments passed to \code{\link[graphics:hist]{graphics::hist()}}.}
 }
 \description{
 Plot a Histogram of Edge Weights in the Network

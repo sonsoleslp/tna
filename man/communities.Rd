@@ -7,13 +7,12 @@
 \usage{
 communities(x, ...)
 
-\method{communities}{tna}(x, cluster = NULL, gamma = 1)
+\method{communities}{tna}(x, gamma = 1, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object that contains transition matrices.}
 
-\item{cluster}{An optional argument specifying which cluster to analyze.
-If \code{NULL}, the function will analyze all clusters in \code{x}.}
+\item{...}{Ignored.}
 
 \item{gamma}{A numeric parameter that affects the behavior of certain
 algorithms like the Spin Glass method. Defaults to \code{1}.}
@@ -25,8 +24,8 @@ element for each cluster containing:
 \item \code{counts}: A \code{list} with the number of communities found
 by each algorithm.
 \item \code{assignments}: A \code{data.frame} where each row corresponds to a
-node and each column to a community detection algorithm, with color-coded
-community assignments.
+node and each column to a community detection algorithm,
+with color-coded community assignments.
 }
 }
 \description{
@@ -42,13 +41,8 @@ algorithms (e.g., Walktrap, Fast Greedy, Label Propagation, Infomap,
 Edge Betweenness, Leading Eigenvector, and Spin Glass).
 }
 \examples{
-\dontrun{
-# Detect communities for all clusters
+model <- tna(engagement)
 comm <- communities(tna_model)
-
-# Detect communities for a specific cluster
-comm <- communities(tna_model, cluster = 1)
-}
 
 }
 \seealso{

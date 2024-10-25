@@ -2,7 +2,7 @@
 title: "Not so basic example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{not-so-basic-example}
+  %\VignetteIndexEntry{Not so basic example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -28,7 +28,7 @@ data("engagement", package = "tna")
 ```
 
 ```{r}
-tna_model <- build_tna(engagement)
+tna_model <- tna(engagement)
 print(tna_model)
 ```
 
@@ -36,22 +36,23 @@ print(tna_model)
 plot(tna_model)
 ```
 ```{r, warning = FALSE}
-cd <- community_detection(tna_model)
-plot_communities(tna_model, cd, community = "leading_eigen")
+cd <- communities(tna_model)
+plot(cd, method = "leading_eigen")
 ```
-
 
 
 ```{r, figures-side, fig.show="hold", out.width="30%", fig.height=8, fig.width=4}
-find_dyads(tna_model, plot = TRUE)
+dyads <- cliques(tna_model, size = 2)
+plot(dyads)
 ```
 ```{r}
-find_triads(tna_model, plot = TRUE)
+triads <- cliques(tna_model, size = 3)
+plot(triads)
 ```
 
 
 ```{r,}
-prune_results <- prune(tna_model, percentile = 44)
-plot(prune_results$pruned)
+prune_results <- prune(tna_model, method = "lowest", lowest = 0.4)
+plot(prune_results)
 ```
 

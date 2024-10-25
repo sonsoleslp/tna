@@ -8,9 +8,9 @@
   x,
   n = 6,
   first = 1,
-  mar = rep(5, 4),
   show_loops = FALSE,
   minimum = 1e-05,
+  mar = rep(5, 4),
   ...
 )
 }
@@ -23,12 +23,12 @@ The defaults is 6.}
 \item{first}{An \code{integer} giving the index of the first clique to show.
 The default index is 1.}
 
-\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
 \item{show_loops}{A \code{logical} value indicating whether to include loops
 in the plots or not.}
 
 \item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Ignored.}
 }

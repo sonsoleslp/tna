@@ -4,12 +4,10 @@
 \alias{as.igraph.tna}
 \title{Coerce a \code{tna} object to an \code{igraph} object.}
 \usage{
-\method{as.igraph}{tna}(x, cluster = 1, ...)
+\method{as.igraph}{tna}(x, ...)
 }
 \arguments{
 \item{x}{The object to convert.}
-
-\item{cluster}{An \code{integer} specifying which cluster to coerce.}
 
 \item{...}{Additional arguments. None currently.}
 }

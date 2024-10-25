@@ -1,16 +1,13 @@
-#' Calculate Network Metrics for a Cluster
+#' Calculate Summary of Network Metrics for a Transition Network
 #'
-#' This function calculates a variety of network metrics for a specified cluster
-#' in a transition network stored in a `tna` object. It computes key metrics such
-#' as node and edge counts, network density, mean distance, strength measures,
-#' degree centrality, and reciprocity. A histogram of edge weights is also plotted.
+#' This function calculates a variety of network metrics for a `tna` object.
+#' It computes key metrics such as node and edge counts, network density,
+#' mean distance, strength measures, degree centrality, and reciprocity.
 #'
 #' @export
-#' @param x A `tna` object.
-#' @param cluster An integer specifying which cluster to analyze.
-#' Defaults to 1.
-#' @param degree An `integer` specifying how many digits to show.
-#' Defaults to 4.
+#' @param object A `tna` object.
+#' @param digits An `integer` specifying how many digits to show.
+#' @param ... Ignored
 #'
 #' @details
 #' The function extracts the `igraph` network for the specified cluster and
@@ -42,31 +39,24 @@
 #'   * `sd_out_strength`: The standard deviation of out-strength.
 #'   * `mean_in_strength`: The mean in-strength of nodes.
 #'   * `sd_in_strength`: The standard deviation of in-strength.
-#'   * `Mman_out_degree`: The mean out-degree of nodes.
-#'   * `sdD_out_degree`: The standard deviation of out-degree.
+#'   * `mean_out_degree`: The mean out-degree of nodes.
+#'   * `sd_out_degree`: The standard deviation of out-degree.
 #'   * `centralization_out_degree`: The centralization of out-degree.
 #'   * `centralization_in_degree`: The centralization of in-degree.
 #'   * `reciprocity`: The reciprocity of the network.
 #'
 #' @examples
-#' \dontrun{
-#' # Calculate network metrics for the first cluster
-#' metrics <- network_metrics(tna_model, cluster = 1)
-#' }
+#' model <- tna(engagement)
+#' summarys(model)
 #'
-network_metrics <- function(x, ...) {
-  UseMethod("network_metrics")
-}
-
-#' @rdname network_metrics
-#' @export
-network_metrics.tna <- function(x, cluster = 1, digits = 4, ...) {
+summary.tna <- function(object,
+                        digits =  max(3, getOption("digits") - 3L), ...) {
   stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
+    is_tna(object),
+    "Argument {.arg object} must be a {.cls tna} object."
   )
-  weights <- x$weights[[cluster]]
-  g <- as.igraph(x, cluster = cluster)
+  weights <- object$weights
+  g <- as.igraph(object)
   in_strength <- igraph::strength(g, mode = "out")
   out_strength <- igraph::strength(g, mode = "in")
   out_degree <- igraph::degree(g, mode = "out")

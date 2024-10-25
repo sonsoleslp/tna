@@ -8,14 +8,13 @@
 #' @export
 #' @family evaluation
 #' @param x A `tna` object created from sequence data.
-#' @param cluster An integer specifying which cluster of the sequence data to
-#' use for bootstrapping. Defaults to `1`.
 #' @param b An integer specifying the number of bootstrap samples to
 #' be generated. Defaults to `1000`.
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @param threshold A `numeric` value to compare edge weights against.
 #' The default is 0.01.
+#' @param ... Ingored
 #'
 #' @details
 #' The function first computes the original transition matrix for the specified
@@ -54,10 +53,9 @@
 #'     weights, and the range of the removed edge weights.
 #'
 #' @examples
-#' \dontrun{
-#' # Bootstrap transition networks for a cluster
-#' results <- bootstrap(tna_model, v = 1000, level = 0.05, cluster = 1)
-#' }
+#' model <- tna(engagement)
+#' # Small number of iterations for CRAN
+#' bootstrap(model, b = 100)
 #'
 bootstrap <- function(x, ...) {
   UseMethod("bootstrap")
@@ -65,14 +63,13 @@ bootstrap <- function(x, ...) {
 
 #' @rdname bootstrap
 #' @export
-bootstrap.tna <- function(x, cluster = 1, b = 1000, level = 0.05,
-                          threshold = 0.01, ...) {
+bootstrap.tna <- function(x, b = 1000, level = 0.05, threshold = 0.01, ...) {
   stopifnot_(
-    !is.null(x$seq),
+    !is.null(x$data),
     "Argument {.arg x} must be a {.cls tna} object
     created from sequence data."
   )
-  d <- x$seq[[cluster]]
+  d <- x$data
   model <- markov_model(d, transitions = TRUE)
   trans <- model$trans
   alphabet <- attr(d, "alphabet")
@@ -93,8 +90,18 @@ bootstrap.tna <- function(x, cluster = 1, b = 1000, level = 0.05,
   p_values <- p_values / b
   mean_weights <- apply(weights_boot, c(2, 3), mean)
   sd_weights <- apply(weights_boot, c(2, 3), stats::sd)
-  ci_lower <- apply(weights_boot, c(2, 3), stats::quantile, probs = level / 2)
-  ci_upper <- apply(weights_boot, c(2, 3), stats::quantile, probs = 1 - level / 2)
+  ci_lower <- apply(
+    weights_boot,
+    c(2, 3),
+    stats::quantile,
+    probs = level / 2
+  )
+  ci_upper <- apply(
+    weights_boot,
+    c(2, 3),
+    stats::quantile,
+    probs = 1 - level / 2
+  )
   sig_weights <- (p_values < level) * weights
   removed <- c(weights[sig_weights == 0 & weights != 0])
   n_removed <- length(removed)
@@ -135,7 +142,6 @@ bootstrap.tna <- function(x, cluster = 1, b = 1000, level = 0.05,
         range_removed = range_removed
       )
     ),
-    class = "tna_bootstrap",
-    cluster = cluster
+    class = "tna_bootstrap"
   )
 }

@@ -1,4 +1,4 @@
-#' Calculate Centralities for a Transition Matrix
+#' Calculate Centrality Measures for a Transition Matrix
 #'
 #' This function calculates several centrality measures. See 'Details' for
 #' information about the measures.
@@ -20,7 +20,9 @@
 #'   * `Closeness`\cr Closeness centrality (overall), calculated using
 #'     [igraph::closeness()] with `mode = "all"`. It measures how close a node
 #'     is to all other nodes based on both incoming and outgoing paths.
-#'   * `Betweenness`\cr Betweenness centrality based on randomized shortest
+#'   * `Betweenness`\cr Betweenness centrality defined by the number of
+#'     geodesics calculated using [igraph::betweenness()].
+#'   * `BetweennessRSP`\cr Betweenness centrality based on randomized shortest
 #'     paths (Kivimäki et al. 2016). It measures the extent to which a
 #'     node lies on the shortest paths between other nodes.
 #'   * `Diffusion`\cr Diffusion centrality of Banerjee et.al. (2014).
@@ -34,8 +36,7 @@
 #' @export
 #' @family core
 #' @rdname centralities
-#' @param x A square matrix representing transition probabilities or adjacency,
-#'   or a `tna` object.
+#' @param x A `tna` object or a  square `matrix` representing edge weights.
 #' @param measures A `character` vector indicating which centrality
 #'   measures should be computed. If `NULL`, all available measures are
 #'   returned. See 'Details' for available measures. The elements are partially
@@ -44,9 +45,6 @@
 #'   network when computing the centrality measures (default is `FALSE`).
 #' @param normalize  A `logical` value indicating whether the centralities
 #'   should be normalized (default is `FALSE`).
-#' @param cluster Index of the cluster for which to compute the centralities or
-#'   `NULL` if there are no clusters or if centralities should be computed for
-#'   all clusters.
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
@@ -64,72 +62,46 @@
 #' Statistical Applications in Genetics and Molecular Biology, 4(1).
 
 #' @examples
-#' tna_model <- tna(engagement)
+#' model <- tna(engagement)
 #'
 #' # Centrality measures including loops in the network
-#' centralities(tna_model)
+#' centralities(model)
 #'
 #' # Centrality measures excluding loops in the network
-#' centralities(tna_model, loops = FALSE)
+#' centralities(model, loops = FALSE)
 #'
 #' # Centrality measures normalized
-#' centralities(tna_model, normalize = TRUE)
+#' centralities(model, normalize = TRUE)
 #'
-centralities <- function(x, loops = FALSE, cluster = NULL,
+centralities <- function(x, loops = FALSE,
                          normalize = FALSE, measures = NULL, ...) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, loops = FALSE, cluster = NULL,
+centralities.tna <- function(x, loops = FALSE,
                              normalize = FALSE, measures = NULL, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
   colors <- NULL
-  if (length(x$weights) == 1L || !is.null(cluster)) {
-    cluster <- ifelse_(is.null(cluster), 1, cluster)
-    out <- centralities_(
-      x$weights[[cluster]],
-      loops = loops,
-      normalize = normalize,
-      measures = measures
-    )
-    if (!is.null(x$seq)) {
-      attr(out, "colors") <- attr(x$seq[[cluster]], "colors")
-    }
-    return(out)
-  }
-  centrality_list <- list()
-  color_list <- list()
-  cluster_names <- names(x$weights)
-  for (i in seq_along(x$weights)){
-    centrality_list[[i]] <- centralities_(
-      x$weights[[i]],
-      loops = loops,
-      normalize = normalize,
-      measures = measures
-    )
-    centrality_list[[i]]$Cluster <- cluster_names[i]
-    if (!is.null(x$seq)) {
-      color_list[[i]] <- attr(x$seq[[i]], "colors")
-    }
-  }
-  structure(
-    dplyr::bind_rows(centrality_list) |>
-      dplyr::mutate(
-        Cluster = factor(!!rlang::sym("Cluster"), levels = cluster_names)
-      ),
-    class = c("tna_centralities", "tbl_df", "tbl", "data.frame"),
-    color = color_list
+  out <- centralities_(
+    x$weights,
+    loops = loops,
+    normalize = normalize,
+    measures = measures
   )
+  if (!is.null(x$data)) {
+    attr(out, "colors") <- attr(x$data, "colors")
+  }
+  out
 }
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = FALSE, cluster = NULL,
+centralities.matrix <- function(x, loops = FALSE,
                                 normalize = FALSE, measures = NULL, ...) {
   stopifnot_(
     is.matrix(x),
@@ -140,7 +112,8 @@ centralities.matrix <- function(x, loops = FALSE, cluster = NULL,
 
 #' Internal function to calculate various centrality measures
 #'
-#' @param x An adjacency matrix of a directed weighted graph
+#' @param x An adjacency matrix of a directed weighted graph.
+#' @inheritParams centralities
 #' @noRd
 centralities_ <- function(x, loops, normalize, measures) {
   stopifnot_(
@@ -273,8 +246,6 @@ wcc <- function(mat) {
 #' @export
 #' @param x A `tna` object representing the temporal network analysis data.
 #' The object should be created from a sequence datad object.
-#' @param cluster An `integer` specifying the cluster of the `tna` object
-#' to analyze. Default is 1.
 #' @param measures A `character` vector of centrality measures to estimate.
 #' The default measures are `"InStrength"`, `"OutStrength"`,
 #' and `"Betweenness"`.
@@ -283,7 +254,7 @@ wcc <- function(mat) {
 #' @param iter An `integer` specifying the number of resamples to draw.
 #' The default is 1000.
 #' @param method A `character` string indicating the correlation coefficient
-#' type. The default is `"pearson"`. See [stats:cor()] for details.
+#' type. The default is `"pearson"`. See [stats::cor()] for details.
 #' @param drop_prop A `numeric` vector specifying the proportions of
 #' cases to drop in each sampling iteration. Default is a sequence from 0.1 to
 #' 0.9 in increments of 0.1.
@@ -320,13 +291,10 @@ wcc <- function(mat) {
 #'   returned only if `return_detailed = TRUE`.
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming 'x' is a tna object
-#' results <- estimate_cs(x, measures = c("InStrength", "OutStrength"))
-#' }
+#' model <- tna(engagement)
+#' estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 10)
 #'
-estimate_cs <- function(x, cluster = 1,
-                        measures = c(
+estimate_cs <- function(x, measures = c(
                           "InStrength", "OutStrength", "Betweenness"
                         ),
                         normalize = FALSE, iter = 1000, method = "pearson",
@@ -337,24 +305,34 @@ estimate_cs <- function(x, cluster = 1,
     "Argument {.arg x} must be a {.cls tna} object."
   )
   stopifnot_(
-    !is.null(x$seq),
+    !is.null(x$data),
     "Argument {.arg x} must be a {.cls tna} object created from sequence data."
   )
-  d <- x$seq[[cluster]]
+  d <- x$data
   model <- markov_model(d, transitions = TRUE)
   trans <- model$trans
   a <- dim(trans)[2]
   n <- nrow(d)
   n_seq <- seq_len(n)
   n_prop <- length(drop_prop)
-  n_measures <- length(measures)
   type <- attr(x, "type")
   centralities_orig <- centralities(
     x,
-    cluster = cluster,
     normalize = normalize,
     measures = measures
   )
+  sds_orig <- centralities_orig |>
+    dplyr::summarize(
+      dplyr::across(
+        dplyr::all_of(measures),
+        stats::sd
+      )
+    )
+  # TODO check name validity and match, warning
+  valid_measures <- which(sds_orig > 0)
+  centralities_orig <- centralities_orig[, 1L + valid_measures]
+  measures <- measures[valid_measures]
+  n_measures <- length(measures)
   stability <- replicate(
     n_measures,
     matrix(NA, nrow = iter, ncol = n_prop),
@@ -373,20 +351,33 @@ estimate_cs <- function(x, cluster = 1,
       keep <- sample(n_seq, n - n_drop, replace = FALSE)
       trans_sub <- trans[keep, , ]
       weight_sub <- compute_weights(trans_sub, type, a)
+      centralities_sub <- centralities(
+        weight_sub,
+        normalize = normalize,
+        measures = measures
+      )
+      sds_sub <- centralities_sub |>
+        dplyr::summarize(
+          dplyr::across(
+            dplyr::all_of(measures),
+            stats::sd
+          )
+        )
       corr_prop[j, ] <- vapply(
         measures,
         function(measure) {
-          centrality_sub <- centralities(
-            weight_sub,
-            normalize = normalize,
-            measures = measure
-          )[[measure]]
+          centrality_sub <- centralities_sub[[measure]]
           centrality_orig <- centralities_orig[[measure]]
-          cor(
-            centrality_sub,
-            centrality_orig,
-            method = method,
-            use = "complete.obs"
+          sd_sub <- sds_sub[measure]
+          ifelse_(
+            sd_sub > 0,
+            stats::cor(
+              centrality_sub,
+              centrality_orig,
+              method = method,
+              use = "complete.obs"
+            ),
+            NA_real_
           )
         },
         numeric(1L)
@@ -417,44 +408,6 @@ estimate_cs <- function(x, cluster = 1,
     drop_prop = drop_prop,
     threshold = threshold
   )
-
-    # # Check if results are empty
-    # for (measure in measures) {
-    #   if (all(is.na(stability_results[[measure]]))) {
-    #     cat(sprintf("Warning: All results for measure '%s' are NA.\n", measure))
-    #   }
-    # }
-
-    #cat("\n=== Centrality Stability Analysis ===\n\n")
-
-
-      #cat(sprintf("%s Centrality: CS-Coefficient = %.2f\n", measure, cs_coef))
-
-
-    #if (return_detailed) {
-    #  detailed_df <- lapply(stability_results, function(res) {
-    #    data.frame(
-    #      drop_proportion = rep(drop_proportions, each = n_bootstraps),
-    #      correlation = as.vector(res)
-    #    )
-    #  })
-    #  final_results$detailed_results <- detailed_df
-    #}
-
-    # if (plot) {
-    #   plot_stability_results(invisible(final_results))
-    # }
-
-    # return(invisible(final_results))
-
-  # }, error = function(e) {
-  #   cat("\nError occurred:", conditionMessage(e), "\n")
-  #   stop(e)
-  # }, finally = {
-  #   if (!is.null(cl)) {
-  #     parallel::stopCluster(cl)
-  #   }
-  # })
 }
 
 #' @rdname estimate_cs
@@ -462,6 +415,10 @@ estimate_cs <- function(x, cluster = 1,
 estimate_centrality_stability <- estimate_cs
 
 
+#' Calculate Centrality Stability
+#'
+#' @param corr_mat A `matrix` of correlation values
+#' @inheritParams estimate_centrality_stability
 calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
   prop_above <- apply(corr_mat, 2, function(x) {
     mean(x >= threshold, na.rm = TRUE)
@@ -482,12 +439,13 @@ available_centrality_measures <- c(
   "ClosenessOut",
   "Closeness",
   "Betweenness",
+  "BetweennessRSP",
   "Diffusion",
   "Clustering"
 )
 
 
-# Centrality function wrappers --------------------------------------------
+# Centrality measure function wrappers --------------------------------------------
 
 centrality_funs <- list()
 
@@ -511,7 +469,11 @@ centrality_funs$Closeness <- function(g, ...) {
   igraph::closeness(g, mode = "all")
 }
 
-centrality_funs$Betweenness <- function(x, ...) {
+centrality_funs$Betweenness <- function(g, ...) {
+  igraph::betweenness(g)
+}
+
+centrality_funs$BetweennessRSP <- function(x, ...) {
   rsp_bet(x)
 }
 

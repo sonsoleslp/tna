@@ -24,6 +24,7 @@ Imports:
     colorspace,
     dplyr,
     ggplot2,
+    graphics,
     igraph,
     qgraph,
     RColorBrewer,
@@ -31,6 +32,7 @@ Imports:
     tibble,
     stats
 Suggests: 
+    gt,
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)

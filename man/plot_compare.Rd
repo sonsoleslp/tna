@@ -25,9 +25,9 @@ initial probabilities between model \code{x} and model \code{y}. Green color ind
 that \code{x}is greater than \code{y}and red indicates otherwise.
 }
 \examples{
-tna_model_1 <- tna(engagement[engagement[, 1] == "Active", ])
-tna_model_2 <- tna(engagement[engagement[, 1] != "Active", ])
-plot_compare(tna_model_1, tna_model_2)
+model_x <- tna(engagement[engagement[, 1] == "Active", ])
+model_u <- tna(engagement[engagement[, 1] != "Active", ])
+plot_compare(model_x, model_y)
 
 }
 \seealso{

@@ -7,10 +7,12 @@
 \usage{
 bootstrap(x, ...)
 
-\method{bootstrap}{tna}(x, b = 1000, level = 0.05, cluster = 1, ...)
+\method{bootstrap}{tna}(x, b = 1000, level = 0.05, threshold = 0.01, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
+
+\item{...}{Ingored}
 
 \item{b}{An integer specifying the number of bootstrap samples to
 be generated. Defaults to \code{1000}.}
@@ -18,8 +20,8 @@ be generated. Defaults to \code{1000}.}
 \item{level}{A \code{numeric} value representing the significance level for
 hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
 
-\item{cluster}{An integer specifying which cluster of the sequence data to
-use for bootstrapping. Defaults to \code{1}.}
+\item{threshold}{A \code{numeric} value to compare edge weights against.
+The default is 0.01.}
 }
 \value{
 A \code{tna_bootstrap} object which is a \code{list} containing the
@@ -66,10 +68,9 @@ estimates, and summary statistics for removed edges, are returned in a
 structured list.
 }
 \examples{
-\dontrun{
-# Bootstrap transition networks for a cluster
-results <- bootstrap(tna_model, v = 1000, level = 0.05, cluster = 1)
-}
+model <- tna(engagement)
+# Small number of iterations for CRAN
+bootstrap(model, b = 100)
 
 }
 \seealso{

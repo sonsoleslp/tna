@@ -11,18 +11,18 @@
 #' @export
 #' @family core
 #' @rdname tna
-#' @param x A `stslist` object describing a sequence of events or states to
-#'   be used for building
-#'   the Markov model or a `matrix` of transition probabilities with column
+#' @param x An `stslist` object describing a sequence of events or states to
+#'   be used for building the Markov model or a `matrix` of weights with column
 #'   names describing the states. If `x` is a matrix, it is assumed that the
-#'   element on row `i` and column `j` is the transition probability (or weight)
-#'   from state `i` to state `j`. It also accepts a `data.frame` object in wide format
-#'.  (each column is a timepoint with no extra columns)
+#'   element on row `i` and column `j` is the weight of the edge representing
+#'   the transition from state `i` to state `j`. The argument `x` also accepts
+#'   a `data.frame` object in wide format
+#'.  (each column is a timepoint with no extra columns).
 #' @param type A `character` string describing the weight matrix type.
 #'   Currently supports `"relative"` for relative frequencies
 #'   (probabilities, the default), `"scaled"` for frequencies scaled to the
 #'   unit interval, `"ranked"` for ranks of the weights scaled to the unit
-#'   interval, and   `"absolute"` for frequencies.
+#'   interval, and `"absolute"` for frequencies.
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
@@ -30,18 +30,18 @@
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
-#'   * `weights`\cr A `list` of adjacency matrices of the model
-#'     (weight matrices) for each cluster.
-#'   * `inits`\cr A `list` of initial weight vectors for each
-#'     cluster. For matrices, this element will be `NULL` if `inits` is not
+#'   * `weights`\cr An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`\cr A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
 #'     directly provided
-#'   * `labels`\cr A `character` vector of the state labels, or `NULL` if there
-#'     are no labels.
-#'   * `seq`\cr The original sequence data converted to an internal format
-#'     used by the package when `x` is a `stslist` or a `data.frame` object.
+#'   * `labels`\cr A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`\cr The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
 #'
 #' @examples
-#' tna_model <- tna(engagement)
+#' model <- tna(engagement)
 #' print(tna_model)
 #'
 tna <- function(x, ...) {
@@ -108,12 +108,12 @@ tna.matrix <- function(x, type = "relative", inits, ...) {
       )
       inits <- inits[seq_len(nc)]
     }
+    names(inits) <- colnames(x)
   }
-  names(inits) <- colnames(x)
   check_tna_type(type)
   tna_(
-    weights = list(x),
-    inits = list(inits),
+    weights = x,
+    inits = inits,
     labels = colnames(x),
     type = type
   )
@@ -130,14 +130,13 @@ tna.stslist <- function(x, type = "relative", ...) {
   x <- create_seqdata(x)
   model <- markov_model(x, type, ...)
   tna_(
-    weights = list(model$weights),
-    inits = list(model$inits),
+    weights = model$weights,
+    inits = model$inits,
     labels = attr(x, "labels"),
     type = type,
-    seq = list(x)
+    data = x
   )
 }
-
 
 #' @export
 #' @rdname tna
@@ -150,57 +149,61 @@ tna.data.frame <- function(x, type = "relative", ...) {
   x <- create_seqdata(x)
   model <- markov_model(x, type, ...)
   tna_(
-    weights = list(model$weights),
-    inits = list(model$inits),
+    weights = model$weights,
+    inits = model$inits,
     labels = model$labels,
     type = type,
-    seq = list(x)
+    data = x
   )
 }
 
-#' @export
-#' @rdname tna
-tna.mhmm <- function(x, type = "relative", ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
-  stopifnot_(
-    attr(x, "type") == "mmm",
-    "Argument {.arg x} must be a mixed Markov model fit."
-  )
-  check_tna_type(type)
-  clusters <- names(x$transition_probs)
-  n_clust <- length(clusters)
-  seq <- vector(mode = "list", length = n_clust)
-  cluster_assignment <- summary(x)$most_probable_cluster
-  for (i in clusters) {
-    seq[[i]] <- x$observations[cluster_assignment == i, ]
-  }
-  tna_(
-    weights = x$transition_probs,
-    inits = x$initial_probs,
-    labels = attr(x$observations, "labels"),
-    type = type,
-    seq = seq
-  )
-}
+# TODO tna_cluster
+#' #' @export
+#' #' @rdname tna
+#' tna.mhmm <- function(x, type = "relative", ...) {
+#'   stopifnot_(
+#'     !missing(x),
+#'     "Argument {.arg x} is missing."
+#'   )
+#'   stopifnot_(
+#'     attr(x, "type") == "mmm",
+#'     "Argument {.arg x} must be a mixed Markov model fit."
+#'   )
+#'   check_tna_type(type)
+#'   clusters <- names(x$transition_probs)
+#'   n_clust <- length(clusters)
+#'   seq <- vector(mode = "list", length = n_clust)
+#'   cluster_assignment <- summary(x)$most_probable_cluster
+#'   for (i in clusters) {
+#'     seq[[i]] <- x$observations[cluster_assignment == i, ]
+#'   }
+#'   tna_(
+#'     weights = x$transition_probs,
+#'     inits = x$initial_probs,
+#'     labels = attr(x$observations, "labels"),
+#'     type = type,
+#'     seq = seq
+#'   )
+#' }
 
 #' Build a Transition Network Analysis object
 #'
-#' @param weights A `list` of `matrix` of transition probabilities.
-#' @param inits A `list` of `matrix` of initial state probabilities.
+#' @param weights A `matrix` of edge weights.
+#' @param type A `character` string defining the network type.
+#' @param inits A `numeric` vector of initial state probabilities.
 #' @param labels A `character` vector of state labels.
-#' @param seq A `list` of `tna_seqdata` objects when created from sequence data.
+#' @param data A `tna_seqdata` object when `weights` is
+#'   created from sequence data.
 #' @return A `tna` object.
 #' @noRd
-tna_ <- function(weights, inits, labels, type, seq = NULL) {
+tna_ <- function(weights, type, inits = NULL, labels = NULL, data = NULL) {
   structure(
     list(
       weights = weights,
+      # TODO can inits be missing?
       inits = onlyif(!missing(inits), inits),
       labels = labels,
-      seq = seq
+      data = data
     ),
     type = type,
     class = "tna"
@@ -217,13 +220,7 @@ tna_ <- function(weights, inits, labels, type, seq = NULL) {
 #' @export
 #' @param x A `tna` object containing transition matrices and
 #' associated metadata.
-#' @param cluster An integer specifying which cluster to analyze.
-#' Defaults to `1`.
-#' @param layout A numeric matrix or character string specifying the layout of
-#' the network for the visualization. If `NULL`, a default layout is used.
-#' Defaults to `NULL`.
-#' @param plot A logical value indicating whether to visualize the network.
-#' Defaults to `TRUE`.
+#' @param ... Ignored.
 #'
 #' @details
 #' The function first converts the transition matrix for the specified cluster
@@ -243,54 +240,31 @@ tna_ <- function(weights, inits, labels, type, seq = NULL) {
 #' @return A `tna` object where edge betweenness represents the edge weights.
 #'
 #' @examples
-#' \dontrun{
-#' # Build and visualize the network for the first cluster
-#' edge_betweenness_df <- betweenness_network(tna_model)
-#' }
+#' model <- tna(group_regulation)
+#' betweenness_network(model)
+#'
 betweenness_network <- function(x, ...) {
   UseMethod("betweenness_network")
 }
 
 #' @rdname betweenness_network
 #' @export
-betweenness_network.tna <- function(x, cluster = 1, layout = NULL) {
+betweenness_network.tna <- function(x, ...) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
   )
-  weights <- x$weights[[cluster]]
-  seq <- onlyif(!is.null(x$seq), x$seq[[cluster]])
-  g <- as.igraph(x, cluster = cluster)
+  weights <- x$weights
+  g <- as.igraph(x)
   betweenness <- igraph::edge_betweenness(g, directed = TRUE)
   weights[weights > 0] <- betweenness
   tna_(
-    weights = list(weights),
-    inits = x$inits[cluster],
-    labels = x$labels,
+    weights = weights,
     type = "betweenness",
-    seq = list(seq)
+    inits = x$inits,
+    labels = x$labels,
+    data = x$data
   )
-
-  # if(plot) {
-  #   # Plot the network with qgraph
-  #   print(qgraph::qgraph(
-  #     Edge_betweeness,
-  #     theme = "colorblind",
-  #     layout = onlyif(!is.null(layout), layout),
-  #     minimum = 0.03,
-  #     mar = c(4, 4, 4, 4),
-  #     cut = 5,
-  #     edge.labels = TRUE,
-  #     title = "",
-  #     colors = onlyif(!is.null(colors), colors),
-  #     pie = init_values,
-  #     pieBorder = 0.2,
-  #     edge.label.cex = 1.5,
-  #     maximum = 0.6,
-  #     vsize = 10
-  #   ))
-  # }
-  # return(Edge_betweeness)
 }
 
 #' Convert Sequence Data to an Internal Format
@@ -302,7 +276,11 @@ create_seqdata <- function(x) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
     colors <- attr(x, "cpal")
-    colors <- ifelse_(is.null(colors), color_palette(length(labels)), colors)
+    colors <- ifelse_(
+      is.null(colors),
+      color_palette(length(labels)),
+      colors
+    )
     out <- as.data.frame(x)
   } else if (is.data.frame(x)) {
     vals <- sort(unique(unlist(x)))
@@ -348,7 +326,8 @@ markov_model <- function(x, type = "relative", transitions = FALSE) {
   a <- length(alphabet)
   idx <- seq_len(n)
   trans <- array(0L, dim = c(n, a, a))
-  inits <- table(m[, 1L])
+  inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
+  inits <- as.vector(table(inits))
   for (i in seq_len(p - 1)) {
     from <- m[, i]
     to <- m[, i + 1L]
@@ -358,6 +337,7 @@ markov_model <- function(x, type = "relative", transitions = FALSE) {
   }
   weights <- compute_weights(trans, type, a)
   inits <- inits / sum(inits)
+  names(inits) <- alphabet
   dimnames(weights) <- list(alphabet, alphabet)
   list(
     weights = weights,
