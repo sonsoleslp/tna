@@ -95,15 +95,11 @@ print.tna <- function(x, digits = 2, generic = FALSE, ...) {
   type <- attr(x, "type")
   mat_type <- switch(
     type,
-    prop = "Transition Probability",
-    freq = "Transition Frequency",
+    relative = "Transition Probability",
+    scaled = "Scaled Transition Frequency",
+    ranked = "Transition Frequency Scaled Rank",
+    absolute = "Transition Frequency",
     betweenness = "Edge Betweenness"
-  )
-  # TODO what to do for init with betweenness
-  init_type <- ifelse_(
-    type %in% c("prop", "betweenness"),
-    "Probabilities",
-    "Frequencies"
   )
   cat("State Labels\n\n")
   cat(paste(x$labels, collapse = ", "), "\n")
@@ -116,7 +112,7 @@ print.tna <- function(x, digits = 2, generic = FALSE, ...) {
     print(x$weights[[i]])
     onlyif(has_clust, cat("\n"))
   }
-  cat("\nInitial ", init_type, "\n\n", sep = "")
+  cat("\nInitial Probabilities\n\n", sep = "")
   for (i in seq_len(n_clust)) {
     init <- x$inits[[i]]
     names(init) <- x$labels

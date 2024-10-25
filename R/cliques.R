@@ -14,6 +14,9 @@
 #' @param threshold A `numeric` value that sets the minimum edge weight
 #' for an edge to be considered in the clique. Edges below this value
 #' are ignored. Defaults to `0`.
+#' @param sum_weights A `logical` value specifying whether the sum of the
+#' weights should be above the `threshold` instead of individual weights of the
+#' directed edges. Defaults to `FALSE`.
 #' @return A `cliques` object which is a `list` of two elements:
 #'
 #'   * `weights` is a `matrix` of the edge weights in the clique.
@@ -34,7 +37,8 @@ cliques <- function(x, ...) {
 
 #' @rdname cliques
 #' @export
-cliques.tna <- function(x, cluster = 1, size = 3, threshold = 0) {
+cliques.tna <- function(x, cluster = 1, size = 3,
+                        threshold = 0, sum_weights = FALSE) {
   stopifnot_(
     is_tna(x),
     "Argument {.arg x} must be a {.cls tna} object."
@@ -42,33 +46,45 @@ cliques.tna <- function(x, cluster = 1, size = 3, threshold = 0) {
   weights <- x$weights[[cluster]]
   labels <- x$labels
   inits <- x$inits[[cluster]]
-  mat1 <- mat2 <- weights
-  # TODO previous sum_weights could be implemented here
-  mat1[upper.tri(mat1) | mat1 < threshold] <- 0
-  mat2[lower.tri(mat2) | mat2 < threshold] <- 0
-  g1 <- igraph::graph_from_adjacency_matrix(
-    mat1,
-    mode = "undirected",
-    weighted = TRUE
-  )
-  g2 <- igraph::graph_from_adjacency_matrix(
-    mat2,
-    mode = "undirected",
-    weighted = TRUE
-  )
-  cliq1 <- igraph::cliques(g1, min = size, max = size)
-  cliq2 <- igraph::cliques(g2, min = size, max = size)
-  nodes1 <- lapply(cliq1, function(y) which(labels %in% attr(y, "names")))
-  nodes2 <- lapply(cliq2, function(y) which(labels %in% attr(y, "names")))
-  common <- intersect(nodes1, nodes2)
+  clique_idx <- integer(0)
+  if (sum_weights) {
+    mat <- weights + t(weights)
+    mat[upper.tri(mat) | mat < threshold] <- 0
+    g <- igraph::graph_from_adjacency_matrix(
+      mat,
+      mode = "undirected",
+      weighted = TRUE
+    )
+    cliq <- igraph::cliques(g, min = size, max = size)
+    cliq_idx <- lapply(cliq, function(y) which(labels %in% attr(y, "names")))
+  } else {
+    mat1 <- mat2 <- weights
+    mat1[upper.tri(mat1) | mat1 < threshold] <- 0
+    mat2[lower.tri(mat2) | mat2 < threshold] <- 0
+    g1 <- igraph::graph_from_adjacency_matrix(
+      mat1,
+      mode = "undirected",
+      weighted = TRUE
+    )
+    g2 <- igraph::graph_from_adjacency_matrix(
+      mat2,
+      mode = "undirected",
+      weighted = TRUE
+    )
+    cliq1 <- igraph::cliques(g1, min = size, max = size)
+    cliq2 <- igraph::cliques(g2, min = size, max = size)
+    nodes1 <- lapply(cliq1, function(y) which(labels %in% attr(y, "names")))
+    nodes2 <- lapply(cliq2, function(y) which(labels %in% attr(y, "names")))
+    cliq_idx <- intersect(nodes1, nodes2)
+  }
   structure(
     list(
       weights = lapply(
-        common,
+        cliq_idx,
         function(y) weights[y, y]
       ),
       inits = lapply(
-        common,
+        cliq_idx,
         function(y) inits[y]
       )
     ),

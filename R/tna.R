@@ -19,8 +19,10 @@
 #'   from state `i` to state `j`. It also accepts a `data.frame` object in wide format
 #'.  (each column is a timepoint with no extra columns)
 #' @param type A `character` string describing the weight matrix type.
-#'   Currently supports `"prop"` for proportions (probabilities) and
-#'   `"freq"` for frequencies.
+#'   Currently supports `"relative"` for relative frequencies
+#'   (probabilities, the default), `"scaled"` for frequencies scaled to the
+#'   unit interval, `"ranked"` for ranks of the weights scaled to the unit
+#'   interval, and   `"absolute"` for frequencies.
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
@@ -48,7 +50,7 @@ tna <- function(x, ...) {
 
 #' @export
 #' @rdname tna
-tna.default <- function(x, type = "prop", inits, ...) {
+tna.default <- function(x, type = "relative", inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -63,7 +65,7 @@ tna.default <- function(x, type = "prop", inits, ...) {
 
 #' @export
 #' @rdname tna
-tna.matrix <- function(x, type = "prop", inits, ...) {
+tna.matrix <- function(x, type = "relative", inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -109,7 +111,6 @@ tna.matrix <- function(x, type = "prop", inits, ...) {
   }
   names(inits) <- colnames(x)
   check_tna_type(type)
-  check_tna_inits(inits, type)
   tna_(
     weights = list(x),
     inits = list(inits),
@@ -120,7 +121,7 @@ tna.matrix <- function(x, type = "prop", inits, ...) {
 
 #' @export
 #' @rdname tna
-tna.stslist <- function(x, type = "prop", ...) {
+tna.stslist <- function(x, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -140,7 +141,7 @@ tna.stslist <- function(x, type = "prop", ...) {
 
 #' @export
 #' @rdname tna
-tna.data.frame <- function(x, type = "prop", ...) {
+tna.data.frame <- function(x, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -159,7 +160,7 @@ tna.data.frame <- function(x, type = "prop", ...) {
 
 #' @export
 #' @rdname tna
-tna.mhmm <- function(x, type = "prop", ...) {
+tna.mhmm <- function(x, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -214,17 +215,30 @@ tna_ <- function(weights, inits, labels, type, seq = NULL) {
 #' edge betweenness values.
 #'
 #' @export
-#' @param x A `tna` object containing transition matrices and associated metadata.
-#' @param cluster An integer specifying which cluster to analyze. Defaults to `1`.
-#' @param layout A numeric matrix or character string specifying the layout of the network for the visualization. If `NULL`, a default layout is used. Defaults to `NULL`.
-#' @param plot A logical value indicating whether to visualize the network. Defaults to `TRUE`.
+#' @param x A `tna` object containing transition matrices and
+#' associated metadata.
+#' @param cluster An integer specifying which cluster to analyze.
+#' Defaults to `1`.
+#' @param layout A numeric matrix or character string specifying the layout of
+#' the network for the visualization. If `NULL`, a default layout is used.
+#' Defaults to `NULL`.
+#' @param plot A logical value indicating whether to visualize the network.
+#' Defaults to `TRUE`.
 #'
 #' @details
-#' The function first converts the transition matrix for the specified cluster into a directed graph using the `igraph` package. It then calculates the edge betweenness of the graph, which is a measure of how often an edge lies on the shortest paths between pairs of nodes.
+#' The function first converts the transition matrix for the specified cluster
+#' into a directed graph using the `igraph` package. It then calculates the
+#' edge betweenness of the graph, which is a measure of how often an edge lies
+#' on the shortest paths between pairs of nodes.
 #'
-#' If `plot = TRUE`, the function uses `qgraph` to visualize the network, where edge thickness is proportional to edge betweenness, node colors are derived from the `tna` object, and `Pie` values from the `tna` object are displayed on the nodes.
+#' If `plot = TRUE`, the function uses `qgraph` to visualize the network,
+#' where edge thickness is proportional to edge betweenness, node colors are
+#' derived from the `tna` object, and `Pie` values from the `tna` object are
+#' displayed on the nodes.
 #'
-#' The layout of the network can be customized via the `layout` parameter, which can either be a predefined layout from `qgraph` or a user-specified matrix of node positions.
+#' The layout of the network can be customized via the `layout` parameter,
+#' which can either be a predefined layout from `qgraph` or a user-specified
+#' matrix of node positions.
 #'
 #' @return A `tna` object where edge betweenness represents the edge weights.
 #'
@@ -325,7 +339,7 @@ create_seqdata <- function(x) {
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
-markov_model <- function(x, type = c("prop"), transitions = FALSE) {
+markov_model <- function(x, type = "relative", transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
   m <- as.matrix(x)
@@ -343,9 +357,7 @@ markov_model <- function(x, type = c("prop"), transitions = FALSE) {
     trans[new_trans] <- trans[new_trans] + 1L
   }
   weights <- compute_weights(trans, type, a)
-  if (type == "prop") {
-    inits <- inits / sum(inits)
-  }
+  inits <- inits / sum(inits)
   dimnames(weights) <- list(alphabet, alphabet)
   list(
     weights = weights,
@@ -361,26 +373,18 @@ markov_model <- function(x, type = c("prop"), transitions = FALSE) {
 #' @noRd
 check_tna_type <- function(type) {
   type <- onlyif(is.character(type), tolower(type))
-  type <- try(match.arg(type, c("prop", "freq")), silent = TRUE)
+  type <- try(
+    match.arg(
+      type,
+      c("relative", "scaled", "ranked", "absolute")
+    ),
+    silent = TRUE
+  )
   stopifnot_(
     !inherits(type, "try-error"),
-    "Argument {.arg type} must be either {.val prop} or {.val freq}."
+    "Argument {.arg type} must be either {.val relative}, {.val scaled},
+     {.val ranked}, or {.val absolute}."
   )
-}
-
-#' Check Transition Network Initial Values for Validity
-#'
-#' @param inits A `numeric` vector of initial values.
-#' @param type Type of the transition network as a `character` string.
-#' @noRd
-check_tna_inits <- function(inits, type) {
-  if (!missing(inits) && type == "prop") {
-    stopifnot_(
-      all(inits <= 1),
-      "Argument {.arg inits} must contain numeric values between 0 and 1 when
-      {.arg type} is {.val prop}."
-    )
-  }
 }
 
 #' Compute Network Weights Based On TNA Type
@@ -393,8 +397,12 @@ check_tna_inits <- function(inits, type) {
 #' @noRd
 compute_weights <- function(transitions, type, s) {
   weights <- apply(transitions, c(2, 3), sum)
-  if (type == "prop") {
+  if (type == "relative") {
     weights <- weights / .rowSums(weights, m = s, n = s)
+  } else if (type == "scaled") {
+    weights[] <- ranger(weights)
+  } else if (type == "ranked") {
+    weights[] <- (rank(weights, ties.method = "first") - 1) / (s^2 - 1)
   }
   weights
 }

@@ -10,15 +10,21 @@ hist.tna <- function(x, cluster = 1, breaks, col = "lightblue",
   if (missing(xlab)) {
     xlab <- paste0(
       "Edge Weights (",
-      ifelse_(type == "prop", "Probabilities", "Frequencies"),
+      switch(
+        type,
+        relative = "Probabilities",
+        scaled = "Scaled Frequencies",
+        ranked = "Scaled Ranks of Frequency",
+        absolute = "Frequencies"
+      ),
       ")"
     )
   }
   if (missing(breaks)) {
     breaks <- ifelse_(
-      type == "prop",
-      seq(0, 1, length.out = 20),
-      seq(0, max(w), length.out = 20)
+      type == "absolute",
+      seq(0, max(w), length.out = 20),
+      seq(0, 1, length.out = 20)
     )
   }
   hist(
