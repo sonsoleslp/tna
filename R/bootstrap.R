@@ -15,6 +15,7 @@
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @param threshold A `numeric` value to compare edge weights against.
+#' The default is 0.01.
 #'
 #' @details
 #' The function first computes the original transition matrix for the specified
@@ -65,7 +66,7 @@ bootstrap <- function(x, ...) {
 #' @rdname bootstrap
 #' @export
 bootstrap.tna <- function(x, cluster = 1, b = 1000, level = 0.05,
-                          threshold = 0.05, ...) {
+                          threshold = 0.01, ...) {
   stopifnot_(
     !is.null(x$seq),
     "Argument {.arg x} must be a {.cls tna} object
@@ -81,11 +82,6 @@ bootstrap.tna <- function(x, cluster = 1, b = 1000, level = 0.05,
   a <- length(alphabet)
   weights <- compute_weights(trans, type, a)
   dimnames(weights) <- dim_names
-  threshold <- ifelse_(
-    missing(threshold),
-    weights,
-    threshold
-  )
   weights_boot <- array(0L, dim = c(b, a, a))
   p_values <- matrix(0, a, a)
   idx <- seq_len(n)
