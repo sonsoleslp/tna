@@ -270,6 +270,9 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     )
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
+    if ((max_cliques - first) == 0) {
+      return (do.call(qgraph::qgraph, args = plot_args))
+    }
   }
 }
 
