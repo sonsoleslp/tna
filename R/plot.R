@@ -216,9 +216,10 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
 #' @param show_loops A `logical` value indicating whether to include loops
 #' in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
+#' @param ask Interactive plotting (defaults to `TRUE`).
 #' @export
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
-                             minimum = 0.00001, mar = rep(5, 4), ...) {
+                             minimum = 0.00001, mar = rep(5, 4), ask = TRUE, ...) {
   stopifnot_(
     is_tna_cliques(x),
     "Argument {.arg x} must be a {.cls tna_cliques} object."
@@ -233,7 +234,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
   labels <- attr(x, "labels")
   max_cliques <- min(first + n - 1L, n_cliques)
   if (interactive()) {
-    op <- graphics::par(ask = TRUE)
+    op <- graphics::par(ask = ask)
     on.exit(graphics::par(op))
   }
   for (i in seq(first, max_cliques)) {
@@ -260,6 +261,9 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     )
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
+    if ((max_cliques - first) == 0) {
+      return (do.call(qgraph::qgraph, args = plot_args))
+    }
   }
 }
 
