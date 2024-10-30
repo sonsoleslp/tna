@@ -44,7 +44,7 @@ differences in transition probabilities, effect sizes, p-values, and confidence 
 model_x <- tna(group_regulation[1:1000,])
 model_y <- tna(group_regulation[1001:2000,])
 # Small number of iterations for CRAN
-permutation_test(x, y, iter = 100)
+permutation_test(model_x, model_y, iter = 50)
 
 }
 \seealso{

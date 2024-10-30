@@ -31,25 +31,14 @@
 #' model_x <- tna(group_regulation[1:1000,])
 #' model_y <- tna(group_regulation[1001:2000,])
 #' # Small number of iterations for CRAN
-#' permutation_test(x, y, iter = 100)
+#' permutation_test(model_x, model_y, iter = 50)
 #'
 permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
-  stopifnot_(
-    is_tna(y),
-    "Argument {.arg y} must be a {.cls tna} object."
-  )
-  stopifnot_(
-    !is.null(x$data),
-    "Argument {.arg x} must be a {.cls tna} object created from sequence data."
-  )
-  stopifnot_(
-    !is.null(y$data),
-    "Argument {.arg y} must be a {.cls tna} object created from sequence data."
-  )
+  check_tna_seq(x)
+  check_tna_seq(y)
+  check_positive(iter)
+  check_flag(paired)
+  check_probability(level)
   # TODO check that networks can be compared
   data_x <- x$data
   data_y <- y$data

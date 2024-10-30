@@ -30,11 +30,11 @@ print.tna_communities <- function(x, ...) {
 #'
 #' @param x A `tna_cliques` object.
 #' @param n An `integer` defining the maximum number of cliques to show.
-#' The defaults is 6.
+#' The defaults is `6`.
 #' @param first An `integer` giving the index of the first clique to show.
-#' The default index is 1.
+#' The default index is `1`.
 #' @param digits An `integer` giving the number of digits to show for the edge
-#' weights in the cliques. The default is 3.
+#' weights in the cliques. The default is `3`.
 #' @param ... Ignored.
 #' @export
 #'
@@ -44,11 +44,18 @@ print.tna_cliques <- function(x, n = 6, first = 1, digits = 3, ...) {
     "Argument {.arg x} must be a {.cls cliques} object."
   )
   n_cliques <- length(x$weights)
-  size <- attr(x, "size")
   if (n_cliques == 0) {
     cat("No ", size, "-cliques were found in the network.", sep = "")
     return(invisible(x))
   }
+  stopifnot_(
+    checkmate::test_int(x = n, lower = 1L, upper = n_cliques),
+    "Argument {.arg n} must be a single non-negative {.cls integer}
+    between 1 and {n_cliques}."
+  )
+  check_positive(first)
+  check_nonnegative(digits)
+  size <- attr(x, "size")
   threshold <- attr(x, "threshold")
   cluster <- attr(x, "cluster")
   cat(
@@ -72,20 +79,21 @@ print.tna_cliques <- function(x, n = 6, first = 1, digits = 3, ...) {
 #' Print a `tna` object
 #'
 #' @param x A `tna` object.
-#' @param digits Number of decimal digits to print. Defaults to 2.
-#' @param generic Use generic print. Defaults to `FALSE`
+#' @param digits An `integer` giving the number of decimal digits to print.
+#' Defaults to `3`.
+#' @param generic A `logical` value. If `TRUE`, use generic print method
+#' instead. Defaults to `FALSE`.
 #' @param ... Ignored.
 #' @export
 #'
-print.tna <- function(x, digits = 2, generic = FALSE, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+print.tna <- function(x, digits = 3, generic = FALSE, ...) {
+  check_tna(x)
+  check_flag(generic)
   if (generic) {
     NextMethod(generic = "print", object = x, ...)
     return()
   }
+  check_nonnegative(digits)
   type <- attr(x, "type")
   mat_type <- switch(
     type,
@@ -98,10 +106,10 @@ print.tna <- function(x, digits = 2, generic = FALSE, ...) {
   cat("State Labels\n\n")
   cat(paste(x$labels, collapse = ", "), "\n")
   cat("\n", mat_type, " Matrix\n\n", sep = "")
-  print(x$weights)
+  print(round(x$weights, digits))
   cat("\nInitial Probabilities\n\n", sep = "")
-  #init <- x$inits
-  #names(init) <- x$labels
-  print(x$inits)
+  print(round(x$inits, digits))
   invisible(x)
 }
+
+# TODO print.tna_stability

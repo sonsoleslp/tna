@@ -1,9 +1,24 @@
 #' Bootstrap Transition Networks from Sequence Data
 #'
-#' This function performs bootstrapping on transition networks created from
-#' sequence data stored in a `tna` object. It resamples the sequences,
-#' computes transition matrices, and returns bootstrapped estimates
-#' of transitions with confidence intervals and significance testing.
+#' Perform bootstrapping on transition networks created from
+#' sequence data stored in a `tna` object. Bootstrapped estimates
+#' of edge weights are returned with confidence intervals and significance
+#' testing.
+#'
+#' The function first computes the original edge weights for the specified
+#' cluster from the `tna` object. It then performs bootstrapping by resampling
+#' the sequence data and recalculating the edge weights for each
+#' bootstrap sample. The mean and standard deviation of the transitions are
+#' computed, and confidence intervals are derived. The function also calculates
+#' p-values for each edge and identifies significant edges based on
+#' the specified significance level. A matrix of significant edges
+#' (those with p-values below the significance level) is generated.
+#' Additional statistics on removed edges (those not considered
+#' significant) are provided.
+#'
+#' All results, including the original transition matrix, bootstrapped
+#' estimates, and summary statistics for removed edges, are returned in a
+#' structured list.
 #'
 #' @export
 #' @family evaluation
@@ -13,25 +28,8 @@
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @param threshold A `numeric` value to compare edge weights against.
-#' The default is 0.01.
-#' @param ... Ingored
-#'
-#' @details
-#' The function first computes the original transition matrix for the specified
-#' cluster from the `tna` object. It then performs bootstrapping by resampling
-#' the sequence data and recalculating the transition matrices for each
-#' bootstrap sample. The mean and standard deviation of the transitions are
-#' computed, and confidence intervals are derived. The function also calculates
-#' p-values for each transition and identifies significant transitions based on
-#' the specified significance level. A matrix of significant transitions
-#' (those with p-values below the significance level) is generated.
-#' Additional statistics on removed edges (transitions not considered
-#' significant) are provided.
-#'
-#' All results, including the original transition matrix, bootstrapped
-#' estimates, and summary statistics for removed edges, are returned in a
-#' structured list.
-#'
+#' The default is the 10th percentile of the edge weights.
+#' @param ... Ingored.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
 #
@@ -55,7 +53,7 @@
 #' @examples
 #' model <- tna(engagement)
 #' # Small number of iterations for CRAN
-#' bootstrap(model, b = 100)
+#' bootstrap(model, b = 50)
 #'
 bootstrap <- function(x, ...) {
   UseMethod("bootstrap")
@@ -63,12 +61,17 @@ bootstrap <- function(x, ...) {
 
 #' @rdname bootstrap
 #' @export
-bootstrap.tna <- function(x, b = 1000, level = 0.05, threshold = 0.01, ...) {
+bootstrap.tna <- function(x, b = 1000, level = 0.05, threshold, ...) {
+  check_tna_seq(x)
   stopifnot_(
-    !is.null(x$data),
-    "Argument {.arg x} must be a {.cls tna} object
-    created from sequence data."
+    checkmate::test_int(x = b, lower = 1L),
+    "Argument {.arg b} must be a single positive {.cls integer}."
   )
+  check_probability(level)
+  if (missing(threshold)) {
+    threshold <- stats::quantile(x$weights, probs = 0.1)
+  }
+  check_nonnegative(threshold, type = "numeric")
   d <- x$data
   model <- markov_model(d, transitions = TRUE)
   trans <- model$trans

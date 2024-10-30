@@ -18,30 +18,24 @@
 #' @param lowest A `numeric` value specifying the lowest percentage
 #' of non-zero edges. This percentage of edges with the lowest weights will be
 #' considered for removal. The default is `0.05`.
-#' @param alpha A `numeric` value representing the significance level for the
+#' @param level A `numeric` value representing the significance level for the
 #' disparity filter. Defaults to `0.5`.
 #' @param boot A `tna_bootstrap` object to be used for pruning with method
 #' `"boot"`. The method argument is ignored if this argument is supplied.
-#' @param ... Arguments passeed to [bootstrap()] when
-#' using `metod = "bootstrap"` and when a `tna_bootstrap` is not supplied.
-#' @return A list containing:
-#'
-#'   * `pruned` The pruned `tna` object with updated transition matrix.
-#'   * `removed_edges` A data frame of edges that were removed.
-#'   * `num_removed_edges` The number of edges removed.
+#' @param ... Arguments passed to [bootstrap()] when
+#' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
+#' @return A pruned `tna` object. Details on the pruning can be viewed with
+#' [pruning_details()]. The original model can be restored with [deprune()].
 #'
 #' @examples
 #' model <- tna(group_regulation)
-#' pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
-#' pruned_percentile <- prune(tna_model,method = "lowest", lowest = 0.05)
-#' pruned_disparity <- prune(tna_model, method = "disparity", alpha = 0.5)
+#' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+#' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+#' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 #'
 prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
-                  alpha = 0.5, boot = NULL, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+                  level = 0.5, boot = NULL, ...) {
+  check_tna(x)
   method <- onlyif(is.character(method), tolower(method))
   method <- try(
     match.arg(method, c("threshold", "lowest", "bootstrap", "disparity")),
@@ -52,14 +46,9 @@ prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
     "Argument {.arg method} must be either {.val threshold}, {.val lowest},
      {.val bootstrap}, or {.val disparity}."
   )
-  stopifnot_(
-    is.numeric(threshold) && threshold > 0,
-    "Argument {.arg threshold} must be a non-negative numeric value."
-  )
-  stopifnot_(
-    is.numeric(lowest) && lowest > 0 && lowest < 1,
-    "Argument 'lowest_percent' must be a numeric value between 0 and 1."
-  )
+  check_nonnegative(threshold, type = "numeric")
+  check_probability(lowest)
+  check_probability(level)
   stopifnot_(
     is.null(attr(x, "pruning")),
     "The model has already been pruned."
@@ -67,13 +56,13 @@ prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
   # TODO No lables? when?
   labels <- ifelse_(
     is.null(x$labels),
-    seq_len(ncol(x$weights[[1]])),
+    seq_len(nodes(x)),
     x$labels
   )
   tmp <- switch(
     method,
     bootstrap = prune_bootstrap(x, boot, ...),
-    disparity = prune_disparity(x, alpha, labels),
+    disparity = prune_disparity(x, level, labels),
     prune_default(x, method, threshold, lowest, labels)
   )
   tmp$original <- x$weights
@@ -84,12 +73,6 @@ prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
 }
 
 prune_default <- function(x, method, threshold, lowest, labels) {
-  # n_clust <- length(x$weights)
-  # cut_offs <- numeric(n_clust)
-  # removed <- vector(mode = "list", length = n_clust)
-  # pruned <- vector(mode = "list", length = n_clust)
-  # num_removed <- integer(n_clust)
-  # num_retained <- integer(n_clust)
   weights <- x$weights
   pos_edges_idx <- weights > 0
   n_edges <- sum(pos_edges_idx)
@@ -173,10 +156,10 @@ prune_bootstrap <- function(x, boot, ...) {
 # #' @noRd
 
 
-prune_disparity <- function(x, alpha, labels) {
+prune_disparity <- function(x, level, labels) {
   weights <- x$weights
   n_edges <- sum(weights > 0)
-  disparity_filtered <- backbone::disparity(weights, alpha)
+  disparity_filtered <- backbone::disparity(weights, alpha = level)
   weights_pruned <- disparity_filtered * weights
   dimnames(weights_pruned) <- dimnames(weights)
   pruned <- weights_pruned
@@ -194,7 +177,7 @@ prune_disparity <- function(x, alpha, labels) {
   list(
     weights = pruned,
     method = "disparity",
-    alpha = alpha,
+    level = level,
     removed = removed,
     num_removed = num_removed,
     num_retained = num_retained
@@ -242,6 +225,10 @@ pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
 #' @export
 #' @param x A `tna` object.
 #' @param ... Ignored.
+#' @examples
+#' model <- tna(engagement)
+#' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
+#' depruned_model <- deprune(pruned_model) # restore original model
 deprune <- function(x, ...) {
   UseMethod("deprune")
 }
@@ -249,10 +236,7 @@ deprune <- function(x, ...) {
 #' @rdname deprune
 #' @export
 deprune.tna <- function(x, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+  check_tna(x)
   tmp <- attr(x, "pruning")
   stopifnot_(
     !is.null(tmp),
@@ -266,6 +250,7 @@ deprune.tna <- function(x, ...) {
   tmp$active <- FALSE
   x$weights <- tmp$original
   attr(x, "pruning") <- tmp
+  x
 }
 
 #' Restore Previous Pruning of a Transition Network Analysis Model
@@ -274,6 +259,13 @@ deprune.tna <- function(x, ...) {
 #' @export
 #' @param x A `tna` object.
 #' @param ... Ignored.
+#' @return A `tna` object that has not been pruned. The previous pruning
+#' result can be reactivated with [reprune()].
+#' @examples
+#' model <- tna(engagement)
+#' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
+#' depruned_model <- deprune(pruned_model) # restore original model
+#' repruned_model <- reprune(depruned_model) # reapply the previous pruning
 reprune <- function(x, ...) {
   UseMethod("reprune")
 }
@@ -281,10 +273,7 @@ reprune <- function(x, ...) {
 #' @rdname deprune
 #' @export
 reprune.tna <- function(x, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+  check_tna(x)
   tmp <- attr(x, "pruning")
   stopifnot_(
     !is.null(tmp),

@@ -14,8 +14,8 @@
 #' @export
 #' @family patterns
 #' @param x A `tna` object that contains transition matrices.
-#' @param gamma A numeric parameter that affects the behavior of certain
-#' algorithms like the Spin Glass method. Defaults to `1`.
+#' @param gamma A `numeric` value depicting a parameter that affects the
+#' behavior of certain algorithms like the Spin Glass method. Defaults to `1`.
 #' @param ... Ignored.
 #' @return An object of class `tna_communities` which is a `list` with an
 #'   element for each cluster containing:
@@ -28,7 +28,7 @@
 #'
 #' @examples
 #' model <- tna(engagement)
-#' comm <- communities(tna_model)
+#' comm <- communities(model)
 #'
 communities <- function(x, ...) {
   UseMethod("communities")
@@ -37,9 +37,10 @@ communities <- function(x, ...) {
 #' @rdname communities
 #' @export
 communities.tna <- function(x, gamma = 1, ...) {
+  check_tna(x)
   stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
+    checkmate::test_number(x = gamma),
+    "Argument {.arg gamma} must be a single {.cls numeric} value."
   )
   g <- as.igraph(x)
   g_un <- igraph::as.undirected(

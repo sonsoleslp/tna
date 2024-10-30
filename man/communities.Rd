@@ -14,8 +14,8 @@ communities(x, ...)
 
 \item{...}{Ignored.}
 
-\item{gamma}{A numeric parameter that affects the behavior of certain
-algorithms like the Spin Glass method. Defaults to \code{1}.}
+\item{gamma}{A \code{numeric} value depicting a parameter that affects the
+behavior of certain algorithms like the Spin Glass method. Defaults to \code{1}.}
 }
 \value{
 An object of class \code{tna_communities} which is a \code{list} with an
@@ -42,7 +42,7 @@ Edge Betweenness, Leading Eigenvector, and Spin Glass).
 }
 \examples{
 model <- tna(engagement)
-comm <- communities(tna_model)
+comm <- communities(model)
 
 }
 \seealso{

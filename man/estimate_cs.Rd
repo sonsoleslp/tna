@@ -7,38 +7,45 @@
 \usage{
 estimate_cs(
   x,
-  measures = c("InStrength", "OutStrength", "Betweenness"),
+  loops = FALSE,
   normalize = FALSE,
+  measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  detailed = FALSE
+  detailed = FALSE,
+  progressbar = FALSE
 )
 
 estimate_centrality_stability(
   x,
-  measures = c("InStrength", "OutStrength", "Betweenness"),
+  loops = FALSE,
   normalize = FALSE,
+  measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  detailed = FALSE
+  detailed = FALSE,
+  progressbar = FALSE
 )
 }
 \arguments{
 \item{x}{A \code{tna} object representing the temporal network analysis data.
-The object should be created from a sequence datad object.}
+The object should be created from a sequence data object.}
+
+\item{loops}{A \code{logical} value indicating whether to include loops in the
+network when computing the centrality measures (default is \code{FALSE}).}
+
+\item{normalize}{A \code{logical} value indicating whether to normalize
+the centrality measures. The default is \code{FALSE}.}
 
 \item{measures}{A \code{character} vector of centrality measures to estimate.
 The default measures are \code{"InStrength"}, \code{"OutStrength"},
 and \code{"Betweenness"}.}
-
-\item{normalize}{A \code{logical} value indicating whether to normalize
-the centrality measures. The default is \code{FALSE}.}
 
 \item{iter}{An \code{integer} specifying the number of resamples to draw.
 The default is 1000.}
@@ -51,14 +58,17 @@ cases to drop in each sampling iteration. Default is a sequence from 0.1 to
 0.9 in increments of 0.1.}
 
 \item{threshold}{A \code{numeric} value specifying the correlation threshold for
-calculating the CS-coefficient. THe default is 0.7.}
+calculating the CS-coefficient. The default is 0.7.}
 
 \item{certainty}{A \code{numeric} value specifying the desired level of certainty
 for the CS-coefficient. Default is 0.95.}
 
 \item{detailed}{A \code{logical} value specifying whether to return detailed
 sampling results. If \code{TRUE}, detailed results are included in the output.
-THe default is \code{FALSE}.}
+The default is \code{FALSE}.}
+
+\item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed
+Defaults to \code{FALSE}}
 }
 \value{
 A \code{tna_stability} object which is a \code{list} with an element for each
@@ -69,14 +79,14 @@ of the measure.
 \item \code{correlations}: A \code{matrix} of correlations between the original
 centrality and the resampled centralities for each drop proportion.
 \item \code{detailed_results}: A detailed data frame of the sampled correlations,
-returned only if \code{return_detailed = TRUE}.
+returned only if \code{return_detailed = TRUE}. TODO not implemented yet
 }
 }
 \description{
-This function estimates the stability of centrality measures in a network
+Estimates the stability of centrality measures in a network
 using subset sampling without replacement. It allows for dropping varying
 proportions of cases and calculates correlations between the original
-centralities and sampled subsets.
+centralities and those computed using sampled subsets.
 }
 \details{
 The function works by repeatedly resampling the data, dropping varying
@@ -87,9 +97,9 @@ centrality measure is then summarized using a centrality stability (CS)
 coefficient, which represents the proportion of dropped cases at which
 the correlations drop below a given threshold (default 0.7).
 
-The results can be visualized with an optional plot showing the stability of
-the centrality measures across different drop proportions, along with
-confidence intervals. The CS-coefficients are displayed in the plot's
+The results can be visualized by plotting the output object showing the
+stability of the centrality measures across different drop proportions,
+along with confidence intervals. The CS-coefficients are displayed in the
 subtitle.
 }
 \examples{

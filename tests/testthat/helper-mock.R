@@ -1,21 +1,20 @@
 # Helper function to create a mock tna object
 create_mock_tna <- function() {
   # Create a simple mock transition matrix
-  transits <- list(
-    matrix(
-      c(
-        0.1, 0.2, 0.0, 0.1,
-        0.0, 0.2, 0.3, 0.0,
-        0.4, 0.0, 0.1, 0.2,
-        0.1, 0.1, 0.0, 0.2
-      ),
-      nrow = 4,
-      ncol = 4,
-      byrow = TRUE
-    )
+  weights <- matrix(
+    c(
+      0.1, 0.2, 0.0, 0.1,
+      0.0, 0.2, 0.3, 0.0,
+      0.4, 0.0, 0.1, 0.2,
+      0.1, 0.1, 0.0, 0.2
+    ),
+    nrow = 4,
+    ncol = 4,
+    byrow = TRUE
   )
   structure(
-    list(transits = transits),
+    list(weights = weights),
+    type = "relative",
     class = "tna"
   )
 }

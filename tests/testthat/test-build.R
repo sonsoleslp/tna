@@ -48,18 +48,16 @@ test_that("non-coercible arguments fail", {
 test_that("tna works with matrix data with inits", {
   trans_matrix <- create_mock_matrix()
   inits <- c(0.25, 0.25, 0.25, 0.25)
-  tna_model <- tna(trans_matrix, inits)
-
+  tna_model <- tna(trans_matrix, inits = inits)
   expect_s3_class(tna_model, "tna")
-  expect_true(is.list(tna_model$transits))
-  expect_true(is.list(tna_model$inits))
-  expect_equal(length(tna_model$inits[[1]]), ncol(trans_matrix))
+  expect_true(is.matrix(tna_model$weights))
+  expect_true(is.vector(tna_model$inits))
+  expect_equal(length(tna_model$inits), ncol(trans_matrix))
   expect_equal(tna_model$labels, colnames(trans_matrix))
 })
 
 test_that("tna fails with non-square matrix", {
   trans_matrix <- matrix(c(0.1, 0.2, 0.0, 0.0, 0.2, 0.3), nrow = 2, ncol = 3)
-
   expect_error(
     tna(trans_matrix),
     "Argument `x` must be a square <matrix>"
@@ -71,7 +69,7 @@ test_that("tna fails with inits of wrong length", {
   inits <- c(0.1, 0.2, 0.3)
 
   expect_error(
-    tna(trans_matrix, inits),
+    tna(trans_matrix, inits = inits),
     "Argument `inits` must provide initial probabilities for all states."
   )
 })

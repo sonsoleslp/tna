@@ -7,12 +7,12 @@
 \usage{
 bootstrap(x, ...)
 
-\method{bootstrap}{tna}(x, b = 1000, level = 0.05, threshold = 0.01, ...)
+\method{bootstrap}{tna}(x, b = 1000, level = 0.05, threshold, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
 
-\item{...}{Ingored}
+\item{...}{Ingored.}
 
 \item{b}{An integer specifying the number of bootstrap samples to
 be generated. Defaults to \code{1000}.}
@@ -21,7 +21,7 @@ be generated. Defaults to \code{1000}.}
 hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
 
 \item{threshold}{A \code{numeric} value to compare edge weights against.
-The default is 0.01.}
+The default is the 10th percentile of the edge weights.}
 }
 \value{
 A \code{tna_bootstrap} object which is a \code{list} containing the
@@ -46,21 +46,21 @@ weights, and the range of the removed edge weights.
 }
 }
 \description{
-This function performs bootstrapping on transition networks created from
-sequence data stored in a \code{tna} object. It resamples the sequences,
-computes transition matrices, and returns bootstrapped estimates
-of transitions with confidence intervals and significance testing.
+Perform bootstrapping on transition networks created from
+sequence data stored in a \code{tna} object. Bootstrapped estimates
+of edge weights are returned with confidence intervals and significance
+testing.
 }
 \details{
-The function first computes the original transition matrix for the specified
+The function first computes the original edge weights for the specified
 cluster from the \code{tna} object. It then performs bootstrapping by resampling
-the sequence data and recalculating the transition matrices for each
+the sequence data and recalculating the edge weights for each
 bootstrap sample. The mean and standard deviation of the transitions are
 computed, and confidence intervals are derived. The function also calculates
-p-values for each transition and identifies significant transitions based on
-the specified significance level. A matrix of significant transitions
+p-values for each edge and identifies significant edges based on
+the specified significance level. A matrix of significant edges
 (those with p-values below the significance level) is generated.
-Additional statistics on removed edges (transitions not considered
+Additional statistics on removed edges (those not considered
 significant) are provided.
 
 All results, including the original transition matrix, bootstrapped
@@ -70,7 +70,7 @@ structured list.
 \examples{
 model <- tna(engagement)
 # Small number of iterations for CRAN
-bootstrap(model, b = 100)
+bootstrap(model, b = 50)
 
 }
 \seealso{

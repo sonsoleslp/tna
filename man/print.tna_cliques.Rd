@@ -10,13 +10,13 @@
 \item{x}{A \code{tna_cliques} object.}
 
 \item{n}{An \code{integer} defining the maximum number of cliques to show.
-The defaults is 6.}
+The defaults is \code{6}.}
 
 \item{first}{An \code{integer} giving the index of the first clique to show.
-The default index is 1.}
+The default index is \code{1}.}
 
 \item{digits}{An \code{integer} giving the number of digits to show for the edge
-weights in the cliques. The default is 3.}
+weights in the cliques. The default is \code{3}.}
 
 \item{...}{Ignored.}
 }

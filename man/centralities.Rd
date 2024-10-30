@@ -6,11 +6,11 @@
 \alias{centralities.matrix}
 \title{Calculate Centrality Measures for a Transition Matrix}
 \usage{
-centralities(x, loops = FALSE, normalize = FALSE, measures = NULL, ...)
+centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
 
-\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures = NULL, ...)
+\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
 
-\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures = NULL, ...)
+\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object or a  square \code{matrix} representing edge weights.}
@@ -22,7 +22,7 @@ network when computing the centrality measures (default is \code{FALSE}).}
 should be normalized (default is \code{FALSE}).}
 
 \item{measures}{A \code{character} vector indicating which centrality
-measures should be computed. If \code{NULL}, all available measures are
+measures should be computed. If missing, all available measures are
 returned. See 'Details' for available measures. The elements are partially
 matched ignoring case.}
 
@@ -33,7 +33,7 @@ A \code{centralities} object which is a tibble (\code{tbl_df})
 containing centrality measures for each state.
 }
 \description{
-This function calculates several centrality measures. See 'Details' for
+Calculates several centrality measures. See 'Details' for
 information about the measures.
 }
 \details{

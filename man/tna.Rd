@@ -65,7 +65,7 @@ probabilities and initial state probabilities directly.
 }
 \examples{
 model <- tna(engagement)
-print(tna_model)
+print(model)
 
 }
 \seealso{

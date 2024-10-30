@@ -10,7 +10,7 @@
   reorder = TRUE,
   ncol = 3,
   scales = c("free_x", "fixed"),
-  colors = NULL,
+  colors,
   labels = TRUE,
   ...
 )

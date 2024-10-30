@@ -18,10 +18,10 @@
 \item{x}{A \code{tna_cliques} object.}
 
 \item{n}{An \code{integer} defining the maximum number of cliques to show.
-The defaults is 6.}
+The defaults is \code{6}.}
 
 \item{first}{An \code{integer} giving the index of the first clique to show.
-The default index is 1.}
+The default index is \code{1}.}
 
 \item{show_loops}{A \code{logical} value indicating whether to include loops
 in the plots or not.}

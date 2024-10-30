@@ -59,6 +59,6 @@ A summary of the metrics is printed to the console.
 }
 \examples{
 model <- tna(engagement)
-summarys(model)
+summary(model)
 
 }

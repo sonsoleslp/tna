@@ -8,7 +8,7 @@
 #' @export
 #' @param x A `tna` object.
 #' @param size An `integer` specifying the size of the cliques to identify.
-#' Defaults to `3` (triads).
+#' Defaults to `2` (dyads).
 #' @param threshold A `numeric` value that sets the minimum edge weight
 #' for an edge to be considered in the clique. Edges below this value
 #' are ignored. Defaults to `0`.
@@ -33,11 +33,15 @@ cliques <- function(x, ...) {
 
 #' @rdname cliques
 #' @export
-cliques.tna <- function(x, size = 3, threshold = 0, sum_weights = FALSE, ...) {
+cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
+  check_tna(x)
   stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
+    checkmate::test_int(x = size, lower = 2),
+    "Argument {.arg size} must be a single {.cls integer}
+    between 2 and {nodes(x)}."
   )
+  check_nonnegative(threshold, type = "numeric")
+  check_flag(sum_weights)
   weights <- x$weights
   labels <- x$labels
   inits <- x$inits

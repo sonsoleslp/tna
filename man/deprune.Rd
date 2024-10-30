@@ -20,3 +20,8 @@ deprune(x, ...)
 \description{
 Restore a Pruned Transition Network Analysis Model
 }
+\examples{
+model <- tna(engagement)
+pruned_model <- prune(model, method = "threshold", threshold = 0.1)
+depruned_model <- deprune(pruned_model) # restore original model
+}

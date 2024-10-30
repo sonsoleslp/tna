@@ -42,7 +42,7 @@
 #'
 #' @examples
 #' model <- tna(engagement)
-#' print(tna_model)
+#' print(model)
 #'
 tna <- function(x, ...) {
   UseMethod("tna")
@@ -87,7 +87,7 @@ tna.matrix <- function(x, type = "relative", inits, ...) {
   if (!missing(inits)) {
     stopifnot_(
       length(inits) >= nc,
-      "Argument {.arg inits} must provide initial weights for all states."
+      "Argument {.arg inits} must provide initial probabilities for all states."
     )
     inits <- try_(as.numeric(inits))
     stopifnot_(
@@ -96,7 +96,7 @@ tna.matrix <- function(x, type = "relative", inits, ...) {
     )
     stopifnot_(
       all(inits >= 0),
-      "Elements of {.arg inits} must be non-negative."
+      "All elements of {.arg inits} must be non-negative."
     )
     if (length(inits) > ncol(x)) {
       warning_(
@@ -110,7 +110,7 @@ tna.matrix <- function(x, type = "relative", inits, ...) {
     }
     names(inits) <- colnames(x)
   }
-  check_tna_type(type)
+  type <- check_tna_type(type)
   tna_(
     weights = x,
     inits = inits,
@@ -126,7 +126,7 @@ tna.stslist <- function(x, type = "relative", ...) {
     !missing(x),
     "Argument {.arg x} is missing."
   )
-  check_tna_type(type)
+  type <- check_tna_type(type)
   x <- create_seqdata(x)
   model <- markov_model(x, type, ...)
   tna_(
@@ -145,7 +145,7 @@ tna.data.frame <- function(x, type = "relative", ...) {
     !missing(x),
     "Argument {.arg x} is missing."
   )
-  check_tna_type(type)
+  type <- check_tna_type(type)
   x <- create_seqdata(x)
   model <- markov_model(x, type, ...)
   tna_(
@@ -250,10 +250,7 @@ betweenness_network <- function(x, ...) {
 #' @rdname betweenness_network
 #' @export
 betweenness_network.tna <- function(x, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+  check_tna(x)
   weights <- x$weights
   g <- as.igraph(x)
   betweenness <- igraph::edge_betweenness(g, directed = TRUE)
@@ -303,17 +300,17 @@ create_seqdata <- function(x) {
     dplyr::mutate(dplyr::across(dplyr::everything(), as.integer))
   structure(
     out,
+    class = "data.frame",
     alphabet = alphabet,
     labels = labels,
-    colors = colors,
-    class = "data.frame"
+    colors = colors
   )
 }
 
 #' Build a Markov Model from Sequence Data
 #'
 #' @param x A data object from `create_seqdata()`
-#' @param type The type of transition network model to build
+#' @param type The type of transition network model to build.
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
@@ -347,26 +344,6 @@ markov_model <- function(x, type = "relative", transitions = FALSE) {
   )
 }
 
-#' Check Transition Network Type for Validity
-#'
-#' @param type Type of the transition network.
-#' @noRd
-check_tna_type <- function(type) {
-  type <- onlyif(is.character(type), tolower(type))
-  type <- try(
-    match.arg(
-      type,
-      c("relative", "scaled", "ranked", "absolute")
-    ),
-    silent = TRUE
-  )
-  stopifnot_(
-    !inherits(type, "try-error"),
-    "Argument {.arg type} must be either {.val relative}, {.val scaled},
-     {.val ranked}, or {.val absolute}."
-  )
-}
-
 #' Compute Network Weights Based On TNA Type
 #'
 #' @param transitions An `array` of the individual-level transitions.
@@ -385,4 +362,12 @@ compute_weights <- function(transitions, type, s) {
     weights[] <- (rank(weights, ties.method = "first") - 1) / (s^2 - 1)
   }
   weights
+}
+
+#' Get `tna` Node Count
+#'
+#' @param x A `tna` object.
+#' @noRd
+nodes <- function(x) {
+  dim(x$weights)[2L]
 }

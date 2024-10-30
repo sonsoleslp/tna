@@ -7,10 +7,7 @@
 #' @export
 hist.tna <- function(x, breaks, col = "lightblue",
                      main, xlab, border = "white", ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+  check_tna(x)
   w <- c(x$weights)
   type <- attr(x, "type")
   xlab_missing <- missing(xlab)
@@ -67,8 +64,10 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param layout See [qgraph::qgraph()].
 #' @param mar See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
-#' @param cut See [qgraph::qgraph()].
-#' @param minimum See [qgraph::qgraph()].
+#' @param cut See [qgraph::qgraph()]. Defaults to the smallest 20th percentile
+#'   of the weights.
+#' @param minimum See [qgraph::qgraph()]. Defaults to the smallest 10th
+#'   percentile of the weights.
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
@@ -79,12 +78,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #'
 plot.tna <- function(x, labels, colors, pie,
                      edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), cut = 0.1, minimum = 0.05,
+                     mar = rep(5, 4), cut, minimum,
                      theme = "colorblind", ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+  check_tna(x)
   if (missing(pie)) {
     pie <- x$inits
   }
@@ -98,6 +94,11 @@ plot.tna <- function(x, labels, colors, pie,
       attr(x$data, "colors")
     )
   }
+  # abs here for plot_compare()
+  weights_abs <- abs(x$weights)
+  q <- stats::quantile(weights_abs, probs = c(0.05, 0.1))
+  minimum <- ifelse_(missing(minimum), q[1L], minimum)
+  cut <- ifelse_(missing(cut), q[2L], cut)
   # TODO qgraph produces error if no edges are above cut/minimum, check
   qgraph::qgraph(
     input = x$weights,
@@ -179,27 +180,17 @@ plot.tna <- function(x, labels, colors, pie,
 #'
 plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
                                   ncol = 3, scales = c("free_x", "fixed"),
-                                  colors = NULL, labels = TRUE, ...) {
+                                  colors, labels = TRUE, ...) {
   stopifnot_(
     is_tna_centralities(x),
     "Argument {.arg x} must be a {.cls tna_centralities} object."
   )
-  stopifnot_(
-    checkmate::test_flag(x = reorder),
-    "Argument {.arg reorder} must be a single {.cls logical} value."
-  )
-  stopifnot_(
-    checkmate::test_flag(x = labels),
-    "Argument {.arg labels} must be a single {.cls logical} value."
-  )
-  stopifnot_(
-    is.null(model) | is_tna(model),
-    "Argument {.arg modes} must be a single {.cls tna} model or empty."
-  )
-  if (is.null(colors)) {
+  check_flag(reorder)
+  check_flag(labels)
+  if (missing(colors) && !is.null(attr(x, "colors"))) {
     colors <- attr(x, "colors")
   }
-  if (is.null(colors)) {
+  if (missing(colors)) {
     colors <- rep("black", length.out = length(unique(x$State)))
   } else if (!is.list(colors) && length(colors) == 1) {
     colors <- rep(colors, length.out = length(unique(x$State)))
@@ -311,6 +302,11 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' plot(cs)
 #'
 plot.tna_stability <- function(x, level = 0.05, ...) {
+  stopifnot_(
+    is_tna_stability(x),
+    "Argument {.arg x} must be a {.cls tna_stability} object."
+  )
+  check_probability(level)
   x$detailed_results <- NULL
   x_names <- names(x)
   drop_prop <- attr(x, "drop_prop")
@@ -479,9 +475,9 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
         ggplot2::aes(
           label = round(!!rlang::sym("value"), 2),
           x = !!rlang::sym("rank"),
-          y = !!rlang::sym("value")
+          y = 0.98 * !!rlang::sym("value")
         ),
-        # vjust = 2,
+        vjust = 0.3,
         hjust = 1,
         size = 3
       )
@@ -491,7 +487,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
       name = NULL,
       expand = c(0, 0.5),
       breaks = x$rank,
-      labels = x$State,
+      labels = x$State
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
@@ -500,7 +496,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
       panel.grid.minor.y = ggplot2::element_blank(),
       panel.grid.minor.x = ggplot2::element_blank(),
       strip.text = ggplot2::element_text(face = "bold", size = 12),
-      axis.text.y = ggplot2::element_text(size = 8),
+      axis.text.y = ggplot2::element_text(size = 8, vjust = 0.2),
       panel.spacing = ggplot2::unit(2, "lines"),
       plot.margin = ggplot2::margin(5.5, 11, 5.5, 5.5, "points")
     ) +
@@ -564,37 +560,37 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
 #' @param x An object of class `tna`. It will be the principal model.
 #' @param y An object of class `tna`. It will be the model subtracted from the
 #'   principal model.
+#' @param cut See [qgraph::qgraph()].
+#' @param minimum See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object displaying the difference network between the
 #'   two models.
 #' @examples
 #' model_x <- tna(engagement[engagement[, 1] == "Active", ])
-#' model_u <- tna(engagement[engagement[, 1] != "Active", ])
+#' model_y <- tna(engagement[engagement[, 1] != "Active", ])
 #' plot_compare(model_x, model_y)
 #'
-plot_compare <- function(x, y, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
-  stopifnot_(
-    is_tna(y),
-    "Argument {.arg y} must be a {.cls tna} object."
-  )
+plot_compare <- function(x, y, cut, minimum, ...) {
+  check_tna(x)
+  check_tna(y)
   stopifnot_(
     all(x$labels == y$labels),
     "{.arg x} and {.arg y} must have the same labels."
   )
+  colors <- rlang::missing_arg()
   pie <- abs(x$inits - y$inits)
   piesign <- ifelse(x$inits > y$inits, "#009900", "red")
   #pos_col <- c("#009900", "darkgreen")
   #neg_col <- c("#BF0000", "red")
-  diff <- tna(x$weights - y$weights, pie)
+  diff <- tna(x$weights - y$weights, inits = pie)
+  if (!is.null(x$data)) {
+    colors <- attr(x$data, "colors")
+  }
   plot.tna(
-    diff,
+    x = diff,
     pie = pie,
     pieColor = piesign,
-    colors = x$colors,
+    colors = colors,
     theme = NULL,
     palette = "colorblind",
     ...

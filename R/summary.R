@@ -47,14 +47,12 @@
 #'
 #' @examples
 #' model <- tna(engagement)
-#' summarys(model)
+#' summary(model)
 #'
 summary.tna <- function(object,
                         digits =  max(3, getOption("digits") - 3L), ...) {
-  stopifnot_(
-    is_tna(object),
-    "Argument {.arg object} must be a {.cls tna} object."
-  )
+  check_tna(object)
+  check_positive(digits)
   weights <- object$weights
   g <- as.igraph(object)
   in_strength <- igraph::strength(g, mode = "out")
@@ -63,7 +61,7 @@ summary.tna <- function(object,
   cent_out <- igraph::centr_degree(g, mode = "out", loops = FALSE)
   cent_in <- igraph::centr_degree(g, mode = "in", loops = FALSE)
   out <- c(
-    node_count = ncol(weights),
+    node_count = nodes(object),
     edge_count = sum(weights > 0),
     network_density = min(igraph::edge_density(g), 1),
     mean_distance = igraph::mean_distance(g),
@@ -95,5 +93,8 @@ summary.tna <- function(object,
   out <- tibble::as_tibble(
     data.frame(metric = out_names, value = round(out, digits))
   )
-  out
+  structure(
+    out,
+    class = c("summary.tna", "tbl_df", "tbl", "data.frame")
+  )
 }

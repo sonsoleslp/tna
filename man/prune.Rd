@@ -9,7 +9,7 @@ prune(
   method = "threshold",
   threshold = 0.1,
   lowest = 0.05,
-  alpha = 0.5,
+  level = 0.5,
   boot = NULL,
   ...
 )
@@ -30,22 +30,18 @@ removal.}
 of non-zero edges. This percentage of edges with the lowest weights will be
 considered for removal. The default is \code{0.05}.}
 
-\item{alpha}{A \code{numeric} value representing the significance level for the
+\item{level}{A \code{numeric} value representing the significance level for the
 disparity filter. Defaults to \code{0.5}.}
 
 \item{boot}{A \code{tna_bootstrap} object to be used for pruning with method
 \code{"boot"}. The method argument is ignored if this argument is supplied.}
 
-\item{...}{Arguments passeed to \code{\link[=bootstrap]{bootstrap()}} when
-using \code{metod = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.}
+\item{...}{Arguments passed to \code{\link[=bootstrap]{bootstrap()}} when
+using \code{method = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.}
 }
 \value{
-A list containing:
-\itemize{
-\item \code{pruned} The pruned \code{tna} object with updated transition matrix.
-\item \code{removed_edges} A data frame of edges that were removed.
-\item \code{num_removed_edges} The number of edges removed.
-}
+A pruned \code{tna} object. Details on the pruning can be viewed with
+\code{\link[=pruning_details]{pruning_details()}}. The original model can be restored with \code{\link[=deprune]{deprune()}}.
 }
 \description{
 This function prunes a network represented by a \code{tna} object by removing
@@ -55,9 +51,9 @@ network remains weakly connected.
 }
 \examples{
 model <- tna(group_regulation)
-pruned_threshold <- prune(tna_model, method = "threshold", threshold = 0.1)
-pruned_percentile <- prune(tna_model,method = "lowest", lowest = 0.05)
-pruned_disparity <- prune(tna_model, method = "disparity", alpha = 0.5)
+pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 
 }
 \seealso{

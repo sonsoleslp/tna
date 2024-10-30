@@ -4,13 +4,17 @@
 \alias{plot_compare}
 \title{Plot the difference network between two models}
 \usage{
-plot_compare(x, y, ...)
+plot_compare(x, y, cut, minimum, ...)
 }
 \arguments{
 \item{x}{An object of class \code{tna}. It will be the principal model.}
 
 \item{y}{An object of class \code{tna}. It will be the model subtracted from the
 principal model.}
+
+\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
@@ -26,7 +30,7 @@ that \code{x}is greater than \code{y}and red indicates otherwise.
 }
 \examples{
 model_x <- tna(engagement[engagement[, 1] == "Active", ])
-model_u <- tna(engagement[engagement[, 1] != "Active", ])
+model_y <- tna(engagement[engagement[, 1] != "Active", ])
 plot_compare(model_x, model_y)
 
 }

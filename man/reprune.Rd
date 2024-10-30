@@ -11,6 +11,16 @@ reprune(x, ...)
 
 \item{...}{Ignored.}
 }
+\value{
+A \code{tna} object that has not been pruned. The previous pruning
+result can be reactivated with \code{\link[=reprune]{reprune()}}.
+}
 \description{
 Restore Previous Pruning of a Transition Network Analysis Model
+}
+\examples{
+model <- tna(engagement)
+pruned_model <- prune(model, method = "threshold", threshold = 0.1)
+depruned_model <- deprune(pruned_model) # restore original model
+repruned_model <- reprune(depruned_model) # reapply the previous pruning
 }

@@ -7,7 +7,7 @@
 \usage{
 cliques(x, ...)
 
-\method{cliques}{tna}(x, size = 3, threshold = 0, sum_weights = FALSE, ...)
+\method{cliques}{tna}(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
@@ -15,7 +15,7 @@ cliques(x, ...)
 \item{...}{Ignored.}
 
 \item{size}{An \code{integer} specifying the size of the cliques to identify.
-Defaults to \code{3} (triads).}
+Defaults to \code{2} (dyads).}
 
 \item{threshold}{A \code{numeric} value that sets the minimum edge weight
 for an edge to be considered in the clique. Edges below this value

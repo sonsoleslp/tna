@@ -1,6 +1,6 @@
 #' Calculate Centrality Measures for a Transition Matrix
 #'
-#' This function calculates several centrality measures. See 'Details' for
+#' Calculates several centrality measures. See 'Details' for
 #' information about the measures.
 #'
 #' The following measures are provided:
@@ -37,14 +37,14 @@
 #' @family core
 #' @rdname centralities
 #' @param x A `tna` object or a  square `matrix` representing edge weights.
-#' @param measures A `character` vector indicating which centrality
-#'   measures should be computed. If `NULL`, all available measures are
-#'   returned. See 'Details' for available measures. The elements are partially
-#'   matched ignoring case.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `FALSE`).
 #' @param normalize  A `logical` value indicating whether the centralities
 #'   should be normalized (default is `FALSE`).
+#' @param measures A `character` vector indicating which centrality
+#'   measures should be computed. If missing, all available measures are
+#'   returned. See 'Details' for available measures. The elements are partially
+#'   matched ignoring case.
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
@@ -73,19 +73,15 @@
 #' # Centrality measures normalized
 #' centralities(model, normalize = TRUE)
 #'
-centralities <- function(x, loops = FALSE,
-                         normalize = FALSE, measures = NULL, ...) {
+centralities <- function(x, loops = FALSE, normalize = FALSE, measures, ...) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
 centralities.tna <- function(x, loops = FALSE,
-                             normalize = FALSE, measures = NULL, ...) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
+                             normalize = FALSE, measures, ...) {
+  check_tna(x)
   colors <- NULL
   out <- centralities_(
     x$weights,
@@ -102,7 +98,7 @@ centralities.tna <- function(x, loops = FALSE,
 #' @export
 #' @rdname centralities
 centralities.matrix <- function(x, loops = FALSE,
-                                normalize = FALSE, measures = NULL, ...) {
+                                normalize = FALSE, measures, ...) {
   stopifnot_(
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
@@ -112,44 +108,18 @@ centralities.matrix <- function(x, loops = FALSE,
 
 #' Internal function to calculate various centrality measures
 #'
-#' @param x An adjacency matrix of a directed weighted graph.
+#' @param x An adjacency `matrix` of a directed weighted graph.
 #' @inheritParams centralities
 #' @noRd
 centralities_ <- function(x, loops, normalize, measures) {
-  stopifnot_(
-    checkmate::test_flag(x = loops),
-    "Argument {.arg loops} must be a single {.cls logical} value."
-  )
-  stopifnot_(
-    checkmate::test_flag(x = normalize),
-    "Argument {.arg normalize} must be a single {.cls logical} value."
-  )
+  check_flag(loops)
+  check_flag(normalize)
   measures <- ifelse_(
-    is.null(measures),
+    missing(measures),
     available_centrality_measures,
     measures
   )
-  stopifnot_(
-    checkmate::test_character(
-      x = measures,
-      any.missing = FALSE,
-      unique = TRUE,
-    ),
-    "Argument {.arg measures} must be a {.cls character} vector."
-  )
-  lower_measures <- tolower(measures)
-  lower_defaults <- tolower(available_centrality_measures)
-  measures_match <- pmatch(lower_measures, lower_defaults)
-  no_match <- is.na(measures_match)
-  invalid_measures <- measures[no_match]
-  valid_measures <- measures[!no_match]
-  stopifnot_(
-    length(invalid_measures) == 0L,
-    c(
-      "Argument {.arg measures} contains invalid centrality measures:",
-      `x` = "Measure{?s} {.val {invalid_measures}} {?is/are} not recognized."
-    )
-  )
+  check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
   g <- igraph::graph_from_adjacency_matrix(
     adjmatrix = x,
@@ -157,12 +127,12 @@ centralities_ <- function(x, loops, normalize, measures) {
     weighted = TRUE
   )
   measures_out <- lapply(
-    valid_measures,
+    measures,
     function(y) {
       centrality_funs[[y]](g = g, x = x)
     }
   )
-  names(measures_out) <- valid_measures
+  names(measures_out) <- measures
   out <- as.data.frame(measures_out)
   if (normalize) {
     out <- out |>
@@ -208,65 +178,13 @@ diffusion <- function(mat) {
   .rowSums(s, n, n)
 }
 
-#' Compute the Randomized Shortest Path Betweenness Centrality Measure
-#'
-#' @param mat A weight `matrix`.
-#' @noRd
-rsp_bet <- function(mat, beta = 0.01) {
-  n <- ncol(mat)
-  W <- mat * exp(-beta * mat^-1)
-  Z <- solve(diag(1, n, n) - W)
-  Zrecip <- Z^-1
-  Zrecip_diag <- diag(Zrecip) * diag(1, n, n)
-  out <- diag(tcrossprod(Z, Zrecip - n * Zrecip_diag) %*% Z)
-  out <- round(out)
-  out <- out - min(out) + 1
-  out
-}
-
-#' Compute the Signed Clustering Coefficient
-#'
-#' @param mat A weight `matrix`.
-#' @noRd
-wcc <- function(mat) {
-  diag(mat) <- 0
-  n <- ncol(mat)
-  num <- diag(mat %*% mat %*% mat)
-  den <- .colSums(mat, n, n)^2 - .colSums(mat^2, n, n)
-  num / den
-}
-
 #' Estimate Centrality Stability
 #'
-#' This function estimates the stability of centrality measures in a network
+#' Estimates the stability of centrality measures in a network
 #' using subset sampling without replacement. It allows for dropping varying
 #' proportions of cases and calculates correlations between the original
-#' centralities and sampled subsets.
+#' centralities and those computed using sampled subsets.
 #'
-#' @export
-#' @param x A `tna` object representing the temporal network analysis data.
-#' The object should be created from a sequence datad object.
-#' @param measures A `character` vector of centrality measures to estimate.
-#' The default measures are `"InStrength"`, `"OutStrength"`,
-#' and `"Betweenness"`.
-#' @param normalize A `logical` value indicating whether to normalize
-#' the centrality measures. The default is `FALSE`.
-#' @param iter An `integer` specifying the number of resamples to draw.
-#' The default is 1000.
-#' @param method A `character` string indicating the correlation coefficient
-#' type. The default is `"pearson"`. See [stats::cor()] for details.
-#' @param drop_prop A `numeric` vector specifying the proportions of
-#' cases to drop in each sampling iteration. Default is a sequence from 0.1 to
-#' 0.9 in increments of 0.1.
-#' @param threshold A `numeric` value specifying the correlation threshold for
-#' calculating the CS-coefficient. THe default is 0.7.
-#' @param certainty A `numeric` value specifying the desired level of certainty
-#' for the CS-coefficient. Default is 0.95.
-#' @param detailed A `logical` value specifying whether to return detailed
-#' sampling results. If `TRUE`, detailed results are included in the output.
-#' THe default is `FALSE`.
-#'
-#' @details
 #' The function works by repeatedly resampling the data, dropping varying
 #' proportions of cases, and calculating centrality measures on the subsets.
 #' The correlation between the original centralities and the resampled
@@ -275,10 +193,40 @@ wcc <- function(mat) {
 #' coefficient, which represents the proportion of dropped cases at which
 #' the correlations drop below a given threshold (default 0.7).
 #'
-#' The results can be visualized with an optional plot showing the stability of
-#' the centrality measures across different drop proportions, along with
-#' confidence intervals. The CS-coefficients are displayed in the plot's
+#' The results can be visualized by plotting the output object showing the
+#' stability of the centrality measures across different drop proportions,
+#' along with confidence intervals. The CS-coefficients are displayed in the
 #' subtitle.
+#'
+#' @export
+#' @param x A `tna` object representing the temporal network analysis data.
+#' The object should be created from a sequence data object.
+#' @param loops A `logical` value indicating whether to include loops in the
+#'   network when computing the centrality measures (default is `FALSE`).
+#' @param normalize A `logical` value indicating whether to normalize
+#' the centrality measures. The default is `FALSE`.
+#' @param measures A `character` vector of centrality measures to estimate.
+#' The default measures are `"InStrength"`, `"OutStrength"`,
+#' and `"Betweenness"`.
+#' @param iter An `integer` specifying the number of resamples to draw.
+#' The default is 1000.
+#' @param method A `character` string indicating the correlation coefficient
+#' type. The default is `"pearson"`. See [stats::cor()] for details.
+#' @param drop_prop A `numeric` vector specifying the proportions of
+#' cases to drop in each sampling iteration. Default is a sequence from 0.1 to
+#' 0.9 in increments of 0.1.
+#' @param threshold A `numeric` value specifying the correlation threshold for
+#' calculating the CS-coefficient. The default is 0.7.
+#' @param certainty A `numeric` value specifying the desired level of certainty
+#' for the CS-coefficient. Default is 0.95.
+#' @param detailed A `logical` value specifying whether to return detailed
+#' sampling results. If `TRUE`, detailed results are included in the output.
+#' The default is `FALSE`.
+#' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
+#' Defaults to `FALSE`
+#'
+#' @details
+
 #'
 #' @return A `tna_stability` object which is a `list` with an element for each
 #' `measure` with the following elements:
@@ -288,26 +236,28 @@ wcc <- function(mat) {
 #' * `correlations`: A `matrix` of correlations between the original
 #'   centrality and the resampled centralities for each drop proportion.
 #' * `detailed_results`: A detailed data frame of the sampled correlations,
-#'   returned only if `return_detailed = TRUE`.
+#'   returned only if `return_detailed = TRUE`. TODO not implemented yet
 #'
 #' @examples
 #' model <- tna(engagement)
 #' estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 10)
 #'
-estimate_cs <- function(x, measures = c(
+estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
                           "InStrength", "OutStrength", "Betweenness"
                         ),
-                        normalize = FALSE, iter = 1000, method = "pearson",
+                        iter = 1000, method = "pearson",
                         drop_prop = seq(0.1, 0.9, by = 0.1), threshold = 0.7,
-                        certainty = 0.95, detailed = FALSE) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
-  stopifnot_(
-    !is.null(x$data),
-    "Argument {.arg x} must be a {.cls tna} object created from sequence data."
-  )
+                        certainty = 0.95, detailed = FALSE,
+                        progressbar = FALSE) {
+  check_tna_seq(x)
+  check_flag(loops)
+  check_flag(normalize)
+  check_flag(progressbar)
+  check_flag(detailed)
+  check_positive(iter)
+  check_probability(threshold)
+  check_probability(certainty)
+  check_measures(measures)
   d <- x$data
   model <- markov_model(d, transitions = TRUE)
   trans <- model$trans
@@ -316,8 +266,9 @@ estimate_cs <- function(x, measures = c(
   n_seq <- seq_len(n)
   n_prop <- length(drop_prop)
   type <- attr(x, "type")
-  centralities_orig <- centralities(
-    x,
+  centralities_orig <- centralities_(
+    x = x$weights,
+    loops = loops,
     normalize = normalize,
     measures = measures
   )
@@ -328,7 +279,6 @@ estimate_cs <- function(x, measures = c(
         stats::sd
       )
     )
-  # TODO check name validity and match, warning
   valid_measures <- which(sds_orig > 0)
   centralities_orig <- centralities_orig[, 1L + valid_measures]
   measures <- measures[valid_measures]
@@ -339,6 +289,9 @@ estimate_cs <- function(x, measures = c(
     simplify = FALSE
   )
   names(stability) <- measures
+  if (progressbar) {
+    pb <- utils::txtProgressBar(min = 0, max = n_prop * iter, style = 3)
+  }
   for (i in seq_len(n_prop)) {
     prop <- drop_prop[i]
     n_drop <- floor(n * prop)
@@ -351,8 +304,9 @@ estimate_cs <- function(x, measures = c(
       keep <- sample(n_seq, n - n_drop, replace = FALSE)
       trans_sub <- trans[keep, , ]
       weight_sub <- compute_weights(trans_sub, type, a)
-      centralities_sub <- centralities(
-        weight_sub,
+      centralities_sub <- centralities_(
+        x = weight_sub,
+        loops = loops,
         normalize = normalize,
         measures = measures
       )
@@ -382,11 +336,17 @@ estimate_cs <- function(x, measures = c(
         },
         numeric(1L)
       )
+      if (progressbar) {
+        utils::setTxtProgressBar(pb, (i - 1) * iter + j)
+      }
     }
     for (k in seq_len(n_measures)) {
       measure <- measures[k]
       stability[[measure]][, i] <- corr_prop[, k]
     }
+  }
+  if (progressbar) {
+    close(pb)
   }
   out <- list()
   # TODO handle all NA case?
@@ -419,6 +379,7 @@ estimate_centrality_stability <- estimate_cs
 #'
 #' @param corr_mat A `matrix` of correlation values
 #' @inheritParams estimate_centrality_stability
+#' @noRd
 calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
   prop_above <- apply(corr_mat, 2, function(x) {
     mean(x >= threshold, na.rm = TRUE)
@@ -429,6 +390,35 @@ calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
     drop_prop[max(valid_indices)],
     0
   )
+}
+
+#' Compute the Randomized Shortest Path Betweenness Centrality Measure
+#'
+#' @param mat A weight `matrix`.
+#' @param beta The beta parameter of the algorithm.
+#' @noRd
+rsp_bet <- function(mat, beta = 0.01) {
+  n <- ncol(mat)
+  W <- mat * exp(-beta * mat^-1)
+  Z <- solve(diag(1, n, n) - W)
+  Zrecip <- Z^-1
+  Zrecip_diag <- diag(Zrecip) * diag(1, n, n)
+  out <- diag(tcrossprod(Z, Zrecip - n * Zrecip_diag) %*% Z)
+  out <- round(out)
+  out <- out - min(out) + 1
+  out
+}
+
+#' Compute the Signed Clustering Coefficient
+#'
+#' @param mat A weight `matrix`.
+#' @noRd
+wcc <- function(mat) {
+  diag(mat) <- 0
+  n <- ncol(mat)
+  num <- diag(mat %*% mat %*% mat)
+  den <- .colSums(mat, n, n)^2 - .colSums(mat^2, n, n)
+  num / den
 }
 
 # Available centrality measures -----------------------------------------------
