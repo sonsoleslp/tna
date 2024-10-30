@@ -11,6 +11,7 @@
   show_loops = FALSE,
   minimum = 1e-05,
   mar = rep(5, 4),
+  ask = TRUE,
   ...
 )
 }
@@ -29,6 +30,9 @@ in the plots or not.}
 \item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{ask}{A \code{logical} value. When \code{TRUE}, showw plots one by one and asks
+to plot the next plot in interactive mode.}
 
 \item{...}{Ignored.}
 }

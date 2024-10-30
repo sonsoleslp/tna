@@ -216,10 +216,12 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
 #' @param show_loops A `logical` value indicating whether to include loops
 #' in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
-#' @param ask Interactive plotting (defaults to `TRUE`).
+#' @param ask A `logical` value. When `TRUE`, showw plots one by one and asks
+#' to plot the next plot in interactive mode.
 #' @export
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
-                             minimum = 0.00001, mar = rep(5, 4), ask = TRUE, ...) {
+                             minimum = 0.00001, mar = rep(5, 4),
+                             ask = TRUE, ...) {
   stopifnot_(
     is_tna_cliques(x),
     "Argument {.arg x} must be a {.cls tna_cliques} object."
@@ -261,9 +263,10 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     )
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
-    if ((max_cliques - first) == 0) {
-      return (do.call(qgraph::qgraph, args = plot_args))
-    }
+    # TODO should already work with 1 clique?
+    #if ((max_cliques - first) == 0) {
+    #  return (do.call(qgraph::qgraph, args = plot_args))
+    #}
   }
 }
 

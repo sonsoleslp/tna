@@ -48,19 +48,16 @@ print.tna_cliques <- function(x, n = 6, first = 1, digits = 3, ...) {
     cat("No ", size, "-cliques were found in the network.", sep = "")
     return(invisible(x))
   }
-  stopifnot_(
-    checkmate::test_int(x = n, lower = 1L, upper = n_cliques),
-    "Argument {.arg n} must be a single non-negative {.cls integer}
-    between 1 and {n_cliques}."
-  )
+  check_positive(n)
   check_positive(first)
   check_nonnegative(digits)
+  n <- min(n, n_cliques)
   size <- attr(x, "size")
   threshold <- attr(x, "threshold")
   cluster <- attr(x, "cluster")
   cat(
     "Number of ", size, "-cliques: ", n_cliques, " ",
-    "(weight threshold = ", threshold, ", cluster = ", cluster, ")\n",
+    "(weight threshold = ", threshold, ")\n",
     sep = ""
   )
   max_cliques <- min(first + n - 1L, n_cliques)
