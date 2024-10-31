@@ -18,7 +18,6 @@ BugReports: https://github.com/sonsoleslp/tna/issues/
 Depends:
     R (>= 3.6.0)
 Imports:
-    backbone,
     checkmate,
     cli,
     colorspace,

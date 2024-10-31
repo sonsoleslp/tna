@@ -1,9 +1,9 @@
 #' Prune a `tna` network based on transition probabilities
 #'
-#' This function prunes a network represented by a `tna` object by removing
+#' Prunes a network represented by a `tna` object by removing
 #' edges based on a specified threshold, lowest percent of non-zero edge
-#' weights, or the disparity algorithm TODO cite. It ensures the
-#' network remains weakly connected.
+#' weights, or the disparity filter algorithm (Serrano et al., 2009).
+#' It ensures the network remains weakly connected.
 #'
 #' @export
 #' @family evaluation
@@ -26,6 +26,11 @@
 #' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
 #' @return A pruned `tna` object. Details on the pruning can be viewed with
 #' [pruning_details()]. The original model can be restored with [deprune()].
+#' @references
+#' Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
+#' multiscale backbone of complex weighted networks.
+#' *Proceedings of the National Academy of Sciences, 106*,
+#' 6483-6488. \doi{10.1073/pnas.0808904106}
 #'
 #' @examples
 #' model <- tna(group_regulation)
@@ -132,34 +137,10 @@ prune_bootstrap <- function(x, boot, ...) {
   )
 }
 
-
-# TODO integrate documentation to pruning docs
-# #' Apply Disparity Filter to Transition Matrix in a tna Object
-# #'
-# #' The `disparity` function applies a disparity filter to the transition matrix
-# #' of a specified cluster within a `tna` object and returns a modified `tna`
-# #' object with the filtered transition matrix.
-# #'
-# #' @param x A `tna` object, which contains transition matrices and other relevant data.
-# #' @param cluster A numeric value specifying the cluster for which the transition matrix
-# #'   should be extracted and processed. Defaults to `1`.
-# #' @param alpha A numeric value representing the significance level for the
-# #'   disparity filter. Defaults to `0.5`.
-# #'
-# #' @details
-# #' This function extracts the transition matrix of the specified cluster from
-# #' the `tna` object, applies the disparity filter from the `backbone` package
-# #' with the specified `alpha`, and then multiplies the filtered result with the
-# #' original transition matrix. The result is returned as a new `tna` object with
-# #' updated transition data.
-# #'
-# #' @noRd
-
-
 prune_disparity <- function(x, level, labels) {
   weights <- x$weights
   n_edges <- sum(weights > 0)
-  disparity_filtered <- backbone::disparity(weights, alpha = level)
+  disparity_filtered <- disparity_filter(weights, level)
   weights_pruned <- disparity_filtered * weights
   dimnames(weights_pruned) <- dimnames(weights)
   pruned <- weights_pruned
@@ -286,4 +267,24 @@ reprune.tna <- function(x, ...) {
   tmp$active <- TRUE
   x$weights <- tmp$weights
   attr(x, "pruning") <- tmp
+}
+
+#' Disparity Filter Algorithm
+#'
+#' @param mat A weighted adjacency `matrix` of a directed graph.
+#' @param level A `numeric` value for the significance level.
+#' @noRd
+disparity_filter <- function(mat, level) {
+  d <- dim(mat)[2]
+  idx_mat <- 1L * (mat > 0)
+  out_edges <- mat / .rowSums(mat, m = d, n = d)
+  out_degree <- .rowSums(idx_mat, m = d, n = d)
+  out_p_values <- (1 - out_edges)^(out_degree - 1)
+  in_edges <- t(mat) / .colSums(mat, m = d, n = d)
+  in_degree <- .colSums(idx_mat, m = d, n = d)
+  in_p_values <- t((1 - in_edges)^(in_degree - 1))
+  p_values <- pmin(out_p_values, in_p_values)
+  sig <- 1 * (p_values < level)
+  diag(sig) <- 0
+  sig
 }

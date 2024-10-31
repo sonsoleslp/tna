@@ -44,10 +44,10 @@ A pruned \code{tna} object. Details on the pruning can be viewed with
 \code{\link[=pruning_details]{pruning_details()}}. The original model can be restored with \code{\link[=deprune]{deprune()}}.
 }
 \description{
-This function prunes a network represented by a \code{tna} object by removing
+Prunes a network represented by a \code{tna} object by removing
 edges based on a specified threshold, lowest percent of non-zero edge
-weights, or the disparity algorithm TODO cite. It ensures the
-network remains weakly connected.
+weights, or the disparity filter algorithm (Serrano et al., 2009).
+It ensures the network remains weakly connected.
 }
 \examples{
 model <- tna(group_regulation)
@@ -55,6 +55,12 @@ pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
 pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
 pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 
+}
+\references{
+Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
+multiscale backbone of complex weighted networks.
+\emph{Proceedings of the National Academy of Sciences, 106},
+6483-6488. \doi{10.1073/pnas.0808904106}
 }
 \seealso{
 Evaluation and validation functions
