@@ -10,9 +10,9 @@
 \usage{
 tna(x, ...)
 
-\method{tna}{default}(x, type = "relative", inits, ...)
+\method{tna}{default}(x, inits, type = "relative", ...)
 
-\method{tna}{matrix}(x, type = "relative", inits, ...)
+\method{tna}{matrix}(x, inits, type = "relative", ...)
 
 \method{tna}{stslist}(x, type = "relative", ...)
 
@@ -29,15 +29,15 @@ a \code{data.frame} object in wide format
 
 \item{...}{Ignored.}
 
+\item{inits}{An optional \code{numeric} vector of initial state probabilities
+for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
+be scaled to unity.}
+
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports \code{"relative"} for relative frequencies
 (probabilities, the default), \code{"scaled"} for frequencies scaled to the
 unit interval, \code{"ranked"} for ranks of the weights scaled to the unit
 interval, and \code{"absolute"} for frequencies.}
-
-\item{inits}{An optional \code{numeric} vector of initial state probabilities
-for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
-be scaled to unity.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

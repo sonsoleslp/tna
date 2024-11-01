@@ -12,11 +12,7 @@ create_mock_tna <- function() {
     ncol = 4,
     byrow = TRUE
   )
-  structure(
-    list(weights = weights),
-    type = "relative",
-    class = "tna"
-  )
+  tna(weights)
 }
 
 # Helper function to create a sample transition matrix

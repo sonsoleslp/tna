@@ -128,12 +128,13 @@ prune_bootstrap <- function(x, boot, ...) {
   if (is.null(boot)) {
     boot <- bootstrap(x, ...)
   }
+  removed <- boot$combined[which(boot$combined$sig), c("from", "to", "weight")]
   list(
     weights = boot$sig_weights,
     method = "bootstrap",
-    removed = boot$combined,
-    num_removed = boot$removed_edges_summary$num_removed,
-    num_retained = boot$removed_edges_summary$num_retained
+    removed = removed,
+    num_removed = unname(boot$removed_edges_summary["num_removed"]),
+    num_retained = unname(boot$removed_edges_summary["num_retained"])
   )
 }
 
@@ -190,13 +191,13 @@ pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
     threshold = paste0("User-specified threshold (", pruning$threshold, ")"),
     lowest = paste0("Lowest ", pruning$lowest * 100, "% of non-zero edges"),
     bootstrap = "Bootstrapping",
-    disparity = paste0("Disparity filter (alpha = ", pruning$alpha, ")")
+    disparity = paste0("Disparity filter (sig. level = ", pruning$level, ")")
   )
   cat("**Pruning Details**\n")
   cat("\nMethod used:", method_txt)
   cat("\nNumber of removed edges:", cs(pruning$num_removed))
   cat("\nNumber of retained edges:", cs(pruning$num_retained))
-  cat("\n\n**Removed edges")
+  cat("\n\n**Removed edges**\n\n")
   print(pruning$removed)
 }
 

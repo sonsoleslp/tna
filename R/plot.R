@@ -96,7 +96,7 @@ plot.tna <- function(x, labels, colors, pie,
   }
   # abs here for plot_compare()
   weights_abs <- abs(x$weights)
-  q <- stats::quantile(weights_abs, probs = c(0.05, 0.1))
+  q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
   minimum <- ifelse_(missing(minimum), q[1L], minimum)
   cut <- ifelse_(missing(cut), q[2L], cut)
   # TODO qgraph produces error if no edges are above cut/minimum, check
@@ -604,3 +604,41 @@ plot_compare <- function(x, y, cut, minimum, ...) {
   )
 }
 
+#' Plot a Transition Network from a Matrix of Edge Weights
+#'
+#' @export
+#' @param x A square `matrix` of edge weights.
+#' @inheritParams plot.tna
+#' @return See [plot.tna()].
+#' @examples
+#' m <- matrix(rexp(25), 5, 5)
+#' plot_tna(m)
+#'
+plot_tna <- function(x, labels, colors,
+                     edge.labels = TRUE, layout = "circle",
+                     mar = rep(5, 4), cut = 0.1, minimum = 0.05,
+                     theme = "colorblind", ...) {
+  stopifnot_(
+    is.matrix(x) && ncol(x) == nrow(x),
+    "Argument {.arg x} must be a square matrix."
+  )
+  nc <- ncol(x)
+  if (missing(labels)) {
+    labels <- seq_len(nc)
+  }
+  if (missing(colors)) {
+    colors <- color_palette(nc)
+  }
+  qgraph::qgraph(
+    input = x,
+    color = colors,
+    minimum = minimum,
+    cut = cut,
+    edge.labels = edge.labels,
+    labels = labels,
+    layout = layout,
+    mar = mar,
+    theme = theme,
+    ...
+  )
+}

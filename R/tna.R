@@ -50,7 +50,7 @@ tna <- function(x, ...) {
 
 #' @export
 #' @rdname tna
-tna.default <- function(x, type = "relative", inits, ...) {
+tna.default <- function(x, inits, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -60,12 +60,12 @@ tna.default <- function(x, type = "relative", inits, ...) {
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  tna.matrix(x, type, inits, ...)
+  tna.matrix(x, inits, type, ...)
 }
 
 #' @export
 #' @rdname tna
-tna.matrix <- function(x, type = "relative", inits, ...) {
+tna.matrix <- function(x, inits, type = "relative",...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -111,6 +111,9 @@ tna.matrix <- function(x, type = "relative", inits, ...) {
     names(inits) <- colnames(x)
   }
   type <- check_tna_type(type)
+  if (is.null(colnames(x))) {
+    dimnames(x) <- list(seq_len(nc), seq_len(nc))
+  }
   tna_(
     weights = x,
     inits = inits,

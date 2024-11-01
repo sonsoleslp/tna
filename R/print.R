@@ -104,9 +104,12 @@ print.tna <- function(x, digits = 3, generic = FALSE, ...) {
   cat(paste(x$labels, collapse = ", "), "\n")
   cat("\n", mat_type, " Matrix\n\n", sep = "")
   print(round(x$weights, digits))
-  cat("\nInitial Probabilities\n\n", sep = "")
-  print(round(x$inits, digits))
+  if (!is.null(x$inits)) {
+    cat("\nInitial Probabilities\n\n", sep = "")
+    print(round(x$inits, digits))
+  }
   invisible(x)
 }
 
 # TODO print.tna_stability
+# TODO print.tna_bootstrap

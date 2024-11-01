@@ -46,28 +46,25 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
   labels <- x$labels
   inits <- x$inits
   clique_idx <- integer(0)
+  mat <- weights
+  mat[mat < threshold] <- 0
   if (sum_weights) {
-    mat <- weights + t(weights)
-    mat[upper.tri(mat) | mat < threshold] <- 0
     g <- igraph::graph_from_adjacency_matrix(
       mat,
-      mode = "undirected",
+      mode = "plus",
       weighted = TRUE
     )
     cliq <- igraph::cliques(g, min = size, max = size)
     cliq_idx <- lapply(cliq, function(y) which(labels %in% attr(y, "names")))
   } else {
-    mat1 <- mat2 <- weights
-    mat1[upper.tri(mat1) | mat1 < threshold] <- 0
-    mat2[lower.tri(mat2) | mat2 < threshold] <- 0
     g1 <- igraph::graph_from_adjacency_matrix(
-      mat1,
-      mode = "undirected",
+      mat,
+      mode = "upper",
       weighted = TRUE
     )
     g2 <- igraph::graph_from_adjacency_matrix(
-      mat2,
-      mode = "undirected",
+      mat,
+      mode = "lower",
       weighted = TRUE
     )
     cliq1 <- igraph::cliques(g1, min = size, max = size)

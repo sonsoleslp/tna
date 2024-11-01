@@ -23,8 +23,8 @@
 #' @export
 #' @family evaluation
 #' @param x A `tna` object created from sequence data.
-#' @param b An integer specifying the number of bootstrap samples to
-#' be generated. Defaults to `1000`.
+#' @param iter An `integer` specifying the number of bootstrap samples to
+#' draw. Defaults to `1000`.
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @param threshold A `numeric` value to compare edge weights against.
@@ -53,7 +53,7 @@
 #' @examples
 #' model <- tna(engagement)
 #' # Small number of iterations for CRAN
-#' bootstrap(model, b = 50)
+#' bootstrap(model, iter = 50)
 #'
 bootstrap <- function(x, ...) {
   UseMethod("bootstrap")
@@ -61,15 +61,12 @@ bootstrap <- function(x, ...) {
 
 #' @rdname bootstrap
 #' @export
-bootstrap.tna <- function(x, b = 1000, level = 0.05, threshold, ...) {
+bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
   check_tna_seq(x)
-  stopifnot_(
-    checkmate::test_int(x = b, lower = 1L),
-    "Argument {.arg b} must be a single positive {.cls integer}."
-  )
+  check_positive(iter)
   check_probability(level)
   if (missing(threshold)) {
-    threshold <- stats::quantile(x$weights, probs = 0.1)
+    threshold <- unname(stats::quantile(x$weights, probs = 0.1))
   }
   check_nonnegative(threshold, type = "numeric")
   d <- x$data
@@ -82,15 +79,15 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, threshold, ...) {
   a <- length(alphabet)
   weights <- compute_weights(trans, type, a)
   dimnames(weights) <- dim_names
-  weights_boot <- array(0L, dim = c(b, a, a))
+  weights_boot <- array(0L, dim = c(iter, a, a))
   p_values <- matrix(0, a, a)
   idx <- seq_len(n)
-  for (i in seq_len(b)) {
+  for (i in seq_len(iter)) {
     trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
     weights_boot[i, , ] <- compute_weights(trans_boot, type, a)
     p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
   }
-  p_values <- p_values / b
+  p_values <- p_values / iter
   mean_weights <- apply(weights_boot, c(2, 3), mean)
   sd_weights <- apply(weights_boot, c(2, 3), stats::sd)
   ci_lower <- apply(
@@ -122,27 +119,30 @@ bootstrap.tna <- function(x, b = 1000, level = 0.05, threshold, ...) {
   combined <- data.frame(
     from = rep(alphabet, each = a),
     to = rep(alphabet, times = a),
-    edge_weight = as.vector(weights),
+    weight = as.vector(weights),
     p_value = as.vector(p_values),
+    sig = as.vector(p_values < level),
     ci_Lower = as.vector(ci_lower),
     ci_Upper = as.vector(ci_upper)
   )
   structure(
     list(
       original_weights = weights,
+      sig_weights = sig_weights,
+      p_values = p_values,
       mean_weights = mean_weights,
       sd_weights = sd_weights,
       ci_lower = ci_lower,
       ci_upper = ci_upper,
-      p_values = p_values,
-      sig_weights = sig_weights,
       combined = combined,
-      removed_edges_summary = list(
+      removed_edges_summary = c(
         num_removed = n_removed,
         num_retained = n_retained,
         mean_removed = mean_removed,
         sd_removed = sd_removed,
-        range_removed = range_removed
+        min_removed = range_removed[1L],
+        max_removed = range_removed[2L],
+        threshold = threshold
       )
     ),
     class = "tna_bootstrap"

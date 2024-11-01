@@ -7,15 +7,15 @@
 \usage{
 bootstrap(x, ...)
 
-\method{bootstrap}{tna}(x, b = 1000, level = 0.05, threshold, ...)
+\method{bootstrap}{tna}(x, iter = 1000, level = 0.05, threshold, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
 
 \item{...}{Ingored.}
 
-\item{b}{An integer specifying the number of bootstrap samples to
-be generated. Defaults to \code{1000}.}
+\item{iter}{An \code{integer} specifying the number of bootstrap samples to
+draw. Defaults to \code{1000}.}
 
 \item{level}{A \code{numeric} value representing the significance level for
 hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
@@ -70,7 +70,7 @@ structured list.
 \examples{
 model <- tna(engagement)
 # Small number of iterations for CRAN
-bootstrap(model, b = 50)
+bootstrap(model, iter = 50)
 
 }
 \seealso{
