@@ -88,19 +88,21 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
     p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
   }
   p_values <- p_values / iter
-  mean_weights <- apply(weights_boot, c(2, 3), mean)
-  sd_weights <- apply(weights_boot, c(2, 3), stats::sd)
+  mean_weights <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
+  sd_weights <- apply(weights_boot, c(2, 3), stats::sd, na.rm = TRUE)
   ci_lower <- apply(
     weights_boot,
     c(2, 3),
     stats::quantile,
-    probs = level / 2
+    probs = level / 2,
+    na.rm = TRUE
   )
   ci_upper <- apply(
     weights_boot,
     c(2, 3),
     stats::quantile,
-    probs = 1 - level / 2
+    probs = 1 - level / 2,
+    na.rm = TRUE
   )
   sig_weights <- (p_values < level) * weights
   removed <- c(weights[sig_weights == 0 & weights != 0])

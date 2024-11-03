@@ -358,7 +358,10 @@ markov_model <- function(x, type = "relative", transitions = FALSE) {
 compute_weights <- function(transitions, type, s) {
   weights <- apply(transitions, c(2, 3), sum)
   if (type == "relative") {
-    weights <- weights / .rowSums(weights, m = s, n = s)
+    rs <- .rowSums(weights, m = s, n = s)
+    pos <- which(rs > 0)
+    weights[pos, ] <- weights[pos, ] / rs[pos]
+    weights[!pos, ] <- NA
   } else if (type == "scaled") {
     weights[] <- ranger(weights)
   } else if (type == "ranked") {
