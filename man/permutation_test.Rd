@@ -4,41 +4,59 @@
 \alias{permutation_test}
 \title{Compare Two Networks from Sequence Data Using Permutation Tests}
 \usage{
-permutation_test(x, y, iter = 1000, paired = FALSE, level = 0.05)
+permutation_test(
+  x,
+  y,
+  iter = 1000,
+  paired = FALSE,
+  level = 0.05,
+  measures = character(0),
+  samples = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{tna} object containing sequence data for the first \code{tna} model.}
 
 \item{y}{A \code{tna} object containing sequence data for the second \code{tna} model.}
 
-\item{iter}{An \code{integer} gicing the number of permutations to perform.
+\item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}
 
 \item{paired}{A \code{logical} value. If \code{TRUE}, perform paired permutation tests;
 if \code{FALSE}, perform unpaired tests. The default is \code{FALSE}.}
 
-\item{level}{A \code{numeric} value gicing the significance level for the
+\item{level}{A \code{numeric} value giving the significance level for the
 permutation tests. The default is 0.05.}
+
+\item{measures}{A \code{character} vector of centrality measures to test.
+See \code{\link[=centralities]{centralities()}} for a list of available centralities.}
+
+\item{samples}{A \code{logical} value. If \code{TRUE}, the permuted samples are also
+returned. The default is \code{FALSE}.}
+
+\item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 }
 \value{
-A \code{list} containing:
+A \code{tna_permutation} object which is a \code{list} with two elements:
+\code{edges} and \code{centralities}, both containing the following elements
 \itemize{
-\item \code{edge_statistics} A data frame with edge names, original differences,
-and p-values.
-\item \code{original_weights_x} The edge weight matrix from
-the first \code{tna} model \code{x}.
-\item \code{original_weights_y} The edge weight matrix from
-the second \code{tna} model \code{y}.
-\item \code{true_diffs} The matrix of differences in weights.
-\item \code{sig_diffs} A matrix showing the significant differences
-based on the permutation test.
+\item \code{stats}\cr A \code{data.frame} of original differences and p-values for
+each edge or centrality measure
+\item \code{diffs_true}\cr A \code{matrix} of differences in the data.
+\item \code{diffs_sig} A \code{matrix} showing the significant differences.
+\item \code{x}\cr The permuted samples for the \code{x} argument. Included only if
+\code{samples = TRUE}..
+\item \code{y}\cr The permuted samples for the \code{y} argument. Included only if
+\code{samples = TRUE}.
 }
 }
 \description{
-This function compares two networks built from sequence data using permutation tests.
-The function builds Markov models for two sequence objects , computes the transition
-probabilities, and compares them by performing permutation tests. It returns the
-differences in transition probabilities, effect sizes, p-values, and confidence intervals.
+This function compares two networks built from sequence data using
+permutation tests. The function builds Markov models for two sequence
+objects, computes the transition probabilities, and compares them by
+performing permutation tests. It returns the differences in transition
+probabilities, effect sizes, p-values, and confidence intervals.
 }
 \examples{
 model_x <- tna(group_regulation[1:1000,])
