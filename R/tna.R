@@ -30,13 +30,13 @@
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
-#'   * `weights`\cr An adjacency `matrix` of the model (weight matrix).
-#'   * `inits`\cr A `numeric` vector of initial values for each state.
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
 #'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
 #'     directly provided
-#'   * `labels`\cr A `character` vector of the state labels, or `NULL` if
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
 #'     there are no labels.
-#'   * `data`\cr The original sequence data that has been converted to an
+#'   * `data`: The original sequence data that has been converted to an
 #'     internal format used by the package when `x` is a `stslist` or a
 #'     `data.frame` object. Otherwise `NULL`.
 #'

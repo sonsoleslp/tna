@@ -22,10 +22,10 @@
 #' @return A `tna_permutation` object which is a `list` with two elements:
 #' `edges` and `centralities`, both containing the following elements
 #'
-#'   * `stats`\cr A `data.frame` of original differences and p-values for
+#'   * `stats`: A `data.frame` of original differences and p-values for
 #'     each edge or centrality measure
-#'   * `diffs_true`\cr A `matrix` of differences in the data.
-#'   * `diffs_sig` A `matrix` showing the significant differences.
+#'   * `diffs_true`: A `matrix` of differences in the data.
+#'   * `diffs_sig`: A `matrix` showing the significant differences.
 #'
 #' @examples
 #' model_x <- tna(group_regulation[1:1000,])
@@ -137,6 +137,8 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   }
   structure(
     out,
+    labels = x$labels,
+    colors = attr(x$data, "colors"),
     class = "tna_permutation"
   )
 }

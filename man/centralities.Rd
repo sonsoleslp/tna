@@ -39,30 +39,30 @@ information about the measures.
 \details{
 The following measures are provided:
 \itemize{
-\item \code{OutStrength}\cr Outgoing strength centrality, calculated using
+\item \code{OutStrength}: Outgoing strength centrality, calculated using
 \code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "out"}. It measures the total weight
 of the outgoing edges from each node.
-\item \code{InStrength}\cr Incoming strength centrality, calculated using
+\item \code{InStrength}: Incoming strength centrality, calculated using
 \code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "in"}. It measures the total weight
 of the incoming edges to each node.
-\item \code{ClosenessIn}\cr Closeness centrality (incoming), calculated using
+\item \code{ClosenessIn}: Closeness centrality (incoming), calculated using
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "in"}. It measures how close a node
 is to all other nodes based on the incoming paths.
-\item \code{ClosenessOut}\cr Closeness centrality (outgoing), calculated using
+\item \code{ClosenessOut}: Closeness centrality (outgoing), calculated using
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "out"}. It measures how close a node
 is to all other nodes based on the outgoing paths.
-\item \code{Closeness}\cr Closeness centrality (overall), calculated using
+\item \code{Closeness}: Closeness centrality (overall), calculated using
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "all"}. It measures how close a node
 is to all other nodes based on both incoming and outgoing paths.
-\item \code{Betweenness}\cr Betweenness centrality defined by the number of
+\item \code{Betweenness}: Betweenness centrality defined by the number of
 geodesics calculated using \code{\link[igraph:betweenness]{igraph::betweenness()}}.
-\item \code{BetweennessRSP}\cr Betweenness centrality based on randomized shortest
+\item \code{BetweennessRSP}: Betweenness centrality based on randomized shortest
 paths (Kivimäki et al. 2016). It measures the extent to which a
 node lies on the shortest paths between other nodes.
-\item \code{Diffusion}\cr Diffusion centrality of Banerjee et.al. (2014).
+\item \code{Diffusion}: Diffusion centrality of Banerjee et.al. (2014).
 It measures the influence of a node in spreading information through
 the network.
-\item \code{Clustering}\cr Signed clustering coefficient of Zhang and Horvath (2005)
+\item \code{Clustering}: Signed clustering coefficient of Zhang and Horvath (2005)
 based on the symmetric adjacency matrix (sum of the adjacency matrix
 and its transpose). It measures the degree to which nodes tend to
 cluster together.

@@ -90,6 +90,14 @@ is_tna_stability <- function(x) {
   inherits(x, "tna_stability")
 }
 
+#' Check that argument is an object of class `tna_permutation`
+#'
+#' @param x An \R object.
+#' @noRd
+is_tna_permutation <- function(x) {
+  inherits(x, "tna_permutation")
+}
+
 #' @importFrom igraph as.igraph
 #' @export
 igraph::as.igraph

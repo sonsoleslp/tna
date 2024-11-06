@@ -442,6 +442,31 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
   plot(y, colors = map_to_color(x$assignment[, method], colors), ...)
 }
 
+#' Plot the Significant Differences from a Permutation Test
+#'
+#' @export
+#' @param x A `tna_permutation` object.
+#' @param ... Arguments passed to [plot_tna()].
+#' @examples
+#' model_x <- tna(group_regulation[1:1000,])
+#' model_y <- tna(group_regulation[1001:2000,])
+#' # Small number of iterations for CRAN
+#' perm <- permutation_test(model_x, model_y, iter = 50)
+#' plot(perm)
+#'
+plot.tna_permutation <- function(x, ...) {
+  stopifnot_(
+    is_tna_permutation(x),
+    "Argument {.arg x} must be a {.cls tna_permutation} object."
+  )
+  plot_tna(
+    x$edges$diffs_sig,
+    labels = attr(x, "labels"),
+    colors = attr(x, "colors"),
+    ...
+  )
+}
+
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
   x <- stats::reshape(
     as.data.frame(x),

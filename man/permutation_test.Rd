@@ -11,7 +11,6 @@ permutation_test(
   paired = FALSE,
   level = 0.05,
   measures = character(0),
-  samples = FALSE,
   ...
 )
 }
@@ -32,23 +31,16 @@ permutation tests. The default is 0.05.}
 \item{measures}{A \code{character} vector of centrality measures to test.
 See \code{\link[=centralities]{centralities()}} for a list of available centralities.}
 
-\item{samples}{A \code{logical} value. If \code{TRUE}, the permuted samples are also
-returned. The default is \code{FALSE}.}
-
 \item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 }
 \value{
 A \code{tna_permutation} object which is a \code{list} with two elements:
 \code{edges} and \code{centralities}, both containing the following elements
 \itemize{
-\item \code{stats}\cr A \code{data.frame} of original differences and p-values for
+\item \code{stats}: A \code{data.frame} of original differences and p-values for
 each edge or centrality measure
-\item \code{diffs_true}\cr A \code{matrix} of differences in the data.
-\item \code{diffs_sig} A \code{matrix} showing the significant differences.
-\item \code{x}\cr The permuted samples for the \code{x} argument. Included only if
-\code{samples = TRUE}..
-\item \code{y}\cr The permuted samples for the \code{y} argument. Included only if
-\code{samples = TRUE}.
+\item \code{diffs_true}: A \code{matrix} of differences in the data.
+\item \code{diffs_sig}: A \code{matrix} showing the significant differences.
 }
 }
 \description{

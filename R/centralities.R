@@ -5,30 +5,30 @@
 #'
 #' The following measures are provided:
 #'
-#'   * `OutStrength`\cr Outgoing strength centrality, calculated using
+#'   * `OutStrength`: Outgoing strength centrality, calculated using
 #'     [igraph::strength()] with `mode = "out"`. It measures the total weight
 #'     of the outgoing edges from each node.
-#'   * `InStrength`\cr Incoming strength centrality, calculated using
+#'   * `InStrength`: Incoming strength centrality, calculated using
 #'     [igraph::strength()] with `mode = "in"`. It measures the total weight
 #'     of the incoming edges to each node.
-#'   * `ClosenessIn`\cr Closeness centrality (incoming), calculated using
+#'   * `ClosenessIn`: Closeness centrality (incoming), calculated using
 #'     [igraph::closeness()] with `mode = "in"`. It measures how close a node
 #'     is to all other nodes based on the incoming paths.
-#'   * `ClosenessOut`\cr Closeness centrality (outgoing), calculated using
+#'   * `ClosenessOut`: Closeness centrality (outgoing), calculated using
 #'     [igraph::closeness()] with `mode = "out"`. It measures how close a node
 #'     is to all other nodes based on the outgoing paths.
-#'   * `Closeness`\cr Closeness centrality (overall), calculated using
+#'   * `Closeness`: Closeness centrality (overall), calculated using
 #'     [igraph::closeness()] with `mode = "all"`. It measures how close a node
 #'     is to all other nodes based on both incoming and outgoing paths.
-#'   * `Betweenness`\cr Betweenness centrality defined by the number of
+#'   * `Betweenness`: Betweenness centrality defined by the number of
 #'     geodesics calculated using [igraph::betweenness()].
-#'   * `BetweennessRSP`\cr Betweenness centrality based on randomized shortest
+#'   * `BetweennessRSP`: Betweenness centrality based on randomized shortest
 #'     paths (Kivimäki et al. 2016). It measures the extent to which a
 #'     node lies on the shortest paths between other nodes.
-#'   * `Diffusion`\cr Diffusion centrality of Banerjee et.al. (2014).
+#'   * `Diffusion`: Diffusion centrality of Banerjee et.al. (2014).
 #'     It measures the influence of a node in spreading information through
 #'     the network.
-#'   * `Clustering`\cr Signed clustering coefficient of Zhang and Horvath (2005)
+#'   * `Clustering`: Signed clustering coefficient of Zhang and Horvath (2005)
 #'     based on the symmetric adjacency matrix (sum of the adjacency matrix
 #'     and its transpose). It measures the degree to which nodes tend to
 #'     cluster together.

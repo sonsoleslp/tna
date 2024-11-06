@@ -12,7 +12,7 @@ bootstrap(x, ...)
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
 
-\item{...}{Ingored.}
+\item{...}{Ignored.}
 
 \item{iter}{An \code{integer} specifying the number of bootstrap samples to
 draw. Defaults to \code{1000}.}
@@ -27,22 +27,18 @@ The default is the 10th percentile of the edge weights.}
 A \code{tna_bootstrap} object which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{original_weights}: The original weights \code{matrix} for the selected
-cluster.
-\item \code{mean_weights}: The mean weight \code{matrix} from the bootstrap samples.
-\item \code{sd_weights}: The standard deviation \code{matrix} from the bootstrap samples.
-\item \code{ci_lower}: The lower bound \code{matrix} of the confidence intervals for
-the transitions.
-\item \code{ci_upper}: The upper bound \code{matrix} of the confidence intervals for
-the transitions.
-\item \code{p_values}: The \code{matrix} of p-values for the transitions.
-\item \code{sig_weight}: The \code{matrix} of significant transitions
+\item \code{weights_orig}: The original edge weight \code{matrix}.
+\item \code{weights_sig}: The \code{matrix} of significant transitions
 (those with p-values below the significance level).
-\item \code{combined}: A \code{data.frame} summarizing the transitions, their weights,
-p-values, and confidence intervals.
-\item \code{removed_edges_summary}: A list summarizing the number of removed edges
-(insignificant transitions), the mean and standard deviation of their
-weights, and the range of the removed edge weights.
+\item \code{weights_mean}: The mean weight \code{matrix} from the bootstrap samples.
+\item \code{weights_sd}: The standard deviation \code{matrix} from the bootstrap samples.
+\item \code{ci_lower}: The lower bound \code{matrix} of the confidence intervals for
+the edge weights.
+\item \code{ci_upper}: The upper bound \code{matrix} of the confidence intervals for
+the edge weights.
+\item \code{p_values}: The \code{matrix} of p-values for the edge weights.
+\item \code{summary}: A \code{data.frame} summarizing the edges, their weights,
+p-values, statistical significance and confidence intervals.
 }
 }
 \description{

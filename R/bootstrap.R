@@ -29,26 +29,22 @@
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @param threshold A `numeric` value to compare edge weights against.
 #' The default is the 10th percentile of the edge weights.
-#' @param ... Ingored.
+#' @param ... Ignored.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
 #
-#'   * `original_weights`: The original weights `matrix` for the selected
-#'   cluster.
-#'   * `mean_weights`: The mean weight `matrix` from the bootstrap samples.
-#'   * `sd_weights`: The standard deviation `matrix` from the bootstrap samples.
-#'   * `ci_lower`: The lower bound `matrix` of the confidence intervals for
-#'   the transitions.
-#'   * `ci_upper`: The upper bound `matrix` of the confidence intervals for
-#'   the transitions.
-#'   * `p_values`: The `matrix` of p-values for the transitions.
-#'   * `sig_weight`: The `matrix` of significant transitions
+#'   * `weights_orig`: The original edge weight `matrix`.
+#'   * `weights_sig`: The `matrix` of significant transitions
 #'     (those with p-values below the significance level).
-#'   * `combined`: A `data.frame` summarizing the transitions, their weights,
-#'     p-values, and confidence intervals.
-#'   * `removed_edges_summary`: A list summarizing the number of removed edges
-#'     (insignificant transitions), the mean and standard deviation of their
-#'     weights, and the range of the removed edge weights.
+#'   * `weights_mean`: The mean weight `matrix` from the bootstrap samples.
+#'   * `weights_sd`: The standard deviation `matrix` from the bootstrap samples.
+#'   * `ci_lower`: The lower bound `matrix` of the confidence intervals for
+#'     the edge weights.
+#'   * `ci_upper`: The upper bound `matrix` of the confidence intervals for
+#'     the edge weights.
+#'   * `p_values`: The `matrix` of p-values for the edge weights.
+#'   * `summary`: A `data.frame` summarizing the edges, their weights,
+#'     p-values, statistical significance and confidence intervals.
 #'
 #' @examples
 #' model <- tna(engagement)
@@ -88,8 +84,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
     p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
   }
   p_values <- p_values / iter
-  mean_weights <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
-  sd_weights <- apply(weights_boot, c(2, 3), stats::sd, na.rm = TRUE)
+  weights_mean <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
+  weights_sd <- apply(weights_boot, c(2, 3), stats::sd, na.rm = TRUE)
   ci_lower <- apply(
     weights_boot,
     c(2, 3),
@@ -104,48 +100,33 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
     probs = 1 - level / 2,
     na.rm = TRUE
   )
-  sig_weights <- (p_values < level) * weights
-  removed <- c(weights[sig_weights == 0 & weights != 0])
-  n_removed <- length(removed)
-  n_retained <- sum(weights > 0) - n_removed
-  any_removed <- n_removed > 0
-  mean_removed <- ifelse_(any_removed, mean(removed), NA)
-  sd_removed <- ifelse_(any_removed, stats::sd(removed), NA)
-  range_removed <- ifelse_(any_removed, range(removed), c(NA, NA))
+  weights_sig <- (p_values < level) * weights
   dimnames(p_values) <- dim_names
-  dimnames(mean_weights) <- dim_names
-  dimnames(sd_weights) <- dim_names
+  dimnames(weights_mean) <- dim_names
+  dimnames(weights_sd) <- dim_names
+  dimnames(weights_sig) <- dim_names
   dimnames(ci_lower) <- dim_names
   dimnames(ci_upper) <- dim_names
-  dimnames(sig_weights) <- dim_names
+  weights_vec <- as.vector(weights)
   combined <- data.frame(
     from = rep(alphabet, each = a),
     to = rep(alphabet, times = a),
-    weight = as.vector(weights),
+    weight = weights_vec,
     p_value = as.vector(p_values),
     sig = as.vector(p_values < level),
-    ci_Lower = as.vector(ci_lower),
-    ci_Upper = as.vector(ci_upper)
-  )
+    ci_lower = as.vector(ci_lower),
+    ci_upper = as.vector(ci_upper)
+  )[weights_vec > 0, ]
   structure(
     list(
-      original_weights = weights,
-      sig_weights = sig_weights,
+      weights_orig = weights,
+      weights_sig = weights_sig,
+      weights_mean = weights_mean,
+      weights_sd = weights_sd,
       p_values = p_values,
-      mean_weights = mean_weights,
-      sd_weights = sd_weights,
       ci_lower = ci_lower,
       ci_upper = ci_upper,
-      combined = combined,
-      removed_edges_summary = c(
-        num_removed = n_removed,
-        num_retained = n_retained,
-        mean_removed = mean_removed,
-        sd_removed = sd_removed,
-        min_removed = range_removed[1L],
-        max_removed = range_removed[2L],
-        threshold = threshold
-      )
+      summary = combined
     ),
     class = "tna_bootstrap"
   )

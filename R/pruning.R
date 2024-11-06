@@ -128,13 +128,14 @@ prune_bootstrap <- function(x, boot, ...) {
   if (is.null(boot)) {
     boot <- bootstrap(x, ...)
   }
-  removed <- boot$combined[which(boot$combined$sig), c("from", "to", "weight")]
+  sig <- boot$summary$sig
+  removed <- boot$summary[which(!sig), c("from", "to", "weight")]
   list(
-    weights = boot$sig_weights,
+    weights = boot$weights_sig,
     method = "bootstrap",
     removed = removed,
-    num_removed = unname(boot$removed_edges_summary["num_removed"]),
-    num_retained = unname(boot$removed_edges_summary["num_retained"])
+    num_removed = sum(!sig),
+    num_retained = sum(sig)
   )
 }
 
