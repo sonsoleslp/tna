@@ -365,7 +365,8 @@ compute_weights <- function(transitions, type, s) {
   } else if (type == "scaled") {
     weights[] <- ranger(weights)
   } else if (type == "ranked") {
-    weights[] <- (rank(weights, ties.method = "first") - 1) / (s^2 - 1)
+    ranks <- rank(weights, ties.method = "average")
+    weights[] <- ranger(ranks)
   }
   weights
 }

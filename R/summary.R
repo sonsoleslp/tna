@@ -6,7 +6,6 @@
 #'
 #' @export
 #' @param object A `tna` object.
-#' @param digits An `integer` specifying how many digits to show.
 #' @param ... Ignored
 #'
 #' @details
@@ -49,10 +48,8 @@
 #' model <- tna(engagement)
 #' summary(model)
 #'
-summary.tna <- function(object,
-                        digits =  max(3, getOption("digits") - 3L), ...) {
+summary.tna <- function(object, ...) {
   check_tna(object)
-  check_positive(digits)
   weights <- object$weights
   g <- as.igraph(object)
   in_strength <- igraph::strength(g, mode = "out")
@@ -90,11 +87,31 @@ summary.tna <- function(object,
     "Centralization (In-Degree)",
     "Reciprocity"
   )
-  out <- tibble::as_tibble(
-    data.frame(metric = out_names, value = round(out, digits))
-  )
+  out <- data.frame(metric = out_names, value = unname(out))
   structure(
     out,
-    class = c("summary.tna", "tbl_df", "tbl", "data.frame")
+    class = c("summary.tna", "data.frame")
+  )
+}
+
+#' Summarize Bootstrap Results
+#'
+#' @export
+#' @param object A `tna_bootstrap` object from [bootstrap()].
+#' @param ... Ignored.
+#' @examples
+#' model <- tna(engagement)
+#' # Small number of iterations for CRAN
+#' boot <- bootstrap(model, iter = 50)
+#' summary(boot)
+#'
+summary.tna_bootstrap <- function(object, ...) {
+  stopifnot_(
+    is_tna_bootstrap(object),
+    "Argument {.arg object} must be a {.cls tna_bootstrap} object."
+  )
+  structure(
+    object$summary,
+    class = c("summary.tna_bootstrap", "data.frame")
   )
 }

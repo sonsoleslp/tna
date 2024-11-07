@@ -58,6 +58,14 @@ is_tna <- function(x) {
   inherits(x, "tna")
 }
 
+#' Check that argument is an object of class `tna_bootstrap`
+#'
+#' @param x An \R object.
+#' @noRd
+is_tna_bootstrap <- function(x) {
+  inherits(x, "tna_bootstrap")
+}
+
 #' Check that argument is an object of class `tna_centralities`
 #'
 #' @param x An \R object.

@@ -4,7 +4,7 @@
 \alias{print.tna_cliques}
 \title{Print Found Cliques}
 \usage{
-\method{print}{tna_cliques}(x, n = 6, first = 1, digits = 3, ...)
+\method{print}{tna_cliques}(x, n = 6, first = 1, digits = getOption("digits"), ...)
 }
 \arguments{
 \item{x}{A \code{tna_cliques} object.}
@@ -15,8 +15,8 @@ The defaults is \code{6}.}
 \item{first}{An \code{integer} giving the index of the first clique to show.
 The default index is \code{1}.}
 
-\item{digits}{An \code{integer} giving the number of digits to show for the edge
-weights in the cliques. The default is \code{3}.}
+\item{digits}{An \code{integer} giving the minimal number of
+\emph{significant} digits to print.}
 
 \item{...}{Ignored.}
 }

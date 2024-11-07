@@ -4,12 +4,10 @@
 \alias{summary.tna}
 \title{Calculate Summary of Network Metrics for a Transition Network}
 \usage{
-\method{summary}{tna}(object, digits = max(3, getOption("digits") - 3L), ...)
+\method{summary}{tna}(object, ...)
 }
 \arguments{
 \item{object}{A \code{tna} object.}
-
-\item{digits}{An \code{integer} specifying how many digits to show.}
 
 \item{...}{Ignored}
 }

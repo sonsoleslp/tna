@@ -147,22 +147,6 @@ centralities_ <- function(x, loops, normalize, measures) {
   )
 }
 
-# TODO Is this needed? not called ever
-#' #' Convert an \R Object into a `centralities` object
-#' #'
-#' #' @export
-#' #' @param x An \R object to be converted
-#' #' @rdname as.tna_centralities
-#' as.tna_centralities <- function(x) {
-#'   UseMethod("as.centralities")
-#' }
-#'
-#' #' @rdname as.centralities
-#' #' @export
-#' as.tna_centralities.data.frame <- function(x) {
-#'   structure(df, class = c("tna_centralities", "tbl_df", "tbl", "data.frame"))
-#' }
-
 #' Compute the Diffusion Centrality Measure
 #'
 #' @param mat A weight `matrix`.
