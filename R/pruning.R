@@ -1,222 +1,292 @@
 #' Prune a `tna` network based on transition probabilities
 #'
-#' This function prunes a network represented by a `tna` object by removing edges based on a specified threshold, percentile, or lowest percent of non-zero edge weights. It ensures the network remains weakly connected.
+#' Prunes a network represented by a `tna` object by removing
+#' edges based on a specified threshold, lowest percent of non-zero edge
+#' weights, or the disparity filter algorithm (Serrano et al., 2009).
+#' It ensures the network remains weakly connected.
 #'
-#' @param x An object of class `tna`
-#' @param threshold A numeric value specifying the edge weight threshold. Edges with weights below or equal to this threshold will be considered for removal.
-#' @param percentile A numeric value specifying the percentile of non-zero edges. Edges with weights below or equal to this percentile will be considered for removal.
-#' @param lowest_percent A numeric value specifying the lowest percentage of non-zero edges. This percentage of edges with the lowest weights will be considered for removal.
+#' @export
 #' @family evaluation
-#' @return A list containing:
-#' \describe{
-#'   \item{\code{pruned}}{The pruned `tna` object with updated transition matrix.}
-#'   \item{\code{removed_edges}}{A data frame of edges that were removed.}
-#'   \item{\code{num_removed_edges}}{The number of edges removed.}
-#'   \item{\code{threshold_used}}{The threshold value used for pruning.}
-#'   \item{\code{method_used}}{The method used to determine the threshold.}
-#' }
-#'
-#' @details
-#' The function prunes the edges of the network(s) based on the specified threshold, percentile, or lowest percent of non-zero edge weights. It ensures that removing an edge does not disconnect the network (i.e., the network remains weakly connected).
-#' \describe{
-#'   \item{\code{threshold}}{If specified, transition probabilities that are less than or equal to this value will be considered for removal.}
-#'   \item{\code{percentile}}{If specified, transition probabilities below this percentile of non-zero edge weights will be considered for removal.}
-#'   \item{\code{lowest_percent}}{If specified, the lowest percent of non-zero transition probabilities will be considered for removal.}
-#'   \item{\code{Default threshold}}{If no threshold, percentile, or lowest percent is specified, a default threshold of 0.05 is used.}
-#' }
-#' The function uses a depth-first search to ensure the network remains weakly connected after pruning.
-#'
-#' @usage
-#' prune(x, threshold = NULL, percentile = NULL, lowest_percent = NULL)
+#' @param x An object of class `tna`
+#' @param method A `character` string describing the pruning method.
+#' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
+#' `"disparity"`, corresponding to the methods listed in Details. The default
+#' is `"threshold"`.
+#' @param threshold A numeric value specifying the edge weight threshold.
+#' Edges with weights below or equal to this threshold will be considered for
+#' removal.
+#' @param lowest A `numeric` value specifying the lowest percentage
+#' of non-zero edges. This percentage of edges with the lowest weights will be
+#' considered for removal. The default is `0.05`.
+#' @param level A `numeric` value representing the significance level for the
+#' disparity filter. Defaults to `0.5`.
+#' @param boot A `tna_bootstrap` object to be used for pruning with method
+#' `"boot"`. The method argument is ignored if this argument is supplied.
+#' @param ... Arguments passed to [bootstrap()] when
+#' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
+#' @return A pruned `tna` object. Details on the pruning can be viewed with
+#' [pruning_details()]. The original model can be restored with [deprune()].
+#' @references
+#' Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
+#' multiscale backbone of complex weighted networks.
+#' *Proceedings of the National Academy of Sciences, 106*,
+#' 6483-6488. \doi{10.1073/pnas.0808904106}
 #'
 #' @examples
-#' \dontrun{
-#'   tna_model <- build_tna(engagement)
-#'   pruned_result <- prune(tna_model, threshold = 0.1)
-#'   pruned_result <- prune(tna_model, percentile = 10)
-#'   pruned_result <- prune(tna_model, lowest_percent = 5)
-#' }
-#' @author
-#' Mohammed Saqr (\email{mohammed.saqr@uef.fi})
-#' @export
-prune <- function(x, threshold = NULL, percentile = NULL, lowest_percent = NULL) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
-  )
-
-  # Ensure only one of the threshold, percentile, or lowest_percent parameters is provided
-  stopifnot_(
-    sum(!is.null(threshold), !is.null(percentile), !is.null(lowest_percent)) <= 1,
-    "Only one of 'threshold', 'percentile', or 'lowest_percent' should be provided."
-  )
-
-  # Validate input values
-  stopifnot_(
-    is.null(threshold) ||
-      (is.numeric(threshold) && threshold >= 0),
-    "Argument 'threshold' must be a non-negative numeric value."
+#' model <- tna(group_regulation)
+#' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+#' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+#' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
+#'
+prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
+                  level = 0.5, boot = NULL, ...) {
+  check_tna(x)
+  method <- onlyif(is.character(method), tolower(method))
+  method <- try(
+    match.arg(method, c("threshold", "lowest", "bootstrap", "disparity")),
+    silent = TRUE
   )
   stopifnot_(
-    is.null(percentile) ||
-      (is.numeric(percentile) && percentile > 0 && percentile < 100),
-    "Argument 'percentile' must be a numeric value between 0 and 100."
+    !inherits(method, "try-error"),
+    "Argument {.arg method} must be either {.val threshold}, {.val lowest},
+     {.val bootstrap}, or {.val disparity}."
   )
+  check_nonnegative(threshold, type = "numeric")
+  check_probability(lowest)
+  check_probability(level)
   stopifnot_(
-    is.null(lowest_percent) ||
-      (is.numeric(lowest_percent) && lowest_percent > 0 && lowest_percent < 100),
-    "Argument 'lowest_percent' must be a numeric value between 0 and 100."
+    is.null(attr(x, "pruning")),
+    "The model has already been pruned."
   )
-
-
-  matrices <- x$transits
-  removed_edges <- list()
-  cut_offs <- list()
-  methods <- list()
-
-  info_("\nNetwork Pruning Results: \n")
-  info_("------------------------\n")
-
-  for (clus in seq_along(matrices)) {
-    # Make a copy of the original matrix
-    pruned_matrix <- matrices[[clus]]
-
-    # Get non-zero edges
-    non_zero_edges <- pruned_matrix[pruned_matrix > 0]
-
-    # Determine the threshold
-    if (!is.null(threshold)) {
-      cut_off <- threshold
-      method <- "User-specified threshold"
-    } else if (!is.null(percentile)) {
-      cut_off <- stats::quantile(non_zero_edges, probs = percentile/100)
-      method <- paste("Lowest", percentile, "percentile of non-zero edges")
-    } else if (!is.null(lowest_percent)) {
-      sorted_edges <- sort(non_zero_edges)
-      num_edges_to_consider <- ceiling(length(sorted_edges) * lowest_percent / 100)
-      cut_off <- sorted_edges[num_edges_to_consider]
-      method <- paste("Lowest", lowest_percent, "% of non-zero edges")
-    } else {
-      cut_off <- 0.05
-      method <- "Default threshold"
-    }
-
-    # Get indices of edges below or equal to threshold
-    edges_to_remove <- which(pruned_matrix > 0 & pruned_matrix <= cut_off, arr.ind = TRUE)
-
-    removed_edges[[clus]] <- data.frame()
-    labels = x$labels
-    # Check each edge for removal
-    for (i in 1:nrow(edges_to_remove)) {
-      row <- edges_to_remove[i, 1]
-      col <- edges_to_remove[i, 2]
-
-      # Temporarily remove the edge
-      temp_value <- pruned_matrix[row, col]
-      pruned_matrix[row, col] <- 0
-
-      # If removing the edge disconnects the network, restore it
-      if (!is_weakly_connected(pruned_matrix)) {
-        pruned_matrix[row, col] <- temp_value
-      } else {
-        # Edge was successfully removed, add it to the list
-        removed_edges[[clus]] <- rbind(removed_edges[[clus]],
-                                       data.frame(from = labels[row], to = labels[col],
-                                                  weight = temp_value))
-      }
-    }
-
-    if (length(matrices) > 1) {
-      info_(paste0("Cluster:", clus, "\n"))
-    }
-    info_(paste0("Method used: ", method, "\n"))
-    info_(paste0("Number of edges removed: ", nrow(removed_edges[[clus]]), "\n"))
-    info_(paste0("Number of edges retained: ", sum(pruned_matrix > 0), "\n"))
-    if (nrow(removed_edges[[clus]]) == 0) {
-      warning_("No edges were removed")
-    } else {
-      info_("\n**Removed edges:** \n")
-      matrix_data <- as.matrix(removed_edges[[clus]])
-      matrix_data[,"weight"] <- format(round(as.numeric(matrix_data[,"weight"]), 2),
-                                       nsmall = 2)
-      matrix_output <- utils::capture.output(print(matrix_data, digits = 2))
-
-      # Print the captured output using cli_verbatim
-      cli::cli_verbatim(matrix_output)
-
-    }
-    if (length(matrices) > 1) {
-      info_("------------------------\n")
-    }
-
-
-    x$transits[[clus]] <- pruned_matrix
-    cut_offs[[clus]] <- cut_off
-    methods[[clus]] <- method
-  }
-  # Prepare the result
-  result <- list(
-    pruned = x,
-    removed_edges = removed_edges,
-    num_removed_edges =  sapply(removed_edges,nrow),
-    threshold_used = cut_offs,
-    method_used = methods
+  # TODO No lables? when?
+  labels <- ifelse_(
+    is.null(x$labels),
+    seq_len(nodes(x)),
+    x$labels
   )
-
-  return(result)
+  tmp <- switch(
+    method,
+    bootstrap = prune_bootstrap(x, boot, ...),
+    disparity = prune_disparity(x, level, labels),
+    prune_default(x, method, threshold, lowest, labels)
+  )
+  tmp$original <- x$weights
+  tmp$active <- TRUE
+  x$weights <- tmp$weights
+  attr(x, "pruning") <- tmp
+  x
 }
 
-
-
-#' Apply Disparity Filter to Transition Matrix in a tna Object
-#'
-#' The `disparity` function applies a disparity filter to the transition matrix
-#' of a specified cluster within a `tna` object and returns a modified `tna`
-#' object with the filtered transition matrix.
-#'
-#' @param x A `tna` object, which contains transition matrices and other relevant data.
-#' @param cluster A numeric value specifying the cluster for which the transition matrix
-#'   should be extracted and processed. Defaults to `1`.
-#' @param alpha A numeric value representing the significance level for the
-#'   disparity filter. Defaults to `0.5`.
-#'
-#' @details
-#' This function extracts the transition matrix of the specified cluster from
-#' the `tna` object, applies the disparity filter from the `backbone` package
-#' with the specified `alpha`, and then multiplies the filtered result with the
-#' original transition matrix. The result is returned as a new `tna` object with
-#' updated transition data.
-#'
-#' The function also uses the `onlyif` helper to conditionally pass the `colors`
-#' attribute of the `tna` object if it is not `NULL`.
-#'
-#' @return A modified `tna` object with the disparity-filtered transition matrix
-#'   for the specified cluster.
-#' @examples
-#' \dontrun{
-#' # Assuming 'tna_model' is a valid `tna` object
-#' modified_tna <- disparity(tna_model)
-#' }
-#' @family evaluation
-#' @export
-tna_disparity <- function(x, cluster = 1, alpha = 0.5) {
-  stopifnot_(
-    is_tna(x),
-    "Argument {.arg x} must be a {.cls tna} object."
+prune_default <- function(x, method, threshold, lowest, labels) {
+  weights <- x$weights
+  pos_edges_idx <- weights > 0
+  n_edges <- sum(pos_edges_idx)
+  pos_edges <- weights[pos_edges_idx]
+  cut_off <- switch(
+    method,
+    threshold = threshold,
+    lowest = stats::quantile(pos_edges, probs = lowest)
   )
-  # Extract the transition matrix from the specified cluster
-  transition_matrix <- x$transits[[cluster]]
+  to_remove_idx <- which(
+    pos_edges_idx & weights <= cut_off,
+    arr.ind = TRUE
+  )
+  n_remove <- nrow(to_remove_idx)
+  to_remove <- data.frame(
+    from = labels[to_remove_idx[, 1]],
+    to = labels[to_remove_idx[, 2]],
+    weight = weights[to_remove_idx]
+  )
+  removed_idx <- logical(n_remove)
+  for (j in seq_len(n_remove)) {
+    row <- to_remove_idx[j, 1]
+    col <- to_remove_idx[j, 2]
+    tmp <- weights
+    tmp[row, col] <- 0
+    if (is_weakly_connected(tmp)) {
+      weights <- tmp
+      removed_idx[j] <- TRUE
+    }
+  }
+  pruned <- weights
+  removed <- to_remove[removed_idx, ]
+  num_removed <- sum(removed_idx)
+  num_retained <- n_edges - num_removed
+  list(
+    weights = pruned,
+    method = method,
+    threshold = threshold,
+    lowest = lowest,
+    cut_off = cut_off,
+    removed = removed,
+    num_removed = num_removed,
+    num_retained = num_retained
+  )
+}
 
-  # Apply the disparity filter
-  disparity_filtered <- backbone::disparity(transition_matrix, alpha)
+prune_bootstrap <- function(x, boot, ...) {
+  if (is.null(boot)) {
+    boot <- bootstrap(x, ...)
+  }
+  sig <- boot$summary$sig
+  removed <- boot$summary[which(!sig), c("from", "to", "weight")]
+  list(
+    weights = boot$weights_sig,
+    method = "bootstrap",
+    removed = removed,
+    num_removed = sum(!sig),
+    num_retained = sum(sig)
+  )
+}
 
-  # Multiply the disparity filter with the original transition matrix
-  modified_matrix <- disparity_filtered * transition_matrix
-  colnames(modified_matrix) <- colnames(transition_matrix)
-  rownames(modified_matrix) <- rownames(transition_matrix)
-  modified <- build_tna(modified_matrix,
-                        inits = x$inits[[cluster]],
-                        colors = onlyif(!is.null(x$colors),x$colors))
+prune_disparity <- function(x, level, labels) {
+  weights <- x$weights
+  n_edges <- sum(weights > 0)
+  disparity_filtered <- disparity_filter(weights, level)
+  weights_pruned <- disparity_filtered * weights
+  dimnames(weights_pruned) <- dimnames(weights)
+  pruned <- weights_pruned
+  removed_idx <- which(
+    weights_pruned == 0 & weights != 0,
+    arr.ind = TRUE
+  )
+  num_removed <- nrow(removed_idx)
+  num_retained <- n_edges - num_removed
+  removed <- data.frame(
+    from = labels[removed_idx[, 1]],
+    to = labels[removed_idx[, 2]],
+    weight = c(weights[removed_idx])
+  )
+  list(
+    weights = pruned,
+    method = "disparity",
+    level = level,
+    removed = removed,
+    num_removed = num_removed,
+    num_retained = num_retained
+  )
+}
 
-  return(modified)
+#' Print Detailed Information on the Pruning Results
+#'
+#' @rdname pruning_details
+#' @export
+#' @param x A `tna` object.
+#' @param removed_edges Should a `data.frame` of removed edges be printed?
+#' The default is `FALSE`.
+#' @param ... Ignored.
+pruning_details <- function(x, ...) {
+  UseMethod("pruning_details")
+}
+
+#' @rdname pruning_details
+#' @export
+pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
+  pruning <- attr(x, "pruning")
+  stopifnot_(
+    !is.null(pruning),
+    "Argument {.arg x} must have been pruned."
+  )
+  method_txt <- switch(
+    pruning$method,
+    threshold = paste0("User-specified threshold (", pruning$threshold, ")"),
+    lowest = paste0("Lowest ", pruning$lowest * 100, "% of non-zero edges"),
+    bootstrap = "Bootstrapping",
+    disparity = paste0("Disparity filter (sig. level = ", pruning$level, ")")
+  )
+  cat("**Pruning Details**\n")
+  cat("\nMethod used:", method_txt)
+  cat("\nNumber of removed edges:", cs(pruning$num_removed))
+  cat("\nNumber of retained edges:", cs(pruning$num_retained))
+  cat("\n\n**Removed edges**\n\n")
+  print(pruning$removed)
+}
+
+#' Restore a Pruned Transition Network Analysis Model
+#'
+#' @rdname deprune
+#' @export
+#' @param x A `tna` object.
+#' @param ... Ignored.
+#' @examples
+#' model <- tna(engagement)
+#' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
+#' depruned_model <- deprune(pruned_model) # restore original model
+deprune <- function(x, ...) {
+  UseMethod("deprune")
+}
+
+#' @rdname deprune
+#' @export
+deprune.tna <- function(x, ...) {
+  check_tna(x)
+  tmp <- attr(x, "pruning")
+  stopifnot_(
+    !is.null(tmp),
+    "Argument {.arg x} must have been pruned."
+  )
+  stopifnot_(
+    tmp$active,
+    "Pruning must be active for argument {.arg x}."
+  )
+  tmp <- attr(x, "pruning")
+  tmp$active <- FALSE
+  x$weights <- tmp$original
+  attr(x, "pruning") <- tmp
+  x
+}
+
+#' Restore Previous Pruning of a Transition Network Analysis Model
+#'
+#' @rdname reprune
+#' @export
+#' @param x A `tna` object.
+#' @param ... Ignored.
+#' @return A `tna` object that has not been pruned. The previous pruning
+#' result can be reactivated with [reprune()].
+#' @examples
+#' model <- tna(engagement)
+#' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
+#' depruned_model <- deprune(pruned_model) # restore original model
+#' repruned_model <- reprune(depruned_model) # reapply the previous pruning
+reprune <- function(x, ...) {
+  UseMethod("reprune")
+}
+
+#' @rdname deprune
+#' @export
+reprune.tna <- function(x, ...) {
+  check_tna(x)
+  tmp <- attr(x, "pruning")
+  stopifnot_(
+    !is.null(tmp),
+    "Argument {.arg x} must have been pruned."
+  )
+  stopifnot_(
+    !tmp$active,
+    "Pruning must not be active for argument {.arg x}."
+  )
+  tmp$active <- TRUE
+  x$weights <- tmp$weights
+  attr(x, "pruning") <- tmp
+}
+
+#' Disparity Filter Algorithm
+#'
+#' @param mat A weighted adjacency `matrix` of a directed graph.
+#' @param level A `numeric` value for the significance level.
+#' @noRd
+disparity_filter <- function(mat, level) {
+  d <- dim(mat)[2]
+  idx_mat <- 1L * (mat > 0)
+  out_edges <- mat / .rowSums(mat, m = d, n = d)
+  out_degree <- .rowSums(idx_mat, m = d, n = d)
+  out_p_values <- (1 - out_edges)^(out_degree - 1)
+  in_edges <- t(mat) / .colSums(mat, m = d, n = d)
+  in_degree <- .colSums(idx_mat, m = d, n = d)
+  in_p_values <- t((1 - in_edges)^(in_degree - 1))
+  p_values <- pmin(out_p_values, in_p_values)
+  sig <- 1 * (p_values < level)
+  diag(sig) <- 0
+  sig
 }

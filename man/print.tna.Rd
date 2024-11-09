@@ -2,19 +2,21 @@
 % Please edit documentation in R/print.R
 \name{print.tna}
 \alias{print.tna}
-\title{Print \code{tna} object}
+\title{Print a \code{tna} object}
 \usage{
-\method{print}{tna}(x, digits = 2, generic = FALSE, ...)
+\method{print}{tna}(x, digits = getOption("digits"), generic = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
 
-\item{digits}{Number of decimal digits to print. Defaults to 2.}
+\item{digits}{An \code{integer} giving the number of
+\emph{significant} digits to print.}
 
-\item{generic}{Use generic print. Defaults to \code{FALSE}}
+\item{generic}{A \code{logical} value. If \code{TRUE}, use generic print method
+instead. Defaults to \code{FALSE}.}
 
 \item{...}{Ignored.}
 }
 \description{
-Print \code{tna} object
+Print a \code{tna} object
 }

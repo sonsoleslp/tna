@@ -4,51 +4,25 @@
 \alias{centralities}
 \alias{centralities.tna}
 \alias{centralities.matrix}
-\title{Calculate Centralities for a Transition Matrix}
+\title{Calculate Centrality Measures for a Transition Matrix}
 \usage{
-centralities(
-  x,
-  loops = FALSE,
-  cluster = NULL,
-  normalize = FALSE,
-  measures = NULL,
-  ...
-)
+centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
 
-\method{centralities}{tna}(
-  x,
-  loops = FALSE,
-  cluster = NULL,
-  normalize = FALSE,
-  measures = NULL,
-  ...
-)
+\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
 
-\method{centralities}{matrix}(
-  x,
-  loops = FALSE,
-  cluster = NULL,
-  normalize = FALSE,
-  measures = NULL,
-  ...
-)
+\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures, ...)
 }
 \arguments{
-\item{x}{A square matrix representing transition probabilities or adjacency,
-or a \code{tna} object.}
+\item{x}{A \code{tna} object or a  square \code{matrix} representing edge weights.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{FALSE}).}
-
-\item{cluster}{Index of the cluster for which to compute the centralities or
-\code{NULL} if there are no clusters or if centralities should be computed for
-all clusters.}
 
 \item{normalize}{A \code{logical} value indicating whether the centralities
 should be normalized (default is \code{FALSE}).}
 
 \item{measures}{A \code{character} vector indicating which centrality
-measures should be computed. If \code{NULL}, all available measures are
+measures should be computed. If missing, all available measures are
 returned. See 'Details' for available measures. The elements are partially
 matched ignoring case.}
 
@@ -59,50 +33,52 @@ A \code{centralities} object which is a tibble (\code{tbl_df})
 containing centrality measures for each state.
 }
 \description{
-This function calculates several centrality measures. See 'Details' for
+Calculates several centrality measures. See 'Details' for
 information about the measures.
 }
 \details{
 The following measures are provided:
 \itemize{
-\item \code{OutStrength}\cr Outgoing strength centrality, calculated using
+\item \code{OutStrength}: Outgoing strength centrality, calculated using
 \code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "out"}. It measures the total weight
 of the outgoing edges from each node.
-\item \code{InStrength}\cr Incoming strength centrality, calculated using
+\item \code{InStrength}: Incoming strength centrality, calculated using
 \code{\link[igraph:strength]{igraph::strength()}} with \code{mode = "in"}. It measures the total weight
 of the incoming edges to each node.
-\item \code{ClosenessIn}\cr Closeness centrality (incoming), calculated using
+\item \code{ClosenessIn}: Closeness centrality (incoming), calculated using
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "in"}. It measures how close a node
 is to all other nodes based on the incoming paths.
-\item \code{ClosenessOut}\cr Closeness centrality (outgoing), calculated using
+\item \code{ClosenessOut}: Closeness centrality (outgoing), calculated using
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "out"}. It measures how close a node
 is to all other nodes based on the outgoing paths.
-\item \code{Closeness}\cr Closeness centrality (overall), calculated using
+\item \code{Closeness}: Closeness centrality (overall), calculated using
 \code{\link[igraph:closeness]{igraph::closeness()}} with \code{mode = "all"}. It measures how close a node
 is to all other nodes based on both incoming and outgoing paths.
-\item \code{Betweenness}\cr Betweenness centrality based on randomized shortest
+\item \code{Betweenness}: Betweenness centrality defined by the number of
+geodesics calculated using \code{\link[igraph:betweenness]{igraph::betweenness()}}.
+\item \code{BetweennessRSP}: Betweenness centrality based on randomized shortest
 paths (Kivimäki et al. 2016). It measures the extent to which a
 node lies on the shortest paths between other nodes.
-\item \code{Diffusion}\cr Diffusion centrality of Banerjee et.al. (2014).
+\item \code{Diffusion}: Diffusion centrality of Banerjee et.al. (2014).
 It measures the influence of a node in spreading information through
 the network.
-\item \code{Clustering}\cr Signed clustering coefficient of Zhang and Horvath (2005)
+\item \code{Clustering}: Signed clustering coefficient of Zhang and Horvath (2005)
 based on the symmetric adjacency matrix (sum of the adjacency matrix
 and its transpose). It measures the degree to which nodes tend to
 cluster together.
 }
 }
 \examples{
-tna_model <- build_tna(engagement)
+model <- tna(engagement)
 
 # Centrality measures including loops in the network
-centralities(tna_model)
+centralities(model)
 
 # Centrality measures excluding loops in the network
-centralities(tna_model, loops = FALSE)
+centralities(model, loops = FALSE)
 
 # Centrality measures normalized
-centralities(tna_model, normalize = TRUE)
+centralities(model, normalize = TRUE)
 
 }
 \references{
@@ -120,13 +96,9 @@ Statistical Applications in Genetics and Molecular Biology, 4(1).
 }
 \seealso{
 Core functions
-\code{\link{build_tna}()},
-\code{\link{plot.centralities}()},
 \code{\link{plot.tna}()},
-\code{\link{plot_clusters}()},
-\code{\link{plot_compare}()}
-}
-\author{
-Mohammed Saqr (\email{mohammed.saqr@uef.fi})
+\code{\link{plot.tna_centralities}()},
+\code{\link{plot_compare}()},
+\code{\link{tna}()}
 }
 \concept{core}

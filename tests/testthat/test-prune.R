@@ -1,78 +1,70 @@
-# test-prune.R
-
-library(testthat)
-library(tna)
-
-# Helper function to create a mock tna object
-create_mock_tna <- function() {
-  # Create a simple mock transition matrix
-  transits <- list(matrix(c(0.1, 0.2, 0.0, 0.1,
-                            0.0, 0.2, 0.3, 0.0,
-                            0.4, 0.0, 0.1, 0.2,
-                            0.1, 0.1, 0.0, 0.2),
-                          nrow = 4, ncol = 4, byrow = TRUE))
-
-  # Create a mock tna object
-  tna_object <- list(transits = transits)
-  class(tna_object) <- "tna"
-  return(tna_object)
-}
-
-test_that("prune function works with user-specified threshold", {
+test_that("pruning works with user-specified threshold", {
   tna_object <- create_mock_tna()
-  result <- prune(tna_object, threshold = 0.1)
-
+  result <- prune(tna_object, threshold = 0.1) |>
+    attr("pruning")
   expect_true(is.list(result))
-  expect_true(is.list(result$pruned))
-  expect_true(is.data.frame(result$removed_edges[[1]]))
-  expect_equal(result$num_removed_edges[1], 5) # Adjusted expected number of removed edges
-  expect_equal(result$threshold_used[[1]], 0.1)
-  expect_equal(result$method_used[[1]], "User-specified threshold")
+  expect_true(is.data.frame(result$removed))
+  expect_equal(result$num_removed, 5)
+  expect_equal(result$cut_off, 0.1)
+  expect_equal(result$method, "threshold")
 })
 
-test_that("prune function works with percentile", {
+test_that("pruning works with lowest percent", {
   tna_object <- create_mock_tna()
-  result <- prune(tna_object, percentile = 50)
-
+  result <- prune(tna_object, method = "lowest", lowest = 0.25) |>
+    attr("pruning")
   expect_true(is.list(result))
-  expect_true(is.list(result$pruned))
-  expect_true(is.data.frame(result$removed_edges[[1]]))
-  expect_equal(result$num_removed_edges[1], 8) # Adjusted expected number of removed edges
-  expect_equal(result$method_used[[1]], "Lowest 50 percentile of non-zero edges")
+  expect_true(is.data.frame(result$removed))
+  expect_equal(result$num_removed, 5)
+  expect_equal(result$method, "lowest")
 })
 
-test_that("prune function works with lowest_percent", {
+test_that("pruning works with disparity filter", {
   tna_object <- create_mock_tna()
-  result <- prune(tna_object, lowest_percent = 25)
-
+  result <- prune(tna_object, method = "disparity", level = 0.5) |>
+    attr("pruning")
   expect_true(is.list(result))
-  expect_true(is.list(result$pruned))
-  expect_true(is.data.frame(result$removed_edges[[1]]))
-  expect_equal(result$num_removed_edges[1], 5) # Adjusted expected number of removed edges
-  expect_equal(result$method_used[[1]], "Lowest 25 % of non-zero edges")
+  expect_true(is.data.frame(result$removed))
+  expect_equal(result$num_removed, 7)
+  expect_equal(result$method, "disparity")
 })
 
-test_that("prune function ensures weak connectivity", {
-  tna_object <- create_mock_tna()
-  result <- prune(tna_object, threshold = 0.2)
-
+test_that("pruning works with bootstrap", {
+  set.seed(0)
+  tna_object <- tna(engagement)
+  result <- prune(tna_object, method = "bootstrap", iter = 100) |>
+    attr("pruning")
   expect_true(is.list(result))
-  expect_true(is.list(result$pruned))
-  expect_true(is.data.frame(result$removed_edges[[1]]))
-  expect_true(sum(result$pruned$transits[[1]] > 0) > 0) # Ensure some edges are retained
-  expect_equal(result$method_used[[1]], "User-specified threshold")
+  expect_true(is.data.frame(result$removed))
+  expect_equal(result$num_removed, 2)
+  expect_equal(result$method, "bootstrap")
 })
 
-test_that("prune function fails with multiple criteria", {
+test_that("pruning function ensures weak connectivity", {
   tna_object <- create_mock_tna()
-  expect_error(prune(tna_object, threshold = 0.1, percentile = 50))
-  expect_error(prune(tna_object, threshold = 0.1, lowest_percent = 25))
-  expect_error(prune(tna_object, percentile = 50, lowest_percent = 25))
+  result <- prune(tna_object, threshold = 0.2) |>
+    attr("pruning")
+  expect_true(is.list(result))
+  expect_true(is.data.frame(result$removed))
+  expect_true(sum(result$weights > 0) > 0)
+  expect_true(is_weakly_connected(result$weights))
+  expect_equal(result$method, "threshold")
 })
 
-test_that("prune function fails with invalid tna object", {
+test_that("pruning function fails with invalid tna object", {
   invalid_tna_object <- list()
   class(invalid_tna_object) <- "not_tna"
-  expect_error(prune(invalid_tna_object, threshold = 0.1))
+  expect_error(
+    prune(invalid_tna_object, threshold = 0.1),
+    "Argument `x` must be a <tna> object."
+  )
+})
+
+test_that("pruning details can be obtained", {
+  tna_object <- create_mock_tna()
+  expect_error(
+    prune(tna_object, threshold = 0.2),
+    NA
+  )
 })
 

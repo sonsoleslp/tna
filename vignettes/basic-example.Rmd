@@ -2,7 +2,7 @@
 title: "Basic example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{basic-example}
+  %\VignetteIndexEntry{Basic examle}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -27,7 +27,7 @@ data("engagement", package = "tna")
 ```
 
 ```{r}
-tna_model <- build_tna(engagement)
+tna_model <- tna(engagement)
 ```
 
 ```{r}
@@ -39,6 +39,6 @@ cm <- centralities(tna_model)
 cm
 ```
 
-```{r, fig.width=4, fig.height=1.5}
-plot(cm, ncol = 4, model = tna_model)
+```{r, fig.width=8, fig.height=6}
+plot(cm, ncol = 4)
 ```
