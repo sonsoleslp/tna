@@ -17,6 +17,8 @@ knitr::opts_chunk$set(
 # `tna`: An R package for Transition Network Analysis
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/sonsoleslp/tna/graph/badge.svg)](https://app.codecov.io/gh/sonsoleslp/tna)
 <!-- badges: end -->
 
 
