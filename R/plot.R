@@ -427,15 +427,14 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' comm <- communities(model)
 #' plot(comm, method = "leading_eigen")
 #'
-plot.tna_communities <- function(x, cluster = 1L, colors,
-                                 method = "spinglass", ...) {
+plot.tna_communities <- function(x, method = "spinglass", colors, ...) {
   stopifnot_(
     is_tna_communities(x),
     "Argument {.arg x} must be a {.cls tna_communities} object."
   )
   y <- attr(x, "tna")
   colors <- ifelse_(
-    missing(colors),
+    missing(colors) | is.null(colors),
     default_colors,
     colors
   )
@@ -536,11 +535,11 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     ggplot2::ylab("")
 }
 
-plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
+plot_centralities_multiple <- function(x, ncol = 4, scales = "free_x", colors = NULL, labels) {
   # TODO handle colors and test
-  measures <- names(x)
-  n_clusters <- length(unique(x$Cluster))
-  dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
+  measures <- names(x) [3:ncol(x)]
+  n_clusters <- length(unique(x$Group))
+  dplyr::mutate(x, State = factor(State)) |>
     data.frame() |>
     stats::reshape(
       varying = measures,
@@ -551,23 +550,23 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
     ) |>
     ggplot2::ggplot(
       ggplot2::aes(
-        x = !!rlang::sym("value"),
-        y = !!rlang::sym("State"),
-        color = !!rlang::sym("Cluster"),
-        fill = !!rlang::sym("Cluster"),
-        group = !!rlang::sym("Cluster")
+        x = value,
+        y = State,
+        color = Group,
+        fill = Group,
+        group = Group
       )
     ) +
-    ggplot2::facet_wrap("name", ncol = 4) +
+    ggplot2::facet_wrap("name", ncol = ncol, scales = scales) +
     ggplot2::geom_path() +
     ifelse_(
-      length(unique(colors)) == n_clusters,
+      !is.null(colors) & (length(unique(colors)) == n_clusters),
       ggplot2::scale_color_manual(values = colors),
       ggplot2::scale_color_discrete()
     ) +
     ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
     ifelse_(
-      length(unique(colors)) == n_clusters,
+      !is.null(colors) & (length(unique(colors)) == n_clusters),
       ggplot2::scale_fill_manual(values = colors),
       ggplot2::scale_fill_discrete()
     ) +
@@ -618,6 +617,10 @@ plot_compare <- function(x, y, cut, minimum, ...) {
   if (!is.null(x$data)) {
     colors <- attr(x$data, "colors")
   }
+  weights_abs <- abs(x$weights)
+  q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
+  minimum <- ifelse_(missing(minimum), q[1L], minimum)
+  cut <- ifelse_(missing(cut), q[2L], cut)
   plot.tna(
     x = diff,
     pie = pie,
@@ -625,6 +628,8 @@ plot_compare <- function(x, y, cut, minimum, ...) {
     colors = colors,
     theme = NULL,
     palette = "colorblind",
+    cut = cut,
+    minimum = minimum,
     ...
   )
 }

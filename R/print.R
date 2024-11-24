@@ -111,7 +111,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   )
   n_cliques <- length(x$weights)
   if (n_cliques == 0) {
-    cat("No ", size, "-cliques were found in the network.", sep = "")
+    cat("No ", attr(x,"size"), "-cliques were found in the network.", sep = "")
     return(invisible(x))
   }
   check_positive(n)

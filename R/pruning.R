@@ -7,6 +7,21 @@
 #'
 #' @export
 #' @family evaluation
+#' @param x An object of class `tna` or `group_tna`
+prune <- function(x, ...) {
+  UseMethod("prune")
+}
+
+
+#' Prune a `tna` network based on transition probabilities
+#'
+#' Prunes a network represented by a `tna` object by removing
+#' edges based on a specified threshold, lowest percent of non-zero edge
+#' weights, or the disparity filter algorithm (Serrano et al., 2009).
+#' It ensures the network remains weakly connected.
+#'
+#' @export
+#' @family evaluation
 #' @param x An object of class `tna`
 #' @param method A `character` string describing the pruning method.
 #' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
@@ -38,7 +53,7 @@
 #' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
 #' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 #'
-prune <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
+prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
                   level = 0.5, boot = NULL, ...) {
   check_tna(x)
   method <- onlyif(is.character(method), tolower(method))
@@ -206,7 +221,7 @@ pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
 #'
 #' @rdname deprune
 #' @export
-#' @param x A `tna` object.
+#' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
 #' @examples
 #' model <- tna(engagement)
