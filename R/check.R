@@ -7,14 +7,14 @@ check_tna_type <- function(type) {
   type <- try(
     match.arg(
       type,
-      c("relative", "scaled", "ranked", "absolute", "co")
+      c("relative", "scaled", "ranked", "absolute", "co", "co_scaled")
     ),
     silent = TRUE
   )
   stopifnot_(
     !inherits(type, "try-error"),
     "Argument {.arg type} must be either {.val relative}, {.val scaled},
-     {.val ranked}, {.val absolute}, or {.val co}."
+     {.val ranked}, {.val absolute}, {.val co}, or {.val co_scaled}."
   )
   type
 }

@@ -23,10 +23,11 @@
 #'   Currently supports the following types:
 #'
 #'   * `"relative"` for relative frequencies (probabilities, the default)
-#'   * `"scaled"` for frequencies scaled to the unit interval,
-#'   * `"ranked"` for ranks of the weights scaled to the unit interval
+#'   * `"scaled"` for frequencies scaled to the unit interval.
+#'   * `"ranked"` for ranks of the weights scaled to the unit interval.
 #'   * `"absolute"` for frequencies.
 #'   * `"co"` for co-occurrences.
+#'   * `"co_scaled"` for co-occurrences scaled to the unit interval.
 #'
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
@@ -333,7 +334,7 @@ build_model <- function(x, type = "relative", transitions = FALSE) {
   trans <- array(0L, dim = c(n, a, a))
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  if (type == "co") {
+  if (type %in% c("co", "co_scaled")) {
     for (i in seq_len(p - 1)) {
       for (j in seq(i + 1, p)) {
         from <- m[, i]
@@ -382,7 +383,7 @@ compute_weights <- function(transitions, type, s) {
     pos <- which(rs > 0)
     weights[pos, ] <- weights[pos, ] / rs[pos]
     weights[!pos, ] <- NA
-  } else if (type == "scaled") {
+  } else if (type %in% c("scaled", "co_scaled")) {
     weights[] <- ranger(weights)
   } else if (type == "ranked") {
     ranks <- rank(weights, ties.method = "average")
