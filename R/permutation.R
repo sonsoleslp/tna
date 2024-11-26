@@ -67,7 +67,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   edge_names <- paste0(edge_names$from, " -> ", edge_names$to)
   perm_x <- seq_len(n_data_x)
   perm_y <- seq(n_data_x + 1L, n_combined)
-  combined_model <- markov_model(combined_data, transitions = TRUE)
+  combined_model <- build_model(combined_data, transitions = TRUE)
   combined_trans <- combined_model$trans
   edge_diffs_perm <- array(0L, dim = c(iter, a, a))
   cent_diffs_perm <- array(0L, dim = c(iter, a, n_measures))

@@ -11,18 +11,23 @@
 #' @export
 #' @family core
 #' @rdname tna
-#' @param x An `stslist` object describing a sequence of events or states to
-#'   be used for building the Markov model or a `matrix` of weights with column
-#'   names describing the states. If `x` is a matrix, it is assumed that the
-#'   element on row `i` and column `j` is the weight of the edge representing
-#'   the transition from state `i` to state `j`. The argument `x` also accepts
-#'   a `data.frame` object in wide format
-#'.  (each column is a timepoint with no extra columns).
+#' @param x A `stslist` (from `TraMineR`), `data.frame`, or a `matrix`.
+#'   For `stslist` and `data.frame` objects `x`
+#'   should describe a sequence of events or states to be used for building the
+#'   Markov model.  If `x` is a matrix, it is assumed that the element on row
+#'   `i` and column `j` is the weight of the edge representing the transition
+#'   from state `i` to state `j`. If `x` is a `data.frame`, then
+#'   it must be in wide format (each column is a timepoint with
+#'   no extra columns).
 #' @param type A `character` string describing the weight matrix type.
-#'   Currently supports `"relative"` for relative frequencies
-#'   (probabilities, the default), `"scaled"` for frequencies scaled to the
-#'   unit interval, `"ranked"` for ranks of the weights scaled to the unit
-#'   interval, and `"absolute"` for frequencies.
+#'   Currently supports the following types:
+#'
+#'   * `"relative"` for relative frequencies (probabilities, the default)
+#'   * `"scaled"` for frequencies scaled to the unit interval,
+#'   * `"ranked"` for ranks of the weights scaled to the unit interval
+#'   * `"absolute"` for frequencies.
+#'   * `"co"` for co-occurrences.
+#'
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
@@ -65,7 +70,7 @@ tna.default <- function(x, inits, type = "relative", ...) {
 
 #' @export
 #' @rdname tna
-tna.matrix <- function(x, inits, type = "relative",...) {
+tna.matrix <- function(x, group, inits, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -124,14 +129,14 @@ tna.matrix <- function(x, inits, type = "relative",...) {
 
 #' @export
 #' @rdname tna
-tna.stslist <- function(x, type = "relative", ...) {
+tna.stslist <- function(x, group, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   type <- check_tna_type(type)
   x <- create_seqdata(x)
-  model <- markov_model(x, type, ...)
+  model <- build_model(x, type, ...)
   tna_(
     weights = model$weights,
     inits = model$inits,
@@ -150,7 +155,7 @@ tna.data.frame <- function(x, type = "relative", ...) {
   )
   type <- check_tna_type(type)
   x <- create_seqdata(x)
-  model <- markov_model(x, type, ...)
+  model <- build_model(x, type, ...)
   tna_(
     weights = model$weights,
     inits = model$inits,
@@ -310,14 +315,14 @@ create_seqdata <- function(x) {
   )
 }
 
-#' Build a Markov Model from Sequence Data
+#' Build a (Markov) Model from Sequence Data
 #'
 #' @param x A data object from `create_seqdata()`
 #' @param type The type of transition network model to build.
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
-markov_model <- function(x, type = "relative", transitions = FALSE) {
+build_model <- function(x, type = "relative", transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
   m <- as.matrix(x)
@@ -328,12 +333,27 @@ markov_model <- function(x, type = "relative", transitions = FALSE) {
   trans <- array(0L, dim = c(n, a, a))
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  for (i in seq_len(p - 1)) {
-    from <- m[, i]
-    to <- m[, i + 1L]
-    any_na <- is.na(from) | is.na(to)
-    new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-    trans[new_trans] <- trans[new_trans] + 1L
+  if (type == "co") {
+    for (i in seq_len(p - 1)) {
+      for (j in seq(i + 1, p)) {
+        from <- m[, i]
+        to <- m[, j]
+        any_na <- is.na(from) | is.na(to)
+        new_trans <- rbind(
+          cbind(idx, from, to)[!any_na, , drop = FALSE],
+          cbind(idx, to, from)[!any_na, , drop = FALSE]
+        )
+        trans[new_trans] <- trans[new_trans] + 1L
+      }
+    }
+  } else {
+    for (i in seq_len(p - 1)) {
+      from <- m[, i]
+      to <- m[, i + 1L]
+      any_na <- is.na(from) | is.na(to)
+      new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+      trans[new_trans] <- trans[new_trans] + 1L
+    }
   }
   weights <- compute_weights(trans, type, a)
   inits <- inits / sum(inits)

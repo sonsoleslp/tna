@@ -12,20 +12,21 @@ tna(x, ...)
 
 \method{tna}{default}(x, inits, type = "relative", ...)
 
-\method{tna}{matrix}(x, inits, type = "relative", ...)
+\method{tna}{matrix}(x, group, inits, type = "relative", ...)
 
-\method{tna}{stslist}(x, type = "relative", ...)
+\method{tna}{stslist}(x, group, type = "relative", ...)
 
 \method{tna}{data.frame}(x, type = "relative", ...)
 }
 \arguments{
-\item{x}{An \code{stslist} object describing a sequence of events or states to
-be used for building the Markov model or a \code{matrix} of weights with column
-names describing the states. If \code{x} is a matrix, it is assumed that the
-element on row \code{i} and column \code{j} is the weight of the edge representing
-the transition from state \code{i} to state \code{j}. The argument \code{x} also accepts
-a \code{data.frame} object in wide format
-.  (each column is a timepoint with no extra columns).}
+\item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, or a \code{matrix}.
+For \code{stslist} and \code{data.frame} objects \code{x}
+should describe a sequence of events or states to be used for building the
+Markov model.  If \code{x} is a matrix, it is assumed that the element on row
+\code{i} and column \code{j} is the weight of the edge representing the transition
+from state \code{i} to state \code{j}. If \code{x} is a \code{data.frame}, then
+it must be in wide format (each column is a timepoint with
+no extra columns).}
 
 \item{...}{Ignored.}
 
@@ -34,10 +35,14 @@ for each state. Can be provided only if \code{x} is a \code{matrix}. The vector 
 be scaled to unity.}
 
 \item{type}{A \code{character} string describing the weight matrix type.
-Currently supports \code{"relative"} for relative frequencies
-(probabilities, the default), \code{"scaled"} for frequencies scaled to the
-unit interval, \code{"ranked"} for ranks of the weights scaled to the unit
-interval, and \code{"absolute"} for frequencies.}
+Currently supports the following types:
+\itemize{
+\item \code{"relative"} for relative frequencies (probabilities, the default)
+\item \code{"scaled"} for frequencies scaled to the unit interval,
+\item \code{"ranked"} for ranks of the weights scaled to the unit interval
+\item \code{"absolute"} for frequencies.
+\item \code{"co"} for co-occurrences.
+}}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

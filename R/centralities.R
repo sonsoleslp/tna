@@ -243,7 +243,7 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
   check_probability(certainty)
   check_measures(measures)
   d <- x$data
-  model <- markov_model(d, transitions = TRUE)
+  model <- build_model(d, transitions = TRUE)
   trans <- model$trans
   a <- dim(trans)[2]
   n <- nrow(d)
