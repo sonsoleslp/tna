@@ -66,7 +66,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
   }
   check_nonnegative(threshold, type = "numeric")
   d <- x$data
-  model <- markov_model(d, transitions = TRUE)
+  model <- build_model(d, transitions = TRUE)
   trans <- model$trans
   alphabet <- attr(d, "alphabet")
   type <- attr(x, "type")
