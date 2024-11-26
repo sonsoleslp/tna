@@ -71,7 +71,7 @@ tna.default <- function(x, inits, type = "relative", ...) {
 
 #' @export
 #' @rdname tna
-tna.matrix <- function(x, group, inits, type = "relative", ...) {
+tna.matrix <- function(x, inits, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -130,7 +130,7 @@ tna.matrix <- function(x, group, inits, type = "relative", ...) {
 
 #' @export
 #' @rdname tna
-tna.stslist <- function(x, group, type = "relative", ...) {
+tna.stslist <- function(x, type = "relative", ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."

@@ -12,9 +12,9 @@ tna(x, ...)
 
 \method{tna}{default}(x, inits, type = "relative", ...)
 
-\method{tna}{matrix}(x, group, inits, type = "relative", ...)
+\method{tna}{matrix}(x, inits, type = "relative", ...)
 
-\method{tna}{stslist}(x, group, type = "relative", ...)
+\method{tna}{stslist}(x, type = "relative", ...)
 
 \method{tna}{data.frame}(x, type = "relative", ...)
 }
@@ -38,10 +38,11 @@ be scaled to unity.}
 Currently supports the following types:
 \itemize{
 \item \code{"relative"} for relative frequencies (probabilities, the default)
-\item \code{"scaled"} for frequencies scaled to the unit interval,
-\item \code{"ranked"} for ranks of the weights scaled to the unit interval
+\item \code{"scaled"} for frequencies scaled to the unit interval.
+\item \code{"ranked"} for ranks of the weights scaled to the unit interval.
 \item \code{"absolute"} for frequencies.
 \item \code{"co"} for co-occurrences.
+\item \code{"co_scaled"} for co-occurrences scaled to the unit interval.
 }}
 }
 \value{
