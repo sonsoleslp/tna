@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @family core
-#' @rdname tna
+#' @rdname build_model
 #' @param x A `stslist` (from `TraMineR`), `data.frame`, or a `matrix`.
 #'   For `stslist` and `data.frame` objects `x`
 #'   should describe a sequence of events or states to be used for building the
@@ -23,11 +23,24 @@
 #'   Currently supports the following types:
 #'
 #'   * `"relative"` for relative frequencies (probabilities, the default)
-#'   * `"scaled"` for frequencies scaled to the unit interval.
-#'   * `"ranked"` for ranks of the weights scaled to the unit interval.
 #'   * `"absolute"` for frequencies.
-#'   * `"co"` for co-occurrences.
-#'   * `"co_scaled"` for co-occurrences scaled to the unit interval.
+#'   * `"co-occurrence"` for co-occurrences.
+#'
+#' @param scaling A `character` vector describing how to scale the weights
+#'   defined by `type`. When a vector is provided, the scaling options are
+#'   applied in the respective order. For example, `c("rank", "minmax")` would
+#'   first compute the ranks, then scale them to the unit interval using
+#'   min-max normalization. An empty vector corresponds to no scaling.
+#'   Currently supports the following options:
+#'
+#'   * `"minmax"` performs min-max normalization to scale the weights to the
+#'       unit interval. Note that if the smallest weight is positive, it
+#'       will be zero after scaling.
+#'   * `"max"` Multiplies the weights by the reciprocal of the largest weight
+#'       to scale the weights to the unit interval. This options preserves
+#'       positive ranks, unlike `"minmax"` when all weights are positive.
+#'   * `"rank"` Computes the ranks of the weights using [rank()] with
+#'       `ties.method = "average"`.
 #'
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
@@ -47,16 +60,17 @@
 #'     `data.frame` object. Otherwise `NULL`.
 #'
 #' @examples
-#' model <- tna(engagement)
+#' model <- build_model(engagement)
 #' print(model)
 #'
-tna <- function(x, ...) {
-  UseMethod("tna")
+build_model <- function(x, type = "relative", scaling = character(0L), ...) {
+  UseMethod("build_model")
 }
 
 #' @export
-#' @rdname tna
-tna.default <- function(x, inits, type = "relative", ...) {
+#' @rdname build_model
+build_model.default <- function(x, type = "relative", scaling = character(0L),
+                                inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -66,12 +80,13 @@ tna.default <- function(x, inits, type = "relative", ...) {
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  tna.matrix(x, inits, type, ...)
+  build_model.matrix(x, type, scaling, inits, ...)
 }
 
 #' @export
-#' @rdname tna
-tna.matrix <- function(x, inits, type = "relative", ...) {
+#' @rdname build_model
+build_model.matrix <- function(x, type = "relative", scaling = character(0L),
+                               inits, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -116,96 +131,77 @@ tna.matrix <- function(x, inits, type = "relative", ...) {
     }
     names(inits) <- colnames(x)
   }
-  type <- check_tna_type(type)
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
   if (is.null(colnames(x))) {
     dimnames(x) <- list(seq_len(nc), seq_len(nc))
   }
-  tna_(
+  build_model_(
     weights = x,
     inits = inits,
     labels = colnames(x),
-    type = type
+    type = type,
+    scaling = scaling
   )
 }
 
 #' @export
-#' @rdname tna
-tna.stslist <- function(x, type = "relative", ...) {
+#' @rdname build_model
+build_model.stslist <- function(x, type = "relative", scaling = character(0L),
+                                ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
-  type <- check_tna_type(type)
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x)
-  model <- build_model(x, type, ...)
-  tna_(
+  model <- initialize_model(x, type, scaling, ...)
+  build_model_(
     weights = model$weights,
     inits = model$inits,
     labels = attr(x, "labels"),
     type = type,
+    scaling = scaling,
     data = x
   )
 }
 
 #' @export
-#' @rdname tna
-tna.data.frame <- function(x, type = "relative", ...) {
+#' @rdname build_model
+build_model.data.frame <- function(x, type = "relative",
+                                   scaling = character(0L), ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
-  type <- check_tna_type(type)
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x)
-  model <- build_model(x, type, ...)
-  tna_(
+  model <- initialize_model(x, type, scaling, ...)
+  build_model_(
     weights = model$weights,
     inits = model$inits,
     labels = model$labels,
     type = type,
+    scaling = scaling,
     data = x
   )
 }
 
-# TODO tna_cluster
-#' #' @export
-#' #' @rdname tna
-#' tna.mhmm <- function(x, type = "relative", ...) {
-#'   stopifnot_(
-#'     !missing(x),
-#'     "Argument {.arg x} is missing."
-#'   )
-#'   stopifnot_(
-#'     attr(x, "type") == "mmm",
-#'     "Argument {.arg x} must be a mixed Markov model fit."
-#'   )
-#'   check_tna_type(type)
-#'   clusters <- names(x$transition_probs)
-#'   n_clust <- length(clusters)
-#'   seq <- vector(mode = "list", length = n_clust)
-#'   cluster_assignment <- summary(x)$most_probable_cluster
-#'   for (i in clusters) {
-#'     seq[[i]] <- x$observations[cluster_assignment == i, ]
-#'   }
-#'   tna_(
-#'     weights = x$transition_probs,
-#'     inits = x$initial_probs,
-#'     labels = attr(x$observations, "labels"),
-#'     type = type,
-#'     seq = seq
-#'   )
-#' }
-
 #' Build a Transition Network Analysis object
 #'
 #' @param weights A `matrix` of edge weights.
-#' @param type A `character` string defining the network type.
 #' @param inits A `numeric` vector of initial state probabilities.
 #' @param labels A `character` vector of state labels.
+#' @param type A `character` string defining the network type.
+#' @param scaling A `character` string defining the scaling of the weights
 #' @param data A `tna_seqdata` object when `weights` is
 #'   created from sequence data.
 #' @return A `tna` object.
 #' @noRd
-tna_ <- function(weights, type, inits = NULL, labels = NULL, data = NULL) {
+build_model_ <- function(weights, inits = NULL, labels = NULL,
+                         type, scaling = character(0L), data = NULL) {
   structure(
     list(
       weights = weights,
@@ -215,63 +211,44 @@ tna_ <- function(weights, type, inits = NULL, labels = NULL, data = NULL) {
       data = data
     ),
     type = type,
+    scaling = scaling,
     class = "tna"
   )
 }
 
-#' Build and Visualize a Network with Edge Betweenness
-#'
-#' This function builds a network from a transition matrix in a `tna` object
-#' and computes edge betweenness for the network. Optionally, it visualizes the
-#' network using the `qgraph` package, with the edge thickness representing the
-#' edge betweenness values.
-#'
+
+# Aliases -----------------------------------------------------------------
+
 #' @export
-#' @param x A `tna` object containing transition matrices and
-#' associated metadata.
-#' @param ... Ignored.
-#'
-#' @details
-#' The function first converts the transition matrix for the specified cluster
-#' into a directed graph using the `igraph` package. It then calculates the
-#' edge betweenness of the graph, which is a measure of how often an edge lies
-#' on the shortest paths between pairs of nodes.
-#'
-#' If `plot = TRUE`, the function uses `qgraph` to visualize the network,
-#' where edge thickness is proportional to edge betweenness, node colors are
-#' derived from the `tna` object, and `Pie` values from the `tna` object are
-#' displayed on the nodes.
-#'
-#' The layout of the network can be customized via the `layout` parameter,
-#' which can either be a predefined layout from `qgraph` or a user-specified
-#' matrix of node positions.
-#'
-#' @return A `tna` object where edge betweenness represents the edge weights.
-#'
+#' @rdname build_model
 #' @examples
-#' model <- tna(group_regulation)
-#' betweenness_network(model)
+#' model <- tna(engagement)
 #'
-betweenness_network <- function(x, ...) {
-  UseMethod("betweenness_network")
+tna <- function(x, scaling = character(0L), ...) {
+  check_missing(x)
+  build_model(x = x, type = "relative", scaling = scaling, ...)
 }
 
-#' @rdname betweenness_network
 #' @export
-betweenness_network.tna <- function(x, ...) {
-  check_tna(x)
-  weights <- x$weights
-  g <- as.igraph(x)
-  betweenness <- igraph::edge_betweenness(g, directed = TRUE)
-  weights[weights > 0] <- betweenness
-  tna_(
-    weights = weights,
-    type = "betweenness",
-    inits = x$inits,
-    labels = x$labels,
-    data = x$data
-  )
+#' @rdname build_model
+#' @examples
+#' model <- ftna(engagement)
+#'
+ftna <- function(x, scaling = character(0L), ...) {
+  build_model(x = x, type = "absolute", scaling = scaling, ...)
 }
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- ctna(engagement)
+#'
+ctna <- function(x, scaling = character(0L), ...) {
+  build_model(x = x, type = "co-occurrence", scaling = scaling, ...)
+}
+
+
+# Internal ----------------------------------------------------------------
 
 #' Convert Sequence Data to an Internal Format
 #'
@@ -316,14 +293,15 @@ create_seqdata <- function(x) {
   )
 }
 
-#' Build a (Markov) Model from Sequence Data
+#' Compute Edge Weights from Sequence Data
 #'
 #' @param x A data object from `create_seqdata()`
 #' @param type The type of transition network model to build.
+#' @param type The type of scaling to apply to the weights
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
-build_model <- function(x, type = "relative", transitions = FALSE) {
+initialize_model <- function(x, type, scaling, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
   m <- as.matrix(x)
@@ -334,7 +312,7 @@ build_model <- function(x, type = "relative", transitions = FALSE) {
   trans <- array(0L, dim = c(n, a, a))
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  if (type %in% c("co", "co_scaled")) {
+  if (type == "co") {
     for (i in seq_len(p - 1)) {
       for (j in seq(i + 1, p)) {
         from <- m[, i]
@@ -356,7 +334,7 @@ build_model <- function(x, type = "relative", transitions = FALSE) {
       trans[new_trans] <- trans[new_trans] + 1L
     }
   }
-  weights <- compute_weights(trans, type, a)
+  weights <- compute_weights(trans, type, scaling, a)
   inits <- inits / sum(inits)
   names(inits) <- alphabet
   dimnames(weights) <- list(alphabet, alphabet)
@@ -372,22 +350,27 @@ build_model <- function(x, type = "relative", transitions = FALSE) {
 #'
 #' @param transitions An `array` of the individual-level transitions.
 #' @param type Type of the transition network as a `character` string.
+#' @param type Scaling to apply as a `character` string.
 #' @param s An `integer`, the number of states.
 #' @return A `matrix` of transition probabilities or frequencies,
 #' based on `type`.
 #' @noRd
-compute_weights <- function(transitions, type, s) {
+compute_weights <- function(transitions, type, scaling, s) {
   weights <- apply(transitions, c(2, 3), sum)
   if (type == "relative") {
     rs <- .rowSums(weights, m = s, n = s)
     pos <- which(rs > 0)
     weights[pos, ] <- weights[pos, ] / rs[pos]
     weights[!pos, ] <- NA
-  } else if (type %in% c("scaled", "co_scaled")) {
-    weights[] <- ranger(weights)
-  } else if (type == "ranked") {
-    ranks <- rank(weights, ties.method = "average")
-    weights[] <- ranger(ranks)
+  }
+  for (i in seq_along(scaling)) {
+    if (scaling[i] == "minmax") {
+      weights[] <- ranger(weights)
+    } else if (scaling[i] == "max") {
+      weights[] <- weights / max(weights, na.rm = TRUE)
+    } else if (scaling[i] == "rank") {
+      weights[] <- rank(weights, ties.method = "average")
+    }
   }
   weights
 }

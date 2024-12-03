@@ -11,8 +11,6 @@ plot_tna(
   edge.labels = TRUE,
   layout = "circle",
   mar = rep(5, 4),
-  cut = 0.1,
-  minimum = 0.05,
   theme = "colorblind",
   ...
 )
@@ -29,12 +27,6 @@ plot_tna(
 \item{layout}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}. Defaults to the smallest 20th percentile
-of the weights.}
-
-\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}. Defaults to the smallest 10th
-percentile of the weights.}
 
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 

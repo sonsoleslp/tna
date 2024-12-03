@@ -45,7 +45,8 @@ the centrality measures. The default is \code{FALSE}.}
 
 \item{measures}{A \code{character} vector of centrality measures to estimate.
 The default measures are \code{"InStrength"}, \code{"OutStrength"},
-and \code{"Betweenness"}.}
+and \code{"Betweenness"}. See \code{\link[=centralities]{centralities()}} for a list of available centrality
+measures.}
 
 \item{iter}{An \code{integer} specifying the number of resamples to draw.
 The default is 1000.}

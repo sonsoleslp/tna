@@ -1,22 +1,59 @@
+#' Check if argument is missing
+#'
+#' @param x An argument to a function.
+#' @noRd
+check_missing <- function(x) {
+  arg <- deparse(substitute(x))
+  stopifnot_(
+    !missing(x),
+    "Argument {.arg {arg}} is missing."
+  )
+}
+
 #' Check Transition Network Type for Validity
 #'
 #' @param type Type of the transition network.
 #' @noRd
-check_tna_type <- function(type) {
+check_model_type <- function(type) {
   type <- onlyif(is.character(type), tolower(type))
   type <- try(
     match.arg(
       type,
-      c("relative", "scaled", "ranked", "absolute", "co", "co_scaled")
+      c("relative", "absolute", "co-occurrence")
     ),
     silent = TRUE
   )
   stopifnot_(
     !inherits(type, "try-error"),
-    "Argument {.arg type} must be either {.val relative}, {.val scaled},
-     {.val ranked}, {.val absolute}, {.val co}, or {.val co_scaled}."
+    "Argument {.arg type} must be either {.val relative}, {.val absolute},
+     or {.val co-occurrence}."
   )
   type
+}
+
+#' Check Transition Network Weight Scaling for Validity
+#'
+#' @param scaling A `character` vector of scaling options to apply.
+#' @noRd
+check_model_scaling <- function(scaling) {
+  if (length(scaling) == 0L) {
+    return(character(0L))
+  }
+  scaling <- onlyif(is.character(scaling), tolower(scaling))
+  scaling <- try(
+    match.arg(
+      scaling,
+      c("minmax", "max", "rank"),
+      several.ok = TRUE
+    ),
+    silent = TRUE
+  )
+  stopifnot_(
+    !inherits(scaling, "try-error"),
+    "Elements of argument {.arg scaling} must be either {.val minmax},
+     {.val max}, or {.val rank}."
+  )
+  scaling
 }
 
 #' Check that `x` is a `tna` Object

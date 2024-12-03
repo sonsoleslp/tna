@@ -96,9 +96,9 @@ Statistical Applications in Genetics and Molecular Biology, 4(1).
 }
 \seealso{
 Core functions
+\code{\link{build_model}()},
 \code{\link{plot.tna}()},
 \code{\link{plot.tna_centralities}()},
-\code{\link{plot_compare}()},
-\code{\link{tna}()}
+\code{\link{plot_compare}()}
 }
 \concept{core}

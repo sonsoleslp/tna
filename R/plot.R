@@ -64,22 +64,17 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param layout See [qgraph::qgraph()].
 #' @param mar See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
-#' @param cut See [qgraph::qgraph()]. Defaults to the smallest 20th percentile
-#'   of the weights.
-#' @param minimum See [qgraph::qgraph()]. Defaults to the smallest 10th
-#'   percentile of the weights.
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
 #' @family core
 #' @examples
-#' tna_model <- tna(engagement)
-#' plot(tna_model)
+#' model <- tna(engagement)
+#' plot(model)
 #'
 plot.tna <- function(x, labels, colors, pie,
                      edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), cut, minimum,
-                     theme = "colorblind", ...) {
+                     mar = rep(5, 4), theme = "colorblind", ...) {
   check_tna(x)
   if (missing(pie)) {
     pie <- x$inits
@@ -95,16 +90,13 @@ plot.tna <- function(x, labels, colors, pie,
     )
   }
   # abs here for plot_compare()
-  weights_abs <- abs(x$weights)
-  q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
-  minimum <- ifelse_(missing(minimum), q[1L], minimum)
-  cut <- ifelse_(missing(cut), q[2L], cut)
-  # TODO qgraph produces error if no edges are above cut/minimum, check
+  # weights_abs <- abs(x$weights)
+  # q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
+  # minimum <- ifelse_(missing(minimum), q[1L], minimum)
+  # cut <- ifelse_(missing(cut), q[2L], cut)
   qgraph::qgraph(
     input = x$weights,
     color = colors,
-    minimum = minimum,
-    cut = cut,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,
@@ -113,7 +105,6 @@ plot.tna <- function(x, labels, colors, pie,
     theme = theme,
     ...
   )
-  invisible(x)
 }
 
 # TODO is this needed
@@ -641,8 +632,7 @@ plot_compare <- function(x, y, cut, minimum, ...) {
 #'
 plot_tna <- function(x, labels, colors,
                      edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), cut = 0.1, minimum = 0.05,
-                     theme = "colorblind", ...) {
+                     mar = rep(5, 4), theme = "colorblind", ...) {
   stopifnot_(
     is.matrix(x) && ncol(x) == nrow(x),
     "Argument {.arg x} must be a square matrix."
@@ -657,8 +647,6 @@ plot_tna <- function(x, labels, colors,
   qgraph::qgraph(
     input = x,
     color = colors,
-    minimum = minimum,
-    cut = cut,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,

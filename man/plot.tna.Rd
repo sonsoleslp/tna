@@ -12,8 +12,6 @@
   edge.labels = TRUE,
   layout = "circle",
   mar = rep(5, 4),
-  cut,
-  minimum,
   theme = "colorblind",
   ...
 )
@@ -33,12 +31,6 @@
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}. Defaults to the smallest 20th percentile
-of the weights.}
-
-\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}. Defaults to the smallest 10th
-percentile of the weights.}
-
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
@@ -53,15 +45,15 @@ sizes corresponding to initial state probabilities. Edge labels represent
 the edge weights of the network.
 }
 \examples{
-tna_model <- tna(engagement)
-plot(tna_model)
+model <- tna(engagement)
+plot(model)
 
 }
 \seealso{
 Core functions
+\code{\link{build_model}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna_centralities}()},
-\code{\link{plot_compare}()},
-\code{\link{tna}()}
+\code{\link{plot_compare}()}
 }
 \concept{core}

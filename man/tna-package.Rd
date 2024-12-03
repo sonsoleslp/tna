@@ -23,8 +23,8 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Mohammed Saqr
   \item Santtu Tikka
+  \item Mohammed Saqr
 }
 
 }

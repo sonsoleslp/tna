@@ -57,9 +57,9 @@ plot(cm, ncol = 4, reorder = TRUE)
 }
 \seealso{
 Core functions
+\code{\link{build_model}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna}()},
-\code{\link{plot_compare}()},
-\code{\link{tna}()}
+\code{\link{plot_compare}()}
 }
 \concept{core}
