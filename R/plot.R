@@ -61,7 +61,13 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param colors See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param labels See [qgraph::qgraph()].
-#' @param layout See [qgraph::qgraph()].
+#' @param layout One of the following:
+#'   * A `character` string describing a `qgraph` layout.
+#'   * A `matrix` of node positions to use, with a row for each node and
+#'     `x` and `y` columns for the node positions.
+#'   * A layout function from `igraph`.
+#' @param layout_args A `list` of arguments to pass to the `igraph` layout
+#'   function when `layout` is a function.
 #' @param mar See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
@@ -74,8 +80,10 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #'
 plot.tna <- function(x, labels, colors, pie,
                      edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), theme = "colorblind", ...) {
+                     layout_args = list(), mar = rep(5, 4),
+                     theme = "colorblind", ...) {
   check_tna(x)
+  layout <- process_layout(x, layout, layout_args)
   if (missing(pie)) {
     pie <- x$inits
   }
@@ -439,8 +447,8 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #' @param x A `tna_permutation` object.
 #' @param ... Arguments passed to [plot_tna()].
 #' @examples
-#' model_x <- tna(group_regulation[1:1000,])
-#' model_y <- tna(group_regulation[1001:2000,])
+#' model_x <- tna(group_regulation[1:1000, ])
+#' model_y <- tna(group_regulation[1001:2000, ])
 #' # Small number of iterations for CRAN
 #' perm <- permutation_test(model_x, model_y, iter = 50)
 #' plot(perm)
@@ -654,4 +662,22 @@ plot_tna <- function(x, labels, colors,
     theme = theme,
     ...
   )
+}
+
+#' Process a `layout` argument
+#'
+#' @param x A `tna` object
+#' @param layout A `character` string, a `matrix`, or a `function`.
+#' @param args A `list` of arguments to pass to the layout function.
+process_layout <- function(x, layout, args = list()) {
+  if (is.character(layout) || is.matrix(layout)) {
+    return(layout)
+  }
+  stopifnot_(
+    is.function(layout),
+    "Argument {.arg layout} must be a {.cls character} string,
+     a {.cls matrix}, or a {.cls function}."
+  )
+  args$graph <- as.igraph(x)
+  do.call(what = layout, args = args)
 }
