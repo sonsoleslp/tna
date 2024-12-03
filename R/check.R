@@ -168,3 +168,42 @@ check_flag <- function(x) {
     "Argument {.arg {arg}} must be a single {.cls logical} value."
   )
 }
+
+#' Check a `layout` Argument
+#'
+#' @param x A `tna` object
+#' @param layout A `character` string, a `matrix`, or a `function`.
+#' @param args A `list` of arguments to pass to the layout function.
+#' @noRd
+check_layout <- function(x, layout, args = list()) {
+  if (is.character(layout)) {
+    layout <- tolower(layout)
+    layout <- try(
+      match.arg(
+        layout,
+        c("circle", "groups", "spring")
+      ),
+      silent = TRUE
+    )
+    stopifnot_(
+      !inherits(layout, "try-error"),
+      "A {.cls character} layout must be either {.val circle}, {.val groups},
+      or {.val spring}"
+    )
+    return(layout)
+  }
+  if (is.matrix(layout)) {
+    stopifnot_(
+      nrow(layout) == nrow(x$weights) && ncol(layout) == 2,
+      "A {.cls matrix} layout must have a row for each node and 2 columns."
+    )
+    return(layout)
+  }
+  stopifnot_(
+    is.function(layout),
+    "Argument {.arg layout} must be a {.cls character} string,
+     a {.cls matrix}, or a {.cls function}."
+  )
+  args$graph <- as.igraph(x)
+  do.call(what = layout, args = args)
+}

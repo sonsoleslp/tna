@@ -83,7 +83,7 @@ plot.tna <- function(x, labels, colors, pie,
                      layout_args = list(), mar = rep(5, 4),
                      theme = "colorblind", ...) {
   check_tna(x)
-  layout <- process_layout(x, layout, layout_args)
+  layout <- check_layout(x, layout, layout_args)
   if (missing(pie)) {
     pie <- x$inits
   }
@@ -662,22 +662,4 @@ plot_tna <- function(x, labels, colors,
     theme = theme,
     ...
   )
-}
-
-#' Process a `layout` argument
-#'
-#' @param x A `tna` object
-#' @param layout A `character` string, a `matrix`, or a `function`.
-#' @param args A `list` of arguments to pass to the layout function.
-process_layout <- function(x, layout, args = list()) {
-  if (is.character(layout) || is.matrix(layout)) {
-    return(layout)
-  }
-  stopifnot_(
-    is.function(layout),
-    "Argument {.arg layout} must be a {.cls character} string,
-     a {.cls matrix}, or a {.cls function}."
-  )
-  args$graph <- as.igraph(x)
-  do.call(what = layout, args = args)
 }

@@ -24,7 +24,13 @@ plot_tna(
 
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{layout}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{layout}{One of the following:
+\itemize{
+\item A \code{character} string describing a \code{qgraph} layout.
+\item A \code{matrix} of node positions to use, with a row for each node and
+\code{x} and \code{y} columns for the node positions.
+\item A layout function from \code{igraph}.
+}}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
