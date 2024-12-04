@@ -19,6 +19,7 @@ It ensures the network remains weakly connected.
 Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{permutation_test}()},
-\code{\link{prune.tna}()}
+\code{\link{prune.tna}()},
+\code{\link{pruning_details.group_tna}()}
 }
 \concept{evaluation}

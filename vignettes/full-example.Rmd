@@ -33,6 +33,7 @@ data("engagement", package = "tna")
 Build the model
 ```{r}
 tna_model <- tna(engagement)
+plot(tna(group_regulation), layout = igraph::layout_nicely(as.igraph(tna(group_regulation))))
 ```
 
 Plot the model

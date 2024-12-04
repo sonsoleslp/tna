@@ -185,8 +185,9 @@ prune_disparity <- function(x, level, labels) {
 #' Print Detailed Information on the Pruning Results
 #'
 #' @rdname pruning_details
+#' @family evaluation
 #' @export
-#' @param x A `tna` object.
+#' @param x A `tna` or `group_tna` object.
 #' @param removed_edges Should a `data.frame` of removed edges be printed?
 #' The default is `FALSE`.
 #' @param ... Ignored.

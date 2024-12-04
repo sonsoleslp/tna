@@ -13,7 +13,7 @@ pruning_details(x, ...)
 \method{pruning_details}{tna}(x, removed_edges = TRUE, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A \code{tna} or \code{group_tna} object.}
 
 \item{...}{Ignored.}
 
@@ -22,20 +22,14 @@ The default is \code{FALSE}.}
 }
 \description{
 Print Detailed Information on the Pruning Results
+
+Print Detailed Information on the Pruning Results
 }
 \seealso{
-Cluster-related functions
-\code{\link{as.igraph.group_tna}()},
-\code{\link{centralities}()},
-\code{\link{communities.group_tna}()},
-\code{\link{deprune.group_tna}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_tna}()},
-\code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{prune.group_tna}()},
-\code{\link{reprune.group_tna}()},
-\code{\link{summary.group_tna}()}
+Evaluation and validation functions
+\code{\link{bootstrap}()},
+\code{\link{permutation_test}()},
+\code{\link{prune}()},
+\code{\link{prune.tna}()}
 }
-\concept{clusters}
+\concept{evaluation}

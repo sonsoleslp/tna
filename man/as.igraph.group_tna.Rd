@@ -2,34 +2,18 @@
 % Please edit documentation in R/clusters.R
 \name{as.igraph.group_tna}
 \alias{as.igraph.group_tna}
-\title{Convert a specific group from a grouped Transition Network Analysis Model into an \code{igraph} object}
+\title{Coerce  a specific group from a \code{group_tna} object to an \code{igraph} object.}
 \usage{
 \method{as.igraph}{group_tna}(x, which)
 }
 \arguments{
-\item{x}{A \code{group_tna} object.}
+\item{x}{The object to convert.}
 
 \item{which}{The number or name of group.}
 }
 \value{
-An \code{igraph} object
+An \code{igraph} object.
 }
 \description{
-Convert a specific group from a grouped Transition Network Analysis Model into an \code{igraph} object
+Coerce  a specific group from a \code{group_tna} object to an \code{igraph} object.
 }
-\seealso{
-Cluster-related functions
-\code{\link{centralities}()},
-\code{\link{communities.group_tna}()},
-\code{\link{deprune.group_tna}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_tna}()},
-\code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{prune.group_tna}()},
-\code{\link{pruning_details.group_tna}()},
-\code{\link{reprune.group_tna}()},
-\code{\link{summary.group_tna}()}
-}
-\concept{clusters}

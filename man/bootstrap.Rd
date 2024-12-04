@@ -73,6 +73,7 @@ bootstrap(model, iter = 50)
 Evaluation and validation functions
 \code{\link{permutation_test}()},
 \code{\link{prune}()},
-\code{\link{prune.tna}()}
+\code{\link{prune.tna}()},
+\code{\link{pruning_details.group_tna}()}
 }
 \concept{evaluation}

@@ -50,16 +50,18 @@ comm <- communities(model)
 }
 \seealso{
 Cluster-related functions
-\code{\link{as.igraph.group_tna}()},
 \code{\link{centralities}()},
 \code{\link{deprune.group_tna}()},
 \code{\link{estimate_cs}()},
 \code{\link{group_tna}()},
 \code{\link{mmm_stats}()},
 \code{\link{plot.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_communities}()},
 \code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{prune.group_tna}()},
-\code{\link{pruning_details.group_tna}()},
 \code{\link{reprune.group_tna}()},
 \code{\link{summary.group_tna}()}
 

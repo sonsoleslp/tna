@@ -61,6 +61,7 @@ permutation_test(model_x, model_y, iter = 50)
 Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{prune}()},
-\code{\link{prune.tna}()}
+\code{\link{prune.tna}()},
+\code{\link{pruning_details.group_tna}()}
 }
 \concept{evaluation}

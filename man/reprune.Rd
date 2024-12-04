@@ -29,7 +29,6 @@ repruned_model <- reprune(depruned_model) # reapply the previous pruning
 }
 \seealso{
 Cluster-related functions
-\code{\link{as.igraph.group_tna}()},
 \code{\link{centralities}()},
 \code{\link{communities.group_tna}()},
 \code{\link{deprune.group_tna}()},
@@ -37,9 +36,12 @@ Cluster-related functions
 \code{\link{group_tna}()},
 \code{\link{mmm_stats}()},
 \code{\link{plot.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_communities}()},
 \code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{prune.group_tna}()},
-\code{\link{pruning_details.group_tna}()},
 \code{\link{summary.group_tna}()}
 }
 \concept{clusters}

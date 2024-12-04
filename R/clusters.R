@@ -1,21 +1,65 @@
 #' Build a grouped Transition Network Analysis Model
 #'
-#' @param x An `stslist` or `data.frame` object
-#' @return A `group_tna` object
+#' This function constructs a transition network analysis (TNA) model for each cluster
+#' from a given sequence, wide-formatted dataframe, or mixture Markov model.
+#'
 #' @export
 #' @family clusters
 #' @rdname group_tna
+#' @param x An `stslist` object describing a sequence of events or states to
+#'   be used for building the Markov model. The argument `x` also accepts
+#'   a `data.frame` object in wide format.
+#'   (each column is a timepoint with no extra columns). Alternatively, the
+#'   function accepts a mixture Markov model from the library `seqHMM`.
+#' @param type A `character` string describing the weight matrix type.
+#'   Currently supports `"relative"` for relative frequencies
+#'   (probabilities, the default), `"scaled"` for frequencies scaled to the
+#'   unit interval, `"ranked"` for ranks of the weights scaled to the unit
+#'   interval, and `"absolute"` for frequencies.
+#' @param ... Ignored.
+#' @return An object of class `group_tna` which is a `list` containing one
+#'   element per cluster. Each element is also a list containing the
+#'   following elements:
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
+#'     directly provided
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`: The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
+#'
+#' @examples
+#' group = c(rep("High",100),rep("Low",100))
+#' model <- group_tna(engagement, group = group)
+#' print(model)
+#'
 group_tna <- function(x, ...) {
   UseMethod("group_tna")
 }
 
 #' Build a grouped Transition Network Analysis Model providing group/cluster assignments
 #'
-#' @param x An `stslist` or `data.frame` object
+#' @param x An `stslist` object describing a sequence of events or states to
+#'   be used for building the Markov model. The argument `x` also accepts
+#'   a `data.frame` object in wide format.
+#'   (each column is a timepoint with no extra columns).
 #' @param group A vector indicating the cluster assignment of each
-#' row of the data / sequence
-#' @param ... Same as `tna`
-#' @return A `group_tna` object
+#'  row of the data / sequence. Must have the same length as the number of
+#'  rows/sequences of `x`.
+#' @return An object of class `group_tna` which is a `list` containing one
+#'   element per cluster. Each element is also a list containing the
+#'   following elements:
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
+#'     directly provided
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`: The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
 #' @export
 #' @family clusters
 #' @rdname group_tna
@@ -57,6 +101,19 @@ group_tna.default <- function(x, group, ...) {
 #' @param x An `mhmm` object from `seqHMM`
 #' @param ... Same as `tna`
 #' @return A `group_tna` object
+#' @return An object of class `group_tna` which is a `list` containing one
+#'   element per cluster. Each element is also a list containing the
+#'   following elements:
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
+#'     directly provided
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`: The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
+#'
 #' @export
 #' @family clusters
 #' @rdname group_tna
@@ -69,7 +126,6 @@ group_tna.mhmm <- function(x, ...) {
   group <- (summary(x))$most_probable_cluster
   group_tna.default(x$observations, group = group, ...)
 }
-
 
 
 #' Check that argument is an object of class `group_tna`
@@ -132,7 +188,8 @@ is_group_tna_stability <- function(x) {
 #' @param x A `group_tna` object.
 #' @param title A title for each plot. It can be a single string (the same one
 #'  will be used for all plots) or a list (one per group)
-#' @param ... Same as `plot.tna`
+#' @param ... Same as [plot.tna()]
+#' @rdname plot
 #' @return NULL
 #' @family clusters
 #' @export
@@ -157,13 +214,13 @@ plot.group_tna <- function(x, title, ...) {
   }
 }
 
-#' Convert a specific group from a grouped Transition Network Analysis Model into an `igraph` object
+
+#' Coerce  a specific group from a `group_tna` object to an `igraph` object.
 #'
-#' @param x A `group_tna` object.
-#' @param which The number or name of group.
-#' @return An `igraph` object
-#' @family clusters
 #' @export
+#' @inheritParams igraph::as.igraph
+#' @param which The number or name of group.
+#' @return An `igraph` object.
 as.igraph.group_tna <- function(x, which){
   stopifnot_(
     !missing(x),
@@ -184,15 +241,60 @@ as.igraph.group_tna <- function(x, which){
   return (as.igraph.tna(x[[which]]))
 }
 
-#' Summarize a grouped Transition Network Analysis Model
+#' Calculate Summary of Network Metrics for a grouped Transition Network
 #'
+#' This function calculates a variety of network metrics for a `tna` object.
+#' It computes key metrics such as node and edge counts, network density,
+#' mean distance, strength measures, degree centrality, and reciprocity.
+#'
+#' @export
 #' @param x A `group_tna` object.
 #' @param combined A logical indicating whether the summary results should be
 #' combined into a single dataframe for all clusters (defaults to `TRUE`)
-#' @return A `data.frame` object if combined is `FALSE` or a `list` if
-#' combined is `TRUE`
+#' @param ... Ignored
+#' @rdname summary
 #' @family clusters
-#' @export
+#' @details
+#' The function extracts the `igraph` network for each cluster and
+#' computes the following network metrics:
+#'
+#'   * Node count: Total number of nodes in the network.
+#'   * Edge count: Total number of edges in the network.
+#'   * Network density: Proportion of possible edges that
+#'     are present in the network.
+#'   * Mean distance: The average shortest path length between nodes.
+#'   * Mean and standard deviation of out-strength and in-strength: Measures
+#'     of the total weight of outgoing and incoming edges for each node.
+#'   * Mean and standard deviation of out-degree: The number of outgoing
+#'     edges from each node.
+#'   * Centralization of out-degree and in-degree: Measures of how
+#'     centralized the network is based on the degrees of nodes.
+#'   * Reciprocity: The proportion of edges that are reciprocated
+#'     (i.e., mutual edges between nodes).
+#'
+#' A summary of the metrics is printed to the console.
+#'
+#' @return A `list` of `list`s or combined `data.frame` or containing the following network metrics (invisibly):
+#'
+#'   * `node_count`: The total number of nodes.
+#'   * `edge_count`: The total number of edges.
+#'   * `network_Density`: The density of the network.
+#'   * `mean_distance`: The mean shortest path length.
+#'   * `mean_out_strength`: The mean out-strength of nodes.
+#'   * `sd_out_strength`: The standard deviation of out-strength.
+#'   * `mean_in_strength`: The mean in-strength of nodes.
+#'   * `sd_in_strength`: The standard deviation of in-strength.
+#'   * `mean_out_degree`: The mean out-degree of nodes.
+#'   * `sd_out_degree`: The standard deviation of out-degree.
+#'   * `centralization_out_degree`: The centralization of out-degree.
+#'   * `centralization_in_degree`: The centralization of in-degree.
+#'   * `reciprocity`: The reciprocity of the network.
+#'
+#' @examples
+#' group <- c(rep("High",100),rep("Low",100))
+#' model <- group_tna(engagement, group = group)
+#' summary(model)
+#'
 summary.group_tna <- function(x, combined = TRUE) {
   stopifnot_(
     !missing(x),
@@ -210,13 +312,48 @@ summary.group_tna <- function(x, combined = TRUE) {
   }
 }
 
-#' Prune a grouped Transition Network Analysis Model
+
+#' Prune a `group_tna` network based on transition probabilities
 #'
-#' @param x A `group_tna` object.
-#' @param ... Same as `prune.tna`
-#' @return A `group_tna` object
-#' @family clusters
+#' Prunes a set of networks represented by a `group_tna` object by removing
+#' edges based on a specified threshold, lowest percent of non-zero edge
+#' weights, or the disparity filter algorithm (Serrano et al., 2009).
+#' It ensures the networks remain weakly connected.
+#'
 #' @export
+#' @family clusters
+#' @param x An object of class `group_tna`
+#' @param method A `character` string describing the pruning method.
+#' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
+#' `"disparity"`, corresponding to the methods listed in Details. The default
+#' is `"threshold"`.
+#' @param threshold A numeric value specifying the edge weight threshold.
+#' Edges with weights below or equal to this threshold will be considered for
+#' removal.
+#' @param lowest A `numeric` value specifying the lowest percentage
+#' of non-zero edges. This percentage of edges with the lowest weights will be
+#' considered for removal. The default is `0.05`.
+#' @param level A `numeric` value representing the significance level for the
+#' disparity filter. Defaults to `0.5`.
+#' @param boot A `group_tna_bootstrap` object to be used for pruning with method
+#' `"boot"`. The method argument is ignored if this argument is supplied.
+#' @param ... Arguments passed to [bootstrap()] when
+#' using `method = "bootstrap"` and when a `group_tna_bootstrap` is not supplied.
+#' @return A pruned `group_tna` object. Details on the pruning can be viewed with
+#' [pruning_details()]. The original model can be restored with [deprune()].
+#' @references
+#' Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
+#' multiscale backbone of complex weighted networks.
+#' *Proceedings of the National Academy of Sciences, 106*,
+#' 6483-6488. \doi{10.1073/pnas.0808904106}
+#'
+#' @examples
+#' group <- c(rep("High",100),rep("Low",100))
+#' model <- group_tna(engagement, group = group)
+#' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+#' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+#' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
+#'
 prune.group_tna <- function(x, ...) {
   stopifnot_(
     !missing(x),
@@ -235,9 +372,14 @@ prune.group_tna <- function(x, ...) {
 }
 
 
-#' @family clusters
+#' Print Detailed Information on the Pruning Results
+#'
 #' @rdname pruning_details
 #' @export
+#' @param x A pruned `group_tna` object.
+#' @param removed_edges Should a `data.frame` of removed edges be printed?
+#' The default is `FALSE`.
+#' @param ... Ignored.
 pruning_details.group_tna <- function(x, ...) {
   stopifnot_(
     !missing(x),
@@ -251,6 +393,7 @@ pruning_details.group_tna <- function(x, ...) {
   Map(function(y, i) {print(i); pruning_details.tna(y, ...)}, x, names(x))
 
 }
+
 #' @family clusters
 #' @rdname deprune
 #' @export
@@ -287,6 +430,17 @@ reprune.group_tna <- function(x, ...) {
   )
 }
 
+#' Print `group_tna` Bootstrap Results
+#'
+#' @param x A `group_tna_bootstrap` object.
+#' @param digits An `integer` giving the minimal number of
+#' *significant* digits to print.
+#' @param type A `character` vector giving the type of edges to print.
+#' The default option `"both"` prints both statistically significant and
+#' non-significant edges, `"sig"` prints only significant edges, and `"nonsig"`
+#' prints only the non-significant edges.
+#' @param ... Ignored.
+#'
 #' @family clusters
 #' @export
 print.group_tna_bootstrap <- function(x, ...) {
@@ -303,7 +457,7 @@ print.group_tna_bootstrap <- function(x, ...) {
 
 #' Print the summary of a grouped Transition Network Analysis Model
 #'
-#' @param x A `group_tna` object.
+#' @param x A `summary.group_tna` object.
 #' @param ... Ignored
 #' @family clusters
 #' @export
@@ -323,6 +477,10 @@ print.summary.group_tna  <- function(x, ...) {
   }
 }
 
+#' Print `group_tna` Bootstrap Summary
+#'
+#' @param x A `summary.group_tna_bootstrap` object.
+#' @param ... Ignored.
 #' @family clusters
 #' @export
 print.summary.group_tna_bootstrap  <- function(x, ...) {
@@ -337,6 +495,10 @@ print.summary.group_tna_bootstrap  <- function(x, ...) {
   lapply(x, \(i) print.summary.tna_bootstrap(i, ...))
 }
 
+#' Print `group_tna` Centrality Measures
+#'
+#' @param x A `group_centralities` object.
+#' @param ... Ignored.
 #' @family clusters
 #' @export
 print.group_tna_centralities  <- function(x, ...) {
@@ -351,8 +513,14 @@ print.group_tna_centralities  <- function(x, ...) {
 
   NextMethod(generic = "print", object = x, ...)
 }
-#' @family clusters
+
+
+#' Print `group_tna` Detected Communities
+#'
 #' @export
+#' @param x A `group_tna_communities` object.
+#' @family clusters
+#' @param ... Ignored.
 print.group_tna_communities  <- function(x, ...) {
   stopifnot_(
     !missing(x),
@@ -365,8 +533,18 @@ print.group_tna_communities  <- function(x, ...) {
   Map(function(y, i) {print(i); print.tna_communities(y, ...)}, x, names(x))
 }
 
-#' @family clusters
+
+#' Print `group_tna` Found Cliques
+#'
 #' @export
+#' @param x A `group_tna_cliques` object.
+#' @param n An `integer` defining the maximum number of cliques to show.
+#' The defaults is `6`.
+#' @param first An `integer` giving the index of the first clique to show.
+#' The default index is `1`.
+#' @param digits An `integer` giving the minimal number of
+#' *significant* digits to print.
+#' @param ... Ignored.
 print.group_tna_cliques  <- function(x, ...) {
   stopifnot_(
     !missing(x),
@@ -590,7 +768,7 @@ mmm_stats <- function(x, use_t_dist = TRUE, conf_level = 0.95) {
   variable_list <- c()
 
   # Exclude the reference cluster (assumed to be the first cluster)
-  coef <- coef[, -1]
+  coef <- as.matrix(coef)[, -1, drop = FALSE]
 
   # Extract the diagonal of the vcov matrix
   vcov_diag <- sqrt(diag(vcov))
@@ -645,4 +823,27 @@ mmm_stats <- function(x, use_t_dist = TRUE, conf_level = 0.95) {
   )
   rownames(results) <- NULL
   return(results)
+}
+
+#' Rename clusters
+#'
+#' @param x A `group_tna` object
+#' @param new_names A vector containing one name per cluster
+#' @return A renamed `group_tna` object
+#' @family clusters
+#' @export
+rename.group_tna <- function(x, new_names) {
+  stopifnot_(
+    !missing(new_names),
+    "Argument {.arg x} is missing."
+  )
+  stopifnot_(
+    !is.vector(new_names),
+    "Argument {.arg new_names} must be a vector"
+  )
+  stopifnot_(
+    length(new_names) != length(x),
+    "Argument {.arg new_names} must be the same length as {.arg x}"
+  )
+  names(x) <- new_names
 }

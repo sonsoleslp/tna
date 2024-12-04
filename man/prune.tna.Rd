@@ -66,6 +66,7 @@ multiscale backbone of complex weighted networks.
 Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{permutation_test}()},
-\code{\link{prune}()}
+\code{\link{prune}()},
+\code{\link{pruning_details.group_tna}()}
 }
 \concept{evaluation}

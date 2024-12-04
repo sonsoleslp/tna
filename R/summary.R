@@ -9,7 +9,7 @@
 #' @param ... Ignored
 #'
 #' @details
-#' The function extracts the `igraph` network for the specified cluster and
+#' The function extracts the `igraph` network  and
 #' computes the following network metrics:
 #'
 #'   * Node count: Total number of nodes in the network.
