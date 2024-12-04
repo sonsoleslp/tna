@@ -4,17 +4,13 @@
 \alias{plot_compare}
 \title{Plot the difference network between two models}
 \usage{
-plot_compare(x, y, cut, minimum, ...)
+plot_compare(x, y, ...)
 }
 \arguments{
 \item{x}{An object of class \code{tna}. It will be the principal model.}
 
 \item{y}{An object of class \code{tna}. It will be the model subtracted from the
 principal model.}
-
-\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
