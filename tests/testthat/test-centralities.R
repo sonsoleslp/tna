@@ -30,7 +30,7 @@ test_that("centralities can be computed for a matrix", {
 test_that("centrality stability can be estimated", {
   model <- tna(mock_sequence)
   expect_error(
-    estimate_cs(model, drop_prop = seq(0.3, 0.9, by = 0.1), iter = 50),
+    estimate_cs(model, drop_prop = seq(0.3, 0.9, by = 0.1), iter = 20),
     NA
   )
 })

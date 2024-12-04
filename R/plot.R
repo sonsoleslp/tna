@@ -269,128 +269,6 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
   }
 }
 
-#' Plot Centrality Stability Results
-#'
-#' This function visualizes the centrality stability results produced by the
-#' `estimate_centrality_stability` function. It shows how different centrality
-#' measures' correlations change as varying proportions of cases are dropped,
-#' along with their confidence intervals (CIs).
-#'
-#' @export
-#' @param x A `tna_stability` object produced by `estimate_cs`.
-#' @param level A `numeric` value representing the significance level for
-#' the confidence intervals. Defaults to `0.05`.
-#' @param ... Ignored.
-#'
-#' @details
-#' The function aggregates the results for each centrality measure across
-#' multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and
-#' calculates the mean and the desired quantiles for each proportion.
-#' The confidence intervals (CIs) are computed based on the quantiles
-#' and displayed in the plot.
-#'
-#' If no valid data is available for a centrality measure
-#' (e.g., missing or NA values), the function skips that measure with a warning.
-#'
-#' The plot includes:
-#'
-#' * The mean correlation for each centrality measure as a function of the
-#'   proportion of dropped cases.
-#' * Shaded confidence intervals representing CIs for each centrality measure.
-#' * A horizontal dashed line at the threshold value used for calculating
-#'   the CS-coefficient.
-#' * A subtitle listing the CS-coefficients for each centrality measure.
-#'
-#' @return A `ggplot` object displaying the stability analysis plot.
-#' @examples
-#' model <- tna(engagement)
-#' cs <- estimate_cs(model, iter = 10)
-#' plot(cs)
-#'
-plot.tna_stability <- function(x, level = 0.05, ...) {
-  stopifnot_(
-    is_tna_stability(x),
-    "Argument {.arg x} must be a {.cls tna_stability} object."
-  )
-  check_probability(level)
-  x$detailed_results <- NULL
-  x_names <- names(x)
-  drop_prop <- attr(x, "drop_prop")
-  threshold <- attr(x, "threshold")
-  measure_data <- vector(mode = "list", length = length(x))
-  cs_subtitle <- character(length(x))
-  for (i in seq_along(x)) {
-    measure <- x_names[i]
-    corr <- x[[measure]]$correlations
-    # Check if measure_results has valid dimensions
-    if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
-      warning_(
-        c("Warning: No valid data for measure ", measure, ". Skipping.")
-      )
-      next
-    }
-    means <- apply(corr, 2, mean, na.rm = TRUE)
-    ci_lower <- apply(corr, 2, stats::quantile, probs = level / 2)
-    ci_upper <- apply(corr, 2, stats::quantile, probs = 1 - level / 2)
-    measure_data[[i]] <- data.frame(
-      measure = measure,
-      proportion = drop_prop,
-      correlation = means,
-      lower = ci_lower,
-      upper = ci_upper
-    )
-    cs_coef <- x[[measure]]$cs_coefficient
-    cs_subtitle[i] <- paste0(
-      measure,
-      " CS = ",
-      round(cs_coef, 2)
-    )
-  }
-  plot_data <- dplyr::bind_rows(measure_data)
-  stopifnot_(
-    nrow(plot_data) > 0,
-    "No valid data to plot."
-  )
-  cs_subtitle <- paste0(cs_subtitle, collapse = "; ")
-  ggplot2::ggplot(
-    plot_data,
-    ggplot2::aes(
-      x = !!rlang::sym("proportion"),
-      y = !!rlang::sym("correlation"),
-      color = !!rlang::sym("measure")
-    )
-  ) +
-    ggplot2::geom_ribbon(
-      ggplot2::aes(
-        ymin = !!rlang::sym("lower"),
-        ymax = !!rlang::sym("upper"),
-        fill = !!rlang::sym("measure")
-      ),
-      alpha = 0.2
-    ) +
-    ggplot2::geom_line() +
-    ggplot2::geom_hline(
-      yintercept = threshold,
-      linetype = "dashed",
-      color = "gray50"
-    ) +
-    ggplot2::geom_hline(
-      yintercept = 0,
-      linetype = "solid",
-      color = "gray25"
-    ) +
-    ggplot2::labs(
-      title = "Centrality Stability Analysis",
-      subtitle = paste0("CS-Coeficients: ", cs_subtitle),
-      x = "Proportion of Cases Dropped",
-      y = "Correlation with Original Centrality",
-      color = "Centrality Measure",
-      fill = "Centrality Measure"
-    ) +
-    ggplot2::scale_x_continuous(breaks = drop_prop) +
-    ggplot2::theme_minimal() +
-    ggplot2::ylim(-1, 1)
-}
 
 #' Plot Communities
 #'
@@ -466,6 +344,142 @@ plot.tna_permutation <- function(x, ...) {
   )
 }
 
+#' Plot Centrality Stability Results
+#'
+#' This function visualizes the centrality stability results produced by the
+#' `estimate_centrality_stability` function. It shows how different centrality
+#' measures' correlations change as varying proportions of cases are dropped,
+#' along with their confidence intervals (CIs).
+#'
+#' @export
+#' @param x A `tna_stability` object produced by `estimate_cs`.
+#' @param level A `numeric` value representing the significance level for
+#' the confidence intervals. Defaults to `0.05`.
+#' @param ... Ignored.
+#'
+#' @details
+#' The function aggregates the results for each centrality measure across
+#' multiple proportions of dropped cases (e.g., 0.1, 0.2, ..., 0.9) and
+#' calculates the mean and the desired quantiles for each proportion.
+#' The confidence intervals (CIs) are computed based on the quantiles
+#' and displayed in the plot.
+#'
+#' If no valid data is available for a centrality measure
+#' (e.g., missing or NA values), the function skips that measure with a warning.
+#'
+#' The plot includes:
+#'
+#' * The mean correlation for each centrality measure as a function of the
+#'   proportion of dropped cases.
+#' * Shaded confidence intervals representing CIs for each centrality measure.
+#' * A horizontal dashed line at the threshold value used for calculating
+#'   the CS-coefficient.
+#' * A subtitle listing the CS-coefficients for each centrality measure.
+#'
+#' @return A `ggplot` object displaying the stability analysis plot.
+#' @examples
+#' model <- tna(engagement)
+#' cs <- estimate_cs(model, iter = 10)
+#' plot(cs)
+#'
+plot.tna_stability <- function(x, level = 0.05, ...) {
+  stopifnot_(
+    is_tna_stability(x),
+    "Argument {.arg x} must be a {.cls tna_stability} object."
+  )
+  check_probability(level)
+  x$detailed_results <- NULL
+  x_names <- names(x)
+  drop_prop <- attr(x, "drop_prop")
+  threshold <- attr(x, "threshold")
+  measure_data <- vector(mode = "list", length = length(x))
+  cs_subtitle <- character(length(x))
+  for (i in seq_along(x)) {
+    measure <- x_names[i]
+    corr <- x[[measure]]$correlations
+    # Check if measure_results has valid dimensions
+    if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
+      warning_(
+        c("Warning: No valid data for measure ", measure, ". Skipping.")
+      )
+      next
+    }
+    means <- apply(corr, 2, mean, na.rm = TRUE)
+    ci_lower <- apply(
+      corr,
+      2L,
+      stats::quantile,
+      probs = level / 2,
+      na.rm = TRUE
+    )
+    ci_upper <- apply(
+      corr,
+      2L,
+      stats::quantile,
+      probs = 1 - level / 2,
+      na.rm = TRUE
+    )
+    measure_data[[i]] <- data.frame(
+      measure = measure,
+      proportion = drop_prop,
+      correlation = means,
+      lower = ci_lower,
+      upper = ci_upper
+    )
+    cs_coef <- x[[measure]]$cs_coefficient
+    cs_subtitle[i] <- paste0(
+      measure,
+      " CS = ",
+      round(cs_coef, 2)
+    )
+  }
+  plot_data <- dplyr::bind_rows(measure_data)
+  stopifnot_(
+    nrow(plot_data) > 0,
+    "No valid data to plot."
+  )
+  cs_subtitle <- paste0(cs_subtitle, collapse = "; ")
+  ggplot2::ggplot(
+    plot_data,
+    ggplot2::aes(
+      x = !!rlang::sym("proportion"),
+      y = !!rlang::sym("correlation"),
+      color = !!rlang::sym("measure")
+    )
+  ) +
+    ggplot2::geom_ribbon(
+      ggplot2::aes(
+        ymin = !!rlang::sym("lower"),
+        ymax = !!rlang::sym("upper"),
+        fill = !!rlang::sym("measure")
+      ),
+      alpha = 0.2
+    ) +
+    ggplot2::geom_line() +
+    ggplot2::geom_hline(
+      yintercept = threshold,
+      linetype = "dashed",
+      color = "gray50"
+    ) +
+    ggplot2::geom_hline(
+      yintercept = 0,
+      linetype = "solid",
+      color = "gray25"
+    ) +
+    ggplot2::labs(
+      title = "Centrality Stability Analysis",
+      subtitle = paste0("CS-Coeficients: ", cs_subtitle),
+      x = "Proportion of Cases Dropped",
+      y = "Correlation with Original Centrality",
+      color = "Centrality Measure",
+      fill = "Centrality Measure"
+    ) +
+    ggplot2::scale_x_continuous(breaks = drop_prop) +
+    ggplot2::theme_minimal() +
+    ggplot2::ylim(-1, 1)
+}
+
+
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
   x <- stats::reshape(
     as.data.frame(x),
@@ -497,7 +511,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
         x = !!rlang::sym("rank"),
         y = !!rlang::sym("value")
       ),
-      size = 4
+      linewidth = 4
     ) +
     ggplot2::coord_flip(clip = "off") +
     onlyif(
@@ -535,49 +549,49 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     ggplot2::ylab("")
 }
 
-plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
-  # TODO handle colors and test
-  measures <- names(x)
-  n_clusters <- length(unique(x$Cluster))
-  dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
-    data.frame() |>
-    stats::reshape(
-      varying = measures,
-      v.names = "value",
-      timevar = "name",
-      times = measures,
-      direction = "long"
-    ) |>
-    ggplot2::ggplot(
-      ggplot2::aes(
-        x = !!rlang::sym("value"),
-        y = !!rlang::sym("State"),
-        color = !!rlang::sym("Cluster"),
-        fill = !!rlang::sym("Cluster"),
-        group = !!rlang::sym("Cluster")
-      )
-    ) +
-    ggplot2::facet_wrap("name", ncol = 4) +
-    ggplot2::geom_path() +
-    ifelse_(
-      length(unique(colors)) == n_clusters,
-      ggplot2::scale_color_manual(values = colors),
-      ggplot2::scale_color_discrete()
-    ) +
-    ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
-    ifelse_(
-      length(unique(colors)) == n_clusters,
-      ggplot2::scale_fill_manual(values = colors),
-      ggplot2::scale_fill_discrete()
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::xlab("Centrality") +
-    ggplot2::ylab("") +
-    ggplot2::theme(
-      panel.spacing = ggplot2::unit(1, "lines"),
-      legend.position = "bottom"
-    )
-}
+# plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
+#   # TODO handle colors and test
+#   measures <- names(x)
+#   n_clusters <- length(unique(x$Cluster))
+#   dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
+#     data.frame() |>
+#     stats::reshape(
+#       varying = measures,
+#       v.names = "value",
+#       timevar = "name",
+#       times = measures,
+#       direction = "long"
+#     ) |>
+#     ggplot2::ggplot(
+#       ggplot2::aes(
+#         x = !!rlang::sym("value"),
+#         y = !!rlang::sym("State"),
+#         color = !!rlang::sym("Cluster"),
+#         fill = !!rlang::sym("Cluster"),
+#         group = !!rlang::sym("Cluster")
+#       )
+#     ) +
+#     ggplot2::facet_wrap("name", ncol = 4) +
+#     ggplot2::geom_path() +
+#     ifelse_(
+#       length(unique(colors)) == n_clusters,
+#       ggplot2::scale_color_manual(values = colors),
+#       ggplot2::scale_color_discrete()
+#     ) +
+#     ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
+#     ifelse_(
+#       length(unique(colors)) == n_clusters,
+#       ggplot2::scale_fill_manual(values = colors),
+#       ggplot2::scale_fill_discrete()
+#     ) +
+#     ggplot2::theme_minimal() +
+#     ggplot2::xlab("Centrality") +
+#     ggplot2::ylab("") +
+#     ggplot2::theme(
+#       panel.spacing = ggplot2::unit(1, "lines"),
+#       legend.position = "bottom"
+#     )
+# }
 
 #' Plot the difference network between two models
 #'
@@ -604,6 +618,7 @@ plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
 plot_compare <- function(x, y, cut, minimum, ...) {
   check_tna(x)
   check_tna(y)
+  # TODO check that x and y are comparable
   stopifnot_(
     all(x$labels == y$labels),
     "{.arg x} and {.arg y} must have the same labels."
@@ -613,7 +628,11 @@ plot_compare <- function(x, y, cut, minimum, ...) {
   piesign <- ifelse(x$inits > y$inits, "#009900", "red")
   #pos_col <- c("#009900", "darkgreen")
   #neg_col <- c("#BF0000", "red")
-  diff <- tna(x$weights - y$weights, inits = pie)
+  diff <- build_model_(
+    x$weights - y$weights,
+    type = attr(x, "type"),
+    inits = pie
+  )
   if (!is.null(x$data)) {
     colors <- attr(x$data, "colors")
   }
