@@ -30,11 +30,13 @@ Imports:
     RColorBrewer,
     rlang,
     tibble,
+    tidyr,
     stats
 Suggests: 
     gt,
     knitr,
     rmarkdown,
+    seqHMM,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr

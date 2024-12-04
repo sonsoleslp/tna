@@ -24,7 +24,7 @@ Kivimaki, I., Lebichot, B., Saramaki, J., Saerens, M. (2016).
 Two betweenness centrality measures based on Randomized Shortest Paths.
 \emph{Scientific Reports}, 6, 19668.
 
-Serrano, M. A., Boguna, M., & Vespignani, A. (2009).
+Serrano, M. A., Boguna, M., Vespignani, A. (2009).
 Extracting the multiscale backbone of complex weighted networks.
 \emph{Proceedings of the National Academy of Sciences}, 106, 6483-6488.
 

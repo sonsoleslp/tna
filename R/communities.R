@@ -125,3 +125,18 @@ communities.tna <- function(x, gamma = 1, ...) {
     tna = x
   )
 }
+
+#' @export
+#' @family clusters
+#' @rdname communities
+communities.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) communities.tna(i, ...)),
+    class = "group_tna_communities"
+  )
+}

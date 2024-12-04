@@ -3,20 +3,33 @@
 \name{pruning_details}
 \alias{pruning_details}
 \alias{pruning_details.tna}
+\alias{pruning_details.group_tna}
 \title{Print Detailed Information on the Pruning Results}
 \usage{
 pruning_details(x, ...)
 
 \method{pruning_details}{tna}(x, removed_edges = TRUE, ...)
+
+\method{pruning_details}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A pruned \code{group_tna} object.}
 
-\item{...}{Ignored.}
+\item{...}{Arguments passed to \code{\link[=pruning_details.tna]{pruning_details.tna()}}.}
 
 \item{removed_edges}{Should a \code{data.frame} of removed edges be printed?
 The default is \code{FALSE}.}
 }
 \description{
 Print Detailed Information on the Pruning Results
+
+Print Detailed Information on the Pruning Results
 }
+\seealso{
+Evaluation and validation functions
+\code{\link{bootstrap}()},
+\code{\link{permutation_test}()},
+\code{\link{prune}()},
+\code{\link{prune.tna}()}
+}
+\concept{evaluation}

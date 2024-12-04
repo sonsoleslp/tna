@@ -52,7 +52,7 @@ test_that("pruning function fails with invalid tna object", {
   class(invalid_tna_object) <- "not_tna"
   expect_error(
     prune(invalid_tna_object, threshold = 0.1),
-    "Argument `x` must be a <tna> object."
+    "no applicable method for 'prune' applied to an object of class \"not_tna\""
   )
 })
 

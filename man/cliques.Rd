@@ -3,11 +3,14 @@
 \name{cliques}
 \alias{cliques}
 \alias{cliques.tna}
+\alias{cliques.group_tna}
 \title{Identify Cliques in a Transition Network}
 \usage{
 cliques(x, ...)
 
 \method{cliques}{tna}(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
+
+\method{cliques}{group_tna}(x, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
@@ -45,3 +48,31 @@ model <- tna(engagement)
 cliq <- cliques(model, size = 2)
 
 }
+\seealso{
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{centralities}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
+\code{\link{estimate_cs}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
+}
+\concept{clusters}

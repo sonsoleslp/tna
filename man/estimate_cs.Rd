@@ -3,6 +3,8 @@
 \name{estimate_cs}
 \alias{estimate_cs}
 \alias{estimate_centrality_stability}
+\alias{estimate_centrality_stability.tna}
+\alias{estimate_centrality_stability.group_tna}
 \title{Estimate Centrality Stability}
 \usage{
 estimate_cs(
@@ -16,10 +18,13 @@ estimate_cs(
   threshold = 0.7,
   certainty = 0.95,
   detailed = FALSE,
-  progressbar = FALSE
+  progressbar = FALSE,
+  ...
 )
 
-estimate_centrality_stability(
+estimate_centrality_stability(x, ...)
+
+\method{estimate_centrality_stability}{tna}(
   x,
   loops = FALSE,
   normalize = FALSE,
@@ -30,8 +35,11 @@ estimate_centrality_stability(
   threshold = 0.7,
   certainty = 0.95,
   detailed = FALSE,
-  progressbar = FALSE
+  progressbar = FALSE,
+  ...
 )
+
+\method{estimate_centrality_stability}{group_tna}(x, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object representing the temporal network analysis data.
@@ -70,6 +78,8 @@ The default is \code{FALSE}.}
 
 \item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed
 Defaults to \code{FALSE}}
+
+\item{...}{Ignored.}
 }
 \value{
 A \code{tna_stability} object which is a \code{list} with an element for each
@@ -114,3 +124,31 @@ estimate_cs(
 )
 
 }
+\seealso{
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{centralities}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
+}
+\concept{clusters}

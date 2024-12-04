@@ -4,6 +4,7 @@
 \alias{deprune}
 \alias{deprune.tna}
 \alias{reprune.tna}
+\alias{deprune.group_tna}
 \title{Restore a Pruned Transition Network Analysis Model}
 \usage{
 deprune(x, ...)
@@ -11,9 +12,11 @@ deprune(x, ...)
 \method{deprune}{tna}(x, ...)
 
 \method{reprune}{tna}(x, ...)
+
+\method{deprune}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A \code{tna} or \code{group_tna} object.}
 
 \item{...}{Ignored.}
 }
@@ -25,3 +28,31 @@ model <- tna(engagement)
 pruned_model <- prune(model, method = "threshold", threshold = 0.1)
 depruned_model <- deprune(pruned_model) # restore original model
 }
+\seealso{
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{centralities}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{estimate_cs}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
+}
+\concept{clusters}

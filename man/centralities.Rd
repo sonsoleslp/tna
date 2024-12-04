@@ -4,6 +4,7 @@
 \alias{centralities}
 \alias{centralities.tna}
 \alias{centralities.matrix}
+\alias{centralities.group_tna}
 \title{Calculate Centrality Measures for a Transition Matrix}
 \usage{
 centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
@@ -11,9 +12,11 @@ centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
 \method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
 
 \method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures, ...)
+
+\method{centralities}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object or a  square \code{matrix} representing edge weights.}
+\item{x}{A \code{tna} object, a \code{group_tna} object, or a  square \code{matrix} representing edge weights.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{FALSE}).}
@@ -87,5 +90,32 @@ Core functions
 \code{\link{plot.tna}()},
 \code{\link{plot.tna_centralities}()},
 \code{\link{plot_compare}()}
+
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
+\code{\link{estimate_cs}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
 }
+\concept{clusters}
 \concept{core}

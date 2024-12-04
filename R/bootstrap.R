@@ -132,3 +132,18 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
     class = "tna_bootstrap"
   )
 }
+
+#' @export
+#' @family clusters
+#' @rdname bootstrap
+bootstrap.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) bootstrap.tna(i, ...)),
+    class = "group_tna_bootstrap"
+  )
+}

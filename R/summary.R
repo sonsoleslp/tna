@@ -9,7 +9,7 @@
 #' @param ... Ignored
 #'
 #' @details
-#' The function extracts the `igraph` network for the specified cluster and
+#' The function extracts the `igraph` network  and
 #' computes the following network metrics:
 #'
 #'   * Node count: Total number of nodes in the network.
@@ -113,5 +113,82 @@ summary.tna_bootstrap <- function(object, ...) {
   structure(
     object$summary,
     class = c("summary.tna_bootstrap", "data.frame")
+  )
+}
+
+#' Calculate Summary of Network Metrics for a grouped Transition Network
+#'
+#' This function calculates a variety of network metrics for a `tna` object.
+#' It computes key metrics such as node and edge counts, network density,
+#' mean distance, strength measures, degree centrality, and reciprocity.
+#'
+#' @export
+#' @family clusters
+#' @rdname summary
+#' @param object A `group_tna` object.
+#' @param combined A logical indicating whether the summary results should be
+#' combined into a single data frame for all clusters (defaults to `TRUE`)
+#' @param ... Ignored
+#' @details
+#' The function extracts the `igraph` network for each cluster and
+#' computes the following network metrics:
+#'
+#'   * Node count: Total number of nodes in the network.
+#'   * Edge count: Total number of edges in the network.
+#'   * Network density: Proportion of possible edges that
+#'     are present in the network.
+#'   * Mean distance: The average shortest path length between nodes.
+#'   * Mean and standard deviation of out-strength and in-strength: Measures
+#'     of the total weight of outgoing and incoming edges for each node.
+#'   * Mean and standard deviation of out-degree: The number of outgoing
+#'     edges from each node.
+#'   * Centralization of out-degree and in-degree: Measures of how
+#'     centralized the network is based on the degrees of nodes.
+#'   * Reciprocity: The proportion of edges that are reciprocated
+#'     (i.e., mutual edges between nodes).
+#'
+#' @return A `summary.group_tna` object which is a `list` of `list`s or a
+#' combined `data.frame`  containing the following network metrics:
+#'
+#'   * `node_count`: The total number of nodes.
+#'   * `edge_count`: The total number of edges.
+#'   * `network_Density`: The density of the network.
+#'   * `mean_distance`: The mean shortest path length.
+#'   * `mean_out_strength`: The mean out-strength of nodes.
+#'   * `sd_out_strength`: The standard deviation of out-strength.
+#'   * `mean_in_strength`: The mean in-strength of nodes.
+#'   * `sd_in_strength`: The standard deviation of in-strength.
+#'   * `mean_out_degree`: The mean out-degree of nodes.
+#'   * `sd_out_degree`: The standard deviation of out-degree.
+#'   * `centralization_out_degree`: The centralization of out-degree.
+#'   * `centralization_in_degree`: The centralization of in-degree.
+#'   * `reciprocity`: The reciprocity of the network.
+#'
+#' @examples
+#' group <- c(rep("High", 100), rep("Low", 100))
+#' model <- group_model(engagement, group = group)
+#' summary(model)
+#'
+summary.group_tna <- function(object, combined = TRUE, ...) {
+  check_missing(object)
+  stopifnot_(
+    is_group_tna(object),
+    "Argument {.arg object} must a {.cls group_tna} object."
+  )
+  if (!combined) {
+    out  <- lapply(object, \(i) summary(i))
+    out_class <- "summary.group_tna"
+  } else {
+    out <- dplyr::bind_rows(
+      lapply(object, \(i) summary.tna(i)),
+      .id = "Cluster"
+    ) |>
+      tidyr::pivot_wider(names_from = "Cluster", values_from = "value")
+    out_class <- c("summary.group_tna", "tbl_df", "tbl", "data.frame")
+  }
+  structure(
+    out,
+    class = out_class,
+    combined = combined
   )
 }

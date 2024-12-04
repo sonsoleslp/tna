@@ -166,7 +166,6 @@ plot.tna <- function(x, labels, colors, pie,
 #'   the same values are used for all axes.
 #' @param reorder A `logical` value indicating whether to reorder the values
 #'   for each centrality in a descending order. The default is `TRUE`.
-#' @param model An object of class `tna`.
 #' @param colors The colors for each node (default is the model colors
 #'  if the `tna` model object is passed, otherwise `"black"`).
 #' @param labels A `logical` value indicating whether to show the centrality
@@ -179,36 +178,15 @@ plot.tna <- function(x, labels, colors, pie,
 #' cm <- centralities(tna_model)
 #' plot(cm, ncol = 4, reorder = TRUE)
 #'
-plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
-                                  ncol = 3, scales = c("free_x", "fixed"),
+plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
+                                  scales = c("free_x", "fixed"),
                                   colors, labels = TRUE, ...) {
   stopifnot_(
     is_tna_centralities(x),
     "Argument {.arg x} must be a {.cls tna_centralities} object."
   )
-  check_flag(reorder)
-  check_flag(labels)
-  if (missing(colors) && !is.null(attr(x, "colors"))) {
-    colors <- attr(x, "colors")
-  }
-  if (missing(colors)) {
-    colors <- rep("black", length.out = length(unique(x$State)))
-  } else if (!is.list(colors) && length(colors) == 1) {
-    colors <- rep(colors, length.out = length(unique(x$State)))
-  }
-  scales <- onlyif(is.character(scales), tolower(scales))
-  scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
-  stopifnot_(
-    !inherits(scales, "try-error"),
-    "Argument {.arg scales} must be either {.val free_x} or {.val fixed}."
-  )
-  scales <- ifelse_(scales == "free_x", "free", "free_y")
-  plot_centralities_single(x, reorder, ncol, scales, colors, labels)
-  # ifelse_(
-  #   "Cluster" %in% names(x),
-  #   plot_centralities_multiple(x, ncol, scales, colors, labels),
-  #   plot_centralities_single(x, reorder, ncol, scales, colors, labels)
-  # )
+  plot_centralities_(x, reorder, ncol, scales, colors, labels)
+
 }
 
 #' Plot Cliques of a TNA Network
@@ -486,6 +464,34 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     ggplot2::ylim(-1, 1)
 }
 
+#' Plot Centrality Measures
+#'
+#' @inheritParams plot.tna_centralities
+#' @noRd
+plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
+  check_flag(reorder)
+  check_flag(labels)
+  if (missing(colors) && !is.null(attr(x, "colors"))) {
+    colors <- attr(x, "colors")
+  }
+  if (missing(colors)) {
+    colors <- rep("black", length.out = length(unique(x$State)))
+  } else if (!is.list(colors) && length(colors) == 1) {
+    colors <- rep(colors, length.out = length(unique(x$State)))
+  }
+  scales <- onlyif(is.character(scales), tolower(scales))
+  scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
+  stopifnot_(
+    !inherits(scales, "try-error"),
+    "Argument {.arg scales} must be either {.val free_x} or {.val fixed}."
+  )
+  scales <- ifelse_(scales == "free_x", "free", "free_y")
+  ifelse_(
+    is_tna_centralities(x),
+    plot_centralities_single(x, reorder, ncol, scales, colors, labels),
+    plot_centralities_multiple(x, reorder, ncol, scales, colors, labels)
+  )
+}
 
 #' Plot Centralities for a Single Cluster
 #'
@@ -560,49 +566,51 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     ggplot2::ylab("")
 }
 
-# plot_centralities_multiple <- function(x, ncol, scales, colors, labels) {
-#   # TODO handle colors and test
-#   measures <- names(x)
-#   n_clusters <- length(unique(x$Cluster))
-#   dplyr::mutate(x, Cluster = factor(!!rlang::sym("Cluster"))) |>
-#     data.frame() |>
-#     stats::reshape(
-#       varying = measures,
-#       v.names = "value",
-#       timevar = "name",
-#       times = measures,
-#       direction = "long"
-#     ) |>
-#     ggplot2::ggplot(
-#       ggplot2::aes(
-#         x = !!rlang::sym("value"),
-#         y = !!rlang::sym("State"),
-#         color = !!rlang::sym("Cluster"),
-#         fill = !!rlang::sym("Cluster"),
-#         group = !!rlang::sym("Cluster")
-#       )
-#     ) +
-#     ggplot2::facet_wrap("name", ncol = 4) +
-#     ggplot2::geom_path() +
-#     ifelse_(
-#       length(unique(colors)) == n_clusters,
-#       ggplot2::scale_color_manual(values = colors),
-#       ggplot2::scale_color_discrete()
-#     ) +
-#     ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
-#     ifelse_(
-#       length(unique(colors)) == n_clusters,
-#       ggplot2::scale_fill_manual(values = colors),
-#       ggplot2::scale_fill_discrete()
-#     ) +
-#     ggplot2::theme_minimal() +
-#     ggplot2::xlab("Centrality") +
-#     ggplot2::ylab("") +
-#     ggplot2::theme(
-#       panel.spacing = ggplot2::unit(1, "lines"),
-#       legend.position = "bottom"
-#     )
-# }
+plot_centralities_multiple <- function(x, reorder, ncol,
+                                       scales, colors, labels) {
+  # TODO handle colors and test
+  measures <- names(x) [3:ncol(x)]
+  n_clusters <- length(unique(x$Group))
+  dplyr::mutate(x, State = factor(!!rlang::sym("State"))) |>
+    data.frame() |>
+    stats::reshape(
+      varying = measures,
+      v.names = "value",
+      timevar = "name",
+      times = measures,
+      direction = "long"
+    ) |>
+    ggplot2::ggplot(
+      ggplot2::aes(
+        x = !!rlang::sym("value"),
+        y = !!rlang::sym("State"),
+        color = !!rlang::sym("Group"),
+        fill = !!rlang::sym("Group"),
+        group = !!rlang::sym("Group")
+      )
+    ) +
+    ggplot2::facet_wrap("name", ncol = ncol, scales = scales) +
+    ggplot2::geom_path() +
+    ifelse_(
+      !is.null(colors) & (length(unique(colors)) == n_clusters),
+      ggplot2::scale_color_manual(values = colors),
+      ggplot2::scale_color_discrete()
+    ) +
+    ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
+    ifelse_(
+      !is.null(colors) & (length(unique(colors)) == n_clusters),
+      ggplot2::scale_fill_manual(values = colors),
+      ggplot2::scale_fill_discrete()
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::xlab("Centrality") +
+    ggplot2::ylab("") +
+    ggplot2::theme(
+      panel.spacing = ggplot2::unit(1, "lines"),
+      legend.position = "bottom"
+    )
+}
+
 
 #' Plot the difference network between two models
 #'
@@ -646,6 +654,8 @@ plot_compare <- function(x, y, ...) {
   if (!is.null(x$data)) {
     colors <- attr(x$data, "colors")
   }
+  weights_abs <- abs(x$weights)
+  q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
   plot.tna(
     x = diff,
     pie = pie,
@@ -690,5 +700,136 @@ plot_model <- function(x, labels, colors,
     mar = mar,
     theme = theme,
     ...
+  )
+}
+
+# Clusters ----------------------------------------------------------------
+
+#' Plot a Histogram of Edge Weights for a `group_tna` Object.
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna` object.
+#' @param ... Additional arguments passed to [graphics::hist()].
+hist.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {group_tna} object."
+  )
+  lapply(x, \(i) hist.tna(i, ...))
+}
+
+#' Plot a grouped Transition Network Analysis Model
+#'
+#' @param x A `group_model` object.
+#' @param title A title for each plot. It can be a single string (the same one
+#'  will be used for all plots) or a list (one per group)
+#' @param ... Same as [plot.tna()].
+#' @rdname plot
+#' @return NULL
+#' @family clusters
+#' @export
+plot.group_tna <- function(x, title, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {.cl group_tna} object."
+  )
+  if (missing(title)) {
+    title = names(x)
+  } else if (length(title) == 1) {
+    title = rep(title, length(x))
+  }
+  for (i in seq_along(x)) {
+    plot(x[[i]], title = title[i], ...)
+  }
+}
+
+#' Plot Centrality Measures
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_centralities` object.
+#' @inheritParams plot.tna_centralities
+plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 4,
+                                        scales = c("free_x", "fixed"),
+                                        colors, labels = TRUE, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna_centralities(x),
+    "Argument {.arg x} must be a {.cls group_tna_centralities} object."
+  )
+  plot_centralities_(x, reorder, ncol, scales, colors, labels)
+}
+
+#' Plot Found Cliques
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_cliques` object.
+#' @param title A `character` vector of titles to use for each plot.
+#' @param ... Arguments passed to [plot.tna_cliques()].
+plot.group_tna_cliques <- function(x, title, ...) {
+  stopifnot_(
+    !missing(x),
+    "Argument {.arg x} is missing."
+  )
+  stopifnot_(
+    is_group_tna_cliques(x),
+    "Argument {.arg x} must be a {.cls group_tna_cliques} object."
+  )
+  if (missing(title)) {
+    title = names(x)
+  } else if (length(title) == 1) {
+    title = rep(title, length(x))
+  }
+  Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
+}
+
+#' Plot Centrality Stability Results
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_stability` object.
+#' @param ... Arguments passed to [plot.tna_stability()].
+plot.group_tna_stability <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna_stability(x),
+    "Argument {.arg x} must be a {.cls group_tna_stability} object."
+  )
+  lapply(x, \(i) plot.tna_stability(i, ...))
+}
+
+#' Plot Found Communities
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_communities` object.
+#' @param title A `character` vector of titles to use for each plot.
+#' @param colors A `character` vector of colors to use.
+#' @param ... Arguments passed to [plot.tna_communities()].
+plot.group_tna_communities <- function(x, title = names(x),
+                                       colors = lapply(x, \(x) NULL), ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna_communities(x),
+    "Argument {.arg x} must be a {.cls group_tna_communities} object."
+  )
+  if (is.null(colors) | (is.vector(colors) & is.atomic(colors))) {
+    colors <- lapply(x, \(x) colors)
+  }
+  if (is.null(title) |
+      (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
+    title <- lapply(x, \(x) title)
+  }
+  Map(
+    function(y, i, j) {
+      plot.tna_communities(y, title = i, colors = j, ...)
+    },
+    x,
+    title,
+    colors
   )
 }

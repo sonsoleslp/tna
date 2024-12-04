@@ -36,7 +36,7 @@
 #' @export
 #' @family core
 #' @rdname centralities
-#' @param x A `tna` object or a  square `matrix` representing edge weights.
+#' @param x A `tna` object, a `group_tna` object, or a  square `matrix` representing edge weights.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `FALSE`).
 #' @param normalize  A `logical` value indicating whether the centralities
@@ -196,9 +196,7 @@ diffusion <- function(mat) {
 #' The default is `FALSE`.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
 #' Defaults to `FALSE`
-#'
-#' @details
-
+#' @param ... Ignored.
 #'
 #' @return A `tna_stability` object which is a `list` with an element for each
 #' `measure` with the following elements:
@@ -226,7 +224,7 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
                         iter = 1000, method = "pearson",
                         drop_prop = seq(0.1, 0.9, by = 0.1), threshold = 0.7,
                         certainty = 0.95, detailed = FALSE,
-                        progressbar = FALSE) {
+                        progressbar = FALSE, ...) {
   check_tna_seq(x)
   check_flag(loops)
   check_flag(normalize)
@@ -353,7 +351,14 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
 
 #' @rdname estimate_cs
 #' @export
-estimate_centrality_stability <- estimate_cs
+estimate_centrality_stability <- function(x, ...) {
+  UseMethod("estimate_centrality_stability")
+}
+
+
+#' @rdname estimate_cs
+#' @export
+estimate_centrality_stability.tna <- estimate_cs
 
 
 #' Calculate Centrality Stability
@@ -400,6 +405,43 @@ wcc <- function(mat) {
   num <- diag(mat %*% mat %*% mat)
   den <- .colSums(mat, n, n)^2 - .colSums(mat^2, n, n)
   num / den
+}
+
+
+# Clusters ----------------------------------------------------------------
+
+#' @export
+#' @family clusters
+#' @rdname centralities
+centralities.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {.cls group_tna} object."
+  )
+  grc <- dplyr::bind_rows(
+    lapply(x, \(i) data.frame(centralities.tna(i, ...))),
+    .id = "Group"
+  )
+  structure(
+    grc,
+    class = c("group_tna_centralities", "tbl_df", "tbl", "data.frame")
+  )
+}
+
+#' @export
+#' @family clusters
+#' @rdname estimate_cs
+estimate_centrality_stability.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) estimate_centrality_stability.tna(i, ...)),
+    class = "group_tna_stability"
+  )
 }
 
 # Available centrality measures -----------------------------------------------
