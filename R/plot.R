@@ -445,7 +445,7 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #'
 #' @export
 #' @param x A `tna_permutation` object.
-#' @param ... Arguments passed to [plot_tna()].
+#' @param ... Arguments passed to [plot_model()].
 #' @examples
 #' model_x <- tna(group_regulation[1:1000, ])
 #' model_y <- tna(group_regulation[1001:2000, ])
@@ -458,7 +458,7 @@ plot.tna_permutation <- function(x, ...) {
     is_tna_permutation(x),
     "Argument {.arg x} must be a {.cls tna_permutation} object."
   )
-  plot_tna(
+  plot_model(
     x$edges$diffs_sig,
     labels = attr(x, "labels"),
     colors = attr(x, "colors"),
@@ -636,7 +636,7 @@ plot_compare <- function(x, y, cut, minimum, ...) {
 #' @return See [plot.tna()].
 #' @examples
 #' m <- matrix(rexp(25), 5, 5)
-#' plot_tna(m)
+#' plot_model(m)
 #'
 plot_model <- function(x, labels, colors,
                        edge.labels = TRUE, layout = "circle",

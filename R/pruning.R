@@ -26,12 +26,6 @@
 #' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
 #' @return A pruned `tna` object. Details on the pruning can be viewed with
 #' [pruning_details()]. The original model can be restored with [deprune()].
-#' @references
-#' Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
-#' multiscale backbone of complex weighted networks.
-#' *Proceedings of the National Academy of Sciences, 106*,
-#' 6483-6488. \doi{10.1073/pnas.0808904106}
-#'
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)

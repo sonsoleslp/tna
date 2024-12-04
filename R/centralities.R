@@ -48,19 +48,6 @@
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
-#' @references
-#' Banerjee, A., A. Chandrasekhar, E. Duflo, and M. Jackson (2014).
-#' Gossip: Identifying Central Individuals in a Social Network.
-#' Working Paper.
-#'
-#' Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016).
-#' Two betweenness centrality measures based on Randomized Shortest Paths.
-#' Scientific Reports, 6, 19668.
-#'
-#' Zhang, B., & Horvath, S. (2005).
-#' A general framework for weighted gene co-expression network analysis.
-#' Statistical Applications in Genetics and Molecular Biology, 4(1).
-
 #' @examples
 #' model <- tna(engagement)
 #'

@@ -46,6 +46,6 @@ Plot a Transition Network Model from a Matrix of Edge Weights
 }
 \examples{
 m <- matrix(rexp(25), 5, 5)
-plot_tna(m)
+plot_model(m)
 
 }

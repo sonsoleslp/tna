@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
 
-\item{...}{Arguments passed to \code{\link[=plot_tna]{plot_tna()}}.}
+\item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }
 \description{
 Plot the Significant Differences from a Permutation Test
