@@ -111,7 +111,13 @@ subtitle.
 }
 \examples{
 model <- tna(engagement)
-estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 10)
+# Small number of iterations and drop proportions for CRAN
+estimate_cs(
+  model,
+  drop_prop = seq(0.3, 0.9, by = 0.2),
+  measures = c("InStrength", "OutStrength"),
+  iter = 10
+)
 
 }
 \seealso{

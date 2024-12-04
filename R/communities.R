@@ -43,7 +43,7 @@ communities.tna <- function(x, gamma = 1, ...) {
     "Argument {.arg gamma} must be a single {.cls numeric} value."
   )
   g <- as.igraph(x)
-  g_un <- igraph::as.undirected(
+  g_un <- igraph::as_undirected(
     g,
     mode = "collapse",
     edge.attr.comb = list(weight = "sum")

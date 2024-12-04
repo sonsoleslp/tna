@@ -10,6 +10,28 @@ including functions for building TNA models, plotting transition networks,
 and calculating centrality measures. The package relies on the \code{qgraph}
 and \code{igraph} for network plotting and centrality measure calculations.
 }
+\references{
+Saqr M., López-Pernas S., Törmänen T., Kaliisa R., Misiejuk K., Tikka S. (2024).
+Transition Network Analysis: A Novel Framework for Modeling, Visualizing,
+and Identifying the Temporal Patterns of Learners and Learning Processes.
+\url{https://arxiv.org/abs/2411.15486}
+
+Banerjee A., Chandrasekhar A., Duflo E., Jackson M. (2014).
+Gossip: Identifying Central Individuals in a Social Network.
+Working Paper.
+
+Kivimaki, I., Lebichot, B., Saramaki, J., Saerens, M. (2016).
+Two betweenness centrality measures based on Randomized Shortest Paths.
+\emph{Scientific Reports}, 6, 19668.
+
+Serrano, M. A., Boguna, M., & Vespignani, A. (2009).
+Extracting the multiscale backbone of complex weighted networks.
+\emph{Proceedings of the National Academy of Sciences}, 106, 6483-6488.
+
+Zhang, B., Horvath, S. (2005).
+A general framework for weighted gene co-expression network analysis.
+\emph{Statistical Applications in Genetics and Molecular Biology}, 4(1).
+}
 \seealso{
 Useful links:
 \itemize{
@@ -19,12 +41,5 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sonsoles López-Pernas \email{sonsoles.lopez@uef.fi}
-
-Authors:
-\itemize{
-  \item Santtu Tikka
-  \item Mohammed Saqr
-}
-
+Sonsoles López-Pernas, Santtu Tikka, Mohamed Saqr
 }

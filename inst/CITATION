@@ -1,4 +1,4 @@
-citHeader("To cite dynamite in publications use:")
+citHeader("To cite tna in publications use:")
 
 bibentry(
   key = "tna_lak",

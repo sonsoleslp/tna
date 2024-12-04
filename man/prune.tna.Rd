@@ -56,12 +56,6 @@ pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
 pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 
 }
-\references{
-Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
-multiscale backbone of complex weighted networks.
-\emph{Proceedings of the National Academy of Sciences, 106},
-6483-6488. \doi{10.1073/pnas.0808904106}
-}
 \seealso{
 Evaluation and validation functions
 \code{\link{bootstrap}()},

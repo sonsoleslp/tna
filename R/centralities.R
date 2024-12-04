@@ -48,19 +48,6 @@
 #' @param ... Ignored.
 #' @return A `centralities` object which is a tibble (`tbl_df`)
 #'   containing centrality measures for each state.
-#' @references
-#' Banerjee, A., A. Chandrasekhar, E. Duflo, and M. Jackson (2014).
-#' Gossip: Identifying Central Individuals in a Social Network.
-#' Working Paper.
-#'
-#' Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016).
-#' Two betweenness centrality measures based on Randomized Shortest Paths.
-#' Scientific Reports, 6, 19668.
-#'
-#' Zhang, B., & Horvath, S. (2005).
-#' A general framework for weighted gene co-expression network analysis.
-#' Statistical Applications in Genetics and Molecular Biology, 4(1).
-
 #' @examples
 #' model <- tna(engagement)
 #'
@@ -225,7 +212,13 @@ diffusion <- function(mat) {
 #'
 #' @examples
 #' model <- tna(engagement)
-#' estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 10)
+#' # Small number of iterations and drop proportions for CRAN
+#' estimate_cs(
+#'   model,
+#'   drop_prop = seq(0.3, 0.9, by = 0.2),
+#'   measures = c("InStrength", "OutStrength"),
+#'   iter = 10
+#' )
 #'
 estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
                           "InStrength", "OutStrength", "Betweenness"
@@ -282,13 +275,15 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
     prop <- drop_prop[i]
     n_drop <- floor(n * prop)
     if (n_drop == 0) {
-      warning_("No cases dropped for proportion ", prop, " skipping...")
+      warning_(
+        paste0("No cases dropped for proportion ", prop, " skipping...")
+      )
       next
     }
     corr_prop <- matrix(nrow = iter, ncol = n_measures)
     for (j in seq_len(iter)) {
       keep <- sample(n_seq, n - n_drop, replace = FALSE)
-      trans_sub <- trans[keep, , ]
+      trans_sub <- trans[keep, , , drop = FALSE]
       weight_sub <- compute_weights(trans_sub, type, scaling, a)
       centralities_sub <- centralities_(
         x = weight_sub,

@@ -11,6 +11,15 @@
 
 \item{...}{Ignored.}
 }
+\value{
+\code{x} (invisibly).
+}
 \description{
 Print Detected Communities
+}
+\examples{
+model <- tna(engagement)
+comm <- communities(model)
+print(comm)
+
 }

@@ -9,16 +9,16 @@
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
 
-\item{...}{Arguments passed to \code{\link[=plot_tna]{plot_tna()}}.}
+\item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }
 \description{
 Plot the Significant Differences from a Permutation Test
 }
 \examples{
-model_x <- tna(group_regulation[1:1000, ])
-model_y <- tna(group_regulation[1001:2000, ])
+model_x <- tna(group_regulation[1:100, ])
+model_y <- tna(group_regulation[1001:1200, ])
 # Small number of iterations for CRAN
-perm <- permutation_test(model_x, model_y, iter = 50)
+perm <- permutation_test(model_x, model_y, iter = 20)
 plot(perm)
 
 }

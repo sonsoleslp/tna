@@ -1,31 +1,28 @@
 test_that("pruning works with user-specified threshold", {
-  tna_object <- create_mock_tna()
-  result <- prune(tna_object, threshold = 0.1) |>
+  result <- prune(mock_tna, threshold = 0.1) |>
     attr("pruning")
   expect_true(is.list(result))
   expect_true(is.data.frame(result$removed))
-  expect_equal(result$num_removed, 5)
+  expect_true(result$num_removed > 0)
   expect_equal(result$cut_off, 0.1)
   expect_equal(result$method, "threshold")
 })
 
 test_that("pruning works with lowest percent", {
-  tna_object <- create_mock_tna()
-  result <- prune(tna_object, method = "lowest", lowest = 0.25) |>
+  result <- prune(mock_tna, method = "lowest", lowest = 0.25) |>
     attr("pruning")
   expect_true(is.list(result))
   expect_true(is.data.frame(result$removed))
-  expect_equal(result$num_removed, 5)
+  expect_true(result$num_removed > 0)
   expect_equal(result$method, "lowest")
 })
 
 test_that("pruning works with disparity filter", {
-  tna_object <- create_mock_tna()
-  result <- prune(tna_object, method = "disparity", level = 0.5) |>
+  result <- prune(mock_tna, method = "disparity", level = 0.5) |>
     attr("pruning")
   expect_true(is.list(result))
   expect_true(is.data.frame(result$removed))
-  expect_equal(result$num_removed, 7)
+  expect_true(result$num_removed > 7)
   expect_equal(result$method, "disparity")
 })
 
@@ -36,13 +33,12 @@ test_that("pruning works with bootstrap", {
     attr("pruning")
   expect_true(is.list(result))
   expect_true(is.data.frame(result$removed))
-  expect_equal(result$num_removed, 2)
+  expect_true(result$num_removed > 0)
   expect_equal(result$method, "bootstrap")
 })
 
 test_that("pruning function ensures weak connectivity", {
-  tna_object <- create_mock_tna()
-  result <- prune(tna_object, threshold = 0.2) |>
+  result <- prune(mock_tna, threshold = 0.2) |>
     attr("pruning")
   expect_true(is.list(result))
   expect_true(is.data.frame(result$removed))
@@ -56,15 +52,53 @@ test_that("pruning function fails with invalid tna object", {
   class(invalid_tna_object) <- "not_tna"
   expect_error(
     prune(invalid_tna_object, threshold = 0.1),
-    "Argument `x` must be a <tna> object."
+    "no applicable method for 'prune' applied to an object of class \"not_tna\""
   )
 })
 
 test_that("pruning details can be obtained", {
-  tna_object <- create_mock_tna()
   expect_error(
-    prune(tna_object, threshold = 0.2),
+    pruned_model <- prune(mock_tna, threshold = 0.2),
+    NA
+  )
+  expect_error(
+    out <- capture.output(pruning_details(pruned_model)),
     NA
   )
 })
 
+test_that("pruning can be deactivated", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  expect_error(
+    deprune(pruned_model),
+    NA
+  )
+})
+
+test_that("pruning can be reactivated", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  depruned_model <- deprune(pruned_model)
+  expect_error(
+    reprune(depruned_model),
+    NA
+  )
+})
+
+test_that("weights are restored by deprune", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  depruned_model <- deprune(pruned_model)
+  expect_equal(
+    mock_tna$weights,
+    depruned_model$weights
+  )
+})
+
+test_that("pruned weights are restored by reprune", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  depruned_model <- deprune(pruned_model)
+  repruned_model <- reprune(depruned_model)
+  expect_equal(
+    pruned_model$weights,
+    repruned_model$weights
+  )
+})

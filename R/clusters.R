@@ -868,7 +868,7 @@ group_tna <- function(x, scaling = character(0L), ...) {
 #' model <- group_ftna(engagement)
 #'
 group_ftna <- function(x, scaling = character(0L), ...) {
-  group_model(x = x, type = "absolute", scaling = scaling, ...)
+  group_model(x = x, type = "frequency", scaling = scaling, ...)
 }
 
 #' @export

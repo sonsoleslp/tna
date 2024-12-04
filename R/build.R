@@ -23,7 +23,7 @@
 #'   Currently supports the following types:
 #'
 #'   * `"relative"` for relative frequencies (probabilities, the default)
-#'   * `"absolute"` for frequencies.
+#'   * `"frequency"` for frequencies.
 #'   * `"co-occurrence"` for co-occurrences.
 #'
 #' @param scaling A `character` vector describing how to scale the weights
@@ -96,6 +96,7 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to {.cls numeric}."
   )
+  check_na(x)
   nc <- ncol(x)
   stopifnot_(
     nc == nrow(x),
@@ -128,11 +129,14 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
         )
       )
       inits <- inits[seq_len(nc)]
+      inits <- inits / sum(inits)
     }
     names(inits) <- colnames(x)
   }
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
+  x <- check_weights(x, type = type)
+  x <- scale_weights(x, scaling = scaling)
   if (is.null(colnames(x))) {
     dimnames(x) <- list(seq_len(nc), seq_len(nc))
   }
@@ -189,6 +193,39 @@ build_model.data.frame <- function(x, type = "relative",
   )
 }
 
+# Aliases -----------------------------------------------------------------
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- tna(engagement)
+#'
+tna <- function(x, scaling = character(0L), ...) {
+  check_missing(x)
+  build_model(x = x, type = "relative", scaling = scaling, ...)
+}
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- ftna(engagement)
+#'
+ftna <- function(x, scaling = character(0L), ...) {
+  build_model(x = x, type = "frequency", scaling = scaling, ...)
+}
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- ctna(engagement)
+#'
+ctna <- function(x, scaling = character(0L), ...) {
+  build_model(x = x, type = "co-occurrence", scaling = scaling, ...)
+}
+
+
+# Internal ----------------------------------------------------------------
+
 #' Build a Transition Network Analysis object
 #'
 #' @param weights A `matrix` of edge weights.
@@ -215,40 +252,6 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
     class = "tna"
   )
 }
-
-
-# Aliases -----------------------------------------------------------------
-
-#' @export
-#' @rdname build_model
-#' @examples
-#' model <- tna(engagement)
-#'
-tna <- function(x, scaling = character(0L), ...) {
-  check_missing(x)
-  build_model(x = x, type = "relative", scaling = scaling, ...)
-}
-
-#' @export
-#' @rdname build_model
-#' @examples
-#' model <- ftna(engagement)
-#'
-ftna <- function(x, scaling = character(0L), ...) {
-  build_model(x = x, type = "absolute", scaling = scaling, ...)
-}
-
-#' @export
-#' @rdname build_model
-#' @examples
-#' model <- ctna(engagement)
-#'
-ctna <- function(x, scaling = character(0L), ...) {
-  build_model(x = x, type = "co-occurrence", scaling = scaling, ...)
-}
-
-
-# Internal ----------------------------------------------------------------
 
 #' Convert Sequence Data to an Internal Format
 #'
@@ -312,7 +315,7 @@ initialize_model <- function(x, type, scaling, transitions = FALSE) {
   trans <- array(0L, dim = c(n, a, a))
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  if (type == "co") {
+  if (type == "co-occurrence") {
     for (i in seq_len(p - 1)) {
       for (j in seq(i + 1, p)) {
         from <- m[, i]
@@ -350,7 +353,7 @@ initialize_model <- function(x, type, scaling, transitions = FALSE) {
 #'
 #' @param transitions An `array` of the individual-level transitions.
 #' @param type Type of the transition network as a `character` string.
-#' @param type Scaling to apply as a `character` string.
+#' @param scaling Scalings to apply as a `character` vectors.
 #' @param s An `integer`, the number of states.
 #' @return A `matrix` of transition probabilities or frequencies,
 #' based on `type`.
@@ -363,6 +366,15 @@ compute_weights <- function(transitions, type, scaling, s) {
     weights[pos, ] <- weights[pos, ] / rs[pos]
     weights[!pos, ] <- NA
   }
+  scale_weights(weights, scaling)
+}
+
+#' Scale Transition Network Weights
+#'
+#' @param weights A `matrix` of edge weights
+#' @param scaling Scalings to apply as a `character` vector.
+#' @noRd
+scale_weights <- function(weights, scaling) {
   for (i in seq_along(scaling)) {
     if (scaling[i] == "minmax") {
       weights[] <- ranger(weights)

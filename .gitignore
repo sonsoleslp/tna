@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 inst/doc
+tests/testthat/Rplots.pdf
 .lue
 # History files
 # Example code in package build process
