@@ -1,10 +1,14 @@
 #' Plot a Histogram of Edge Weights in the Network
 #'
+#' @export
 #' @inheritParams graphics::hist
 #' @param ... Additional arguments passed to [graphics::hist()].
 #' @param main A `character` string defining the title of the plot.
 #' @param xlab A `character` string defining the vertical axis label.
-#' @export
+#' @examples
+#' model <- tna(engagement)
+#' hist(model)
+#'
 hist.tna <- function(x, breaks, col = "lightblue",
                      main, xlab, border = "white", ...) {
   check_tna(x)
@@ -174,7 +178,6 @@ plot.tna <- function(x, labels, colors, pie,
 #' @examples
 #' tna_model <- tna(engagement)
 #' cm <- centralities(tna_model)
-#' plot(cm)
 #' plot(cm, ncol = 4, reorder = TRUE)
 #'
 plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
@@ -201,15 +204,17 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
     "Argument {.arg scales} must be either {.val free_x} or {.val fixed}."
   )
   scales <- ifelse_(scales == "free_x", "free", "free_y")
-  ifelse_(
-    "Cluster" %in% names(x),
-    plot_centralities_multiple(x, ncol, scales, colors, labels),
-    plot_centralities_single(x, reorder, ncol, scales, colors, labels)
-  )
+  plot_centralities_single(x, reorder, ncol, scales, colors, labels)
+  # ifelse_(
+  #   "Cluster" %in% names(x),
+  #   plot_centralities_multiple(x, ncol, scales, colors, labels),
+  #   plot_centralities_single(x, reorder, ncol, scales, colors, labels)
+  # )
 }
 
 #' Plot Cliques of a TNA Network
 #'
+#' @export
 #' @inheritParams print.tna_cliques
 #' @inheritParams plot.tna
 #' @param show_loops A `logical` value indicating whether to include loops
@@ -217,7 +222,11 @@ plot.tna_centralities <- function(x, model = NULL, reorder = TRUE,
 #' @param minimum See [qgraph::qgraph()].
 #' @param ask A `logical` value. When `TRUE`, showw plots one by one and asks
 #' to plot the next plot in interactive mode.
-#' @export
+#' @examples
+#' model <- tna(engagement)
+#' cliq <- cliques(model, size = 2)
+#' plot(cliq, n = 1)
+#'
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
                              minimum = 0.00001, mar = rep(5, 4),
                              ask = TRUE, ...) {
@@ -268,7 +277,6 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     #}
   }
 }
-
 
 #' Plot Communities
 #'
@@ -325,10 +333,10 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #' @param x A `tna_permutation` object.
 #' @param ... Arguments passed to [plot_model()].
 #' @examples
-#' model_x <- tna(group_regulation[1:1000, ])
-#' model_y <- tna(group_regulation[1001:2000, ])
+#' model_x <- tna(group_regulation[1:100, ])
+#' model_y <- tna(group_regulation[1001:1200, ])
 #' # Small number of iterations for CRAN
-#' perm <- permutation_test(model_x, model_y, iter = 50)
+#' perm <- permutation_test(model_x, model_y, iter = 20)
 #' plot(perm)
 #'
 plot.tna_permutation <- function(x, ...) {
@@ -480,6 +488,10 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 }
 
 
+#' Plot Centralities for a Single Cluster
+#'
+#' @inheritParams plot.tna_centralities
+#' @noRd
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
   x <- stats::reshape(
     as.data.frame(x),

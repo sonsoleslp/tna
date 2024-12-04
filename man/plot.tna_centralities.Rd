@@ -51,7 +51,6 @@ measure, showing the values for each state. The returned plot is a
 \examples{
 tna_model <- tna(engagement)
 cm <- centralities(tna_model)
-plot(cm)
 plot(cm, ncol = 4, reorder = TRUE)
 
 }

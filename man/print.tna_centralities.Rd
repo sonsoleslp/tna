@@ -11,6 +11,15 @@
 
 \item{...}{Ignored.}
 }
+\value{
+\code{x} (invisibly).
+}
 \description{
 Print Centrality Measures
+}
+\examples{
+model <- tna(engagement)
+cm <- centralities(model)
+print(cm)
+
 }

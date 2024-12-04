@@ -39,3 +39,9 @@ to plot the next plot in interactive mode.}
 \description{
 Plot Cliques of a TNA Network
 }
+\examples{
+model <- tna(engagement)
+cliq <- cliques(model, size = 2)
+plot(cliq, n = 1)
+
+}

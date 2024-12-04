@@ -19,6 +19,16 @@ prints only the non-significant edges.}
 
 \item{...}{Ignored.}
 }
+\value{
+\code{x} (invisibly).
+}
 \description{
 Print Bootstrap Results
+}
+\examples{
+model <- tna(engagement)
+# Small number of iterations for CRAN
+boot <- bootstrap(model, iter = 10)
+print(boot)
+
 }

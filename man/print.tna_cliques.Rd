@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.tna_cliques}
 \alias{print.tna_cliques}
-\title{Print Found Cliques}
+\title{Print Found Cliques of a TNA Network}
 \usage{
 \method{print}{tna_cliques}(x, n = 6, first = 1, digits = getOption("digits"), ...)
 }
@@ -20,6 +20,15 @@ The default index is \code{1}.}
 
 \item{...}{Ignored.}
 }
+\value{
+\code{x} (invisibly).
+}
 \description{
-Print Found Cliques
+Print Found Cliques of a TNA Network
+}
+\examples{
+model <- tna(engagement)
+cliq <- cliques(model, size = 2)
+print(cliq)
+
 }

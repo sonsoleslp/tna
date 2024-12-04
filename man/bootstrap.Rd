@@ -66,7 +66,7 @@ structured list.
 \examples{
 model <- tna(engagement)
 # Small number of iterations for CRAN
-bootstrap(model, iter = 50)
+bootstrap(model, iter = 10)
 
 }
 \seealso{

@@ -40,3 +40,8 @@
 \description{
 Plot a Histogram of Edge Weights in the Network
 }
+\examples{
+model <- tna(engagement)
+hist(model)
+
+}

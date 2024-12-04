@@ -108,3 +108,11 @@ test_that("scaling options work", {
     seq_len(prod(dim(mock_matrix)))
   )
 })
+
+test_that("model summary can be extracted", {
+  model <- tna(mock_sequence)
+  expect_error(
+    summary(model),
+    NA
+  )
+})
