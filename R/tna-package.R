@@ -21,14 +21,13 @@
 #' Two betweenness centrality measures based on Randomized Shortest Paths.
 #' *Scientific Reports*, 6, 19668.
 #'
-#' Serrano, M. A., Boguna, M., & Vespignani, A. (2009).
+#' Serrano, M. A., Boguna, M., Vespignani, A. (2009).
 #' Extracting the multiscale backbone of complex weighted networks.
 #' *Proceedings of the National Academy of Sciences*, 106, 6483-6488.
 #'
 #' Zhang, B., Horvath, S. (2005).
 #' A general framework for weighted gene co-expression network analysis.
 #' *Statistical Applications in Genetics and Molecular Biology*, 4(1).
-#'
 #'
 "_PACKAGE"
 

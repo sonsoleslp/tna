@@ -40,7 +40,7 @@ tna_model <- tna(engagement)
 Nvar <- length(tna_model$labels)
 Nclusters <- 3
 trans_probs <- simulate_transition_probs(Nvar, Nclusters)
-init_probs <-list(c(0.70, 0.20, 0.10),
+init_probs <- list(c(0.70, 0.20, 0.10),
                   c(0.15, 0.70, 0.15),
                   c(0.10, 0.20, 0.70))
 ```

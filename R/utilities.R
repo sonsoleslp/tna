@@ -58,12 +58,29 @@ is_tna <- function(x) {
   inherits(x, "tna")
 }
 
+#' Check that argument is an object of class `summary.tna`
+#'
+#' @param x An \R object.
+#' @noRd
+is_summary.tna <- function(x) {
+  inherits(x, "summary.tna")
+}
+
+
 #' Check that argument is an object of class `tna_bootstrap`
 #'
 #' @param x An \R object.
 #' @noRd
 is_tna_bootstrap <- function(x) {
   inherits(x, "tna_bootstrap")
+}
+
+#' Check that argument is an object of class `summary.tna_bootstrap`
+#'
+#' @param x An \R object.
+#' @noRd
+is_summary.tna_bootstrap <- function(x) {
+  inherits(x, "summary.tna_bootstrap")
 }
 
 #' Check that argument is an object of class `tna_centralities`
@@ -106,10 +123,6 @@ is_tna_permutation <- function(x) {
   inherits(x, "tna_permutation")
 }
 
-#' @importFrom igraph as.igraph
-#' @export
-igraph::as.igraph
-
 #' Coerce a `tna` object to an `igraph` object.
 #'
 #' @export
@@ -121,6 +134,106 @@ as.igraph.tna <- function(x, ...) {
     mode = "directed",
     weighted = TRUE
   )
+}
+
+
+# Clusters ----------------------------------------------------------------
+
+
+#' Check that argument is an object of class `group_tna`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_group_tna <- function(x) {
+  inherits(x, "group_tna")
+}
+
+#' Check that argument is an object of class `summary.group_tna`
+#'
+#' @param x An \R object.
+#' @noRd
+is_summary.group_tna <- function(x) {
+  inherits(x, "summary.group_tna")
+}
+
+#' Check that argument is an object of class `group_tna_bootstrap`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_group_tna_bootstrap <- function(x) {
+  inherits(x, "group_tna_bootstrap")
+}
+
+#' Check that argument is an object of class `summary.group_tna_bootstrap`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_summary.group_tna_bootstrap <- function(x) {
+  inherits(x, "summary.group_tna_bootstrap")
+}
+
+#' Check that argument is an object of class `group_tna_centralities`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_group_tna_centralities <- function(x) {
+  inherits(x, "group_tna_centralities")
+}
+
+#' Check that argument is an object of class `group_tna_communities`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_group_tna_communities <- function(x) {
+  inherits(x, "group_tna_communities")
+}
+
+
+#' Check that argument is an object of class `group_tna_cliques`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_group_tna_cliques <- function(x) {
+  inherits(x, "group_tna_cliques")
+}
+
+#' Check that argument is an object of class `group_tna_stability`
+#'
+#' @param x An \R object.
+#' @family clusters
+#' @noRd
+is_group_tna_stability <- function(x) {
+  inherits(x, "group_tna_stability")
+}
+
+#' @importFrom igraph as.igraph
+#' @export
+igraph::as.igraph
+
+#' Coerce  a specific group from a `group_tna` object to an `igraph` object.
+#'
+#' @export
+#' @inheritParams igraph::as.igraph
+#' @param which The number or name of the group.
+#' @return An `igraph` object.
+as.igraph.group_tna <- function(x, which, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must a {.cls group_tna}."
+  )
+  stopifnot_(
+    !is.null(x[[which]]),
+    "There is no group named {which}."
+  )
+  check_missing(which)
+  as.igraph.tna(x[[which]])
 }
 
 # Functions borrowed from the `dynamite` package --------------------------

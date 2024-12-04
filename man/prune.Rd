@@ -7,7 +7,9 @@
 prune(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{tna} or \code{group_tna}}
+\item{x}{An object of class \code{tna} or \code{group_tna}.}
+
+\item{...}{Potential additional arguments passed to the pruning method.}
 }
 \description{
 Prunes a network represented by a \code{tna} object by removing
@@ -20,6 +22,6 @@ Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{permutation_test}()},
 \code{\link{prune.tna}()},
-\code{\link{pruning_details.group_model}()}
+\code{\link{pruning_details}()}
 }
 \concept{evaluation}

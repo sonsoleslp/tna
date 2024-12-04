@@ -46,6 +46,6 @@ plot(comm, method = "leading_eigen")
 }
 \seealso{
 Pattern-finding functions
-\code{\link{communities.group_model}()}
+\code{\link{communities}()}
 }
 \concept{patterns}

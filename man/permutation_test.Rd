@@ -62,6 +62,6 @@ Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{prune}()},
 \code{\link{prune.tna}()},
-\code{\link{pruning_details.group_model}()}
+\code{\link{pruning_details}()}
 }
 \concept{evaluation}

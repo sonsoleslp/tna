@@ -7,32 +7,41 @@
 rename_groups(x, new_names)
 }
 \arguments{
-\item{x}{A \code{group_model} object}
+\item{x}{A \code{group_tna} object.}
 
-\item{new_names}{A vector containing one name per cluster}
+\item{new_names}{A \code{vector} containing one name per cluster.}
 }
 \value{
-A renamed \code{group_model} object
+A renamed \code{group_tna} object.
 }
 \description{
 Rename clusters
 }
 \seealso{
 Cluster-related functions
+\code{\link{bootstrap}()},
 \code{\link{centralities}()},
-\code{\link{communities.group_model}()},
-\code{\link{deprune.group_model}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
 \code{\link{estimate_cs}()},
 \code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_model}()},
-\code{\link{print.group_model_bootstrap}()},
-\code{\link{print.group_model_centralities}()},
-\code{\link{print.group_model_communities}()},
-\code{\link{print.summary.group_model}()},
-\code{\link{print.summary.group_model_bootstrap}()},
-\code{\link{prune.group_model}()},
-\code{\link{reprune.group_model}()},
-\code{\link{summary.group_model}()}
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
 }
 \concept{clusters}

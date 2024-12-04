@@ -1,3 +1,7 @@
+# tna 0.3.0
+
+* Added support for clusters.
+
 # tna 0.2.0
 
 * Added bootstrapping, permutation test, and centrality stability functionalities.

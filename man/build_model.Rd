@@ -111,11 +111,11 @@ model <- ftna(engagement)
 
 model <- ctna(engagement)
 
-model <- group_tna(engagement)
+model <- group_tna(engagement, group = gl(2, 100))
 
-model <- group_ftna(engagement)
+model <- group_ftna(engagement, group = gl(2, 100))
 
-model <- group_ctna(engagement)
+model <- group_ctna(engagement, group = gl(2, 100))
 
 }
 \seealso{

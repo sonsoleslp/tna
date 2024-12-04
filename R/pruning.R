@@ -7,7 +7,8 @@
 #'
 #' @export
 #' @family evaluation
-#' @param x An object of class `tna` or `group_tna`
+#' @param x An object of class `tna` or `group_tna`.
+#' @param ... Potential additional arguments passed to the pruning method.
 prune <- function(x, ...) {
   UseMethod("prune")
 }
@@ -299,4 +300,96 @@ disparity_filter <- function(mat, level) {
   sig <- 1 * (p_values < level)
   diag(sig) <- 0
   sig
+}
+
+# Clusters ----------------------------------------------------------------
+
+#' Prune a `group_tna` network based on transition probabilities
+#'
+#' Prunes a set of networks represented by a `group_tna` object by removing
+#' edges based on a specified threshold, lowest percent of non-zero edge
+#' weights, or the disparity filter algorithm (Serrano et al., 2009).
+#' It ensures the networks remain weakly connected.
+#'
+#' @export
+#' @family clusters
+#' @param x An object of class `group_tna`.
+#' @param ... Arguments passed to [prune.tna()].
+#' @return A pruned `group_tna` object. Details on the pruning can be viewed
+#' with [pruning_details()]. The original model can be
+#' restored with [deprune()].
+#'
+#' @examples
+#' group <- c(rep("High", 100), rep("Low", 100))
+#' model <- group_model(engagement, group = group)
+#' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+#' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+#' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
+#'
+prune.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    !missing(x),
+    "Argument {.arg x} is missing."
+  )
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) prune.tna(i, ...)),
+    class = "group_tna"
+  )
+}
+
+#' Print Detailed Information on the Pruning Results
+#'
+#' @export
+#' @rdname pruning_details
+#' @param x A pruned `group_tna` object.
+#' @param ... Arguments passed to [pruning_details.tna()].
+pruning_details.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must a {.cls group_tna} object."
+  )
+  Map(
+    function(y, i) {
+      print(i)
+      pruning_details.tna(y, ...)
+    },
+    x,
+    names(x)
+  )
+}
+
+#' @family clusters
+#' @rdname deprune
+#' @export
+deprune.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) deprune.tna(i, ...)),
+    class = "group_tna"
+  )
+}
+
+#' @family clusters
+#' @rdname reprune
+#' @export
+reprune.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) reprune.tna(i, ...)),
+    class = "group_tna"
+  )
 }

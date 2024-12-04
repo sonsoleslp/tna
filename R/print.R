@@ -246,3 +246,145 @@ print.tna_permutation <- function(x, ...) {
   }
   invisible(x)
 }
+
+# Clusters ----------------------------------------------------------------
+
+#' Print a `group_tna` Object
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna` object.
+#' @param ... Arguments passed to [print.tna()].
+#' @return `x` (invisibly).
+print.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must a {.cls group_tna} object."
+  )
+  lapply(x, \(i) print(i, ...))
+  invisible(x)
+}
+
+#' Print `group_tna` Bootstrap Results
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_bootstrap` object.
+#' @param ... Arguments passed to [print.tna_bootstrap()].
+#' @return `x` (invisibly).
+print.group_tna_bootstrap <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna_bootstrap(x),
+    "Argument {.arg x} must a {.cls group_tna_bootstrap} object."
+  )
+  lapply(x, \(i) print(i, ...))
+  invisible(x)
+}
+
+#' Print the summary of a grouped Transition Network Analysis Model
+#'
+#' @export
+#' @family clusters
+#' @param x A `summary.group_tna` object.
+#' @param ... Arguments passed to [print.summary.tna()].
+#' @return `x` (invisibly).
+print.summary.group_tna  <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_summary.group_tna(x),
+    "Argument {.arg x} a {.cls summary.group_tna} object."
+  )
+  if (inherits(x, "data.frame")) {
+    NextMethod(generic = "print", object = x, ...)
+  } else {
+    lapply(x, \(i) print(x = i, ...))
+  }
+  invisible(x)
+}
+
+#' Print `group_tna` Bootstrap Summary
+#'
+#' @export
+#' @family clusters
+#' @param x A `summary.group_tna_bootstrap` object.
+#' @param ... Arguments passed to [print.summary.tna_bootstrap()].
+#' @return `x` (invisibly).
+print.summary.group_tna_bootstrap  <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_summary.group_tna_bootstrap(x),
+    "Argument {.arg x} must be a {.cls summary.group_tna_bootstrap} object."
+  )
+  lapply(x, \(i) print(i, ...))
+  invisible(x)
+}
+
+#' Print `group_tna` Centrality Measures
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_centralities` object.
+#' @param ... Ignored.
+#' @return `x` (invisibly).
+print.group_tna_centralities  <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna_centralities(x),
+    "Argument {.arg x} must be a {.cls group_tna_centralities} object."
+  )
+  NextMethod(generic = "print", object = x, ...)
+}
+
+
+#' Print `group_tna` Detected Communities
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_communities` object.
+#' @param ... Arguments passed to [print.tna_communities()].
+#' @return `x` (invisibly).
+print.group_tna_communities  <- function(x, ...) {
+  stopifnot_(
+    !missing(x),
+    "Argument {.arg x} is missing."
+  )
+  stopifnot_(
+    is_group_tna_communities(x),
+    "Argument {.arg x} must be of type `group_tna_communities`"
+  )
+  Map(
+    function(y, i) {
+      print(i)
+      print(y, ...)
+    },
+    x,
+    names(x)
+  )
+  invisible(x)
+}
+
+#' Print `group_tna` Found Cliques
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_cliques` object.
+#' @param ... Arguments passed to [print.tna_cliques()].
+#' @return `x` (invisibly).
+print.group_tna_cliques  <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna_cliques(x),
+    "Argument {.arg x} must be a {.cls group_tna_cliques} object."
+  )
+  Map(
+    function(y, i) {
+      print(i)
+      print(y, ...)
+    },
+    x,
+    names(x)
+  )
+  invisible(x)
+}

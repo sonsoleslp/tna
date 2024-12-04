@@ -6,7 +6,6 @@
 \usage{
 \method{plot}{tna_centralities}(
   x,
-  model = NULL,
   reorder = TRUE,
   ncol = 3,
   scales = c("free_x", "fixed"),
@@ -17,8 +16,6 @@
 }
 \arguments{
 \item{x}{An object of class \code{tna_centralities}.}
-
-\item{model}{An object of class \code{tna}.}
 
 \item{reorder}{A \code{logical} value indicating whether to reorder the values
 for each centrality in a descending order. The default is \code{TRUE}.}

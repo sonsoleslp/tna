@@ -6,78 +6,33 @@
 \alias{group_model.mhmm}
 \title{Build a grouped Transition Network Analysis Model}
 \usage{
-group_model(x, ...)
+group_model(x, group, ...)
 
 \method{group_model}{default}(x, group, ...)
 
 \method{group_model}{mhmm}(x, ...)
 }
 \arguments{
-\item{x}{An \code{mhmm} object from \code{seqHMM}}
-
-\item{...}{Same as \code{tna}}
+\item{x}{An \code{stslist} object describing a sequence of events or states to
+be used for building the Markov model. The argument \code{x} also accepts
+a \code{data.frame} object in wide format.
+(each column is a timepoint with no extra columns). Alternatively, the
+function accepts a mixture Markov model from the library \code{seqHMM}.}
 
 \item{group}{A vector indicating the cluster assignment of each
 row of the data / sequence. Must have the same length as the number of
 rows/sequences of \code{x}.}
 
-\item{type}{A \code{character} string describing the weight matrix type.
-Currently supports \code{"relative"} for relative frequencies
-(probabilities, the default), \code{"scaled"} for frequencies scaled to the
-unit interval, \code{"ranked"} for ranks of the weights scaled to the unit
-interval, and \code{"absolute"} for frequencies.}
+\item{...}{Ignored.}
 }
 \value{
-An object of class \code{group_model} which is a \code{list} containing one
-element per cluster. Each element is also a list containing the
-following elements:
-\itemize{
-\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
-\item \code{inits}: A \code{numeric} vector of initial values for each state.
-For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
-directly provided
-\item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
-there are no labels.
-\item \code{data}: The original sequence data that has been converted to an
-internal format used by the package when \code{x} is a \code{stslist} or a
-\code{data.frame} object. Otherwise \code{NULL}.
-}
-
-An object of class \code{group_model} which is a \code{list} containing one
-element per cluster. Each element is also a list containing the
-following elements:
-\itemize{
-\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
-\item \code{inits}: A \code{numeric} vector of initial values for each state.
-For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
-directly provided
-\item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
-there are no labels.
-\item \code{data}: The original sequence data that has been converted to an
-internal format used by the package when \code{x} is a \code{stslist} or a
-\code{data.frame} object. Otherwise \code{NULL}.
-}
-
-A \code{group_model} object
-
-An object of class \code{group_model} which is a \code{list} containing one
-element per cluster. Each element is also a list containing the
-following elements:
-\itemize{
-\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
-\item \code{inits}: A \code{numeric} vector of initial values for each state.
-For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
-directly provided
-\item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
-there are no labels.
-\item \code{data}: The original sequence data that has been converted to an
-internal format used by the package when \code{x} is a \code{stslist} or a
-\code{data.frame} object. Otherwise \code{NULL}.
-}
+An object of class \code{group_tna} which is a \code{list} containing one
+element per cluster. Each element is a \code{tna} object.
 }
 \description{
-This function constructs a transition network analysis (TNA) model for each cluster
-from a given sequence, wide-formatted dataframe, or mixture Markov model.
+This function constructs a transition network analysis (TNA) model for
+each cluster from a given sequence, wide-formatted dataframe,
+or a mixture Markov model.
 }
 \examples{
 group = c(rep("High",100),rep("Low",100))
@@ -87,54 +42,81 @@ print(model)
 }
 \seealso{
 Cluster-related functions
+\code{\link{bootstrap}()},
 \code{\link{centralities}()},
-\code{\link{communities.group_model}()},
-\code{\link{deprune.group_model}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{hist.group_tna}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_model}()},
-\code{\link{print.group_model_bootstrap}()},
-\code{\link{print.group_model_centralities}()},
-\code{\link{print.group_model_communities}()},
-\code{\link{print.summary.group_model}()},
-\code{\link{print.summary.group_model_bootstrap}()},
-\code{\link{prune.group_model}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
 \code{\link{rename_groups}()},
-\code{\link{reprune.group_model}()},
-\code{\link{summary.group_model}()}
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
 
 Cluster-related functions
+\code{\link{bootstrap}()},
 \code{\link{centralities}()},
-\code{\link{communities.group_model}()},
-\code{\link{deprune.group_model}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{hist.group_tna}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_model}()},
-\code{\link{print.group_model_bootstrap}()},
-\code{\link{print.group_model_centralities}()},
-\code{\link{print.group_model_communities}()},
-\code{\link{print.summary.group_model}()},
-\code{\link{print.summary.group_model_bootstrap}()},
-\code{\link{prune.group_model}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
 \code{\link{rename_groups}()},
-\code{\link{reprune.group_model}()},
-\code{\link{summary.group_model}()}
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
 
 Cluster-related functions
+\code{\link{bootstrap}()},
 \code{\link{centralities}()},
-\code{\link{communities.group_model}()},
-\code{\link{deprune.group_model}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{hist.group_tna}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_model}()},
-\code{\link{print.group_model_bootstrap}()},
-\code{\link{print.group_model_centralities}()},
-\code{\link{print.group_model_communities}()},
-\code{\link{print.summary.group_model}()},
-\code{\link{print.summary.group_model_bootstrap}()},
-\code{\link{prune.group_model}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune.group_tna}()},
 \code{\link{rename_groups}()},
-\code{\link{reprune.group_model}()},
-\code{\link{summary.group_model}()}
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()}
 }
 \concept{clusters}

@@ -92,3 +92,18 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
     colors = attr(x$data, "colors")
   )
 }
+
+#' @export
+#' @family clusters
+#' @rdname cliques
+cliques.group_tna <- function(x, ...) {
+  check_missing(x)
+  stopifnot_(
+    is_group_tna(x),
+    "Argument {.arg x} must be a {.cls group_tna} object."
+  )
+  structure(
+    lapply(x, \(i) cliques.tna(i, ...)),
+    class = "group_tna_cliques"
+  )
+}

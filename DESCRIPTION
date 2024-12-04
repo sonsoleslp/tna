@@ -30,6 +30,7 @@ Imports:
     RColorBrewer,
     rlang,
     tibble,
+    tidyr,
     stats
 Suggests: 
     gt,
