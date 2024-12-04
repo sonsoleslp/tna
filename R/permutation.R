@@ -17,7 +17,7 @@
 #' @param level A `numeric` value giving the significance level for the
 #' permutation tests. The default is 0.05.
 #' @param measures A `character` vector of centrality measures to test.
-#' See [centralities()] for a list of available centralities.
+#' See [centralities()] for a list of available centrality measures.
 #' @param ... Additional arguments passed to [centralities()].
 #' @return A `tna_permutation` object which is a `list` with two elements:
 #' `edges` and `centralities`, both containing the following elements
@@ -50,6 +50,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   weights_y <- y$weights
   a <- length(attr(data_x, "alphabet"))
   type <- attr(x, "type")
+  scaling <- attr(x, "scaling")
   n_measures <- length(measures)
   include_centralities <- n_measures > 0L
   if (include_centralities) {
@@ -67,7 +68,12 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   edge_names <- paste0(edge_names$from, " -> ", edge_names$to)
   perm_x <- seq_len(n_data_x)
   perm_y <- seq(n_data_x + 1L, n_combined)
-  combined_model <- markov_model(combined_data, transitions = TRUE)
+  combined_model <- initialize_model(
+    combined_data,
+    type,
+    scaling,
+    transitions = TRUE
+  )
   combined_trans <- combined_model$trans
   edge_diffs_perm <- array(0L, dim = c(iter, a, a))
   cent_diffs_perm <- array(0L, dim = c(iter, a, n_measures))
@@ -85,8 +91,8 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     }
     trans_perm_x <- combined_trans[perm_idx[perm_x], , ]
     trans_perm_y <- combined_trans[perm_idx[perm_y], , ]
-    weights_perm_x <- compute_weights(trans_perm_x, type, s = a)
-    weights_perm_y <- compute_weights(trans_perm_y, type, s = a)
+    weights_perm_x <- compute_weights(trans_perm_x, type, scaling, s = a)
+    weights_perm_y <- compute_weights(trans_perm_y, type, scaling, s = a)
     if (include_centralities) {
       cent_perm_x <- centralities(weights_perm_x, measures = measures, ...)
       cent_perm_y <- centralities(weights_perm_y, measures = measures, ...)

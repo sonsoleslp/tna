@@ -61,26 +61,29 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param colors See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param labels See [qgraph::qgraph()].
-#' @param layout See [qgraph::qgraph()].
+#' @param layout One of the following:
+#'   * A `character` string describing a `qgraph` layout.
+#'   * A `matrix` of node positions to use, with a row for each node and
+#'     `x` and `y` columns for the node positions.
+#'   * A layout function from `igraph`.
+#' @param layout_args A `list` of arguments to pass to the `igraph` layout
+#'   function when `layout` is a function.
 #' @param mar See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
-#' @param cut See [qgraph::qgraph()]. Defaults to the smallest 20th percentile
-#'   of the weights.
-#' @param minimum See [qgraph::qgraph()]. Defaults to the smallest 10th
-#'   percentile of the weights.
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
 #' @family core
 #' @examples
-#' tna_model <- tna(engagement)
-#' plot(tna_model)
+#' model <- tna(engagement)
+#' plot(model)
 #'
 plot.tna <- function(x, labels, colors, pie,
                      edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), cut, minimum,
+                     layout_args = list(), mar = rep(5, 4),
                      theme = "colorblind", ...) {
   check_tna(x)
+  layout <- check_layout(x, layout, layout_args)
   if (missing(pie)) {
     pie <- x$inits
   }
@@ -95,16 +98,13 @@ plot.tna <- function(x, labels, colors, pie,
     )
   }
   # abs here for plot_compare()
-  weights_abs <- abs(x$weights)
-  q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
-  minimum <- ifelse_(missing(minimum), q[1L], minimum)
-  cut <- ifelse_(missing(cut), q[2L], cut)
-  # TODO qgraph produces error if no edges are above cut/minimum, check
+  # weights_abs <- abs(x$weights)
+  # q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
+  # minimum <- ifelse_(missing(minimum), q[1L], minimum)
+  # cut <- ifelse_(missing(cut), q[2L], cut)
   qgraph::qgraph(
     input = x$weights,
     color = colors,
-    minimum = minimum,
-    cut = cut,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,
@@ -113,7 +113,6 @@ plot.tna <- function(x, labels, colors, pie,
     theme = theme,
     ...
   )
-  invisible(x)
 }
 
 # TODO is this needed
@@ -427,7 +426,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' comm <- communities(model)
 #' plot(comm, method = "leading_eigen")
 #'
-plot.tna_communities <- function(x, method = "spinglass", colors, ...) {
+plot.tna_communities <- function(x, method = "spinglass", colors = NULL, ...) {
   stopifnot_(
     is_tna_communities(x),
     "Argument {.arg x} must be a {.cls tna_communities} object."
@@ -447,8 +446,8 @@ plot.tna_communities <- function(x, method = "spinglass", colors, ...) {
 #' @param x A `tna_permutation` object.
 #' @param ... Arguments passed to [plot_tna()].
 #' @examples
-#' model_x <- tna(group_regulation[1:1000,])
-#' model_y <- tna(group_regulation[1001:2000,])
+#' model_x <- tna(group_regulation[1:1000, ])
+#' model_y <- tna(group_regulation[1001:2000, ])
 #' # Small number of iterations for CRAN
 #' perm <- permutation_test(model_x, model_y, iter = 50)
 #' plot(perm)
@@ -646,8 +645,7 @@ plot_compare <- function(x, y, cut, minimum, ...) {
 #'
 plot_tna <- function(x, labels, colors,
                      edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), cut = 0.1, minimum = 0.05,
-                     theme = "colorblind", ...) {
+                     mar = rep(5, 4), theme = "colorblind", ...) {
   stopifnot_(
     is.matrix(x) && ncol(x) == nrow(x),
     "Argument {.arg x} must be a square matrix."
@@ -662,8 +660,6 @@ plot_tna <- function(x, labels, colors,
   qgraph::qgraph(
     input = x,
     color = colors,
-    minimum = minimum,
-    cut = cut,
     edge.labels = edge.labels,
     labels = labels,
     layout = layout,

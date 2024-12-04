@@ -29,7 +29,7 @@ if \code{FALSE}, perform unpaired tests. The default is \code{FALSE}.}
 permutation tests. The default is 0.05.}
 
 \item{measures}{A \code{character} vector of centrality measures to test.
-See \code{\link[=centralities]{centralities()}} for a list of available centralities.}
+See \code{\link[=centralities]{centralities()}} for a list of available centrality measures.}
 
 \item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 }
@@ -62,6 +62,6 @@ Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{prune}()},
 \code{\link{prune.tna}()},
-\code{\link{pruning_details.group_tna}()}
+\code{\link{pruning_details.group_model}()}
 }
 \concept{evaluation}

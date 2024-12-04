@@ -66,21 +66,22 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
   }
   check_nonnegative(threshold, type = "numeric")
   d <- x$data
-  model <- markov_model(d, transitions = TRUE)
+  type <- attr(x, "type")
+  scaling <- attr(x, "scaling")
+  model <- initialize_model(d, type, scaling, transitions = TRUE)
   trans <- model$trans
   alphabet <- attr(d, "alphabet")
-  type <- attr(x, "type")
   dim_names <- list(alphabet, alphabet)
   n <- nrow(d)
   a <- length(alphabet)
-  weights <- compute_weights(trans, type, a)
+  weights <- compute_weights(trans, type, scaling, a)
   dimnames(weights) <- dim_names
   weights_boot <- array(0L, dim = c(iter, a, a))
   p_values <- matrix(0, a, a)
   idx <- seq_len(n)
   for (i in seq_len(iter)) {
     trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
-    weights_boot[i, , ] <- compute_weights(trans_boot, type, a)
+    weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
     p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
   }
   p_values <- p_values / iter

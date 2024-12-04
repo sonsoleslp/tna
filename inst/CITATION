@@ -1,3 +1,14 @@
+citHeader("To cite dynamite in publications use:")
+
+bibentry(
+  key = "tna_lak",
+  bibtype  = "Misc",
+  doi = "10.48550/arXiv.2411.15486",
+  url = "https://arxiv.org/abs/2411.15486",
+  author = c(person("Mohammed", "Saqr"), person("Sonsoles", "L\u00f3pez-Pernas"), person("Tiina", "T\u00f6rm\u00e4nen"), person("Rogers", "Kaliisa"), person("Kamila", "Misiejuk"), person("Santtu", "Tikka")),
+  title = "Transition Network Analysis: A Novel Framework for Modeling, Visualizing, and Identifying the Temporal Patterns of Learners and Learning Processes",
+  year = "2024"
+)
 bibentry(
   key      = "tna_package",
   bibtype  = "Manual",

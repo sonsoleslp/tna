@@ -191,7 +191,8 @@ diffusion <- function(mat) {
 #' the centrality measures. The default is `FALSE`.
 #' @param measures A `character` vector of centrality measures to estimate.
 #' The default measures are `"InStrength"`, `"OutStrength"`,
-#' and `"Betweenness"`.
+#' and `"Betweenness"`. See [centralities()] for a list of available centrality
+#' measures.
 #' @param iter An `integer` specifying the number of resamples to draw.
 #' The default is 1000.
 #' @param method A `character` string indicating the correlation coefficient
@@ -243,13 +244,14 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
   check_probability(certainty)
   check_measures(measures)
   d <- x$data
-  model <- markov_model(d, transitions = TRUE)
+  type <- attr(x, "type")
+  scaling <- attr(x, "scaling")
+  model <- initialize_model(d, type, scaling, transitions = TRUE)
   trans <- model$trans
   a <- dim(trans)[2]
   n <- nrow(d)
   n_seq <- seq_len(n)
   n_prop <- length(drop_prop)
-  type <- attr(x, "type")
   centralities_orig <- centralities_(
     x = x$weights,
     loops = loops,
@@ -287,7 +289,7 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
     for (j in seq_len(iter)) {
       keep <- sample(n_seq, n - n_drop, replace = FALSE)
       trans_sub <- trans[keep, , ]
-      weight_sub <- compute_weights(trans_sub, type, a)
+      weight_sub <- compute_weights(trans_sub, type, scaling, a)
       centralities_sub <- centralities_(
         x = weight_sub,
         loops = loops,

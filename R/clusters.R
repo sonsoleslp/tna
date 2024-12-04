@@ -5,7 +5,7 @@
 #'
 #' @export
 #' @family clusters
-#' @rdname group_tna
+#' @rdname group_model
 #' @param x An `stslist` object describing a sequence of events or states to
 #'   be used for building the Markov model. The argument `x` also accepts
 #'   a `data.frame` object in wide format.
@@ -17,7 +17,7 @@
 #'   unit interval, `"ranked"` for ranks of the weights scaled to the unit
 #'   interval, and `"absolute"` for frequencies.
 #' @param ... Ignored.
-#' @return An object of class `group_tna` which is a `list` containing one
+#' @return An object of class `group_model` which is a `list` containing one
 #'   element per cluster. Each element is also a list containing the
 #'   following elements:
 #'   * `weights`: An adjacency `matrix` of the model (weight matrix).
@@ -32,11 +32,11 @@
 #'
 #' @examples
 #' group = c(rep("High",100),rep("Low",100))
-#' model <- group_tna(engagement, group = group)
+#' model <- group_model(engagement, group = group)
 #' print(model)
 #'
-group_tna <- function(x, ...) {
-  UseMethod("group_tna")
+group_model <- function(x, ...) {
+  UseMethod("group_model")
 }
 
 #' Build a grouped Transition Network Analysis Model providing group/cluster assignments
@@ -48,7 +48,7 @@ group_tna <- function(x, ...) {
 #' @param group A vector indicating the cluster assignment of each
 #'  row of the data / sequence. Must have the same length as the number of
 #'  rows/sequences of `x`.
-#' @return An object of class `group_tna` which is a `list` containing one
+#' @return An object of class `group_model` which is a `list` containing one
 #'   element per cluster. Each element is also a list containing the
 #'   following elements:
 #'   * `weights`: An adjacency `matrix` of the model (weight matrix).
@@ -62,8 +62,8 @@ group_tna <- function(x, ...) {
 #'     `data.frame` object. Otherwise `NULL`.
 #' @export
 #' @family clusters
-#' @rdname group_tna
-group_tna.default <- function(x, group, ...) {
+#' @rdname group_model
+group_model.default <- function(x, group, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
@@ -91,17 +91,17 @@ group_tna.default <- function(x, group, ...) {
   levs <- levels(group)
   clusters <- list()
   for (i in levs) {
-    clusters[[i]] <- tna(x[group == i, ], ...)
+    clusters[[i]] <- build_model(x[group == i, ], ...)
   }
-  structure(clusters, class = "group_tna")
+  structure(clusters, class = "group_model")
 }
 
 #' Build a grouped Transition Network Analysis Model providing an MMM model from `seqHMM`
 #'
 #' @param x An `mhmm` object from `seqHMM`
 #' @param ... Same as `tna`
-#' @return A `group_tna` object
-#' @return An object of class `group_tna` which is a `list` containing one
+#' @return A `group_model` object
+#' @return An object of class `group_model` which is a `list` containing one
 #'   element per cluster. Each element is also a list containing the
 #'   following elements:
 #'   * `weights`: An adjacency `matrix` of the model (weight matrix).
@@ -116,76 +116,76 @@ group_tna.default <- function(x, group, ...) {
 #'
 #' @export
 #' @family clusters
-#' @rdname group_tna
-group_tna.mhmm <- function(x, ...) {
+#' @rdname group_model
+group_model.mhmm <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
 
   group <- (summary(x))$most_probable_cluster
-  group_tna.default(x$observations, group = group, ...)
+  group_model.default(x$observations, group = group, ...)
 }
 
 
-#' Check that argument is an object of class `group_tna`
+#' Check that argument is an object of class `group_model`
 #'
 #' @param x An \R object.
 #' @family clusters
 #' @noRd
-is_group_tna <- function(x) {
-  inherits(x, "group_tna")
+is_group_model <- function(x) {
+  inherits(x, "group_model")
 }
 
-#' Check that argument is an object of class `group_tna_centralities`
+#' Check that argument is an object of class `group_model_centralities`
 #'
 #' @param x An \R object.
 #' @family clusters
 #' @noRd
-is_group_tna_centralities <- function(x) {
-  inherits(x, "group_tna_centralities")
+is_group_model_centralities <- function(x) {
+  inherits(x, "group_model_centralities")
 }
 
-#' Check that argument is an object of class `group_tna_bootstrap`
+#' Check that argument is an object of class `group_model_bootstrap`
 #'
 #' @param x An \R object.
 #' @family clusters
 #' @noRd
-is_group_tna_bootstrap <- function(x) {
-  inherits(x, "group_tna_bootstrap")
+is_group_model_bootstrap <- function(x) {
+  inherits(x, "group_model_bootstrap")
 }
 
-#' Check that argument is an object of class `group_tna_communities`
+#' Check that argument is an object of class `group_model_communities`
 #'
 #' @param x An \R object.
 #' @family clusters
 #' @noRd
-is_group_tna_communities <- function(x) {
-  inherits(x, "group_tna_communities")
+is_group_model_communities <- function(x) {
+  inherits(x, "group_model_communities")
 }
 
 
-#' Check that argument is an object of class `group_tna_cliques`
+#' Check that argument is an object of class `group_model_cliques`
 #'
 #' @param x An \R object.
 #' @family clusters
 #' @noRd
-is_group_tna_cliques <- function(x) {
-  inherits(x, "group_tna_cliques")
+is_group_model_cliques <- function(x) {
+  inherits(x, "group_model_cliques")
 }
 
-#' Check that argument is an object of class `group_tna_stability`
+#' Check that argument is an object of class `group_model_stability`
 #'
 #' @param x An \R object.
 #' @family clusters
 #' @noRd
-is_group_tna_stability <- function(x) {
-  inherits(x, "group_tna_stability")
+is_group_model_stability <- function(x) {
+  inherits(x, "group_model_stability")
 }
 
 #' Plot a grouped Transition Network Analysis Model
 #'
-#' @param x A `group_tna` object.
+#' @param x A `group_model` object.
 #' @param title A title for each plot. It can be a single string (the same one
 #'  will be used for all plots) or a list (one per group)
 #' @param ... Same as [plot.tna()]
@@ -193,14 +193,14 @@ is_group_tna_stability <- function(x) {
 #' @return NULL
 #' @family clusters
 #' @export
-plot.group_tna <- function(x, title, ...) {
+plot.group_model <- function(x, title, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
 
   if (missing(title)) {
@@ -215,20 +215,20 @@ plot.group_tna <- function(x, title, ...) {
 }
 
 
-#' Coerce  a specific group from a `group_tna` object to an `igraph` object.
+#' Coerce  a specific group from a `group_model` object to an `igraph` object.
 #'
 #' @export
 #' @inheritParams igraph::as.igraph
 #' @param which The number or name of group.
 #' @return An `igraph` object.
-as.igraph.group_tna <- function(x, which){
+as.igraph.group_model <- function(x, which){
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   stopifnot_(
     !is.null(x[[which]]),
@@ -248,7 +248,7 @@ as.igraph.group_tna <- function(x, which){
 #' mean distance, strength measures, degree centrality, and reciprocity.
 #'
 #' @export
-#' @param x A `group_tna` object.
+#' @param x A `group_model` object.
 #' @param combined A logical indicating whether the summary results should be
 #' combined into a single dataframe for all clusters (defaults to `TRUE`)
 #' @param ... Ignored
@@ -292,17 +292,17 @@ as.igraph.group_tna <- function(x, which){
 #'
 #' @examples
 #' group <- c(rep("High",100),rep("Low",100))
-#' model <- group_tna(engagement, group = group)
+#' model <- group_model(engagement, group = group)
 #' summary(model)
 #'
-summary.group_tna <- function(x, combined = TRUE) {
+summary.group_model <- function(x, combined = TRUE) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   if(combined == FALSE) {
     lapply(x, \(i) summary.tna(i))
@@ -313,16 +313,16 @@ summary.group_tna <- function(x, combined = TRUE) {
 }
 
 
-#' Prune a `group_tna` network based on transition probabilities
+#' Prune a `group_model` network based on transition probabilities
 #'
-#' Prunes a set of networks represented by a `group_tna` object by removing
+#' Prunes a set of networks represented by a `group_model` object by removing
 #' edges based on a specified threshold, lowest percent of non-zero edge
 #' weights, or the disparity filter algorithm (Serrano et al., 2009).
 #' It ensures the networks remain weakly connected.
 #'
 #' @export
 #' @family clusters
-#' @param x An object of class `group_tna`
+#' @param x An object of class `group_model`
 #' @param method A `character` string describing the pruning method.
 #' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
 #' `"disparity"`, corresponding to the methods listed in Details. The default
@@ -335,11 +335,11 @@ summary.group_tna <- function(x, combined = TRUE) {
 #' considered for removal. The default is `0.05`.
 #' @param level A `numeric` value representing the significance level for the
 #' disparity filter. Defaults to `0.5`.
-#' @param boot A `group_tna_bootstrap` object to be used for pruning with method
+#' @param boot A `group_model_bootstrap` object to be used for pruning with method
 #' `"boot"`. The method argument is ignored if this argument is supplied.
 #' @param ... Arguments passed to [bootstrap()] when
-#' using `method = "bootstrap"` and when a `group_tna_bootstrap` is not supplied.
-#' @return A pruned `group_tna` object. Details on the pruning can be viewed with
+#' using `method = "bootstrap"` and when a `group_model_bootstrap` is not supplied.
+#' @return A pruned `group_model` object. Details on the pruning can be viewed with
 #' [pruning_details()]. The original model can be restored with [deprune()].
 #' @references
 #' Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
@@ -349,25 +349,25 @@ summary.group_tna <- function(x, combined = TRUE) {
 #'
 #' @examples
 #' group <- c(rep("High",100),rep("Low",100))
-#' model <- group_tna(engagement, group = group)
+#' model <- group_model(engagement, group = group)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
 #' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
 #' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 #'
-prune.group_tna <- function(x, ...) {
+prune.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
 
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
 
   structure(
     lapply(x, \(i) prune.tna(i, ...)),
-    class = "group_tna"
+    class = "group_model"
   )
 }
 
@@ -376,18 +376,18 @@ prune.group_tna <- function(x, ...) {
 #'
 #' @rdname pruning_details
 #' @export
-#' @param x A pruned `group_tna` object.
+#' @param x A pruned `group_model` object.
 #' @param removed_edges Should a `data.frame` of removed edges be printed?
 #' The default is `FALSE`.
 #' @param ... Ignored.
-pruning_details.group_tna <- function(x, ...) {
+pruning_details.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
 
   Map(function(y, i) {print(i); pruning_details.tna(y, ...)}, x, names(x))
@@ -397,42 +397,42 @@ pruning_details.group_tna <- function(x, ...) {
 #' @family clusters
 #' @rdname deprune
 #' @export
-deprune.group_tna <- function(x, ...) {
+deprune.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   structure(
     lapply(x, \(i) deprune.tna(i, ...)),
-    class = "group_tna"
+    class = "group_model"
   )
 }
 
 #' @family clusters
 #' @rdname reprune
 #' @export
-reprune.group_tna <- function(x, ...) {
+reprune.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   structure(
     lapply(x, \(i) reprune.tna(i, ...)),
-    class = "group_tna"
+    class = "group_model"
   )
 }
 
-#' Print `group_tna` Bootstrap Results
+#' Print `group_model` Bootstrap Results
 #'
-#' @param x A `group_tna_bootstrap` object.
+#' @param x A `group_model_bootstrap` object.
 #' @param digits An `integer` giving the minimal number of
 #' *significant* digits to print.
 #' @param type A `character` vector giving the type of edges to print.
@@ -443,32 +443,32 @@ reprune.group_tna <- function(x, ...) {
 #'
 #' @family clusters
 #' @export
-print.group_tna_bootstrap <- function(x, ...) {
+print.group_model_bootstrap <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_bootstrap(x),
-    "Argument {.arg x} must be of type `group_tna_bootstrap`"
+    is_group_model_bootstrap(x),
+    "Argument {.arg x} must be of type `group_model_bootstrap`"
   )
   lapply(x, \(i) print.tna_bootstrap(i, ...))
 }
 
 #' Print the summary of a grouped Transition Network Analysis Model
 #'
-#' @param x A `summary.group_tna` object.
+#' @param x A `summary.group_model` object.
 #' @param ... Ignored
 #' @family clusters
 #' @export
-print.summary.group_tna  <- function(x, ...) {
+print.summary.group_model  <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   if (is.list(x)) {
     lapply(x, \(i) print.summary.tna(i, ...))
@@ -477,67 +477,67 @@ print.summary.group_tna  <- function(x, ...) {
   }
 }
 
-#' Print `group_tna` Bootstrap Summary
+#' Print `group_model` Bootstrap Summary
 #'
-#' @param x A `summary.group_tna_bootstrap` object.
+#' @param x A `summary.group_model_bootstrap` object.
 #' @param ... Ignored.
 #' @family clusters
 #' @export
-print.summary.group_tna_bootstrap  <- function(x, ...) {
+print.summary.group_model_bootstrap  <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_bootstrap(x),
-    "Argument {.arg x} must be of type `group_tna_bootstrap`"
+    is_group_model_bootstrap(x),
+    "Argument {.arg x} must be of type `group_model_bootstrap`"
   )
   lapply(x, \(i) print.summary.tna_bootstrap(i, ...))
 }
 
-#' Print `group_tna` Centrality Measures
+#' Print `group_model` Centrality Measures
 #'
 #' @param x A `group_centralities` object.
 #' @param ... Ignored.
 #' @family clusters
 #' @export
-print.group_tna_centralities  <- function(x, ...) {
+print.group_model_centralities  <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_centralities(x),
-    "Argument {.arg x} must be of type `group_tna_centralities`"
+    is_group_model_centralities(x),
+    "Argument {.arg x} must be of type `group_model_centralities`"
   )
 
   NextMethod(generic = "print", object = x, ...)
 }
 
 
-#' Print `group_tna` Detected Communities
+#' Print `group_model` Detected Communities
 #'
 #' @export
-#' @param x A `group_tna_communities` object.
+#' @param x A `group_model_communities` object.
 #' @family clusters
 #' @param ... Ignored.
-print.group_tna_communities  <- function(x, ...) {
+print.group_model_communities  <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_communities(x),
-    "Argument {.arg x} must be of type `group_tna_communities`"
+    is_group_model_communities(x),
+    "Argument {.arg x} must be of type `group_model_communities`"
   )
   Map(function(y, i) {print(i); print.tna_communities(y, ...)}, x, names(x))
 }
 
 
-#' Print `group_tna` Found Cliques
+#' Print `group_model` Found Cliques
 #'
 #' @export
-#' @param x A `group_tna_cliques` object.
+#' @param x A `group_model_cliques` object.
 #' @param n An `integer` defining the maximum number of cliques to show.
 #' The defaults is `6`.
 #' @param first An `integer` giving the index of the first clique to show.
@@ -545,14 +545,14 @@ print.group_tna_communities  <- function(x, ...) {
 #' @param digits An `integer` giving the minimal number of
 #' *significant* digits to print.
 #' @param ... Ignored.
-print.group_tna_cliques  <- function(x, ...) {
+print.group_model_cliques  <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_cliques(x),
-    "Argument {.arg x} must be of type `group_tna_cliques`"
+    is_group_model_cliques(x),
+    "Argument {.arg x} must be of type `group_model_cliques`"
   )
   Map(function(y, i) {print(i); print.tna_cliques(y, ...)}, x, names(x))
 
@@ -560,42 +560,42 @@ print.group_tna_cliques  <- function(x, ...) {
 
 #' @family clusters
 #' @export
-hist.group_tna <- function(x, ...) {
+hist.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   lapply(x, \(i) hist.tna(i, ...))
 }
 
 #' @family clusters
 #' @export
-plot.group_tna_centralities <- function(x, ...) {
+plot.group_model_centralities <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_centralities(x),
-    "Argument {.arg x} must be of type `group_tna_centralities`"
+    is_group_model_centralities(x),
+    "Argument {.arg x} must be of type `group_model_centralities`"
   )
   plot_centralities_multiple(x, ...)
 }
 
 #' @family clusters
 #' @export
-plot.group_tna_cliques <- function(x, title, ...) {
+plot.group_model_cliques <- function(x, title, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_cliques(x),
-    "Argument {.arg x} must be of type `group_tna_cliques`"
+    is_group_model_cliques(x),
+    "Argument {.arg x} must be of type `group_model_cliques`"
   )
 
   if (missing(title)) {
@@ -610,28 +610,28 @@ plot.group_tna_cliques <- function(x, title, ...) {
 
 #' @family clusters
 #' @export
-plot.group_tna_stability <- function(x, ...) {
+plot.group_model_stability <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_stability(x),
-    "Argument {.arg x} must be of type `group_tna_stability`"
+    is_group_model_stability(x),
+    "Argument {.arg x} must be of type `group_model_stability`"
   )
   lapply(x, \(i) plot.tna_stability(i, ...))
 }
 
 #' @family clusters
 #' @export
-plot.group_tna_communities <- function(x, title = names(x), colors = lapply(x, \(x) NULL), ...) {
+plot.group_model_communities <- function(x, title = names(x), colors = lapply(x, \(x) NULL), ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna_communities(x),
-    "Argument {.arg x} must be of type `group_tna_communities`"
+    is_group_model_communities(x),
+    "Argument {.arg x} must be of type `group_model_communities`"
   )
   if (is.null(colors) | (is.vector(colors) & is.atomic(colors))){
       colors = lapply(x, \(x) colors)
@@ -648,76 +648,76 @@ plot.group_tna_communities <- function(x, title = names(x), colors = lapply(x, \
 #' @family clusters
 #' @rdname communities
 #' @export
-communities.group_tna <- function(x, ...) {
+communities.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
 
 
   structure(
     lapply(x, \(i) communities.tna(i, ...)),
-    class = "group_tna_communities"
+    class = "group_model_communities"
   )
 }
 
 #' @family clusters
 #' @export
-cliques.group_tna <- function(x, ...) {
+cliques.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   structure(
     lapply(x, \(i) cliques.tna(i, ...)),
-    class = "group_tna_cliques"
+    class = "group_model_cliques"
   )
 }
 
 #' @family clusters
 #' @rdname centralities
 #' @export
-centralities.group_tna <- function(x, ...) {
+centralities.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
 
   grc <- dplyr::bind_rows(lapply(x, \(i) data.frame(centralities.tna(i, ...))), .id = "Group")
 
   structure(
     grc,
-    class = c("group_tna_centralities", "tbl_df", "tbl", "data.frame")
+    class = c("group_model_centralities", "tbl_df", "tbl", "data.frame")
   )
 }
 
 #' @family clusters
 #' @rdname estimate_cs
 #' @export
-estimate_centrality_stability.group_tna <- function(x, ...) {
+estimate_centrality_stability.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   structure(
     lapply(x, \(i) estimate_centrality_stability.tna(i, ...)),
-    class = "group_tna_stability"
+    class = "group_model_stability"
   )
 
 }
@@ -725,18 +725,18 @@ estimate_centrality_stability.group_tna <- function(x, ...) {
 
 #' @family clusters
 #' @export
-bootstrap.group_tna <- function(x, ...) {
+bootstrap.group_model <- function(x, ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be of type `group_tna`"
+    is_group_model(x),
+    "Argument {.arg x} must be of type `group_model`"
   )
   structure(
     lapply(x, \(i) bootstrap.tna(i, ...)),
-    class = "group_tna_bootstrap"
+    class = "group_model_bootstrap"
   )
 }
 
@@ -827,23 +827,55 @@ mmm_stats <- function(x, use_t_dist = TRUE, conf_level = 0.95) {
 
 #' Rename clusters
 #'
-#' @param x A `group_tna` object
+#' @param x A `group_model` object
 #' @param new_names A vector containing one name per cluster
-#' @return A renamed `group_tna` object
+#' @return A renamed `group_model` object
 #' @family clusters
 #' @export
-rename.group_tna <- function(x, new_names) {
+rename_groups <- function(x, new_names) {
+  stopifnot_(
+    is_group_model(x),
+    "Argument {.arg x} is not a `group_model` object"
+  )
   stopifnot_(
     !missing(new_names),
     "Argument {.arg x} is missing."
   )
   stopifnot_(
-    !is.vector(new_names),
+    is.vector(new_names),
     "Argument {.arg new_names} must be a vector"
   )
   stopifnot_(
-    length(new_names) != length(x),
+    length(new_names) == length(x),
     "Argument {.arg new_names} must be the same length as {.arg x}"
   )
   names(x) <- new_names
+}
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- group_tna(engagement)
+#'
+group_tna <- function(x, scaling = character(0L), ...) {
+  check_missing(x)
+  group_model(x = x, type = "relative", scaling = scaling, ...)
+}
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- group_ftna(engagement)
+#'
+group_ftna <- function(x, scaling = character(0L), ...) {
+  group_model(x = x, type = "absolute", scaling = scaling, ...)
+}
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- group_ctna(engagement)
+#'
+group_ctna <- function(x, scaling = character(0L), ...) {
+  group_model(x = x, type = "co-occurrence", scaling = scaling, ...)
 }

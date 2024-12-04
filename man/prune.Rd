@@ -20,6 +20,6 @@ Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{permutation_test}()},
 \code{\link{prune.tna}()},
-\code{\link{pruning_details.group_tna}()}
+\code{\link{pruning_details.group_model}()}
 }
 \concept{evaluation}

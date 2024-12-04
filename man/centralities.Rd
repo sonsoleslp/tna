@@ -4,7 +4,7 @@
 \alias{centralities}
 \alias{centralities.tna}
 \alias{centralities.matrix}
-\alias{centralities.group_tna}
+\alias{centralities.group_model}
 \title{Calculate Centrality Measures for a Transition Matrix}
 \usage{
 centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
@@ -13,7 +13,7 @@ centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
 
 \method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures, ...)
 
-\method{centralities}{group_tna}(x, ...)
+\method{centralities}{group_model}(x, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object, a \code{group_tna} object, or a  square \code{matrix} representing edge weights.}
@@ -99,26 +99,27 @@ Statistical Applications in Genetics and Molecular Biology, 4(1).
 }
 \seealso{
 Core functions
+\code{\link{build_model}()},
 \code{\link{plot.tna}()},
 \code{\link{plot.tna_centralities}()},
-\code{\link{plot_compare}()},
-\code{\link{tna}()}
+\code{\link{plot_compare}()}
 
 Cluster-related functions
-\code{\link{communities.group_tna}()},
-\code{\link{deprune.group_tna}()},
+\code{\link{communities.group_model}()},
+\code{\link{deprune.group_model}()},
 \code{\link{estimate_cs}()},
-\code{\link{group_tna}()},
+\code{\link{group_model}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
-\code{\link{reprune.group_tna}()},
-\code{\link{summary.group_tna}()}
+\code{\link{plot.group_model}()},
+\code{\link{print.group_model_bootstrap}()},
+\code{\link{print.group_model_centralities}()},
+\code{\link{print.group_model_communities}()},
+\code{\link{print.summary.group_model}()},
+\code{\link{print.summary.group_model_bootstrap}()},
+\code{\link{prune.group_model}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune.group_model}()},
+\code{\link{summary.group_model}()}
 }
 \concept{clusters}
 \concept{core}

@@ -4,7 +4,7 @@
 \alias{estimate_cs}
 \alias{estimate_centrality_stability}
 \alias{estimate_centrality_stability.tna}
-\alias{estimate_centrality_stability.group_tna}
+\alias{estimate_centrality_stability.group_model}
 \title{Estimate Centrality Stability}
 \usage{
 estimate_cs(
@@ -37,7 +37,7 @@ estimate_centrality_stability(x, ...)
   progressbar = FALSE
 )
 
-\method{estimate_centrality_stability}{group_tna}(x, ...)
+\method{estimate_centrality_stability}{group_model}(x, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object representing the temporal network analysis data.
@@ -51,7 +51,8 @@ the centrality measures. The default is \code{FALSE}.}
 
 \item{measures}{A \code{character} vector of centrality measures to estimate.
 The default measures are \code{"InStrength"}, \code{"OutStrength"},
-and \code{"Betweenness"}.}
+and \code{"Betweenness"}. See \code{\link[=centralities]{centralities()}} for a list of available centrality
+measures.}
 
 \item{iter}{An \code{integer} specifying the number of resamples to draw.
 The default is 1000.}
@@ -116,18 +117,19 @@ estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 10)
 \seealso{
 Cluster-related functions
 \code{\link{centralities}()},
-\code{\link{communities.group_tna}()},
-\code{\link{deprune.group_tna}()},
-\code{\link{group_tna}()},
+\code{\link{communities.group_model}()},
+\code{\link{deprune.group_model}()},
+\code{\link{group_model}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
-\code{\link{reprune.group_tna}()},
-\code{\link{summary.group_tna}()}
+\code{\link{plot.group_model}()},
+\code{\link{print.group_model_bootstrap}()},
+\code{\link{print.group_model_centralities}()},
+\code{\link{print.group_model_communities}()},
+\code{\link{print.summary.group_model}()},
+\code{\link{print.summary.group_model_bootstrap}()},
+\code{\link{prune.group_model}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune.group_model}()},
+\code{\link{summary.group_model}()}
 }
 \concept{clusters}

@@ -11,9 +11,8 @@
   pie,
   edge.labels = TRUE,
   layout = "circle",
+  layout_args = list(),
   mar = rep(5, 4),
-  cut,
-  minimum,
   theme = "colorblind",
   ...
 )
@@ -29,15 +28,18 @@
 
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{layout}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{layout}{One of the following:
+\itemize{
+\item A \code{character} string describing a \code{qgraph} layout.
+\item A \code{matrix} of node positions to use, with a row for each node and
+\code{x} and \code{y} columns for the node positions.
+\item A layout function from \code{igraph}.
+}}
+
+\item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
+function when \code{layout} is a function.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}. Defaults to the smallest 20th percentile
-of the weights.}
-
-\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}. Defaults to the smallest 10th
-percentile of the weights.}
 
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
@@ -53,15 +55,15 @@ sizes corresponding to initial state probabilities. Edge labels represent
 the edge weights of the network.
 }
 \examples{
-tna_model <- tna(engagement)
-plot(tna_model)
+model <- tna(engagement)
+plot(model)
 
 }
 \seealso{
 Core functions
+\code{\link{build_model}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna_centralities}()},
-\code{\link{plot_compare}()},
-\code{\link{tna}()}
+\code{\link{plot_compare}()}
 }
 \concept{core}

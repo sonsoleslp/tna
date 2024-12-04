@@ -36,9 +36,9 @@ plot_compare(model_x, model_y)
 }
 \seealso{
 Core functions
+\code{\link{build_model}()},
 \code{\link{centralities}()},
 \code{\link{plot.tna}()},
-\code{\link{plot.tna_centralities}()},
-\code{\link{tna}()}
+\code{\link{plot.tna_centralities}()}
 }
 \concept{core}
