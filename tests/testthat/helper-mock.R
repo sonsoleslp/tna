@@ -1,48 +1,29 @@
-# Helper function to create a mock tna object
-create_mock_tna <- function() {
-  # Create a simple mock transition matrix
-  weights <- matrix(
-    c(
-      0.1, 0.2, 0.0, 0.1,
-      0.0, 0.2, 0.3, 0.0,
-      0.4, 0.0, 0.1, 0.2,
-      0.1, 0.1, 0.0, 0.2
-    ),
-    nrow = 4,
-    ncol = 4,
-    byrow = TRUE
-  )
-  tna(weights)
-}
+# A mock transition matrix
+set.seed(0)
+mock_matrix <- matrix(
+  c(0, runif(15)),
+  nrow = 4,
+  ncol = 4,
+  dimnames = replicate(2, LETTERS[1:4], simplify = FALSE)
+)
 
-# Helper function to create a sample transition matrix
-create_sample_tna <- function() {
-  mat <- matrix(
-    c(
-      0, 1, 2, 0,
-      0, 0, 1, 1,
-      1, 0, 0, 1,
-      0, 1, 0, 0
-    ),
-    nrow = 4,
-    ncol = 4,
-    byrow = TRUE
-  )
-  tna(mat, inits = c(0.3, 0.2, 0.3, 0.2))
-}
+mock_freq_matrix <- matrix(
+  c(0, rpois(24, lambda = 50)),
+  nrow = 5,
+  ncol = 5,
+  dimnames = replicate(2, LETTERS[1:5], simplify = FALSE)
+)
 
-# Helper function to create a mock transition matrix
-create_mock_matrix <- function() {
-  matrix(
-    c(
-      0.8, 0.2, 0.0, 0.1,
-      0.0, 0.2, 0.3, 0.0,
-      0.4, 0.0, 0.1, 0.2,
-      0.1, 0.1, 0.0, 0.2
-    ),
-    nrow = 4,
-    ncol = 4,
-    byrow = TRUE,
-    dimnames = list(c("A", "B", "C", "D"), c("A", "B", "C", "D"))
-  )
-}
+mock_sequence <- data.frame(
+  T1 = c("A", "B", "C", "A"),
+  T2 = c("A", "C", "B", "B"),
+  T3 = c("B", "C", "A", "C"),
+  T4 = c("B", "A", "C", "A"),
+  T5 = c("C", "A", "B", "B")
+)
+
+# A mock tna object
+mock_tna <- tna(
+  x = mock_matrix,
+  inits = c(0.3, 0.2, 0.3, 0.2)
+)

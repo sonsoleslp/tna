@@ -1,12 +1,24 @@
 #' Check if argument is missing
 #'
-#' @param x An argument to a function.
+#' @param x An \R object.
 #' @noRd
 check_missing <- function(x) {
   arg <- deparse(substitute(x))
   stopifnot_(
     !missing(x),
     "Argument {.arg {arg}} is missing."
+  )
+}
+
+#' Check if argument contains missing values
+#'
+#' @param x An \R object.
+#' @noRd
+check_na <- function(x) {
+  arg <- deparse(substitute(x))
+  stopifnot_(
+    all(!is.na(x)),
+    "Argument {.arg {arg}} must not contain missing values."
   )
 }
 
@@ -206,4 +218,29 @@ check_layout <- function(x, layout, args = list()) {
   )
   args$graph <- as.igraph(x)
   do.call(what = layout, args = args)
+}
+
+#' Check Edge Weight Matrix based on TNA Type
+#'
+#' @param x A `matrix` of edge weights.
+#' @param type Type of the transition network as a `character` string.
+#' @noRd
+check_weights <- function(x, type) {
+  d <- dim(x)[1L]
+  if (type == "relative") {
+    rs <- .rowSums(x = x, m = d, n = d)
+    stopifnot_(
+      all(rs > 0),
+      "At least one element of each row of {.arg x} must be positive."
+    )
+    x[] <- x / rs
+  } else if (type %in% c("absolute", "co-occurrence")) {
+    x_int <- as.integer(x)
+    stopifnot_(
+      all(x == x_int) && all(x >= 0),
+      "All elements of {.arg x} must be non-negative integers."
+    )
+    x[] <- x_int
+  }
+  x
 }

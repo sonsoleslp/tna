@@ -628,7 +628,7 @@ plot_compare <- function(x, y, cut, minimum, ...) {
   )
 }
 
-#' Plot a Transition Network from a Matrix of Edge Weights
+#' Plot a Transition Network Model from a Matrix of Edge Weights
 #'
 #' @export
 #' @param x A square `matrix` of edge weights.
@@ -638,9 +638,9 @@ plot_compare <- function(x, y, cut, minimum, ...) {
 #' m <- matrix(rexp(25), 5, 5)
 #' plot_tna(m)
 #'
-plot_tna <- function(x, labels, colors,
-                     edge.labels = TRUE, layout = "circle",
-                     mar = rep(5, 4), theme = "colorblind", ...) {
+plot_model <- function(x, labels, colors,
+                       edge.labels = TRUE, layout = "circle",
+                       mar = rep(5, 4), theme = "colorblind", ...) {
   stopifnot_(
     is.matrix(x) && ncol(x) == nrow(x),
     "Argument {.arg x} must be a square matrix."

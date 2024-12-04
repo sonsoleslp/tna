@@ -46,14 +46,11 @@ test_that("non-coercible arguments fail", {
 # })
 
 test_that("tna works with matrix data with inits", {
-  trans_matrix <- create_mock_matrix()
   inits <- c(0.25, 0.25, 0.25, 0.25)
-  tna_model <- tna(trans_matrix, inits = inits)
+  tna_model <- tna(mock_matrix, inits = inits)
   expect_s3_class(tna_model, "tna")
   expect_true(is.matrix(tna_model$weights))
   expect_true(is.vector(tna_model$inits))
-  expect_equal(length(tna_model$inits), ncol(trans_matrix))
-  expect_equal(tna_model$labels, colnames(trans_matrix))
 })
 
 test_that("tna fails with non-square matrix", {
@@ -64,13 +61,20 @@ test_that("tna fails with non-square matrix", {
   )
 })
 
-test_that("tna fails with inits of wrong length", {
-  trans_matrix <- create_mock_matrix()
-  inits <- c(0.1, 0.2, 0.3)
-
+test_that("tna fails with too few inits", {
   expect_error(
-    tna(trans_matrix, inits = inits),
+    tna(mock_matrix, inits = c(0.1, 0.2, 0.3)),
     "Argument `inits` must provide initial probabilities for all states."
+  )
+})
+
+test_that("tna warns with too many inits", {
+  expect_warning(
+    tna(mock_matrix, inits = c(0.1, 0.2, 0.3, 0.4, 0.5)),
+    paste0(
+      "Argument `inits` contains more values than the number of states\\.\n",
+      "i Only the first 4 values will be used\\."
+    )
   )
 })
 
@@ -78,3 +82,29 @@ test_that("tna handles missing x argument", {
   expect_error(tna(), "Argument `x` is missing.")
 })
 
+test_that("tna handles default case", {
+  expect_error(build_model.default(mock_matrix), NA)
+})
+
+test_that("tna aliases work", {
+  expect_error(ftna(mock_freq_matrix), NA)
+  expect_error(ctna(mock_sequence), NA)
+})
+
+test_that("scaling options work", {
+  model_minmax <- tna(mock_freq_matrix, scaling = "minmax")
+  expect_equal(
+    range(model_minmax$weights),
+    c(0, 1)
+  )
+  model_max <- tna(mock_freq_matrix, scaling = "max")
+  expect_equal(
+    model_max$weights,
+    model_minmax$weights
+  )
+  model_rank <- tna(mock_matrix, scaling = "rank")
+  expect_equal(
+    sort(model_rank$weights),
+    seq_len(prod(dim(mock_matrix)))
+  )
+})

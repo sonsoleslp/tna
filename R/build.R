@@ -96,6 +96,7 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to {.cls numeric}."
   )
+  check_na(x)
   nc <- ncol(x)
   stopifnot_(
     nc == nrow(x),
@@ -128,11 +129,14 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
         )
       )
       inits <- inits[seq_len(nc)]
+      inits <- inits / sum(inits)
     }
     names(inits) <- colnames(x)
   }
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
+  x <- check_weights(x, type = type)
+  x <- scale_weights(x, scaling = scaling)
   if (is.null(colnames(x))) {
     dimnames(x) <- list(seq_len(nc), seq_len(nc))
   }
@@ -189,34 +193,6 @@ build_model.data.frame <- function(x, type = "relative",
   )
 }
 
-#' Build a Transition Network Analysis object
-#'
-#' @param weights A `matrix` of edge weights.
-#' @param inits A `numeric` vector of initial state probabilities.
-#' @param labels A `character` vector of state labels.
-#' @param type A `character` string defining the network type.
-#' @param scaling A `character` string defining the scaling of the weights
-#' @param data A `tna_seqdata` object when `weights` is
-#'   created from sequence data.
-#' @return A `tna` object.
-#' @noRd
-build_model_ <- function(weights, inits = NULL, labels = NULL,
-                         type, scaling = character(0L), data = NULL) {
-  structure(
-    list(
-      weights = weights,
-      # TODO can inits be missing?
-      inits = onlyif(!missing(inits), inits),
-      labels = labels,
-      data = data
-    ),
-    type = type,
-    scaling = scaling,
-    class = "tna"
-  )
-}
-
-
 # Aliases -----------------------------------------------------------------
 
 #' @export
@@ -249,6 +225,33 @@ ctna <- function(x, scaling = character(0L), ...) {
 
 
 # Internal ----------------------------------------------------------------
+
+#' Build a Transition Network Analysis object
+#'
+#' @param weights A `matrix` of edge weights.
+#' @param inits A `numeric` vector of initial state probabilities.
+#' @param labels A `character` vector of state labels.
+#' @param type A `character` string defining the network type.
+#' @param scaling A `character` string defining the scaling of the weights
+#' @param data A `tna_seqdata` object when `weights` is
+#'   created from sequence data.
+#' @return A `tna` object.
+#' @noRd
+build_model_ <- function(weights, inits = NULL, labels = NULL,
+                         type, scaling = character(0L), data = NULL) {
+  structure(
+    list(
+      weights = weights,
+      # TODO can inits be missing?
+      inits = onlyif(!missing(inits), inits),
+      labels = labels,
+      data = data
+    ),
+    type = type,
+    scaling = scaling,
+    class = "tna"
+  )
+}
 
 #' Convert Sequence Data to an Internal Format
 #'
@@ -350,7 +353,7 @@ initialize_model <- function(x, type, scaling, transitions = FALSE) {
 #'
 #' @param transitions An `array` of the individual-level transitions.
 #' @param type Type of the transition network as a `character` string.
-#' @param type Scaling to apply as a `character` string.
+#' @param scaling Scalings to apply as a `character` vectors.
 #' @param s An `integer`, the number of states.
 #' @return A `matrix` of transition probabilities or frequencies,
 #' based on `type`.
@@ -363,6 +366,15 @@ compute_weights <- function(transitions, type, scaling, s) {
     weights[pos, ] <- weights[pos, ] / rs[pos]
     weights[!pos, ] <- NA
   }
+  scale_weights(weights, scaling)
+}
+
+#' Scale Transition Network Weights
+#'
+#' @param weights A `matrix` of edge weights
+#' @param scaling Scalings to apply as a `character` vector.
+#' @noRd
+scale_weights <- function(weights, scaling) {
   for (i in seq_along(scaling)) {
     if (scaling[i] == "minmax") {
       weights[] <- ranger(weights)

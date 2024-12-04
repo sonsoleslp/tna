@@ -282,13 +282,15 @@ estimate_cs <- function(x, loops = FALSE, normalize = FALSE, measures = c(
     prop <- drop_prop[i]
     n_drop <- floor(n * prop)
     if (n_drop == 0) {
-      warning_("No cases dropped for proportion ", prop, " skipping...")
+      warning_(
+        paste0("No cases dropped for proportion ", prop, " skipping...")
+      )
       next
     }
     corr_prop <- matrix(nrow = iter, ncol = n_measures)
     for (j in seq_len(iter)) {
       keep <- sample(n_seq, n - n_drop, replace = FALSE)
-      trans_sub <- trans[keep, , ]
+      trans_sub <- trans[keep, , , drop = FALSE]
       weight_sub <- compute_weights(trans_sub, type, scaling, a)
       centralities_sub <- centralities_(
         x = weight_sub,
