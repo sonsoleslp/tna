@@ -40,6 +40,14 @@ test_that("cliques can be printed", {
   )
 })
 
+test_that("zero clique case is considered", {
+  cliq <- cliques(mock_tna, size = 2, threshold = 0.5)
+  expect_output(
+    print.tna_cliques(cliq),
+    "No 2-cliques were found in the network\\."
+  )
+})
+
 test_that("communities can be printed", {
   comm <- communities(mock_tna)
   expect_error(

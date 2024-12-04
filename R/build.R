@@ -23,7 +23,7 @@
 #'   Currently supports the following types:
 #'
 #'   * `"relative"` for relative frequencies (probabilities, the default)
-#'   * `"absolute"` for frequencies.
+#'   * `"frequency"` for frequencies.
 #'   * `"co-occurrence"` for co-occurrences.
 #'
 #' @param scaling A `character` vector describing how to scale the weights
@@ -211,7 +211,7 @@ tna <- function(x, scaling = character(0L), ...) {
 #' model <- ftna(engagement)
 #'
 ftna <- function(x, scaling = character(0L), ...) {
-  build_model(x = x, type = "absolute", scaling = scaling, ...)
+  build_model(x = x, type = "frequency", scaling = scaling, ...)
 }
 
 #' @export
@@ -315,7 +315,7 @@ initialize_model <- function(x, type, scaling, transitions = FALSE) {
   trans <- array(0L, dim = c(n, a, a))
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  if (type == "co") {
+  if (type == "co-occurrence") {
     for (i in seq_len(p - 1)) {
       for (j in seq(i + 1, p)) {
         from <- m[, i]

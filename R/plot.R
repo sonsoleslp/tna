@@ -20,10 +20,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
       "Edge Weights (",
       switch(
         type,
-        relative = "Probabilities",
-        scaled = "Scaled Frequencies",
-        ranked = "Scaled Frequency Ranks",
-        absolute = "Frequencies"
+        `relative` = "Probabilities",
+        `frequency` = "Frequencies",
+        `co-occurrence` = "Co-occurrences"
       ),
       ")"
     )
@@ -37,9 +36,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
   }
   if (missing(breaks)) {
     breaks <- ifelse_(
-      type == "absolute",
-      seq(0, max(w), length.out = 20),
-      seq(0, 1, length.out = 20)
+      type == "relative",
+      seq(0, 1, length.out = 20),
+      seq(0, max(w), length.out = 20)
     )
   }
   graphics::hist(
@@ -238,7 +237,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
   size <- attr(x, "size")
   if (n_cliques == 0) {
     warning_("No {size}-cliques were found in the network.")
-    return()
+    return(invisible(NULL))
   }
   colors <- attr(x, "colors")
   labels <- attr(x, "labels")
@@ -408,7 +407,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     # Check if measure_results has valid dimensions
     if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
       warning_(
-        c("Warning: No valid data for measure ", measure, ". Skipping.")
+        paste0("Warning: No valid data for measure ", measure, ". Skipping.")
       )
       next
     }

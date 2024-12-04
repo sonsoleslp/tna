@@ -86,6 +86,16 @@ test_that("tna handles default case", {
   expect_error(build_model.default(mock_matrix), NA)
 })
 
+test_that("unnamed matrix gains dimnames", {
+  mat <- mock_matrix
+  dimnames(mat) <- NULL
+  model <- tna(mat)
+  expect_equal(
+    dimnames(model$weights),
+    list(as.character(1:4), as.character(1:4))
+  )
+})
+
 test_that("tna aliases work", {
   expect_error(ftna(mock_freq_matrix), NA)
   expect_error(ctna(mock_sequence), NA)

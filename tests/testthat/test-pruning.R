@@ -67,3 +67,38 @@ test_that("pruning details can be obtained", {
   )
 })
 
+test_that("pruning can be deactivated", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  expect_error(
+    deprune(pruned_model),
+    NA
+  )
+})
+
+test_that("pruning can be reactivated", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  depruned_model <- deprune(pruned_model)
+  expect_error(
+    reprune(depruned_model),
+    NA
+  )
+})
+
+test_that("weights are restored by deprune", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  depruned_model <- deprune(pruned_model)
+  expect_equal(
+    mock_tna$weights,
+    depruned_model$weights
+  )
+})
+
+test_that("pruned weights are restored by reprune", {
+  pruned_model <- prune(mock_tna, threshold = 0.2)
+  depruned_model <- deprune(pruned_model)
+  repruned_model <- reprune(depruned_model)
+  expect_equal(
+    pruned_model$weights,
+    repruned_model$weights
+  )
+})

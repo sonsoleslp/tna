@@ -41,7 +41,7 @@ no extra columns).}
 Currently supports the following types:
 \itemize{
 \item \code{"relative"} for relative frequencies (probabilities, the default)
-\item \code{"absolute"} for frequencies.
+\item \code{"frequency"} for frequencies.
 \item \code{"co-occurrence"} for co-occurrences.
 }}
 

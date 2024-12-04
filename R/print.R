@@ -39,11 +39,10 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
   type <- attr(x, "type")
   mat_type <- switch(
     type,
-    relative = "Transition Probability",
-    scaled = "Scaled Transition Frequency",
-    ranked = "Scaled Transition Frequency Rank",
-    absolute = "Transition Frequency",
-    betweenness = "Edge Betweenness"
+    `relative` = "Transition Probability",
+    `frequency` = "Transition Frequency",
+    `co-occurrence` = "Co-occurrence",
+    `betweenness` = "Edge Betweenness"
   )
   cat("State Labels\n\n")
   cat(paste(x$labels, collapse = ", "), "\n")
@@ -171,6 +170,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
     "Argument {.arg x} must be a {.cls tna_cliques} object."
   )
   n_cliques <- length(x$weights)
+  size <- attr(x, "size")
   if (n_cliques == 0) {
     cat("No ", size, "-cliques were found in the network.", sep = "")
     return(invisible(x))
@@ -179,7 +179,6 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   check_positive(first)
   check_nonnegative(digits)
   n <- min(n, n_cliques)
-  size <- attr(x, "size")
   threshold <- attr(x, "threshold")
   cluster <- attr(x, "cluster")
   cat(

@@ -31,13 +31,13 @@ check_model_type <- function(type) {
   type <- try(
     match.arg(
       type,
-      c("relative", "absolute", "co-occurrence")
+      c("relative", "frequency", "co-occurrence")
     ),
     silent = TRUE
   )
   stopifnot_(
     !inherits(type, "try-error"),
-    "Argument {.arg type} must be either {.val relative}, {.val absolute},
+    "Argument {.arg type} must be either {.val relative}, {.val frequency},
      or {.val co-occurrence}."
   )
   type
@@ -206,8 +206,18 @@ check_layout <- function(x, layout, args = list()) {
   }
   if (is.matrix(layout)) {
     stopifnot_(
-      nrow(layout) == nrow(x$weights) && ncol(layout) == 2,
-      "A {.cls matrix} layout must have a row for each node and 2 columns."
+      ncol(layout) == 2L,
+      c(
+        "A {.cls matrix} layout must have 2 columns.",
+        `x` = "Found {ncol(layout)} columns instead."
+      )
+    )
+    stopifnot_(
+      nrow(layout) == nodes(x),
+      c(
+        "A {.cls matrix} layout must have a row for each node",
+        `x` = "Expected {nodes(x)} rows but {nrow(layout)} were supplied."
+      )
     )
     return(layout)
   }
@@ -234,7 +244,7 @@ check_weights <- function(x, type) {
       "At least one element of each row of {.arg x} must be positive."
     )
     x[] <- x / rs
-  } else if (type %in% c("absolute", "co-occurrence")) {
+  } else if (type %in% c("frequency", "co-occurrence")) {
     x_int <- as.integer(x)
     stopifnot_(
       all(x == x_int) && all(x >= 0),
