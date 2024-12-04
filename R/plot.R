@@ -616,8 +616,6 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 #' @param x An object of class `tna`. It will be the principal model.
 #' @param y An object of class `tna`. It will be the model subtracted from the
 #'   principal model.
-#' @param cut See [qgraph::qgraph()].
-#' @param minimum See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object displaying the difference network between the
 #'   two models.
@@ -626,7 +624,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 #' model_y <- tna(engagement[engagement[, 1] != "Active", ])
 #' plot_compare(model_x, model_y)
 #'
-plot_compare <- function(x, y, cut, minimum, ...) {
+plot_compare <- function(x, y, ...) {
   check_tna(x)
   check_tna(y)
   # TODO check that x and y are comparable
@@ -642,6 +640,7 @@ plot_compare <- function(x, y, cut, minimum, ...) {
   diff <- build_model_(
     x$weights - y$weights,
     type = attr(x, "type"),
+    labels = x$labels,
     inits = pie
   )
   if (!is.null(x$data)) {
