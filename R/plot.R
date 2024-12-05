@@ -756,10 +756,6 @@ plot.group_tna_communities <- function(x, title = names(x),
                                        colors, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
-  stopifnot_(
-    is_group_tna_communities(x),
-    "Argument {.arg x} must be a {.cls group_tna_communities} object."
-  )
 
   colors <- ifelse_(
     missing(colors),
