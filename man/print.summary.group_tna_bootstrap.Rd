@@ -2,20 +2,27 @@
 % Please edit documentation in R/print.R
 \name{print.summary.group_tna_bootstrap}
 \alias{print.summary.group_tna_bootstrap}
-\title{Print \code{group_tna} Bootstrap Summary}
+\title{Print Bootstrap Summary for a Grouped Transition Network}
 \usage{
 \method{print}{summary.group_tna_bootstrap}(x, ...)
 }
 \arguments{
 \item{x}{A \code{summary.group_tna_bootstrap} object.}
 
-\item{...}{Arguments passed to \code{\link[=print.summary.tna_bootstrap]{print.summary.tna_bootstrap()}}.}
+\item{...}{Arguments passed to the generic \code{print} method.}
 }
 \value{
 \code{x} (invisibly).
 }
 \description{
-Print \code{group_tna} Bootstrap Summary
+Print Bootstrap Summary for a Grouped Transition Network
+}
+\examples{
+model <- group_model(engagement_mmm)
+# Low number of iteration for CRAN
+boot <- bootstrap(model, iter = 10)
+print(summary(boot))
+
 }
 \seealso{
 Cluster-related functions
@@ -38,10 +45,13 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

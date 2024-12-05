@@ -1,6 +1,6 @@
 Package: tna
 Title: Transition Network Analysis (TNA)
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person("Sonsoles", "L\u00f3pez-Pernas", 
            email = "sonsoles.lopez@uef.fi", role = c("aut", "cre")), 
@@ -29,9 +29,9 @@ Imports:
     qgraph,
     RColorBrewer,
     rlang,
+    stats,
     tibble,
-    tidyr,
-    stats
+    tidyr
 Suggests: 
     gt,
     knitr,

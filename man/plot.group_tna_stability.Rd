@@ -14,6 +14,17 @@
 \description{
 Plot Centrality Stability Results
 }
+\examples{
+model <- group_model(engagement_mmm)
+# Low number of iterations for CRAN
+stability <- estimate_cs(
+  model,
+  drop_prop = c(0.3, 0.5, 0.7, 0.9),
+  iter = 10
+)
+plot(stability)
+
+}
 \seealso{
 Cluster-related functions
 \code{\link{bootstrap}()},
@@ -34,11 +45,14 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

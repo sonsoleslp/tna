@@ -102,3 +102,54 @@ test_that("pruned weights are restored by reprune", {
     repruned_model$weights
   )
 })
+
+test_that("pruning can be applied for clusters", {
+  expect_error(
+    prune(mmm_model, threshold = 0.3),
+    NA
+  )
+})
+
+test_that("pruning details can be obtained for clusters", {
+  pruned_model <- prune(mmm_model, threshold = 0.3)
+  expect_error(
+    out <- capture.output(pruning_details(pruned_model)),
+    NA
+  )
+})
+
+test_that("pruning can be deactivated for clusters", {
+  pruned_model <- prune(mmm_model, threshold = 0.3)
+  expect_error(
+    deprune(pruned_model),
+    NA
+  )
+})
+
+test_that("pruning can be reactivated for clusters", {
+  pruned_model <- prune(mmm_model, threshold = 0.3)
+  depruned_model <- deprune(pruned_model)
+  expect_error(
+    reprune(depruned_model),
+    NA
+  )
+})
+
+test_that("weights are restored by deprune for clusters", {
+  pruned_model <- prune(mmm_model, threshold = 0.3)
+  depruned_model <- deprune(pruned_model)
+  expect_equal(
+    lapply(mmm_model, "[[", "weights"),
+    lapply(depruned_model, "[[", "weights")
+  )
+})
+
+test_that("pruned weights are restored by reprune for clusters", {
+  pruned_model <- prune(mmm_model, threshold = 0.3)
+  depruned_model <- deprune(pruned_model)
+  repruned_model <- reprune(depruned_model)
+  expect_equal(
+    lapply(pruned_model, "[[", "weights"),
+    lapply(repruned_model, "[[", "weights")
+  )
+})

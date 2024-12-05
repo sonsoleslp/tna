@@ -13,23 +13,56 @@ pruning_details(x, ...)
 \method{pruning_details}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{A pruned \code{group_tna} object.}
+\item{x}{A \code{tna} or \code{group_tna} object.}
 
-\item{...}{Arguments passed to \code{\link[=pruning_details.tna]{pruning_details.tna()}}.}
+\item{...}{Ignored.}
 
 \item{removed_edges}{Should a \code{data.frame} of removed edges be printed?
 The default is \code{FALSE}.}
 }
 \description{
 Print Detailed Information on the Pruning Results
+}
+\examples{
+model <- tna(group_regulation)
+pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+pruning_details(pruned_threshold)
 
-Print Detailed Information on the Pruning Results
 }
 \seealso{
 Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{permutation_test}()},
+\code{\link{prune}()}
+
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{centralities}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
+\code{\link{estimate_cs}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{prune}()},
-\code{\link{prune.tna}()}
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
+\concept{clusters}
 \concept{evaluation}

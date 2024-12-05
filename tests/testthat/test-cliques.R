@@ -13,3 +13,10 @@ test_that("cliques of can be found with sum of weights", {
   expect_length(dyads$weights, 36)
   expect_length(triads$weights, 84)
 })
+
+test_that("cliques can be found for clusters", {
+  expect_error(
+    cliques(mmm_model, size = 2),
+    NA
+  )
+})

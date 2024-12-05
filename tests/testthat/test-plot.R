@@ -110,3 +110,62 @@ test_that("warning is issued by plot if no cliques are found", {
     "No 2-cliques were found in the network\\."
   )
 })
+
+test_that("group model can be plotted", {
+  expect_error(
+    plot(mmm_model),
+    NA
+  )
+  expect_error(
+    plot(mmm_model, title = "Clusters"),
+    NA
+  )
+})
+
+test_that("centralities can be plotted for clusters", {
+  cm <- centralities(mmm_model)
+  expect_error(
+    plot(cm),
+    NA
+  )
+})
+
+test_that("centrality stability results can be plotted for clusters", {
+  stability <- estimate_cs(
+    mmm_model,
+    drop_prop = seq(0.3, 0.9, by = 0.1),
+    iter = 10
+  )
+  expect_error(
+    plot(stability),
+    NA
+  )
+})
+
+test_that("cliques can be plotted clusters", {
+  cliq <- cliques(mmm_model, size = 2)
+  expect_error(
+    plot(cliq),
+    NA
+  )
+  expect_error(
+    plot(cliq, title = "Clusters"),
+    NA
+  )
+})
+
+test_that("communities can plotted for clusters", {
+  comm <- communities(mmm_model)
+  expect_error(
+    plot(comm),
+    NA
+  )
+})
+
+test_that("histogram of edge weights can be plotted", {
+  pdf(NULL)
+  expect_error(
+    hist(mmm_model),
+    NA
+  )
+})

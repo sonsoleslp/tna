@@ -84,10 +84,13 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
-\code{\link{reprune}()}
+\code{\link{reprune}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

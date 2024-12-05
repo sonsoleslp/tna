@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.group_tna_cliques}
 \alias{print.group_tna_cliques}
-\title{Print \code{group_tna} Found Cliques}
+\title{Print Found Cliques}
 \usage{
 \method{print}{group_tna_cliques}(x, ...)
 }
@@ -15,7 +15,12 @@
 \code{x} (invisibly).
 }
 \description{
-Print \code{group_tna} Found Cliques
+Print Found Cliques
+}
+\examples{
+model <- group_model(engagement_mmm)
+cliq <- cliques(model, size = 2)
+print(cliq)
 }
 \seealso{
 Cluster-related functions
@@ -37,11 +42,14 @@ Cluster-related functions
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

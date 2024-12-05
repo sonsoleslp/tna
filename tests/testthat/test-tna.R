@@ -126,3 +126,19 @@ test_that("model summary can be extracted", {
     NA
   )
 })
+
+test_that("igraph conversion works", {
+  model <- tna(mock_sequence)
+  expect_error(
+    as.igraph(model),
+    NA
+  )
+})
+
+test_that("igraph conversion works for clusters", {
+  model <- group_tna(engagement_mmm)
+  expect_error(
+    as.igraph(model, which = 1),
+    NA
+  )
+})

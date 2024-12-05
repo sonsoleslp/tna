@@ -20,6 +20,9 @@ deprune(x, ...)
 
 \item{...}{Ignored.}
 }
+\value{
+A \code{tna} or \code{group_tna} object that has not been pruned.
+}
 \description{
 Restore a Pruned Transition Network Analysis Model
 }
@@ -27,6 +30,7 @@ Restore a Pruned Transition Network Analysis Model
 model <- tna(engagement)
 pruned_model <- prune(model, method = "threshold", threshold = 0.1)
 depruned_model <- deprune(pruned_model) # restore original model
+
 }
 \seealso{
 Cluster-related functions
@@ -48,11 +52,14 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

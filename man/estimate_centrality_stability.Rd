@@ -3,11 +3,17 @@
 \name{estimate_cs}
 \alias{estimate_cs}
 \alias{estimate_centrality_stability}
+\alias{estimate_cs.tna}
 \alias{estimate_centrality_stability.tna}
+\alias{estimate_cs.group_tna}
 \alias{estimate_centrality_stability.group_tna}
 \title{Estimate Centrality Stability}
 \usage{
-estimate_cs(
+estimate_cs(x, ...)
+
+estimate_centrality_stability(x, ...)
+
+\method{estimate_cs}{tna}(
   x,
   loops = FALSE,
   normalize = FALSE,
@@ -21,8 +27,6 @@ estimate_cs(
   progressbar = FALSE,
   ...
 )
-
-estimate_centrality_stability(x, ...)
 
 \method{estimate_centrality_stability}{tna}(
   x,
@@ -39,11 +43,41 @@ estimate_centrality_stability(x, ...)
   ...
 )
 
-\method{estimate_centrality_stability}{group_tna}(x, ...)
+\method{estimate_cs}{group_tna}(
+  x,
+  loops = FALSE,
+  normalize = FALSE,
+  measures = c("InStrength", "OutStrength", "Betweenness"),
+  iter = 1000,
+  method = "pearson",
+  drop_prop = seq(0.1, 0.9, by = 0.1),
+  threshold = 0.7,
+  certainty = 0.95,
+  detailed = FALSE,
+  progressbar = FALSE,
+  ...
+)
+
+\method{estimate_centrality_stability}{group_tna}(
+  x,
+  loops = FALSE,
+  normalize = FALSE,
+  measures = c("InStrength", "OutStrength", "Betweenness"),
+  iter = 1000,
+  method = "pearson",
+  drop_prop = seq(0.1, 0.9, by = 0.1),
+  threshold = 0.7,
+  certainty = 0.95,
+  detailed = FALSE,
+  progressbar = FALSE,
+  ...
+)
 }
 \arguments{
-\item{x}{A \code{tna} object representing the temporal network analysis data.
-The object should be created from a sequence data object.}
+\item{x}{A \code{tna} or a \code{group_tna} object representing the temporal network
+analysis data. The object should be created from a sequence data object.}
+
+\item{...}{Ignored.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{FALSE}).}
@@ -78,8 +112,6 @@ The default is \code{FALSE}.}
 
 \item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed
 Defaults to \code{FALSE}}
-
-\item{...}{Ignored.}
 }
 \value{
 A \code{tna_stability} object which is a \code{list} with an element for each
@@ -90,8 +122,11 @@ of the measure.
 \item \code{correlations}: A \code{matrix} of correlations between the original
 centrality and the resampled centralities for each drop proportion.
 \item \code{detailed_results}: A detailed data frame of the sampled correlations,
-returned only if \code{return_detailed = TRUE}. TODO not implemented yet
+returned only if \code{return_detailed = TRUE}
 }
+
+If \code{x} is a \code{group_tna} object, a \code{group_tna_stability} object is returned
+instead, which is a \code{list} of \code{tna_stability} objects.
 }
 \description{
 Estimates the stability of centrality measures in a network
@@ -144,11 +179,43 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
+
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{centralities}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

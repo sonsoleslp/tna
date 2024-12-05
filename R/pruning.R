@@ -23,7 +23,8 @@ prune <- function(x, ...) {
 #'
 #' @export
 #' @family evaluation
-#' @param x An object of class `tna`
+#' @rdname prune
+#' @param x An object of class `tna` or `group_tna`
 #' @param method A `character` string describing the pruning method.
 #' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
 #' `"disparity"`, corresponding to the methods listed in Details. The default
@@ -40,8 +41,9 @@ prune <- function(x, ...) {
 #' `"boot"`. The method argument is ignored if this argument is supplied.
 #' @param ... Arguments passed to [bootstrap()] when
 #' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
-#' @return A pruned `tna` object. Details on the pruning can be viewed with
-#' [pruning_details()]. The original model can be restored with [deprune()].
+#' @return A pruned `tna` or `group_tna` object. Details on the pruning can be
+#' viewed with [pruning_details()]. The original model can be restored with
+#' [deprune()].
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
@@ -49,17 +51,12 @@ prune <- function(x, ...) {
 #' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 #'
 prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
-                  level = 0.5, boot = NULL, ...) {
-  check_tna(x)
-  method <- onlyif(is.character(method), tolower(method))
-  method <- try(
-    match.arg(method, c("threshold", "lowest", "bootstrap", "disparity")),
-    silent = TRUE
-  )
-  stopifnot_(
-    !inherits(method, "try-error"),
-    "Argument {.arg method} must be either {.val threshold}, {.val lowest},
-     {.val bootstrap}, or {.val disparity}."
+                      level = 0.5, boot = NULL, ...) {
+  check_missing(x)
+  check_class(x, "tna")
+  method <- check_match(
+    method,
+    c("threshold", "lowest", "bootstrap", "disparity")
   )
   check_nonnegative(threshold, type = "numeric")
   check_probability(lowest)
@@ -179,19 +176,24 @@ prune_disparity <- function(x, level, labels) {
 
 #' Print Detailed Information on the Pruning Results
 #'
-#' @rdname pruning_details
-#' @family evaluation
 #' @export
+#' @family evaluation
+#' @rdname pruning_details
 #' @param x A `tna` or `group_tna` object.
 #' @param removed_edges Should a `data.frame` of removed edges be printed?
 #' The default is `FALSE`.
 #' @param ... Ignored.
+#' @examples
+#' model <- tna(group_regulation)
+#' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+#' pruning_details(pruned_threshold)
+#'
 pruning_details <- function(x, ...) {
   UseMethod("pruning_details")
 }
 
-#' @rdname pruning_details
 #' @export
+#' @rdname pruning_details
 pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
   pruning <- attr(x, "pruning")
   stopifnot_(
@@ -215,22 +217,25 @@ pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
 
 #' Restore a Pruned Transition Network Analysis Model
 #'
-#' @rdname deprune
 #' @export
+#' @rdname deprune
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
+#' @return A `tna` or `group_tna` object that has not been pruned.
 #' @examples
 #' model <- tna(engagement)
 #' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
 #' depruned_model <- deprune(pruned_model) # restore original model
+#'
 deprune <- function(x, ...) {
   UseMethod("deprune")
 }
 
-#' @rdname deprune
 #' @export
+#' @rdname deprune
 deprune.tna <- function(x, ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   tmp <- attr(x, "pruning")
   stopifnot_(
     !is.null(tmp),
@@ -251,23 +256,25 @@ deprune.tna <- function(x, ...) {
 #'
 #' @rdname reprune
 #' @export
-#' @param x A `tna` object.
+#' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
-#' @return A `tna` object that has not been pruned. The previous pruning
-#' result can be reactivated with [reprune()].
+#' @return A `tna` or `group_tna` object that has not been pruned. The previous
+#' pruning result can be reactivated with [reprune()].
 #' @examples
 #' model <- tna(engagement)
 #' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
 #' depruned_model <- deprune(pruned_model) # restore original model
 #' repruned_model <- reprune(depruned_model) # reapply the previous pruning
+#'
 reprune <- function(x, ...) {
   UseMethod("reprune")
 }
 
-#' @rdname deprune
 #' @export
+#' @rdname deprune
 reprune.tna <- function(x, ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   tmp <- attr(x, "pruning")
   stopifnot_(
     !is.null(tmp),
@@ -304,56 +311,26 @@ disparity_filter <- function(mat, level) {
 
 # Clusters ----------------------------------------------------------------
 
-#' Prune a `group_tna` network based on transition probabilities
-#'
-#' Prunes a set of networks represented by a `group_tna` object by removing
-#' edges based on a specified threshold, lowest percent of non-zero edge
-#' weights, or the disparity filter algorithm (Serrano et al., 2009).
-#' It ensures the networks remain weakly connected.
-#'
+
+
 #' @export
 #' @family clusters
-#' @param x An object of class `group_tna`.
-#' @param ... Arguments passed to [prune.tna()].
-#' @return A pruned `group_tna` object. Details on the pruning can be viewed
-#' with [pruning_details()]. The original model can be
-#' restored with [deprune()].
-#'
-#' @examples
-#' group <- c(rep("High", 100), rep("Low", 100))
-#' model <- group_model(engagement, group = group)
-#' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
-#' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
-#' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
-#'
+#' @rdname prune
 prune.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   structure(
     lapply(x, \(i) prune.tna(i, ...)),
     class = "group_tna"
   )
 }
 
-#' Print Detailed Information on the Pruning Results
-#'
 #' @export
+#' @family clusters
 #' @rdname pruning_details
-#' @param x A pruned `group_tna` object.
-#' @param ... Arguments passed to [pruning_details.tna()].
 pruning_details.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   Map(
     function(y, i) {
       print(i)
@@ -364,30 +341,24 @@ pruning_details.group_tna <- function(x, ...) {
   )
 }
 
+#' @export
 #' @family clusters
 #' @rdname deprune
-#' @export
 deprune.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   structure(
     lapply(x, \(i) deprune.tna(i, ...)),
     class = "group_tna"
   )
 }
 
+#' @export
 #' @family clusters
 #' @rdname reprune
-#' @export
 reprune.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   structure(
     lapply(x, \(i) reprune.tna(i, ...)),
     class = "group_tna"

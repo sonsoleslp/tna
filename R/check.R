@@ -27,20 +27,7 @@ check_na <- function(x) {
 #' @param type Type of the transition network.
 #' @noRd
 check_model_type <- function(type) {
-  type <- onlyif(is.character(type), tolower(type))
-  type <- try(
-    match.arg(
-      type,
-      c("relative", "frequency", "co-occurrence")
-    ),
-    silent = TRUE
-  )
-  stopifnot_(
-    !inherits(type, "try-error"),
-    "Argument {.arg type} must be either {.val relative}, {.val frequency},
-     or {.val co-occurrence}."
-  )
-  type
+  check_match(type, c("relative", "frequency", "co-occurrence"))
 }
 
 #' Check Transition Network Weight Scaling for Validity
@@ -51,32 +38,19 @@ check_model_scaling <- function(scaling) {
   if (length(scaling) == 0L) {
     return(character(0L))
   }
-  scaling <- onlyif(is.character(scaling), tolower(scaling))
-  scaling <- try(
-    match.arg(
-      scaling,
-      c("minmax", "max", "rank"),
-      several.ok = TRUE
-    ),
-    silent = TRUE
-  )
-  stopifnot_(
-    !inherits(scaling, "try-error"),
-    "Elements of argument {.arg scaling} must be either {.val minmax},
-     {.val max}, or {.val rank}."
-  )
-  scaling
+  check_match(scaling, c("minmax", "max", "rank"), several.ok = TRUE)
 }
 
-#' Check that `x` is a `tna` Object
+#' Check that `x` is of specific class
 #'
 #' @param x An \R object.
+#' @inheritParams class
 #' @noRd
-check_tna <- function(x) {
+check_class <- function(x, what) {
   arg <- deparse(substitute(x))
   stopifnot_(
-    is_tna(x),
-    "Argument {.arg {arg}} must be a {.cls tna} object."
+    inherits(x, what),
+    "Argument {.arg {arg}} must be a {.cls {what}} object."
   )
 }
 
@@ -89,7 +63,7 @@ check_tna_seq <- function(x) {
   stopifnot_(
     is_tna(x) && !is.null(x$data),
     "Argument {.arg {arg}} must be a {.cls tna}
-    object created from sequence data."
+     object created from sequence data."
   )
 }
 
@@ -252,5 +226,35 @@ check_weights <- function(x, type) {
     )
     x[] <- x_int
   }
+  x
+}
+
+#' Check if argument matches given choices ignoring case
+#'
+#' @param x A `character` string.
+#' @inheritParams match.arg
+#' @noRd
+check_match <- function(x, choices, several.ok = FALSE) {
+  arg <- deparse(substitute(x))
+  x <- onlyif(is.character(x), tolower(x))
+  x <- try(
+    match.arg(
+      arg = x,
+      choices = choices,
+      several.ok = several.ok
+    ),
+    silent = TRUE
+  )
+  n_choices <- length(choices)
+  prefix <- ifelse_(
+    several.ok,
+    "Elements of",
+    "Argument"
+  )
+  stopifnot_(
+    !inherits(x, "try-error"),
+    "{prefix} {.arg {arg}} must be either
+    {qty(n_choices)} {.or {.val {choices}}}."
+  )
   x
 }

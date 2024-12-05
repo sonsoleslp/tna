@@ -10,10 +10,10 @@ communities(x, ...)
 
 \method{communities}{tna}(x, gamma = 1, ...)
 
-\method{communities}{group_tna}(x, ...)
+\method{communities}{group_tna}(x, gamma = 1, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object that contains transition matrices.}
+\item{x}{A \code{tna} or a \code{group_tna} object.}
 
 \item{...}{Ignored.}
 
@@ -30,6 +30,9 @@ by each algorithm.
 node and each column to a community detection algorithm,
 with color-coded community assignments.
 }
+
+If \code{x} is a \code{group_tna} object, a \code{group_tna_communities} object is returned
+instead, which is a \code{list} of \code{tna_communities} objects.
 }
 \description{
 This function detects communities within the transition networks
@@ -71,12 +74,15 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}
 \concept{patterns}

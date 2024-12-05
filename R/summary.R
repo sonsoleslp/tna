@@ -7,7 +7,6 @@
 #' @export
 #' @param object A `tna` object.
 #' @param ... Ignored
-#'
 #' @details
 #' The function extracts the `igraph` network  and
 #' computes the following network metrics:
@@ -49,7 +48,8 @@
 #' summary(model)
 #'
 summary.tna <- function(object, ...) {
-  check_tna(object)
+  check_missing(object)
+  check_class(object, "tna")
   weights <- object$weights
   g <- as.igraph(object)
   in_strength <- igraph::strength(g, mode = "out")
@@ -106,10 +106,8 @@ summary.tna <- function(object, ...) {
 #' summary(boot)
 #'
 summary.tna_bootstrap <- function(object, ...) {
-  stopifnot_(
-    is_tna_bootstrap(object),
-    "Argument {.arg object} must be a {.cls tna_bootstrap} object."
-  )
+  check_missing(object)
+  check_class(object, "tna_bootstrap")
   structure(
     object$summary,
     class = c("summary.tna_bootstrap", "data.frame")
@@ -124,7 +122,6 @@ summary.tna_bootstrap <- function(object, ...) {
 #'
 #' @export
 #' @family clusters
-#' @rdname summary
 #' @param object A `group_tna` object.
 #' @param combined A logical indicating whether the summary results should be
 #' combined into a single data frame for all clusters (defaults to `TRUE`)
@@ -171,24 +168,45 @@ summary.tna_bootstrap <- function(object, ...) {
 #'
 summary.group_tna <- function(object, combined = TRUE, ...) {
   check_missing(object)
-  stopifnot_(
-    is_group_tna(object),
-    "Argument {.arg object} must a {.cls group_tna} object."
-  )
+  check_class(object, "group_tna")
   if (!combined) {
     out  <- lapply(object, \(i) summary(i))
     out_class <- "summary.group_tna"
   } else {
     out <- dplyr::bind_rows(
       lapply(object, \(i) summary.tna(i)),
-      .id = "Cluster"
+      .id = "Group"
     ) |>
-      tidyr::pivot_wider(names_from = "Cluster", values_from = "value")
+      tidyr::pivot_wider(names_from = "Group", values_from = "value")
     out_class <- c("summary.group_tna", "tbl_df", "tbl", "data.frame")
   }
   structure(
     out,
     class = out_class,
     combined = combined
+  )
+}
+
+#' Summarize Bootstrap Results for a Grouped Transition Network
+#'
+#' @export
+#' @family clusters
+#' @param object A `group_tna_bootstrap` object from [bootstrap()].
+#' @param ... Ignored.
+#' @examples
+#' model <- group_tna(engagement_mmm)
+#' # Small number of iterations for CRAN
+#' boot <- bootstrap(model, iter = 10)
+#' summary(boot)
+#'
+summary.group_tna_bootstrap <- function(object, ...) {
+  check_missing(object)
+  check_class(object, "group_tna_bootstrap")
+  structure(
+    dplyr::bind_rows(
+      lapply(object, function(x) x$summary),
+      .id = "Group"
+    ),
+    class = c("summary.group_tna_bootstrap", "data.frame")
   )
 }

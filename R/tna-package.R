@@ -37,13 +37,28 @@
 #' throuhgout a whole study program. The data was generated synthetically
 #' based on the article "The longitudinal association between engagement and
 #' achievement varies by time, students’ profiles, and achievement state:
-#' A full program study" (doi: 10.1016/j.compedu.2023.104787)
+#' A full program study"
+#'
+#' @family examples
+#' @source <https://doi.org/10.1016/j.compedu.2023.104787>
+#' @format A `stslist` object (sequence data).
 "engagement"
+
+#' Example mixed Markov model fitted to the `engagement` data
+#'
+#' @family examples
+#' @source The data was generated via `mixed_markov_model.R` in
+#' <https://github.com/sonsoleslp/tna/tree/main/data-raw/>
+#' @format A `mhmm` object.
+"engagement_mmm"
 
 #' Example data on group regulation
 #'
 #' Students' regulation during collaborative learning. Students' interactions
 #' were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
 #' "emotion", "monitor", "plan", "synthesis"
-#' The data was generated synthetically.
+#'
+#' @family examples
+#' @source The data was generated synthetically.
+#' @format A `data.frame` object.
 "group_regulation"

@@ -2,26 +2,111 @@
 % Please edit documentation in R/pruning.R
 \name{prune}
 \alias{prune}
+\alias{prune.tna}
+\alias{prune.group_tna}
 \title{Prune a \code{tna} network based on transition probabilities}
 \usage{
 prune(x, ...)
+
+\method{prune}{tna}(
+  x,
+  method = "threshold",
+  threshold = 0.1,
+  lowest = 0.05,
+  level = 0.5,
+  boot = NULL,
+  ...
+)
+
+\method{prune}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{tna} or \code{group_tna}.}
+\item{x}{An object of class \code{tna} or \code{group_tna}}
 
-\item{...}{Potential additional arguments passed to the pruning method.}
+\item{...}{Arguments passed to \code{\link[=bootstrap]{bootstrap()}} when
+using \code{method = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.}
+
+\item{method}{A \code{character} string describing the pruning method.
+The available options are \code{"threshold"}, \code{"lowest"}, \code{"bootstrap"} and
+\code{"disparity"}, corresponding to the methods listed in Details. The default
+is \code{"threshold"}.}
+
+\item{threshold}{A numeric value specifying the edge weight threshold.
+Edges with weights below or equal to this threshold will be considered for
+removal.}
+
+\item{lowest}{A \code{numeric} value specifying the lowest percentage
+of non-zero edges. This percentage of edges with the lowest weights will be
+considered for removal. The default is \code{0.05}.}
+
+\item{level}{A \code{numeric} value representing the significance level for the
+disparity filter. Defaults to \code{0.5}.}
+
+\item{boot}{A \code{tna_bootstrap} object to be used for pruning with method
+\code{"boot"}. The method argument is ignored if this argument is supplied.}
+}
+\value{
+A pruned \code{tna} or \code{group_tna} object. Details on the pruning can be
+viewed with \code{\link[=pruning_details]{pruning_details()}}. The original model can be restored with
+\code{\link[=deprune]{deprune()}}.
 }
 \description{
 Prunes a network represented by a \code{tna} object by removing
 edges based on a specified threshold, lowest percent of non-zero edge
 weights, or the disparity filter algorithm (Serrano et al., 2009).
 It ensures the network remains weakly connected.
+
+Prunes a network represented by a \code{tna} object by removing
+edges based on a specified threshold, lowest percent of non-zero edge
+weights, or the disparity filter algorithm (Serrano et al., 2009).
+It ensures the network remains weakly connected.
+}
+\examples{
+model <- tna(group_regulation)
+pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
+pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+pruned_disparity <- prune(model, method = "disparity", level = 0.5)
+
 }
 \seealso{
 Evaluation and validation functions
 \code{\link{bootstrap}()},
 \code{\link{permutation_test}()},
-\code{\link{prune.tna}()},
 \code{\link{pruning_details}()}
+
+Evaluation and validation functions
+\code{\link{bootstrap}()},
+\code{\link{permutation_test}()},
+\code{\link{pruning_details}()}
+
+Cluster-related functions
+\code{\link{bootstrap}()},
+\code{\link{centralities}()},
+\code{\link{cliques}()},
+\code{\link{communities}()},
+\code{\link{deprune}()},
+\code{\link{estimate_cs}()},
+\code{\link{group_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{mmm_stats}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{pruning_details}()},
+\code{\link{rename_groups}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
+\concept{clusters}
 \concept{evaluation}

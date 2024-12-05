@@ -20,9 +20,8 @@
 #'   element per cluster. Each element is a `tna` object.
 #'
 #' @examples
-#' group = c(rep("High",100),rep("Low",100))
+#' group <- c(rep("High",100), rep("Low",100))
 #' model <- group_model(engagement, group = group)
-#' print(model)
 #'
 group_model <- function(x, group, ...) {
   UseMethod("group_model")
@@ -67,6 +66,10 @@ group_model.default <- function(x, group, ...) {
 #' @family clusters
 #' @rdname group_model
 group_model.mhmm <- function(x, ...) {
+  stopifnot_(
+    requireNamespace("seqHMM", quietly = TRUE),
+    "Please install the {.pkg seqHMM} package."
+  )
   check_missing(x)
   group <- summary(x)$most_probable_cluster
   group_model.default(x$observations, group = group, ...)
@@ -110,14 +113,23 @@ group_ctna <- function(x, scaling = character(0L), ...) {
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @return A `data.frame` object.
+#' @examples
+#' mmm_stats(engagement_mmm)
+#'
 mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
+  stopifnot_(
+    requireNamespace("seqHMM", quietly = TRUE),
+    "Please install the {.pkg seqHMM} package."
+  )
   check_missing(x)
   check_flag(use_t_dist)
   check_probability(level)
   stopifnot_(
     inherits(x, "mhmm"),
-    "Argument {.arg x} a {.cls mhmm} object.
-     See the `seqHMM` package for more information."
+    c(
+      "Argument {.arg x} must be a {.cls mhmm} object.",
+       `i` = "See the {.pkg seqHMM} package for more information."
+    )
   )
 
   model_summary <- summary(x)
@@ -198,13 +210,14 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
 #' @param x A `group_tna` object.
 #' @param new_names A `vector` containing one name per cluster.
 #' @return A renamed `group_tna` object.
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' model_renamed <- rename_groups(model, c("A", "B", "C"))
+#'
 rename_groups <- function(x, new_names) {
   check_missing(x)
   check_missing(new_names)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   stopifnot_(
     is.vector(new_names),
     "Argument {.arg new_names} must be a vector."

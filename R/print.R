@@ -12,7 +12,7 @@ print.summary.tna <- function(x, ...) {
 #'
 #' @export
 #' @param x A `summary.tna_bootstrap` object.
-#' @param ... Ignored.
+#' @param ... Arguments passed to the generic `print` method.
 #'
 print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
@@ -29,7 +29,8 @@ print.summary.tna_bootstrap <- function(x, ...) {
 #' @param ... Ignored.
 #'
 print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   check_flag(generic)
   if (generic) {
     NextMethod(generic = "print", object = x, ...)
@@ -75,21 +76,10 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
 #'
 print.tna_bootstrap <- function(x, digits = getOption("digits"),
                                 type = "both", ...) {
-  stopifnot_(
-    is_tna_bootstrap(x),
-    "Argument {.arg x} must be a {.cls tna_bootstrap} object."
-  )
+  check_missing(x)
+  check_class(x, "tna_bootstrap")
   check_nonnegative(digits)
-  method <- onlyif(is.character(type), tolower(type))
-  method <- try(
-    match.arg(type, c("both", "sig", "nonsig")),
-    silent = TRUE
-  )
-  stopifnot_(
-    !inherits(method, "try-error"),
-    "Argument {.arg type} must be either {.val both}, {.val sig},
-     or {.val nonsig}."
-  )
+  type <- check_match(type, c("both", "sig", "nonsig"))
   sig <- x$summary$sig
   edges <- x$summary |>
     dplyr::select(!sig)
@@ -135,10 +125,8 @@ print.tna_centralities <- function(x, ...) {
 #' print(comm)
 #'
 print.tna_communities <- function(x, ...) {
-  stopifnot_(
-    is_tna_communities(x),
-    "Argument {.arg x} must be a {.cls tna_communities} object."
-  )
+  check_missing(x)
+  check_class(x, "tna_communities")
   cat("Number of communities found by each algorithm:\n")
   print(x$counts)
   cat("\nCommunity assignments:\n")
@@ -165,10 +153,8 @@ print.tna_communities <- function(x, ...) {
 #'
 print.tna_cliques <- function(x, n = 6, first = 1,
                               digits = getOption("digits"), ...) {
-  stopifnot_(
-    is_tna_cliques(x),
-    "Argument {.arg x} must be a {.cls tna_cliques} object."
-  )
+  check_missing(x)
+  check_class(x, "tna_cliques")
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
   if (n_cliques == 0) {
@@ -217,6 +203,8 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 #' print(cs)
 #'
 print.tna_stability <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "tna_stability")
   cs_coefs <- unlist(lapply(x, "[[", "cs_coefficient"))
   names(cs_coefs) <- names(x)
   cat("Centrality Stability Coefficients\n\n")
@@ -238,6 +226,8 @@ print.tna_stability <- function(x, ...) {
 #' print(perm)
 #'
 print.tna_permutation <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "tna_permutation")
   cat("Edges\n\n")
   print(tibble::as_tibble(x$edges$stats), ...)
   if (!is.null(x$centralities)) {
@@ -256,12 +246,13 @@ print.tna_permutation <- function(x, ...) {
 #' @param x A `group_tna` object.
 #' @param ... Arguments passed to [print.tna()].
 #' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' print(model)
+#'
 print.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   lapply(x, \(i) print(i, ...))
   invisible(x)
 }
@@ -273,12 +264,15 @@ print.group_tna <- function(x, ...) {
 #' @param x A `group_tna_bootstrap` object.
 #' @param ... Arguments passed to [print.tna_bootstrap()].
 #' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Low number of iteration for CRAN
+#' boot <- bootstrap(model, iter = 10)
+#' print(boot)
+#'
 print.group_tna_bootstrap <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna_bootstrap(x),
-    "Argument {.arg x} must a {.cls group_tna_bootstrap} object."
-  )
+  check_class(x, "group_tna_bootstrap")
   lapply(x, \(i) print(i, ...))
   invisible(x)
 }
@@ -290,12 +284,13 @@ print.group_tna_bootstrap <- function(x, ...) {
 #' @param x A `summary.group_tna` object.
 #' @param ... Arguments passed to [print.summary.tna()].
 #' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' print(summary(model))
+#'
 print.summary.group_tna  <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_summary.group_tna(x),
-    "Argument {.arg x} a {.cls summary.group_tna} object."
-  )
+  check_class(x, "summary.group_tna")
   if (inherits(x, "data.frame")) {
     NextMethod(generic = "print", object = x, ...)
   } else {
@@ -304,56 +299,55 @@ print.summary.group_tna  <- function(x, ...) {
   invisible(x)
 }
 
-#' Print `group_tna` Bootstrap Summary
+#' Print Bootstrap Summary for a Grouped Transition Network
 #'
 #' @export
 #' @family clusters
 #' @param x A `summary.group_tna_bootstrap` object.
-#' @param ... Arguments passed to [print.summary.tna_bootstrap()].
+#' @param ... Arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
-print.summary.group_tna_bootstrap  <- function(x, ...) {
-  check_missing(x)
-  stopifnot_(
-    is_summary.group_tna_bootstrap(x),
-    "Argument {.arg x} must be a {.cls summary.group_tna_bootstrap} object."
-  )
-  lapply(x, \(i) print(i, ...))
-  invisible(x)
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Low number of iteration for CRAN
+#' boot <- bootstrap(model, iter = 10)
+#' print(summary(boot))
+#'
+print.summary.group_tna_bootstrap <- function(x, ...) {
+  NextMethod(generic = "print", object = x, ...)
 }
 
-#' Print `group_tna` Centrality Measures
+#' Print Centrality Measures
 #'
 #' @export
 #' @family clusters
 #' @param x A `group_tna_centralities` object.
 #' @param ... Ignored.
 #' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' cm <- centralities(model)
+#' print(cm)
+#'
 print.group_tna_centralities  <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna_centralities(x),
-    "Argument {.arg x} must be a {.cls group_tna_centralities} object."
-  )
+  check_class(x, "group_tna_centralities")
   NextMethod(generic = "print", object = x, ...)
 }
 
-
-#' Print `group_tna` Detected Communities
+#' Print Detected Communities
 #'
 #' @export
 #' @family clusters
 #' @param x A `group_tna_communities` object.
 #' @param ... Arguments passed to [print.tna_communities()].
 #' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' comm <- communities(model)
+#' print(comm)
 print.group_tna_communities  <- function(x, ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
-  stopifnot_(
-    is_group_tna_communities(x),
-    "Argument {.arg x} must be of type `group_tna_communities`"
-  )
+  check_missing(x)
+  check_class(x, "group_tna_communities")
   Map(
     function(y, i) {
       print(i)
@@ -365,22 +359,54 @@ print.group_tna_communities  <- function(x, ...) {
   invisible(x)
 }
 
-#' Print `group_tna` Found Cliques
+#' Print Found Cliques
 #'
 #' @export
 #' @family clusters
 #' @param x A `group_tna_cliques` object.
 #' @param ... Arguments passed to [print.tna_cliques()].
 #' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' cliq <- cliques(model, size = 2)
+#' print(cliq)
 print.group_tna_cliques  <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna_cliques(x),
-    "Argument {.arg x} must be a {.cls group_tna_cliques} object."
-  )
+  check_class(x, "group_tna_cliques")
   Map(
     function(y, i) {
       print(i)
+      print(y, ...)
+    },
+    x,
+    names(x)
+  )
+  invisible(x)
+}
+
+#' Print Centrality Stability Results
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_stability` object.
+#' @param ... Arguments passed to [print.tna_stability()].
+#' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Low number of iterations for CRAN
+#' stability <- estimate_cs(
+#'   model,
+#'   drop_prop = c(0.3, 0.5, 0.7, 0.9),
+#'   iter = 10
+#' )
+#' print(stability)
+#'
+print.group_tna_stability <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "group_tna_stability")
+  Map(
+    function(y, i) {
+      cat(i, ":\n\n", sep = "")
       print(y, ...)
     },
     x,

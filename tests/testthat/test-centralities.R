@@ -34,3 +34,21 @@ test_that("centrality stability can be estimated", {
     NA
   )
 })
+
+test_that("centralities can be computed for clusters", {
+  expect_error(
+    centralities(mmm_model),
+    NA
+  )
+})
+
+test_that("centrality stability can be estimated for clusters", {
+  expect_error(
+    estimate_cs(
+      mmm_model,
+      drop_prop = seq(0.3, 0.9, by = 0.1),
+      iter = 10
+    ),
+    NA
+  )
+})
