@@ -811,15 +811,19 @@ plot.group_tna_stability <- function(x, ...) {
 #' @param colors A `character` vector of colors to use.
 #' @param ... Arguments passed to [plot.tna_communities()].
 plot.group_tna_communities <- function(x, title = names(x),
-                                       colors = lapply(x, \(x) NULL), ...) {
+                                       colors, ...) {
   check_missing(x)
   stopifnot_(
     is_group_tna_communities(x),
     "Argument {.arg x} must be a {.cls group_tna_communities} object."
   )
-  if (is.null(colors) | (is.vector(colors) & is.atomic(colors))) {
-    colors <- lapply(x, \(x) colors)
-  }
+
+  colors <- ifelse_(
+    missing(colors),
+    lapply(x, \(x) default_colors),
+    ifelse_(is.vector(colors) & is.atomic(colors),  lapply(x, function(x) {print(colors);colors}), colors)
+  )
+  print(colors)
   if (is.null(title) |
       (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
     title <- lapply(x, \(x) title)
