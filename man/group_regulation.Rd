@@ -5,7 +5,10 @@
 \alias{group_regulation}
 \title{Example data on group regulation}
 \format{
-An object of class \code{data.frame} with 2000 rows and 26 columns.
+A \code{data.frame} object.
+}
+\source{
+The data was generated synthetically.
 }
 \usage{
 group_regulation
@@ -14,6 +17,11 @@ group_regulation
 Students' regulation during collaborative learning. Students' interactions
 were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
 "emotion", "monitor", "plan", "synthesis"
-The data was generated synthetically.
 }
+\seealso{
+Other examples: 
+\code{\link{engagement}},
+\code{\link{engagement_mmm}}
+}
+\concept{examples}
 \keyword{datasets}

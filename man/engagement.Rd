@@ -5,7 +5,10 @@
 \alias{engagement}
 \title{Example data on student engagement}
 \format{
-An object of class \code{stslist} (inherits from \code{data.frame}) with 200 rows and 20 columns.
+A \code{stslist} object (sequence data).
+}
+\source{
+\url{https://doi.org/10.1016/j.compedu.2023.104787}
 }
 \usage{
 engagement
@@ -15,6 +18,12 @@ Students' engagement states (Active / Average / Disengaged)
 throuhgout a whole study program. The data was generated synthetically
 based on the article "The longitudinal association between engagement and
 achievement varies by time, students’ profiles, and achievement state:
-A full program study" (doi: 10.1016/j.compedu.2023.104787)
+A full program study"
 }
+\seealso{
+Other examples: 
+\code{\link{engagement_mmm}},
+\code{\link{group_regulation}}
+}
+\concept{examples}
 \keyword{datasets}

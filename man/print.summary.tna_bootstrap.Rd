@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A \code{summary.tna_bootstrap} object.}
 
-\item{...}{Ignored.}
+\item{...}{Arguments passed to the generic \code{print} method.}
 }
 \description{
 Print Bootstrap Summary

@@ -22,7 +22,7 @@
 #'
 #' @export
 #' @family evaluation
-#' @param x A `tna` object created from sequence data.
+#' @param x A `tna` or a `group_tna` object created from sequence data.
 #' @param iter An `integer` specifying the number of bootstrap samples to
 #' draw. Defaults to `1000`.
 #' @param level A `numeric` value representing the significance level for
@@ -46,6 +46,9 @@
 #'   * `summary`: A `data.frame` summarizing the edges, their weights,
 #'     p-values, statistical significance and confidence intervals.
 #'
+#'  If `x` is a `group_tna` object, the output is a `group_tna_bootstrap`
+#'  object, which is a `list` of `tna_bootstrap` objects.
+#'
 #' @examples
 #' model <- tna(engagement)
 #' # Small number of iterations for CRAN
@@ -58,6 +61,7 @@ bootstrap <- function(x, ...) {
 #' @rdname bootstrap
 #' @export
 bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
+  check_missing(x)
   check_tna_seq(x)
   check_positive(iter)
   check_probability(level)
@@ -138,10 +142,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
 #' @rdname bootstrap
 bootstrap.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   structure(
     lapply(x, \(i) bootstrap.tna(i, ...)),
     class = "group_tna_bootstrap"

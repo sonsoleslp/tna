@@ -11,7 +11,8 @@
 #'
 hist.tna <- function(x, breaks, col = "lightblue",
                      main, xlab, border = "white", ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   w <- c(x$weights)
   type <- attr(x, "type")
   xlab_missing <- missing(xlab)
@@ -85,7 +86,8 @@ plot.tna <- function(x, labels, colors, pie,
                      edge.labels = TRUE, layout = "circle",
                      layout_args = list(), mar = rep(5, 4),
                      theme = "colorblind", ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   layout <- check_layout(x, layout, layout_args)
   if (missing(pie)) {
     pie <- x$inits
@@ -117,37 +119,6 @@ plot.tna <- function(x, labels, colors, pie,
     ...
   )
 }
-
-# TODO is this needed
-# #' Plot Transition Networks for All Clusters
-# #'
-# #' This function plots the transition networks for each cluster in a `tna` object.
-# #' It iterates through the transition matrices for each cluster and generates
-# #' corresponding plots using the `plot.tna` function.
-# #'
-# #' @param x A `tna` object containing transition matrices for different clusters.
-# #' @param ... Additional arguments to be passed to the `plot.tna` function.
-# #'
-# #' @return A series of plots showing the transition networks for each cluster.
-# #' @family core
-# #' @examples
-# #' \dontrun{
-# #' # Assuming `tna_model` is a tna object containing transition matrices
-# #' plot_clusters(tna_model)
-# #' }
-# #' @export
-# plot_clusters <- function(x, ...) {
-#   stopifnot_(
-#     is_tna(x),
-#     "Argument {.arg x} must be a {.cls tna} object."
-#   )
-#   result <- list()
-#   matrices <- x$transits
-#   for (clus in seq_along(matrices)) {
-#     plot.tna(x, cluster = clus, ...)
-#   }
-# }
-
 
 #' Plot Centrality Measures
 #'
@@ -181,10 +152,7 @@ plot.tna <- function(x, labels, colors, pie,
 plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                   scales = c("free_x", "fixed"),
                                   colors, labels = TRUE, ...) {
-  stopifnot_(
-    is_tna_centralities(x),
-    "Argument {.arg x} must be a {.cls tna_centralities} object."
-  )
+  check_class(x, "tna_centralities")
   plot_centralities_(x, reorder, ncol, scales, colors, labels)
 
 }
@@ -207,10 +175,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
                              minimum = 0.00001, mar = rep(5, 4),
                              ask = TRUE, ...) {
-  stopifnot_(
-    is_tna_cliques(x),
-    "Argument {.arg x} must be a {.cls tna_cliques} object."
-  )
+  check_class(x, "tna_cliques")
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
   if (n_cliques == 0) {
@@ -291,10 +256,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #'
 plot.tna_communities <- function(x, cluster = 1L, colors,
                                  method = "spinglass", ...) {
-  stopifnot_(
-    is_tna_communities(x),
-    "Argument {.arg x} must be a {.cls tna_communities} object."
-  )
+  check_class(x, "tna_communities")
   y <- attr(x, "tna")
   colors <- ifelse_(
     missing(colors),
@@ -317,10 +279,7 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #' plot(perm)
 #'
 plot.tna_permutation <- function(x, ...) {
-  stopifnot_(
-    is_tna_permutation(x),
-    "Argument {.arg x} must be a {.cls tna_permutation} object."
-  )
+  check_class(x, "tna_permutation")
   plot_model(
     x$edges$diffs_sig,
     labels = attr(x, "labels"),
@@ -368,10 +327,7 @@ plot.tna_permutation <- function(x, ...) {
 #' plot(cs)
 #'
 plot.tna_stability <- function(x, level = 0.05, ...) {
-  stopifnot_(
-    is_tna_stability(x),
-    "Argument {.arg x} must be a {.cls tna_stability} object."
-  )
+  check_class(x, "tna_stability")
   check_probability(level)
   x$detailed_results <- NULL
   x_names <- names(x)
@@ -394,14 +350,14 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
       corr,
       2L,
       stats::quantile,
-      probs = level / 2,
+      probs = level / 2.0,
       na.rm = TRUE
     )
     ci_upper <- apply(
       corr,
       2L,
       stats::quantile,
-      probs = 1 - level / 2,
+      probs = 1.0 - level / 2.0,
       na.rm = TRUE
     )
     measure_data[[i]] <- data.frame(
@@ -415,7 +371,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     cs_subtitle[i] <- paste0(
       measure,
       " CS = ",
-      round(cs_coef, 2)
+      round(cs_coef, 2L)
     )
   }
   plot_data <- dplyr::bind_rows(measure_data)
@@ -471,6 +427,8 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
   check_flag(reorder)
   check_flag(labels)
+  scales <- check_match(scales, c("free_x", "fixed"))
+  scales <- ifelse_(scales == "free_x", "free", "free_y")
   if (missing(colors) && !is.null(attr(x, "colors"))) {
     colors <- attr(x, "colors")
   }
@@ -479,13 +437,6 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
   } else if (!is.list(colors) && length(colors) == 1) {
     colors <- rep(colors, length.out = length(unique(x$State)))
   }
-  scales <- onlyif(is.character(scales), tolower(scales))
-  scales <- try(match.arg(scales, c("free_x", "fixed")), silent = TRUE)
-  stopifnot_(
-    !inherits(scales, "try-error"),
-    "Argument {.arg scales} must be either {.val free_x} or {.val fixed}."
-  )
-  scales <- ifelse_(scales == "free_x", "free", "free_y")
   ifelse_(
     is_tna_centralities(x),
     plot_centralities_single(x, reorder, ncol, scales, colors, labels),
@@ -633,8 +584,8 @@ plot_centralities_multiple <- function(x, reorder, ncol,
 #' plot_compare(model_x, model_y)
 #'
 plot_compare <- function(x, y, ...) {
-  check_tna(x)
-  check_tna(y)
+  check_class(x, "tna")
+  check_class(y, "tna")
   # TODO check that x and y are comparable
   stopifnot_(
     all(x$labels == y$labels),
@@ -711,31 +662,31 @@ plot_model <- function(x, labels, colors,
 #' @family clusters
 #' @param x A `group_tna` object.
 #' @param ... Additional arguments passed to [graphics::hist()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' hist(model)
+#'
 hist.group_tna <- function(x, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be a {group_tna} object."
-  )
+  check_class(x, "group_tna")
   lapply(x, \(i) hist.tna(i, ...))
 }
 
 #' Plot a grouped Transition Network Analysis Model
 #'
+#' @export
+#' @family clusters
 #' @param x A `group_model` object.
 #' @param title A title for each plot. It can be a single string (the same one
 #'  will be used for all plots) or a list (one per group)
 #' @param ... Same as [plot.tna()].
-#' @rdname plot
-#' @return NULL
-#' @family clusters
-#' @export
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' plot(model)
+#'
 plot.group_tna <- function(x, title, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be a {.cl group_tna} object."
-  )
+  check_class(x, "group_tna")
   if (missing(title)) {
     title = names(x)
   } else if (length(title) == 1) {
@@ -752,14 +703,16 @@ plot.group_tna <- function(x, title, ...) {
 #' @family clusters
 #' @param x A `group_tna_centralities` object.
 #' @inheritParams plot.tna_centralities
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' cm <- centralities(model)
+#' plot(cm)
+#'
 plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 4,
                                         scales = c("free_x", "fixed"),
                                         colors, labels = TRUE, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna_centralities(x),
-    "Argument {.arg x} must be a {.cls group_tna_centralities} object."
-  )
+  check_class(x, "group_tna_centralities")
   plot_centralities_(x, reorder, ncol, scales, colors, labels)
 }
 
@@ -770,36 +723,20 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 4,
 #' @param x A `group_tna_cliques` object.
 #' @param title A `character` vector of titles to use for each plot.
 #' @param ... Arguments passed to [plot.tna_cliques()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' cliq <- cliques(model, size = 2)
+#' plot(cliq)
+#'
 plot.group_tna_cliques <- function(x, title, ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
-  stopifnot_(
-    is_group_tna_cliques(x),
-    "Argument {.arg x} must be a {.cls group_tna_cliques} object."
-  )
+  check_missing(x)
+  check_class(x, "group_tna_cliques")
   if (missing(title)) {
     title = names(x)
   } else if (length(title) == 1) {
     title = rep(title, length(x))
   }
   Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
-}
-
-#' Plot Centrality Stability Results
-#'
-#' @export
-#' @family clusters
-#' @param x A `group_tna_stability` object.
-#' @param ... Arguments passed to [plot.tna_stability()].
-plot.group_tna_stability <- function(x, ...) {
-  check_missing(x)
-  stopifnot_(
-    is_group_tna_stability(x),
-    "Argument {.arg x} must be a {.cls group_tna_stability} object."
-  )
-  lapply(x, \(i) plot.tna_stability(i, ...))
 }
 
 #' Plot Found Communities
@@ -810,9 +747,15 @@ plot.group_tna_stability <- function(x, ...) {
 #' @param title A `character` vector of titles to use for each plot.
 #' @param colors A `character` vector of colors to use.
 #' @param ... Arguments passed to [plot.tna_communities()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' comm <- communities(model)
+#' plot(comm)
+#'
 plot.group_tna_communities <- function(x, title = names(x),
                                        colors, ...) {
   check_missing(x)
+  check_class(x, "group_tna_communities")
   stopifnot_(
     is_group_tna_communities(x),
     "Argument {.arg x} must be a {.cls group_tna_communities} object."
@@ -821,9 +764,9 @@ plot.group_tna_communities <- function(x, title = names(x),
   colors <- ifelse_(
     missing(colors),
     lapply(x, \(x) default_colors),
-    ifelse_(is.vector(colors) & is.atomic(colors),  lapply(x, function(x) {print(colors);colors}), colors)
+    ifelse_(is.vector(colors) & is.atomic(colors),  lapply(x, function(x) {colors}), colors)
   )
-  print(colors)
+
   if (is.null(title) |
       (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
     title <- lapply(x, \(x) title)
@@ -836,4 +779,27 @@ plot.group_tna_communities <- function(x, title = names(x),
     title,
     colors
   )
+}
+
+
+#' Plot Centrality Stability Results
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna_stability` object.
+#' @param ... Arguments passed to [plot.tna_stability()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Low number of iterations for CRAN
+#' stability <- estimate_cs(
+#'   model,
+#'   drop_prop = c(0.3, 0.5, 0.7, 0.9),
+#'   iter = 10
+#' )
+#' plot(stability)
+#'
+plot.group_tna_stability <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "group_tna_stability")
+  lapply(x, \(i) plot.tna_stability(i, ...))
 }

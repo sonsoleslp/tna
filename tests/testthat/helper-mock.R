@@ -27,3 +27,5 @@ mock_tna <- tna(
   x = mock_matrix,
   inits = c(0.3, 0.2, 0.3, 0.2)
 )
+
+mmm_model <- group_tna(engagement_mmm)

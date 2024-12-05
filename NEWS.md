@@ -1,6 +1,6 @@
 # tna 0.3.0
 
-* Added support for clusters.
+* Added support for grouped sequence data (clusters).
 
 # tna 0.2.0
 

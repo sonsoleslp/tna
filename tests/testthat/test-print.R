@@ -3,6 +3,18 @@ test_that("models can be printed", {
     capture.output(print.tna(mock_tna)),
     NA
   )
+  expect_error(
+    capture.output(print.tna(mock_tna, generic = TRUE)),
+    NA
+  )
+})
+
+test_that("model summary can be printed", {
+  summ <- summary(mock_tna)
+  expect_error(
+    capture.output(print.summary.tna(summ)),
+    NA
+  )
 })
 
 test_that("bootstrap results can be printed", {
@@ -56,7 +68,7 @@ test_that("communities can be printed", {
   )
 })
 
-test_that("centrality stability coefficients can be pritned", {
+test_that("centrality stability coefficients can be printed", {
   model <- tna(mock_sequence)
   out <- estimate_cs(model, drop_prop = seq(0.3, 0.9, by = 0.2), iter = 10)
   expect_error(
@@ -78,10 +90,67 @@ test_that("permutation test results can be printed", {
   )
 })
 
-test_that("model summary can be printed", {
-  summ <- summary(mock_tna)
+test_that("group model can be printed", {
   expect_error(
-    capture.output(print.summary.tna(summ)),
+    capture.output(print.group_tna(mmm_model)),
+    NA
+  )
+})
+
+test_that("group model summary can be printed", {
+  summ <- summary(mmm_model)
+  expect_error(
+    capture.output(print.summary.group_tna(summ)),
+    NA
+  )
+})
+
+test_that("bootstrap results can be printed for clusters", {
+  boot <- bootstrap(mmm_model, iter = 10)
+  expect_error(
+    capture.output(print.group_tna_bootstrap(boot)),
+    NA
+  )
+})
+
+test_that("bootstrap summary can be printed for clusters", {
+  boot <- bootstrap(mmm_model, iter = 10)
+  summ <- summary.group_tna_bootstrap(boot)
+  expect_error(
+    capture.output(print.summary.group_tna_bootstrap(summ)),
+    NA
+  )
+})
+
+test_that("centralities can be printed for clusters", {
+  cm <- centralities(mmm_model)
+  expect_error(
+    capture.output(print.group_tna_centralities(cm)),
+    NA
+  )
+})
+
+test_that("cliques can be printed for clusters", {
+  cliq <- cliques(mmm_model, size = 2)
+  expect_error(
+    capture.output(print.group_tna_cliques(cliq)),
+    NA
+  )
+})
+
+test_that("communities can be printed", {
+  comm <- communities(mmm_model)
+  expect_error(
+    capture.output(print.group_tna_communities(comm)),
+    NA
+  )
+})
+
+
+test_that("centrality stability coefficients can be printed for clusters", {
+  out <- estimate_cs(mmm_model, drop_prop = seq(0.3, 0.9, by = 0.2), iter = 10)
+  expect_error(
+    capture.output(print.group_tna_stability(out)),
     NA
   )
 })

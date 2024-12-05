@@ -13,7 +13,7 @@ bootstrap(x, ...)
 \method{bootstrap}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object created from sequence data.}
+\item{x}{A \code{tna} or a \code{group_tna} object created from sequence data.}
 
 \item{...}{Ignored.}
 
@@ -43,6 +43,9 @@ the edge weights.
 \item \code{summary}: A \code{data.frame} summarizing the edges, their weights,
 p-values, statistical significance and confidence intervals.
 }
+
+If \code{x} is a \code{group_tna} object, the output is a \code{group_tna_bootstrap}
+object, which is a \code{list} of \code{tna_bootstrap} objects.
 }
 \description{
 Perform bootstrapping on transition networks created from
@@ -76,7 +79,6 @@ bootstrap(model, iter = 10)
 Evaluation and validation functions
 \code{\link{permutation_test}()},
 \code{\link{prune}()},
-\code{\link{prune.tna}()},
 \code{\link{pruning_details}()}
 
 Cluster-related functions
@@ -98,12 +100,15 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}
 \concept{evaluation}

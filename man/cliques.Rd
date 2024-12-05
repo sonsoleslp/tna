@@ -10,10 +10,10 @@ cliques(x, ...)
 
 \method{cliques}{tna}(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 
-\method{cliques}{group_tna}(x, ...)
+\method{cliques}{group_tna}(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A \code{tna} or a \code{group_tna} object.}
 
 \item{...}{Ignored.}
 
@@ -34,6 +34,9 @@ A \code{tna_cliques} object which is a \code{list} of two elements:
 \item \code{weights} is a \code{matrix} of the edge weights in the clique.
 \item \code{inits} is a \code{numeric} vector of initial weights for the clique.
 }
+
+If \code{x} is a \code{group_tna} object, a \code{group_tna_cliques} object is returned
+instead, which is a \code{list} or \code{tna_cliques} objects.
 }
 \description{
 This function identifies cliques of a specified size in a transition network.
@@ -68,11 +71,14 @@ Cluster-related functions
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.group_tna_cliques}()},
 \code{\link{print.group_tna_communities}()},
+\code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune.group_tna}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
 \code{\link{reprune}()},
-\code{\link{summary.group_tna}()}
+\code{\link{summary.group_tna}()},
+\code{\link{summary.group_tna_bootstrap}()}
 }
 \concept{clusters}

@@ -6,7 +6,8 @@
 #' in the `tna` object.
 #'
 #' @export
-#' @param x A `tna` object.
+#' @rdname cliques
+#' @param x A `tna` or a `group_tna` object.
 #' @param size An `integer` specifying the size of the cliques to identify.
 #' Defaults to `2` (dyads).
 #' @param threshold A `numeric` value that sets the minimum edge weight
@@ -21,6 +22,9 @@
 #'   * `weights` is a `matrix` of the edge weights in the clique.
 #'   * `inits` is a `numeric` vector of initial weights for the clique.
 #'
+#' If `x` is a `group_tna` object, a `group_tna_cliques` object is returned
+#' instead, which is a `list` or `tna_cliques` objects.
+#'
 #' @examples
 #' model <- tna(engagement)
 #'
@@ -31,17 +35,18 @@ cliques <- function(x, ...) {
   UseMethod("cliques")
 }
 
-#' @rdname cliques
 #' @export
+#' @rdname cliques
 cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
+  check_nonnegative(threshold, type = "numeric")
+  check_flag(sum_weights)
   stopifnot_(
     checkmate::test_int(x = size, lower = 2),
     "Argument {.arg size} must be a single {.cls integer}
     between 2 and {nodes(x)}."
   )
-  check_nonnegative(threshold, type = "numeric")
-  check_flag(sum_weights)
   weights <- x$weights
   labels <- x$labels
   inits <- x$inits
@@ -96,14 +101,23 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
 #' @export
 #' @family clusters
 #' @rdname cliques
-cliques.group_tna <- function(x, ...) {
+cliques.group_tna <- function(x, size = 2, threshold = 0,
+                              sum_weights = FALSE, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   structure(
-    lapply(x, \(i) cliques.tna(i, ...)),
+    lapply(
+      x,
+      function(i) {
+        cliques.tna(
+          i,
+          size = size,
+          threshold = threshold,
+          sum_weights = sum_weights,
+          ...
+        )
+      }
+    ),
     class = "group_tna_cliques"
   )
 }

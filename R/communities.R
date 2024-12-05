@@ -13,7 +13,8 @@
 #'
 #' @export
 #' @family patterns
-#' @param x A `tna` object that contains transition matrices.
+#' @rdname communities
+#' @param x A `tna` or a `group_tna` object.
 #' @param gamma A `numeric` value depicting a parameter that affects the
 #' behavior of certain algorithms like the Spin Glass method. Defaults to `1`.
 #' @param ... Ignored.
@@ -26,6 +27,9 @@
 #'     node and each column to a community detection algorithm,
 #'     with color-coded community assignments.
 #'
+#' If `x` is a `group_tna` object, a `group_tna_communities` object is returned
+#' instead, which is a `list` of `tna_communities` objects.
+#'
 #' @examples
 #' model <- tna(engagement)
 #' comm <- communities(model)
@@ -34,10 +38,11 @@ communities <- function(x, ...) {
   UseMethod("communities")
 }
 
-#' @rdname communities
 #' @export
+#' @rdname communities
 communities.tna <- function(x, gamma = 1, ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   stopifnot_(
     checkmate::test_number(x = gamma),
     "Argument {.arg gamma} must be a single {.cls numeric} value."
@@ -129,14 +134,11 @@ communities.tna <- function(x, gamma = 1, ...) {
 #' @export
 #' @family clusters
 #' @rdname communities
-communities.group_tna <- function(x, ...) {
+communities.group_tna <- function(x, gamma = 1, ...) {
   check_missing(x)
-  stopifnot_(
-    is_group_tna(x),
-    "Argument {.arg x} must be a {.cls group_tna} object."
-  )
+  check_class(x, "group_tna")
   structure(
-    lapply(x, \(i) communities.tna(i, ...)),
+    lapply(x, \(i) communities.tna(i, gamma = gamma, ...)),
     class = "group_tna_communities"
   )
 }

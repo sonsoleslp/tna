@@ -1,8 +1,8 @@
 ---
-title: "Full example"
+title: "Getting started with the tna package"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Full example}
+  %\VignetteIndexEntry{Getting started with the tna package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,32 +16,39 @@ knitr::opts_chunk$set(
   dpi = 300,
   comment = "#>"
 )
+suppressPackageStartupMessages({
+  library("tna")
+  library("tibble")
+  library("dplyr")
+  library("gt")
+})
 ```
 
-```{r, warning = F,  message = FALSE, results = FALSE }
+This vignette showcases some basic usage of the `tna` package. First we load the package that we will use for this example.
+
+```{r, eval = FALSE}
 library("tna")
 library("tibble")
 library("dplyr")
 library("gt")
 ```
 
-Import the data
+We also load the `engagement` data available in the package (see `?engagement` for further information)
 ```{r}
 data("engagement", package = "tna")
 ```
 
-Build the model
+We build a TNA model using this data with the `tna()` function .
 ```{r}
 tna_model <- tna(engagement)
-plot(tna(group_regulation), layout = igraph::layout_nicely(as.igraph(tna(group_regulation))))
 ```
 
-Plot the model
+To visualize the model, we can use the standard `plot()` function.
 ```{r}
 plot(tna_model)
 ```
 
-Initial probabilities
+The initial state probabilities are
 ```{r}
 data.frame(`Initial prob.` = tna_model$inits, check.names = FALSE) |> 
   rownames_to_column("Engagement state") |> 
@@ -50,7 +57,7 @@ data.frame(`Initial prob.` = tna_model$inits, check.names = FALSE) |>
   fmt_percent()
 ```
 
-Transition probabilities
+and the transitions probabilities are
 ```{r}
 tna_model$weights |> 
   data.frame() |> 
@@ -59,7 +66,8 @@ tna_model$weights |>
   fmt_percent()
 ```
 
-Centrality measures
+The function `centralities()` can be used to compute various centrality measures (see `?centralities` for more information).
+These measures can also be visualized with the `plot()` function.
 ```{r}
 centrality_measures <- c("BetweennessRSP", "Closeness", "InStrength", "OutStrength")
 cents_withoutloops <- centralities(

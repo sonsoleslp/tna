@@ -38,7 +38,8 @@ betweenness_network <- function(x, ...) {
 #' @rdname betweenness_network
 #' @export
 betweenness_network.tna <- function(x, ...) {
-  check_tna(x)
+  check_missing(x)
+  check_class(x, "tna")
   weights <- x$weights
   g <- as.igraph(x)
   betweenness <- igraph::edge_betweenness(g, directed = TRUE)
