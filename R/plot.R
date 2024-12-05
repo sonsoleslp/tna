@@ -272,7 +272,7 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #' @param x A `tna_permutation` object.
 #' @param ... Arguments passed to [plot_model()].
 #' @examples
-#' model_x <- tna(group_regulation[1:100, ])
+#' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
 #' # Small number of iterations for CRAN
 #' perm <- permutation_test(model_x, model_y, iter = 20)
@@ -520,7 +520,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 plot_centralities_multiple <- function(x, reorder, ncol,
                                        scales, colors, labels) {
   # TODO handle colors and test
-  measures <- names(x) [3:ncol(x)]
+  measures <- names(x)[3:ncol(x)]
   n_clusters <- length(unique(x$Group))
   dplyr::mutate(x, State = factor(!!rlang::sym("State"))) |>
     data.frame() |>
@@ -669,7 +669,7 @@ plot_model <- function(x, labels, colors,
 hist.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  lapply(x, \(i) hist.tna(i, ...))
+  invisible(lapply(x, \(i) hist.tna(i, ...)))
 }
 
 #' Plot a grouped Transition Network Analysis Model
@@ -688,9 +688,9 @@ plot.group_tna <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   if (missing(title)) {
-    title = names(x)
+    title <- names(x)
   } else if (length(title) == 1) {
-    title = rep(title, length(x))
+    title <- rep(title, length(x))
   }
   for (i in seq_along(x)) {
     plot(x[[i]], title = title[i], ...)
@@ -736,7 +736,9 @@ plot.group_tna_cliques <- function(x, title, ...) {
   } else if (length(title) == 1) {
     title = rep(title, length(x))
   }
-  Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
+  invisible(
+    Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
+  )
 }
 
 #' Plot Found Communities
@@ -752,31 +754,33 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' comm <- communities(model)
 #' plot(comm)
 #'
-plot.group_tna_communities <- function(x, title = names(x),
-                                       colors, ...) {
+plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
-
   colors <- ifelse_(
     missing(colors),
     lapply(x, \(x) default_colors),
-    ifelse_(is.vector(colors) & is.atomic(colors),  lapply(x, function(x) {colors}), colors)
+    ifelse_(
+      is.vector(colors) & is.atomic(colors),
+      lapply(x, function(x) colors),
+      colors
+    )
   )
-
-  if (is.null(title) |
+  if (is.null(title) ||
       (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
     title <- lapply(x, \(x) title)
   }
-  Map(
-    function(y, i, j) {
-      plot.tna_communities(y, title = i, colors = j, ...)
-    },
-    x,
-    title,
-    colors
+  invisible(
+    Map(
+      function(y, i, j) {
+        plot(y, title = i, colors = j, ...)
+      },
+      x,
+      title,
+      colors
+    )
   )
 }
-
 
 #' Plot Centrality Stability Results
 #'
@@ -797,5 +801,5 @@ plot.group_tna_communities <- function(x, title = names(x),
 plot.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
-  lapply(x, \(i) plot.tna_stability(i, ...))
+  invisible(lapply(x, \(i) plot.tna_stability(i, ...)))
 }
