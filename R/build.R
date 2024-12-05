@@ -17,7 +17,7 @@
 #'   Markov model.  If `x` is a matrix, it is assumed that the element on row
 #'   `i` and column `j` is the weight of the edge representing the transition
 #'   from state `i` to state `j`. If `x` is a `data.frame`, then
-#'   it must be in wide format (each column is a timepoint with
+#'   it must be in wide format (each column is a time point with
 #'   no extra columns).
 #' @param type A `character` string describing the weight matrix type.
 #'   Currently supports the following types:

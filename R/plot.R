@@ -19,8 +19,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
   if (xlab_missing) {
     xlab <- paste0(
       "Edge Weights (",
-      switch(
-        type,
+      switch(type,
         `relative` = "Probabilities",
         `frequency` = "Frequencies",
         `co-occurrence` = "Co-occurrences"
@@ -154,7 +153,6 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                   colors, labels = TRUE, ...) {
   check_class(x, "tna_centralities")
   plot_centralities_(x, reorder, ncol, scales, colors, labels)
-
 }
 
 #' Plot Cliques of a TNA Network
@@ -165,7 +163,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param show_loops A `logical` value indicating whether to include loops
 #' in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
-#' @param ask A `logical` value. When `TRUE`, showw plots one by one and asks
+#' @param ask A `logical` value. When `TRUE`, show plots one by one and asks
 #' to plot the next plot in interactive mode.
 #' @examples
 #' model <- tna(engagement)
@@ -201,7 +199,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
       labels = colnames(clique_weights),
       edge.labels = TRUE,
       directed = !attr(x, "sum_weights"),
-      #edge.label.cex = 1.82,
+      # edge.label.cex = 1.82,
       mar = mar,
       minimum = minimum,
       theme = "colorblind",
@@ -214,9 +212,9 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
     # TODO should already work with 1 clique?
-    #if ((max_cliques - first) == 0) {
+    # if ((max_cliques - first) == 0) {
     #  return (do.call(qgraph::qgraph, args = plot_args))
-    #}
+    # }
   }
 }
 
@@ -594,8 +592,8 @@ plot_compare <- function(x, y, ...) {
   colors <- rlang::missing_arg()
   pie <- abs(x$inits - y$inits)
   piesign <- ifelse(x$inits > y$inits, "#009900", "red")
-  #pos_col <- c("#009900", "darkgreen")
-  #neg_col <- c("#BF0000", "red")
+  # pos_col <- c("#009900", "darkgreen")
+  # neg_col <- c("#BF0000", "red")
   diff <- build_model_(
     x$weights - y$weights,
     type = attr(x, "type"),
@@ -732,9 +730,9 @@ plot.group_tna_cliques <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
   if (missing(title)) {
-    title = names(x)
+    title <- names(x)
   } else if (length(title) == 1) {
-    title = rep(title, length(x))
+    title <- rep(title, length(x))
   }
   invisible(
     Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
@@ -767,7 +765,7 @@ plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
     )
   )
   if (is.null(title) ||
-      (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
+    (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
     title <- lapply(x, \(x) title)
   }
   invisible(

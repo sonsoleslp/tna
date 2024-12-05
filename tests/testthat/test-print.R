@@ -83,7 +83,8 @@ test_that("permutation test results can be printed", {
   perm <- permutation_test(
     model_x,
     model_y,
-    measures = "InStrength", iter = 20)
+    measures = "InStrength", iter = 20
+  )
   expect_error(
     capture.output(print.tna_permutation(perm)),
     NA

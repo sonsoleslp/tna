@@ -40,7 +40,7 @@ map_to_color <- function(x, palette) {
   # TODO handle case where palette is exceeded or just use RColorBrewer etc.
   if (length(unique(x)) == 1) {
     # Handle the case where all values are the same
-    return(rep(palette[1], length(x)))  # Map to the first color in the palette
+    return(rep(palette[1], length(x))) # Map to the first color in the palette
   }
   # Normalize the numeric values to a range from 1 to the length of the palette
   scaled_values <- as.integer(ranger(x) * (length(palette) - 1L)) + 1L
@@ -58,8 +58,7 @@ color_palette <- function(n_states) {
     1L * (n_states <= 2) -
     1L * (n_states <= 8) -
     1L * (n_states <= 12)
-  switch(
-    color_group,
+  switch(color_group,
     RColorBrewer::brewer.pal(n = 3, name = "Accent")[seq_len(n_states)],
     RColorBrewer::brewer.pal(n = n_states, name = "Accent"),
     RColorBrewer::brewer.pal(n = n_states, name = "Set3"),
@@ -69,4 +68,4 @@ color_palette <- function(n_states) {
 
 # Default Community Colors ------------------------------------------------
 
-default_colors <- c("#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a7184d", "#3c02a6",  "#fd9a01", "#0392ce")
+default_colors <- c("#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a7184d", "#3c02a6", "#fd9a01", "#0392ce")

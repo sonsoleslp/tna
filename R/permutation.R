@@ -28,10 +28,10 @@
 #'   * `diffs_sig`: A `matrix` showing the significant differences.
 #'
 #' @examples
-#' model_x <- tna(group_regulation[1:1000,])
-#' model_y <- tna(group_regulation[1001:2000,])
+#' model_x <- tna(group_regulation[1:200, ])
+#' model_y <- tna(group_regulation[1001:1200, ])
 #' # Small number of iterations for CRAN
-#' permutation_test(model_x, model_y, iter = 50)
+#' permutation_test(model_x, model_y, iter = 20)
 #'
 permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
                              measures = character(0), ...) {

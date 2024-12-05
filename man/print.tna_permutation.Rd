@@ -18,8 +18,8 @@
 Print Permutation Test Results
 }
 \examples{
-model_x <- tna(group_regulation[1:100,])
-model_y <- tna(group_regulation[1001:1200,])
+model_x <- tna(group_regulation[1:200, ])
+model_y <- tna(group_regulation[1001:1200, ])
 # Small number of iterations for CRAN
 perm <- permutation_test(model_x, model_y, iter = 20)
 print(perm)

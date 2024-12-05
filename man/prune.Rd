@@ -64,7 +64,7 @@ It ensures the network remains weakly connected.
 \examples{
 model <- tna(group_regulation)
 pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
-pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+pruned_percentile <- prune(model, method = "lowest", lowest = 0.05)
 pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 
 }

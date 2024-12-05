@@ -47,7 +47,7 @@ prune <- function(x, ...) {
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
-#' pruned_percentile <- prune(model,method = "lowest", lowest = 0.05)
+#' pruned_percentile <- prune(model, method = "lowest", lowest = 0.05)
 #' pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 #'
 prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
@@ -71,8 +71,7 @@ prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
     seq_len(nodes(x)),
     x$labels
   )
-  tmp <- switch(
-    method,
+  tmp <- switch(method,
     bootstrap = prune_bootstrap(x, boot, ...),
     disparity = prune_disparity(x, level, labels),
     prune_default(x, method, threshold, lowest, labels)
@@ -89,8 +88,7 @@ prune_default <- function(x, method, threshold, lowest, labels) {
   pos_edges_idx <- weights > 0
   n_edges <- sum(pos_edges_idx)
   pos_edges <- weights[pos_edges_idx]
-  cut_off <- switch(
-    method,
+  cut_off <- switch(method,
     threshold = threshold,
     lowest = stats::quantile(pos_edges, probs = lowest)
   )
@@ -194,14 +192,13 @@ pruning_details <- function(x, ...) {
 
 #' @export
 #' @rdname pruning_details
-pruning_details.tna <- function(x,  removed_edges = TRUE, ...) {
+pruning_details.tna <- function(x, removed_edges = TRUE, ...) {
   pruning <- attr(x, "pruning")
   stopifnot_(
     !is.null(pruning),
     "Argument {.arg x} must have been pruned."
   )
-  method_txt <- switch(
-    pruning$method,
+  method_txt <- switch(pruning$method,
     threshold = paste0("User-specified threshold (", pruning$threshold, ")"),
     lowest = paste0("Lowest ", pruning$lowest * 100, "% of non-zero edges"),
     bootstrap = "Bootstrapping",

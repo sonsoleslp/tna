@@ -16,7 +16,7 @@ group_model(x, group, ...)
 \item{x}{An \code{stslist} object describing a sequence of events or states to
 be used for building the Markov model. The argument \code{x} also accepts
 a \code{data.frame} object in wide format.
-(each column is a timepoint with no extra columns). Alternatively, the
+(each column is a time point with no extra columns). Alternatively, the
 function accepts a mixture Markov model from the library \code{seqHMM}.}
 
 \item{group}{A vector indicating the cluster assignment of each
@@ -35,7 +35,7 @@ each cluster from a given sequence, wide-formatted dataframe,
 or a mixture Markov model.
 }
 \examples{
-group <- c(rep("High",100), rep("Low",100))
+group <- c(rep("High", 100), rep("Low", 100))
 model <- group_model(engagement, group = group)
 
 }

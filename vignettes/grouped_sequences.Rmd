@@ -54,17 +54,17 @@ init_probs <- list(
 Next, we building and fit the model (this step takes some time to compute, the final model object is also available in the `tna` package as `engagement_mmm`).
 ```{r, eval = FALSE}
 mmm <- build_mmm(
-  engagement, 
+  engagement,
   transition_probs = trans_probs,
   initial_probs = init_probs
 )
 fit_mmm <- fit_model(
- modelTrans,
- global_step = TRUE,
- control_global = list(algorithm = "NLOPT_GD_STOGO_RAND"),
- local_step = TRUE,
- threads = 60,
- control_em = list(restart = list(times = 100, n_optimum = 101))
+  modelTrans,
+  global_step = TRUE,
+  control_global = list(algorithm = "NLOPT_GD_STOGO_RAND"),
+  local_step = TRUE,
+  threads = 60,
+  control_em = list(restart = list(times = 100, n_optimum = 101))
 )
 ```
 
@@ -79,7 +79,7 @@ tna_model_clus <- group_model(fit_mmm$model)
 
 We can summarize the cluster-specific models
 ```{r}
-summary(tna_model_clus) |> 
+summary(tna_model_clus) |>
   gt() |>
   fmt_number(decimals = 2)
 ```
@@ -87,18 +87,19 @@ summary(tna_model_clus) |>
 and their initial probabilities
 ```{r}
 bind_rows(lapply(tna_model_clus, \(x) x$inits), .id = "Cluster") |>
-  gt() |> 
+  gt() |>
   fmt_percent()
 ```
 
 as well as transition probabilities.
 ```{r}
 transitions <- lapply(
-  tna_model_clus, 
+  tna_model_clus,
   function(x) {
-    x$weights |> 
+    x$weights |>
       data.frame() |>
-      rownames_to_column("From\\To") |> gt() |>
+      rownames_to_column("From\\To") |>
+      gt() |>
       tab_header(title = names(tna_model_clus)[1]) |>
       fmt_percent()
   }
@@ -128,9 +129,9 @@ plot(pruned_clus)
 Centrality measures can also be computed for each cluster directly.
 ```{r, fig.width=9, fig.height=4}
 centrality_measures <- c(
-  "BetweennessRSP", 
-  "Closeness", 
-  "InStrength", 
+  "BetweennessRSP",
+  "Closeness",
+  "InStrength",
   "OutStrength"
 )
 centralities_per_cluster <- centralities(
@@ -139,6 +140,6 @@ centralities_per_cluster <- centralities(
 )
 plot(
   centralities_per_cluster,
-  colors = c("purple","orange","pink")
+  colors = c("purple", "orange", "pink")
 )
 ```
