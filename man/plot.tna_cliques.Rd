@@ -9,7 +9,7 @@
   n = 6,
   first = 1,
   show_loops = FALSE,
-  minimum = 1e-05,
+  minimum = 0.00001,
   mar = rep(5, 4),
   ask = TRUE,
   ...
