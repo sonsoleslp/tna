@@ -170,7 +170,7 @@ summary.group_tna <- function(object, combined = TRUE, ...) {
   check_missing(object)
   check_class(object, "group_tna")
   if (!combined) {
-    out  <- lapply(object, \(i) summary(i))
+    out <- lapply(object, \(i) summary(i))
     out_class <- "summary.group_tna"
   } else {
     out <- dplyr::bind_rows(

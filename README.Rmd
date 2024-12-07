@@ -59,15 +59,15 @@ cm <- centralities(tna_model)
 ```
 
 ```{r, echo=FALSE}
-cm |> 
-  gt::gt() |> 
-  gt::tab_options(table.font.size = 8) |> 
+cm |>
+  gt::gt() |>
+  gt::tab_options(table.font.size = 8) |>
   gt::as_raw_html()
 ```
 
 Plot the centrality measures
 ```{r centralitiesplot, fig.width=12}
-plot(cm, ncol = 4, reorder = TRUE) 
+plot(cm, ncol = 4, reorder = TRUE)
 ```
 
 Compare those who started as active with the rest
@@ -76,4 +76,3 @@ tna_model_start_active <- tna(engagement[engagement[, 1] == "Active", ])
 tna_model_start_other <- tna(engagement[engagement[, 1] != "Active", ])
 plot_compare(tna_model_start_active, tna_model_start_other)
 ```
-

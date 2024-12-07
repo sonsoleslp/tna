@@ -5,7 +5,7 @@
 #' @param ... Ignored.
 #'
 print.summary.tna <- function(x, ...) {
-  NextMethod(generic = "print", object =  x, ...)
+  NextMethod(generic = "print", object = x, ...)
 }
 
 #' Print Bootstrap Summary
@@ -38,8 +38,7 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
   }
   check_nonnegative(digits)
   type <- attr(x, "type")
-  mat_type <- switch(
-    type,
+  mat_type <- switch(type,
     `relative` = "Transition Probability",
     `frequency` = "Transition Frequency",
     `co-occurrence` = "Co-occurrence",
@@ -158,7 +157,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
   if (n_cliques == 0) {
-    cat("No ", attr(x,"size"), "-cliques were found in the network.", sep = "")
+    cat("No ", attr(x, "size"), "-cliques were found in the network.", sep = "")
     return(invisible(x))
   }
   check_positive(n)
@@ -219,8 +218,8 @@ print.tna_stability <- function(x, ...) {
 #' @param ... Additional arguments passed to the `tibble` print method.
 #' @return `x` (invisibly).
 #' @examples
-#' model_x <- tna(group_regulation[1:100,])
-#' model_y <- tna(group_regulation[1001:1200,])
+#' model_x <- tna(group_regulation[1:200, ])
+#' model_y <- tna(group_regulation[1001:1200, ])
 #' # Small number of iterations for CRAN
 #' perm <- permutation_test(model_x, model_y, iter = 20)
 #' print(perm)
@@ -288,7 +287,7 @@ print.group_tna_bootstrap <- function(x, ...) {
 #' model <- group_model(engagement_mmm)
 #' print(summary(model))
 #'
-print.summary.group_tna  <- function(x, ...) {
+print.summary.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "summary.group_tna")
   if (inherits(x, "data.frame")) {
@@ -328,7 +327,7 @@ print.summary.group_tna_bootstrap <- function(x, ...) {
 #' cm <- centralities(model)
 #' print(cm)
 #'
-print.group_tna_centralities  <- function(x, ...) {
+print.group_tna_centralities <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_centralities")
   NextMethod(generic = "print", object = x, ...)
@@ -345,7 +344,7 @@ print.group_tna_centralities  <- function(x, ...) {
 #' model <- group_model(engagement_mmm)
 #' comm <- communities(model)
 #' print(comm)
-print.group_tna_communities  <- function(x, ...) {
+print.group_tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
   Map(
@@ -370,7 +369,7 @@ print.group_tna_communities  <- function(x, ...) {
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
 #' print(cliq)
-print.group_tna_cliques  <- function(x, ...) {
+print.group_tna_cliques <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
   Map(

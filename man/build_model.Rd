@@ -43,7 +43,7 @@ should describe a sequence of events or states to be used for building the
 Markov model.  If \code{x} is a matrix, it is assumed that the element on row
 \code{i} and column \code{j} is the weight of the edge representing the transition
 from state \code{i} to state \code{j}. If \code{x} is a \code{data.frame}, then
-it must be in wide format (each column is a timepoint with
+it must be in wide format (each column is a time point with
 no extra columns).}
 
 \item{type}{A \code{character} string describing the weight matrix type.

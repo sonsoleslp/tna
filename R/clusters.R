@@ -10,7 +10,7 @@
 #' @param x An `stslist` object describing a sequence of events or states to
 #'   be used for building the Markov model. The argument `x` also accepts
 #'   a `data.frame` object in wide format.
-#'   (each column is a timepoint with no extra columns). Alternatively, the
+#'   (each column is a time point with no extra columns). Alternatively, the
 #'   function accepts a mixture Markov model from the library `seqHMM`.
 #' @param group A vector indicating the cluster assignment of each
 #'  row of the data / sequence. Must have the same length as the number of
@@ -20,7 +20,7 @@
 #'   element per cluster. Each element is a `tna` object.
 #'
 #' @examples
-#' group <- c(rep("High",100), rep("Low",100))
+#' group <- c(rep("High", 100), rep("Low", 100))
 #' model <- group_model(engagement, group = group)
 #'
 group_model <- function(x, group, ...) {
@@ -128,7 +128,7 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
     inherits(x, "mhmm"),
     c(
       "Argument {.arg x} must be a {.cls mhmm} object.",
-       `i` = "See the {.pkg seqHMM} package for more information."
+      `i` = "See the {.pkg seqHMM} package for more information."
     )
   )
 

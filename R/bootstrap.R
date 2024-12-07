@@ -46,8 +46,8 @@
 #'   * `summary`: A `data.frame` summarizing the edges, their weights,
 #'     p-values, statistical significance and confidence intervals.
 #'
-#'  If `x` is a `group_tna` object, the output is a `group_tna_bootstrap`
-#'  object, which is a `list` of `tna_bootstrap` objects.
+#' If `x` is a `group_tna` object, the output is a `group_tna_bootstrap`
+#' object, which is a `list` of `tna_bootstrap` objects.
 #'
 #' @examples
 #' model <- tna(engagement)

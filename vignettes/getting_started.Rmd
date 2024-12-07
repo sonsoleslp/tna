@@ -50,18 +50,18 @@ plot(tna_model)
 
 The initial state probabilities are
 ```{r}
-data.frame(`Initial prob.` = tna_model$inits, check.names = FALSE) |> 
-  rownames_to_column("Engagement state") |> 
-  arrange(desc(`Initial prob.`)) |> 
-  gt() |> 
+data.frame(`Initial prob.` = tna_model$inits, check.names = FALSE) |>
+  rownames_to_column("Engagement state") |>
+  arrange(desc(`Initial prob.`)) |>
+  gt() |>
   fmt_percent()
 ```
 
 and the transitions probabilities are
 ```{r}
-tna_model$weights |> 
-  data.frame() |> 
-  rownames_to_column("From\\To") |> 
+tna_model$weights |>
+  data.frame() |>
+  rownames_to_column("From\\To") |>
   gt() |>
   fmt_percent()
 ```
@@ -71,9 +71,9 @@ These measures can also be visualized with the `plot()` function.
 ```{r}
 centrality_measures <- c("BetweennessRSP", "Closeness", "InStrength", "OutStrength")
 cents_withoutloops <- centralities(
-  tna_model, 
-  measures = centrality_measures, 
-  loops = FALSE, 
+  tna_model,
+  measures = centrality_measures,
+  loops = FALSE,
   normalize = TRUE
 )
 plot(cents_withoutloops, ncol = 2, model = tna_model)

@@ -31,7 +31,7 @@ in the plots or not.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{ask}{A \code{logical} value. When \code{TRUE}, showw plots one by one and asks
+\item{ask}{A \code{logical} value. When \code{TRUE}, show plots one by one and asks
 to plot the next plot in interactive mode.}
 
 \item{...}{Ignored.}

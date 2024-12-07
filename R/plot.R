@@ -19,8 +19,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
   if (xlab_missing) {
     xlab <- paste0(
       "Edge Weights (",
-      switch(
-        type,
+      switch(type,
         `relative` = "Probabilities",
         `frequency` = "Frequencies",
         `co-occurrence` = "Co-occurrences"
@@ -154,7 +153,6 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                   colors, labels = TRUE, ...) {
   check_class(x, "tna_centralities")
   plot_centralities_(x, reorder, ncol, scales, colors, labels)
-
 }
 
 #' Plot Cliques of a TNA Network
@@ -165,7 +163,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param show_loops A `logical` value indicating whether to include loops
 #' in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
-#' @param ask A `logical` value. When `TRUE`, showw plots one by one and asks
+#' @param ask A `logical` value. When `TRUE`, show plots one by one and asks
 #' to plot the next plot in interactive mode.
 #' @examples
 #' model <- tna(engagement)
@@ -201,7 +199,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
       labels = colnames(clique_weights),
       edge.labels = TRUE,
       directed = !attr(x, "sum_weights"),
-      #edge.label.cex = 1.82,
+      # edge.label.cex = 1.82,
       mar = mar,
       minimum = minimum,
       theme = "colorblind",
@@ -214,9 +212,9 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
     # TODO should already work with 1 clique?
-    #if ((max_cliques - first) == 0) {
+    # if ((max_cliques - first) == 0) {
     #  return (do.call(qgraph::qgraph, args = plot_args))
-    #}
+    # }
   }
 }
 
@@ -272,7 +270,7 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #' @param x A `tna_permutation` object.
 #' @param ... Arguments passed to [plot_model()].
 #' @examples
-#' model_x <- tna(group_regulation[1:100, ])
+#' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
 #' # Small number of iterations for CRAN
 #' perm <- permutation_test(model_x, model_y, iter = 20)
@@ -520,7 +518,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 plot_centralities_multiple <- function(x, reorder, ncol,
                                        scales, colors, labels) {
   # TODO handle colors and test
-  measures <- names(x) [3:ncol(x)]
+  measures <- names(x)[3:ncol(x)]
   n_clusters <- length(unique(x$Group))
   dplyr::mutate(x, State = factor(!!rlang::sym("State"))) |>
     data.frame() |>
@@ -594,8 +592,8 @@ plot_compare <- function(x, y, ...) {
   colors <- rlang::missing_arg()
   pie <- abs(x$inits - y$inits)
   piesign <- ifelse(x$inits > y$inits, "#009900", "red")
-  #pos_col <- c("#009900", "darkgreen")
-  #neg_col <- c("#BF0000", "red")
+  # pos_col <- c("#009900", "darkgreen")
+  # neg_col <- c("#BF0000", "red")
   diff <- build_model_(
     x$weights - y$weights,
     type = attr(x, "type"),
@@ -669,7 +667,7 @@ plot_model <- function(x, labels, colors,
 hist.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  lapply(x, \(i) hist.tna(i, ...))
+  invisible(lapply(x, \(i) hist.tna(i, ...)))
 }
 
 #' Plot a grouped Transition Network Analysis Model
@@ -688,9 +686,9 @@ plot.group_tna <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   if (missing(title)) {
-    title = names(x)
+    title <- names(x)
   } else if (length(title) == 1) {
-    title = rep(title, length(x))
+    title <- rep(title, length(x))
   }
   for (i in seq_along(x)) {
     plot(x[[i]], title = title[i], ...)
@@ -732,11 +730,13 @@ plot.group_tna_cliques <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
   if (missing(title)) {
-    title = names(x)
+    title <- names(x)
   } else if (length(title) == 1) {
-    title = rep(title, length(x))
+    title <- rep(title, length(x))
   }
-  Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
+  invisible(
+    Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
+  )
 }
 
 #' Plot Found Communities
@@ -752,31 +752,33 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' comm <- communities(model)
 #' plot(comm)
 #'
-plot.group_tna_communities <- function(x, title = names(x),
-                                       colors, ...) {
+plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
-
   colors <- ifelse_(
     missing(colors),
     lapply(x, \(x) default_colors),
-    ifelse_(is.vector(colors) & is.atomic(colors),  lapply(x, function(x) {colors}), colors)
+    ifelse_(
+      is.vector(colors) & is.atomic(colors),
+      lapply(x, function(x) colors),
+      colors
+    )
   )
-
-  if (is.null(title) |
-      (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
+  if (is.null(title) ||
+    (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
     title <- lapply(x, \(x) title)
   }
-  Map(
-    function(y, i, j) {
-      plot.tna_communities(y, title = i, colors = j, ...)
-    },
-    x,
-    title,
-    colors
+  invisible(
+    Map(
+      function(y, i, j) {
+        plot(y, title = i, colors = j, ...)
+      },
+      x,
+      title,
+      colors
+    )
   )
 }
-
 
 #' Plot Centrality Stability Results
 #'
@@ -797,5 +799,5 @@ plot.group_tna_communities <- function(x, title = names(x),
 plot.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
-  lapply(x, \(i) plot.tna_stability(i, ...))
+  invisible(lapply(x, \(i) plot.tna_stability(i, ...)))
 }
