@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
   dpi = 300,
   fig.width = 5,
   fig.height = 5,
-  fig.align = "center"
+  fig.align = "center",
+  out.extra="style='text-align: center; display: block; margin: auto;'"
 )
 ```
 
@@ -22,6 +23,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/sonsoleslp/tna/graph/badge.svg)](https://app.codecov.io/gh/sonsoleslp/tna)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 <!-- badges: end -->
 
 An R package for the analysis of relational dynamics through 
@@ -90,11 +93,20 @@ Plot the centrality measures
 ```{r centralitiesplot, fig.width=12, fig.height=8, out.width="90%"}
 plot(cent, ncol = 3)
 ```
+
+Estimate centrality stability
+```{r}
+estimate_centrality_stability(tna_model)
+```
+
+
+Identify and plot communities
 ```{r}
 coms <- communities(tna_model)
 plot(coms)
 ```
 
+Find and plot cliques
 ```{r, out.width="50%"}
 cqs <- cliques(tna_model, threshold = 0.2)
 plot(cqs)
@@ -110,15 +122,18 @@ plot(comparison)
 ```
  
 ::: {layout-ncol=2}
-```{r, echo=FALSE, out.width="40%"}
+```{r, echo=FALSE}
 tna_model_start_high <- tna(group_regulation[1:1000, ])
 tna_model_start_low <- tna(group_regulation[1001:2000, ])
 comparison <- permutation_test(tna_model_start_high, tna_model_start_low,
                                measures = c("InStrength"))
 plot(comparison)
 ```
+
 ```{r, echo = FALSE}
-comparison$centralities$stats |> gt::gt() |> gt::as_raw_html()
+comparison$centralities$stats |> gt::gt() |> 
+  gt::tab_header("Centrality comparison")  |>
+    gt::as_raw_html()
 ```
 :::
 
