@@ -9,8 +9,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%",
-  dpi = 300
+  out.width = "60%",
+  dpi = 300,
+  fig.width = 5,
+  fig.height = 5,
+  fig.align = "center"
 )
 ```
 
@@ -21,10 +24,17 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/sonsoleslp/tna/graph/badge.svg)](https://app.codecov.io/gh/sonsoleslp/tna)
 <!-- badges: end -->
 
+An R package for the analysis of relational dynamics through 
+Transition Network Analysis (TNA). TNA provides tools for building TNA models, 
+plotting transition networks, calculating centrality measures, and identifying 
+dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
+and permutation tests) ensure the reliability of observed insights and confirm
+that identified dynamics are meaningful. See (Saqr et al., 2024) 
+<doi:10.48550/arXiv.2411.15486> for more details on TNA.
 
 ## Installation
 
-You can install the development version of `tna` from [GitHub](https://github.com/) with:
+You can install `tna` from [GitHub](https://github.com/) with:
 
 ```{r, eval = FALSE}
 # install.packages("devtools")
@@ -40,13 +50,24 @@ library("tna")
 
 Example data
 ```{r}
-data("engagement", package = "tna")
+data("group_regulation", package = "tna")
 ```
 
 Build a Markov model
 ```{r}
-tna_model <- tna(engagement)
+tna_model <- tna(group_regulation)
 ```
+
+```{r, eval = F}
+summary(tna_model)
+```
+```{r, echo=FALSE}
+summary(tna_model) |>
+    gt::gt() |>
+    gt::fmt_number(decimals  = 2) |>
+    gt::as_raw_html()
+```
+
 
 Plot the transition network
 ```{r tnaplot}
@@ -55,24 +76,50 @@ plot(tna_model)
 
 Calculate the centrality measures
 ```{r}
-cm <- centralities(tna_model)
+cent <- centralities(tna_model)
 ```
 
 ```{r, echo=FALSE}
-cm |>
-  gt::gt() |>
-  gt::tab_options(table.font.size = 8) |>
-  gt::as_raw_html()
+cent |>
+    gt::gt() |>
+    gt::tab_options(table.font.size = 8) |>
+    gt::as_raw_html()
 ```
 
 Plot the centrality measures
-```{r centralitiesplot, fig.width=12}
-plot(cm, ncol = 4, reorder = TRUE)
+```{r centralitiesplot, fig.width=12, fig.height=8, out.width="90%"}
+plot(cent, ncol = 3)
+```
+```{r}
+coms <- communities(tna_model)
+plot(coms)
 ```
 
-Compare those who started as active with the rest
-```{r}
-tna_model_start_active <- tna(engagement[engagement[, 1] == "Active", ])
-tna_model_start_other <- tna(engagement[engagement[, 1] != "Active", ])
-plot_compare(tna_model_start_active, tna_model_start_other)
+```{r, out.width="50%"}
+cqs <- cliques(tna_model, threshold = 0.2)
+plot(cqs)
 ```
+
+Compare high achievers (first 1000) with low achievers (last 1000)
+```{r, eval=FALSE}
+tna_model_start_high <- tna(group_regulation[1:1000, ])
+tna_model_start_low <- tna(group_regulation[1001:2000, ])
+comparison <- permutation_test(tna_model_start_high, tna_model_start_low,
+                               measures = c("InStrength"))
+plot(comparison)
+```
+ 
+::: {layout-ncol=2}
+```{r, echo=FALSE, out.width="40%"}
+tna_model_start_high <- tna(group_regulation[1:1000, ])
+tna_model_start_low <- tna(group_regulation[1001:2000, ])
+comparison <- permutation_test(tna_model_start_high, tna_model_start_low,
+                               measures = c("InStrength"))
+plot(comparison)
+```
+```{r, echo = FALSE}
+comparison$centralities$stats |> gt::gt() |> gt::as_raw_html()
+```
+:::
+
+

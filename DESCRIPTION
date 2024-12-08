@@ -7,12 +7,13 @@ Authors@R: c(
     person("Santtu", "Tikka", role = "aut"),
     person("Mohammed", "Saqr", role = "aut")
   )
-Description: Provides tools for performing transition network analysis (TNA),
-    including functions for building TNA models, plotting transition networks,
-    and calculating centrality measures. The package relies on the 'qgraph' and 
-    'igraph' packages for plotting networks and for computing centrality 
-    measures. See (Saqr et al., 2024) <doi:10.48550/arXiv.2411.15486> for more 
-    details on TNA.
+Description: An R package for the analysis of relational dynamics through 
+    Transition Network Analysis (TNA). TNA provides tools for building TNA models, 
+    plotting transition networks, calculating centrality measures, and identifying 
+    dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
+    and permutation tests) ensure the reliability of observed insights and confirm
+    that identified dynamics are meaningful. See (Saqr et al., 2024) 
+    <doi:10.48550/arXiv.2411.15486> for more details on TNA.
 License: GPL-3
 URL: https://github.com/sonsoleslp/tna/
 BugReports: https://github.com/sonsoleslp/tna/issues/
