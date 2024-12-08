@@ -120,20 +120,15 @@ comparison <- permutation_test(tna_model_start_high, tna_model_start_low,
                                measures = c("InStrength"))
 plot(comparison)
 ```
- 
-::: {layout-ncol=2}
-```{r, echo=FALSE}
-tna_model_start_high <- tna(group_regulation[1:1000, ])
-tna_model_start_low <- tna(group_regulation[1001:2000, ])
-comparison <- permutation_test(tna_model_start_high, tna_model_start_low,
-                               measures = c("InStrength"))
-plot(comparison)
-```
 
+Compare centralities
+```{r, eval = FALSE}
+print(comparison$centralities$stats)
+```
 ```{r, echo = FALSE}
 comparison$centralities$stats |> gt::gt() |> 
     gt::as_raw_html()
 ```
-:::
+
 
 
