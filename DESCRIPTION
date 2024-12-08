@@ -14,7 +14,7 @@ Description: An R package for the analysis of relational dynamics through
     and permutation tests) ensure the reliability of observed insights and confirm
     that identified dynamics are meaningful. See (Saqr et al., 2024) 
     <doi:10.48550/arXiv.2411.15486> for more details on TNA.
-License: MIT
+License: MIT + file LICENSE
 URL: https://github.com/sonsoleslp/tna/
 BugReports: https://github.com/sonsoleslp/tna/issues/
 Depends:

@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "60%",
-  dpi = 300,
+  dpi = 200,
   fig.width = 5,
   fig.height = 5,
   fig.align = "center",
@@ -33,6 +33,13 @@ plotting transition networks, calculating centrality measures, and identifying
 dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
 and permutation tests) ensure the reliability of observed insights and confirm
 that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.48550/arXiv.2411.15486) for more details on TNA.
+```{css, echo = FALSE}
+body > img, body > table, div > img, div > table {
+    display: block;
+    margin: auto;
+}
+```
+
 
 ## Installation
 
