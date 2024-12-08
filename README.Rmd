@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/sonsoleslp/tna/graph/badge.svg)](https://app.codecov.io/gh/sonsoleslp/tna)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <!-- badges: end -->
 
@@ -32,8 +32,7 @@ Transition Network Analysis (TNA). TNA provides tools for building TNA models,
 plotting transition networks, calculating centrality measures, and identifying 
 dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
 and permutation tests) ensure the reliability of observed insights and confirm
-that identified dynamics are meaningful. See (Saqr et al., 2024) 
-<doi:10.48550/arXiv.2411.15486> for more details on TNA.
+that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.48550/arXiv.2411.15486) for more details on TNA.
 
 ## Installation
 
