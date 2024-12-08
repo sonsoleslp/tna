@@ -132,7 +132,6 @@ plot(comparison)
 
 ```{r, echo = FALSE}
 comparison$centralities$stats |> gt::gt() |> 
-  gt::tab_header("Centrality comparison")  |>
     gt::as_raw_html()
 ```
 :::
