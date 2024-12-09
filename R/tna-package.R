@@ -40,7 +40,7 @@
 #' A full program study"
 #'
 #' @family examples
-#' @source <https://doi.org/10.1016/j.compedu.2023.104787>
+#' @source \doi{10.1016/j.compedu.2023.104787}
 #' @format A `stslist` object (sequence data).
 "engagement"
 

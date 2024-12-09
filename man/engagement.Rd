@@ -8,7 +8,7 @@
 A \code{stslist} object (sequence data).
 }
 \source{
-\url{https://doi.org/10.1016/j.compedu.2023.104787}
+\doi{10.1016/j.compedu.2023.104787}
 }
 \usage{
 engagement
