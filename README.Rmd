@@ -66,12 +66,12 @@ tna_model <- tna(group_regulation)
 summary(tna_model)
 ```
 ```{r, echo=FALSE, results = "asis"}
-cat('<div style="text-align: center;">')
+cat('<center>')
 summary(tna_model) |>
   gt::gt() |>
   gt::fmt_number(decimals  = 2) |>
   gt::as_raw_html()
-cat('</div>')
+cat('</center>')
 ```
 
 Plot the transition network
@@ -79,9 +79,9 @@ Plot the transition network
 plot(tna_model, cut = 0.3)
 ```
 ```{r tnaplot, echo = FALSE,  results = "asis"}
-cat('<div style="text-align: center;">')
+cat('<center>')
 plot(tna_model, cut = 0.3)
-cat('</div>')
+cat('</center>')
 ```
 Calculate the centrality measures
 ```{r}
@@ -89,12 +89,12 @@ cent <- centralities(tna_model)
 ```
 
 ```{r, echo=FALSE, results = 'asis'}
-cat('<div style="text-align: center;">')
+cat('<center>')
 cent |>
   gt::gt() |>
   gt::tab_options(table.font.size = 8) |>
   gt::as_raw_html()
-cat('</div>')
+cat('</center>')
 ```
 
 Plot the centrality measures
@@ -103,9 +103,9 @@ plot(cent, ncol = 3)
 ```
 
 ```{r centralitiesplot, fig.width=12, fig.height=8, out.width="90%", echo = F, results = 'asis'}
-cat('<div style="text-align: center;">')
+cat('<center>')
 plot(cent, ncol = 3)
-cat('</div>')
+cat('</center>')
 ```
 
 Estimate centrality stability
@@ -154,9 +154,9 @@ Compare centralities
 print(comparison$centralities$stats)
 ```
 ```{r, echo = FALSE, results = 'asis'}
-cat('<div style="text-align: center;">')
+cat('<center>')
 comparison$centralities$stats |> 
   gt::gt() |> 
   gt::as_raw_html()
-cat('</div>')
+cat('</center>')
 ```
