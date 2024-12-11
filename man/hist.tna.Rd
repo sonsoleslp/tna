@@ -37,6 +37,9 @@
 
 \item{...}{Additional arguments passed to \code{\link[graphics:hist]{graphics::hist()}}.}
 }
+\value{
+A \code{histogram} object of edge weights
+}
 \description{
 Plot a Histogram of Edge Weights in the Network
 }

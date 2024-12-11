@@ -8,7 +8,7 @@
 \usage{
 pruning_details(x, ...)
 
-\method{pruning_details}{tna}(x, removed_edges = TRUE, ...)
+\method{pruning_details}{tna}(x, ...)
 
 \method{pruning_details}{group_tna}(x, ...)
 }
@@ -16,9 +16,10 @@ pruning_details(x, ...)
 \item{x}{A \code{tna} or \code{group_tna} object.}
 
 \item{...}{Ignored.}
-
-\item{removed_edges}{Should a \code{data.frame} of removed edges be printed?
-The default is \code{FALSE}.}
+}
+\value{
+A \code{data.frame} containing the removed edges if \code{x} is a \code{tna} object,
+or a \code{list} of \code{data.frame} objects in the case of \code{group_tna}.
 }
 \description{
 Print Detailed Information on the Pruning Results

@@ -178,9 +178,9 @@ prune_disparity <- function(x, level, labels) {
 #' @family evaluation
 #' @rdname pruning_details
 #' @param x A `tna` or `group_tna` object.
-#' @param removed_edges Should a `data.frame` of removed edges be printed?
-#' The default is `FALSE`.
 #' @param ... Ignored.
+#' @return A `data.frame` containing the removed edges if `x` is a `tna` object,
+#' or a `list` of `data.frame` objects in the case of `group_tna`.
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
@@ -192,7 +192,7 @@ pruning_details <- function(x, ...) {
 
 #' @export
 #' @rdname pruning_details
-pruning_details.tna <- function(x, removed_edges = TRUE, ...) {
+pruning_details.tna <- function(x, ...) {
   pruning <- attr(x, "pruning")
   stopifnot_(
     !is.null(pruning),
@@ -204,6 +204,7 @@ pruning_details.tna <- function(x, removed_edges = TRUE, ...) {
     bootstrap = "Bootstrapping",
     disparity = paste0("Disparity filter (sig. level = ", pruning$level, ")")
   )
+
   cat("**Pruning Details**\n")
   cat("\nMethod used:", method_txt)
   cat("\nNumber of removed edges:", cs(pruning$num_removed))
@@ -328,14 +329,14 @@ prune.group_tna <- function(x, ...) {
 pruning_details.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  Map(
+  invisible(Map(
     function(y, i) {
       print(i)
       pruning_details.tna(y, ...)
     },
     x,
     names(x)
-  )
+  ))
 }
 
 #' @export

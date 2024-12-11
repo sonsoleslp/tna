@@ -14,6 +14,10 @@ will be used for all plots) or a list (one per group)}
 
 \item{...}{Same as \code{\link[=plot.tna]{plot.tna()}}.}
 }
+\value{
+No return value, plots a transition network of each cluster using
+\code{qgraph}.
+}
 \description{
 Plot a grouped Transition Network Analysis Model
 }

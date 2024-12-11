@@ -11,6 +11,10 @@
 
 \item{...}{Additional arguments passed to \code{\link[graphics:hist]{graphics::hist()}}.}
 }
+\value{
+A \code{list} (invisibly) of \code{histogram} objects of the edge weights of
+each cluster
+}
 \description{
 Plot a Histogram of Edge Weights for a \code{group_tna} Object.
 }

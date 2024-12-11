@@ -11,6 +11,10 @@
 
 \item{...}{Ignored.}
 }
+\value{
+A \code{summary.tna} object containing the TNA model network metrics and
+values
+}
 \description{
 Print a TNA Summary
 }

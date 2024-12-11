@@ -11,6 +11,10 @@
 
 \item{...}{Arguments passed to the generic \code{print} method.}
 }
+\value{
+A \code{summary.tna_bootstrap} containing the weight, p-value and confidence interval
+of each edge
+}
 \description{
 Print Bootstrap Summary
 }

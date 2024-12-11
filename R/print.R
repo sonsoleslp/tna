@@ -2,6 +2,8 @@
 #'
 #' @export
 #' @param x A `summary.tna` object.
+#' @return A `summary.tna` object containing the TNA model network metrics and
+#' values
 #' @param ... Ignored.
 #'
 print.summary.tna <- function(x, ...) {
@@ -12,6 +14,8 @@ print.summary.tna <- function(x, ...) {
 #'
 #' @export
 #' @param x A `summary.tna_bootstrap` object.
+#' @return A `summary.tna_bootstrap` containing the weight, p-value and confidence interval
+#' of each edge
 #' @param ... Arguments passed to the generic `print` method.
 #'
 print.summary.tna_bootstrap <- function(x, ...) {
@@ -27,6 +31,7 @@ print.summary.tna_bootstrap <- function(x, ...) {
 #' @param generic A `logical` value. If `TRUE`, use generic print method
 #' instead. Defaults to `FALSE`.
 #' @param ... Ignored.
+#' @return The `tna` object passed as argument `x` (invisibly)
 #'
 print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
   check_missing(x)
@@ -304,7 +309,8 @@ print.summary.group_tna <- function(x, ...) {
 #' @family clusters
 #' @param x A `summary.group_tna_bootstrap` object.
 #' @param ... Arguments passed to the generic `print` method.
-#' @return `x` (invisibly).
+#' @return A `summary.group_tna_bootstrap` containing the weight, p-value and confidence
+#' interval of each edge of each cluster
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Low number of iteration for CRAN

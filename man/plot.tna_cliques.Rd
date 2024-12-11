@@ -36,6 +36,10 @@ to plot the next plot in interactive mode.}
 
 \item{...}{Ignored.}
 }
+\value{
+Returns a \code{qgraph} plot when only one click is plotted.
+Otherwise, plots all cliques but does not return anything.
+}
 \description{
 Plot Cliques of a TNA Network
 }

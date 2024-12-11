@@ -11,6 +11,9 @@
 
 \item{...}{Arguments passed to \code{\link[=plot.tna_stability]{plot.tna_stability()}}.}
 }
+\value{
+A list (invisibly) of \code{ggplot} objects displaying the stability analysis plot.
+}
 \description{
 Plot Centrality Stability Results
 }

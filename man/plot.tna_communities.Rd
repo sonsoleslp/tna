@@ -33,6 +33,9 @@ modularity matrix.
 \item \code{"spinglass"}: A method based on the spinglass model.
 }}
 }
+\value{
+A \code{qgraph} object in which the nodes are colored by community
+}
 \description{
 This function visualizes the communities detected within a \code{tna} object
 based on different community detection algorithms and their corresponding
