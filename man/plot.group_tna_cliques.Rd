@@ -14,9 +14,9 @@
 \item{...}{Arguments passed to \code{\link[=plot.tna_cliques]{plot.tna_cliques()}}.}
 }
 \value{
-A list (invisibly) with one element per cluster. The element
+A \code{list} (invisibly) with one element per cluster. Each element
 contains a \code{qgraph} plot when only one clique is present per cluster,
-otherwise the element is \code{NULL}
+otherwise the element is \code{NULL}.
 }
 \description{
 Plot Found Cliques

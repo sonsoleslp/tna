@@ -5,7 +5,7 @@
 #' @param ... Additional arguments passed to [graphics::hist()].
 #' @param main A `character` string defining the title of the plot.
 #' @param xlab A `character` string defining the vertical axis label.
-#' @return A `histogram` object of edge weights
+#' @return A `histogram` object of edge weights.
 #' @examples
 #' model <- tna(engagement)
 #' hist(model)
@@ -61,6 +61,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' the edge weights of the network.
 #'
 #' @export
+#' @family core
 #' @param x A `tna` object from [tna()].
 #' @param colors See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
@@ -77,7 +78,6 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
-#' @family core
 #' @examples
 #' model <- tna(engagement)
 #' plot(model)
@@ -166,8 +166,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param minimum See [qgraph::qgraph()].
 #' @param ask A `logical` value. When `TRUE`, show plots one by one and asks
 #' to plot the next plot in interactive mode.
-#' @return Returns a `qgraph` plot when only one click is plotted.
-#' Otherwise, plots all cliques but does not return anything.
+#' @return `NULL` (invisibly).
 #' @examples
 #' model <- tna(engagement)
 #' cliq <- cliques(model, size = 2)
@@ -219,6 +218,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     #  return (do.call(qgraph::qgraph, args = plot_args))
     # }
   }
+  invisible(NULL)
 }
 
 #' Plot Communities
@@ -250,7 +250,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #'   modularity matrix.
 #' * `"spinglass"`: A method based on the spinglass model.
 #'
-#' @return A `qgraph` object in which the nodes are colored by community
+#' @return A `qgraph` object in which the nodes are colored by community.
 #' @examples
 #' model <- tna(group_regulation)
 #' comm <- communities(model)
@@ -274,7 +274,7 @@ plot.tna_communities <- function(x, cluster = 1L, colors,
 #' @param x A `tna_permutation` object.
 #' @param ... Arguments passed to [plot_model()].
 #' @return A `qgraph` object containing only the significant edges according
-#' to the permutation test
+#' to the permutation test.
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
@@ -666,7 +666,7 @@ plot_model <- function(x, labels, colors,
 #' @param x A `group_tna` object.
 #' @param ... Additional arguments passed to [graphics::hist()].
 #' @return A `list` (invisibly) of `histogram` objects of the edge weights of
-#' each cluster
+#' each cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' hist(model)
@@ -679,14 +679,15 @@ hist.group_tna <- function(x, ...) {
 
 #' Plot a grouped Transition Network Analysis Model
 #'
+#' Plots a transition network of each cluster using `qgraph`.
+#'
 #' @export
 #' @family clusters
 #' @param x A `group_model` object.
 #' @param title A title for each plot. It can be a single string (the same one
 #'  will be used for all plots) or a list (one per group)
 #' @param ... Same as [plot.tna()].
-#' @return No return value, plots a transition network of each cluster using
-#' `qgraph`.
+#' @return `NULL` (invisibly).
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot(model)
@@ -702,6 +703,7 @@ plot.group_tna <- function(x, title, ...) {
   for (i in seq_along(x)) {
     plot(x[[i]], title = title[i], ...)
   }
+  invisible(NULL)
 }
 
 #' Plot Centrality Measures
@@ -711,7 +713,7 @@ plot.group_tna <- function(x, title, ...) {
 #' @param x A `group_tna_centralities` object.
 #' @inheritParams plot.tna_centralities
 #' @return A `ggplot` object displaying a line chart for each centrality
-#' with one line per cluster
+#' with one line per cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cm <- centralities(model)
@@ -732,9 +734,9 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 4,
 #' @param x A `group_tna_cliques` object.
 #' @param title A `character` vector of titles to use for each plot.
 #' @param ... Arguments passed to [plot.tna_cliques()].
-#' @return A list (invisibly) with one element per cluster. The element
+#' @return A `list` (invisibly) with one element per cluster. Each element
 #' contains a `qgraph` plot when only one clique is present per cluster,
-#' otherwise the element is `NULL`
+#' otherwise the element is `NULL`.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
@@ -761,8 +763,8 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' @param title A `character` vector of titles to use for each plot.
 #' @param colors A `character` vector of colors to use.
 #' @param ... Arguments passed to [plot.tna_communities()].
-#' @return A list (invisibly) of `qgraph` objects in which the nodes are colored by
-#' community for each cluster
+#' @return A `list` (invisibly) of `qgraph` objects in which the nodes are
+#' colored by community for each cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' comm <- communities(model)
@@ -802,7 +804,8 @@ plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
 #' @family clusters
 #' @param x A `group_tna_stability` object.
 #' @param ... Arguments passed to [plot.tna_stability()].
-#' @return A list (invisibly) of `ggplot` objects displaying the stability analysis plot.
+#' @return A `list` (invisibly) of `ggplot` objects displaying the stability
+#' analysis plot.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Low number of iterations for CRAN

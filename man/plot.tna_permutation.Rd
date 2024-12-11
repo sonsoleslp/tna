@@ -13,7 +13,7 @@
 }
 \value{
 A \code{qgraph} object containing only the significant edges according
-to the permutation test
+to the permutation test.
 }
 \description{
 Plot the Significant Differences from a Permutation Test

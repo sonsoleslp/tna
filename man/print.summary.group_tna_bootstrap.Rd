@@ -12,8 +12,7 @@
 \item{...}{Arguments passed to the generic \code{print} method.}
 }
 \value{
-A \code{summary.group_tna_bootstrap} containing the weight, p-value and confidence
-interval of each edge of each cluster
+\code{x} (invisibly).
 }
 \description{
 Print Bootstrap Summary for a Grouped Transition Network

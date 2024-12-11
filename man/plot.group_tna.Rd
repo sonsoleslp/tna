@@ -15,11 +15,10 @@ will be used for all plots) or a list (one per group)}
 \item{...}{Same as \code{\link[=plot.tna]{plot.tna()}}.}
 }
 \value{
-No return value, plots a transition network of each cluster using
-\code{qgraph}.
+\code{NULL} (invisibly).
 }
 \description{
-Plot a grouped Transition Network Analysis Model
+Plots a transition network of each cluster using \code{qgraph}.
 }
 \examples{
 model <- group_model(engagement_mmm)

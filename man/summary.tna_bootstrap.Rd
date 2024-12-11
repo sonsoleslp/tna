@@ -12,8 +12,8 @@
 \item{...}{Ignored.}
 }
 \value{
-An object of the class \code{summary.tna_bootstrap} containing the weight,
-p-value and confidence interval of each edge
+A \code{summary.tna_bootstrap} object containing the weight,
+p-value and confidence interval of each edge.
 }
 \description{
 Summarize Bootstrap Results

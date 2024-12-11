@@ -36,7 +36,7 @@ numeric values. The default is \code{TRUE}.}
 }
 \value{
 A \code{ggplot} object displaying a line chart for each centrality
-with one line per cluster
+with one line per cluster.
 }
 \description{
 Plot Centrality Measures

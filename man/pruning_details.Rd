@@ -19,7 +19,7 @@ pruning_details(x, ...)
 }
 \value{
 A \code{data.frame} containing the removed edges if \code{x} is a \code{tna} object,
-or a \code{list} of \code{data.frame} objects in the case of \code{group_tna}.
+or a \code{list} of \code{data.frame} objects in the case of \code{group_tna} object.
 }
 \description{
 Print Detailed Information on the Pruning Results

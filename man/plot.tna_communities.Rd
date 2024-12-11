@@ -34,7 +34,7 @@ modularity matrix.
 }}
 }
 \value{
-A \code{qgraph} object in which the nodes are colored by community
+A \code{qgraph} object in which the nodes are colored by community.
 }
 \description{
 This function visualizes the communities detected within a \code{tna} object

@@ -9,7 +9,7 @@
   n = 6,
   first = 1,
   show_loops = FALSE,
-  minimum = 0.00001,
+  minimum = 1e-05,
   mar = rep(5, 4),
   ask = TRUE,
   ...
@@ -37,8 +37,7 @@ to plot the next plot in interactive mode.}
 \item{...}{Ignored.}
 }
 \value{
-Returns a \code{qgraph} plot when only one click is plotted.
-Otherwise, plots all cliques but does not return anything.
+\code{NULL} (invisibly).
 }
 \description{
 Plot Cliques of a TNA Network

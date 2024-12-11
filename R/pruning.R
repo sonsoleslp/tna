@@ -180,7 +180,7 @@ prune_disparity <- function(x, level, labels) {
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
 #' @return A `data.frame` containing the removed edges if `x` is a `tna` object,
-#' or a `list` of `data.frame` objects in the case of `group_tna`.
+#' or a `list` of `data.frame` objects in the case of `group_tna` object.
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)

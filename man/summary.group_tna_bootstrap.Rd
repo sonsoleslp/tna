@@ -12,8 +12,8 @@
 \item{...}{Ignored.}
 }
 \value{
-An object of the class \code{summary.group_tna_bootstrap} containing the weight,
-p-value and confidence interval of each edge for each cluster
+A \code{summary.group_tna_bootstrap} object containing the weight,
+p-value and confidence interval of each edge for each cluster.
 }
 \description{
 Summarize Bootstrap Results for a Grouped Transition Network

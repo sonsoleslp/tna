@@ -16,8 +16,8 @@
 \item{...}{Arguments passed to \code{\link[=plot.tna_communities]{plot.tna_communities()}}.}
 }
 \value{
-A list (invisibly) of \code{qgraph} objects in which the nodes are colored by
-community for each cluster
+A \code{list} (invisibly) of \code{qgraph} objects in which the nodes are
+colored by community for each cluster.
 }
 \description{
 Plot Found Communities
