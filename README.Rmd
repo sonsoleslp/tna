@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   fig.width = 5,
   fig.height = 5,
   fig.align = "center",
-  out.extra="style='text-align: center; display: block; margin: auto;'"
+  out.extra = "style='text-align: center; display: block; margin: auto;'"
 )
 ```
 
@@ -22,8 +22,10 @@ knitr::opts_chunk$set(
 # `tna`: An R package for Transition Network Analysis <img src="man/figures/logo.png" align="right" height="139"/></a>
 
 <!-- badges: start -->
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R-CMD-check](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sonsoleslp/tna/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/sonsoleslp/tna/graph/badge.svg)](https://app.codecov.io/gh/sonsoleslp/tna)
+[![tna CRAN badge](https://www.r-pkg.org/badges/version/tna)](https://cran.r-project.org/package=tna)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <!-- badges: end -->
@@ -38,10 +40,11 @@ that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.o
 
 ## Installation
 
-You can install `tna` from [GitHub](https://github.com/) with:
+You can install the most recent stable version of `tna` from [CRAN](https://cran.r-project.org/package=tna) or the development version from [GitHub](https://github.com/) by running one of the following:
 
 ```{r, eval = FALSE}
 # install.packages("devtools")
+install.packages("tna")
 devtools::install_github("sonsoleslp/tna")
 ```
 
