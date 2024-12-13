@@ -1,3 +1,7 @@
+# tna 0.3.1
+
+* Fixed an issue when checking the validity of `character` type arguments
+
 # tna 0.3.0
 
 * Added support for grouped sequence data (clusters).

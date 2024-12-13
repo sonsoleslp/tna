@@ -254,7 +254,7 @@ check_match <- function(x, choices, several.ok = FALSE) {
   stopifnot_(
     !inherits(x, "try-error"),
     "{prefix} {.arg {arg}} must be either
-    {qty(n_choices)} {.or {.val {choices}}}."
+    {cli::qty(n_choices)} {.or {.val {choices}}}."
   )
   x
 }
