@@ -23,6 +23,7 @@ event2sequence <- function(data, actor_col, time_col, action_col,
                            time_threshold = 900, custom_format = NULL,
                            is_unix_time = FALSE, unix_time_unit = "seconds",
                            verbose = TRUE) {
+  check_missing(data)
   stopifnot_(
     !missing(actor_col),
     "Argument {.arg actor_col} must be provided
