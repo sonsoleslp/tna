@@ -1,6 +1,9 @@
 # tna 0.3.1
 
-* Fixed an issue when checking the validity of `character` type arguments
+* Fixed an issue when checking the validity of `character` type arguments.
+* Improved the `bootstrap()` function to determine edge significance based on
+  deviation from the observed value, rather than a fixed threshold.
+* Added a helper function `event2sequence()` to parse event data into sequence data.
 
 # tna 0.3.0
 

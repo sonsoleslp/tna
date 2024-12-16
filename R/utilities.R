@@ -141,6 +141,16 @@ warning_ <- function(message, ...) {
   cli::cli_warn(message, ..., .envir = parent.frame())
 }
 
+#' Stop Function Execution Without Displaying the Call
+#'
+#' @param message See [cli::cli_abort()].
+#' @param ... See [cli::cli_abort()].
+#' @param call See [cli::cli_abort()].
+#' @noRd
+stop_ <- function(message, ..., call = rlang::caller_env()) {
+  cli::cli_abort(message, ..., .envir = parent.frame(), call = call)
+}
+
 #' Stop function execution unless a condition is true
 #'
 #' @param message See [cli::cli_abort()].
@@ -151,6 +161,15 @@ stopifnot_ <- function(cond, message, ..., call = rlang::caller_env()) {
   if (!cond) {
     cli::cli_abort(message, ..., .envir = parent.frame(), call = call)
   }
+}
+
+#' Generate an Informative Message
+#'
+#' @param message See [cli::cli_inform()]
+#' @param ... See [cli::cli_inform()]
+#' @noRd
+message_ <- function(message, ...) {
+  cli::cli_inform(message, ..., .envir = parent.frame())
 }
 
 #' Create a Comma-separated Character String
