@@ -25,24 +25,28 @@
 #' @param x A `tna` or a `group_tna` object created from sequence data.
 #' @param iter An `integer` specifying the number of bootstrap samples to
 #' draw. Defaults to `1000`.
-#' @param level A `numeric` value representing the significance level for
-#' hypothesis testing and confidence intervals. Defaults to `0.05`.
-#' @param threshold A `numeric` value to compare edge weights against.
-#' The default is the 10th percentile of the edge weights.
+#' @param level A `numeric` value giving the significance level.
+#' This corresponds to the proportion of bootstrap samples of edge weights that
+#' can fall outside the `consistency_range` before being considered
+#' insignificant.
+#' @param consistency_range A `numeric` vector of length 2. Determines how much
+#' the edge weights may deviate (multiplicatively) from their observed values
+#' (below and above) before they are considered insignificant. The default is
+#' `c(0.95, 1.05)` which corresponds to a symmetric 5% deviation range. Edges
+#' withi
 #' @param ... Ignored.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
 #
 #'   * `weights_orig`: The original edge weight `matrix`.
 #'   * `weights_sig`: The `matrix` of significant transitions
-#'     (those with p-values below the significance level).
+#'     (those that are present at least in `threshold` * 100 % of the samples).
 #'   * `weights_mean`: The mean weight `matrix` from the bootstrap samples.
 #'   * `weights_sd`: The standard deviation `matrix` from the bootstrap samples.
 #'   * `ci_lower`: The lower bound `matrix` of the confidence intervals for
 #'     the edge weights.
 #'   * `ci_upper`: The upper bound `matrix` of the confidence intervals for
 #'     the edge weights.
-#'   * `p_values`: The `matrix` of p-values for the edge weights.
 #'   * `summary`: A `data.frame` summarizing the edges, their weights,
 #'     p-values, statistical significance and confidence intervals.
 #'
@@ -60,15 +64,12 @@ bootstrap <- function(x, ...) {
 
 #' @rdname bootstrap
 #' @export
-bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
+bootstrap.tna <- function(x, iter = 1000, level = 0.05,
+                          consistency_range = c(0.95, 1.05), ...) {
   check_missing(x)
   check_tna_seq(x)
   check_positive(iter)
   check_probability(level)
-  if (missing(threshold)) {
-    threshold <- unname(stats::quantile(x$weights, probs = 0.1))
-  }
-  check_nonnegative(threshold, type = "numeric")
   d <- x$data
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
@@ -86,7 +87,9 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
   for (i in seq_len(iter)) {
     trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
     weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
-    p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
+    p_values[] <- p_values +
+      1L * (weights_boot[i, , ] <= weights * consistency_range[1]) +
+      1L * (weights_boot[i, , ] >= weights * consistency_range[2])
   }
   p_values <- p_values / iter
   weights_mean <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
@@ -106,13 +109,13 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, threshold, ...) {
     na.rm = TRUE
   )
   weights_sig <- (p_values < level) * weights
+  weights_vec <- as.vector(weights)
   dimnames(p_values) <- dim_names
   dimnames(weights_mean) <- dim_names
   dimnames(weights_sd) <- dim_names
   dimnames(weights_sig) <- dim_names
   dimnames(ci_lower) <- dim_names
   dimnames(ci_upper) <- dim_names
-  weights_vec <- as.vector(weights)
   combined <- data.frame(
     from = rep(alphabet, each = a),
     to = rep(alphabet, times = a),
