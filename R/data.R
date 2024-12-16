@@ -264,7 +264,7 @@ parse_time <- function(time, custom_format,
     if (!all(is.na(parsed_time))) {
       if (verbose) {
         message_("Successfully parsed using format: {.val {fmt}}")
-        message_("Sample parsed time: {.val {format(parsed_times[1])}")
+        message_("Sample parsed time: {.val {format(parsed_times[1])}}")
       }
       return(parsed_time)
     }
