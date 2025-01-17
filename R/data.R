@@ -453,6 +453,24 @@ parse_time <- function(time, custom_format,
     }
   }
 
+  # Finally, try Unix time
+  if (verbose) {
+    message_(
+      "Unable to parse using supported formats.
+      Trying to convert to {.cls numeric} and assuming Unix time."
+    )
+  }
+  time <- try(as.numeric(time), silent = TRUE)
+  if (!inherits(time, "try-error")) {
+    parsed_time <- switch(
+      unix_time_unit,
+      "seconds" = as.POSIXct(time, origin = "1970-01-01"),
+      "milliseconds" = as.POSIXct(time / 1000.0, origin = "1970-01-01"),
+      "microseconds" = as.POSIXct(time / 1000000.0, origin = "1970-01-01")
+    )
+    return(parsed_time)
+  }
+
   # If all attempts fail, provide helpful error message
   stop_(
     c(
