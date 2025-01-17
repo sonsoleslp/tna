@@ -196,12 +196,12 @@ prepare_data <- function(data, actor, time, action, order,
     }
   } else if (!missing(order)) {
     if (verbose) {
-      message_("Using provided order column to create sequences.")
+      message_("Using provided {.arg order} column to create sequences.")
     }
     if (missing(actor)) {
       long_format <- data
       long_format$session_id <- data$actor
-      long_format$sequence <- base::order(data$order)
+      long_format$sequence <- base::order(data[[order]])
       # long_format <- data |>
       #   dplyr::mutate(
       #     session_id = !!rlang::sym(actor) ,
@@ -219,7 +219,10 @@ prepare_data <- function(data, actor, time, action, order,
   } else {
     if (missing(actor)) {
       if (verbose) {
-        message_("Using provided {.arg order} column to create sequences.")
+        message_(
+          "No time or actor column provided.
+          Treating entire dataset as one session."
+        )
       }
       long_format <- data
       long_format$session_id <- "session"
