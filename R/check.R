@@ -258,3 +258,16 @@ check_match <- function(x, choices, several.ok = FALSE) {
   )
   x
 }
+
+#' Check if argument is a character string
+#'
+check_string <- function(x) {
+  if (missing(x)) {
+    return()
+  }
+  arg <- deparse(substitute(x))
+  stopifnot_(
+    is.character(x) && length(x) == 1L,
+    "Argument {.arg {x}} must be a {.cls character} vector of length 1."
+  )
+}

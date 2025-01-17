@@ -1,46 +1,105 @@
-#' Parse Event Data Into Sequence Data
+#' Compute User Sessions from Event Data
+#'
+#' Processes a dataset to create user sessions based on time gaps,
+#' ordering columns, or actor groupings. It supports different ways to
+#' understand order in user behavior and provides flexibility when
+#' widening the data.
 #'
 #' @export
-#' @param data A `data.frame` with three columns for the actor, time, and
-#' action.
-#' @param actor_col A `character` string naming the actor column.
-#' @param time_col A `character` string naming the actor column.
-#' @param action_col A `character` string naming the actor column.
-#' @param time_threshold TODO
+#' @param data A `data.frame` or containing the action/event data.
+#' @param actor A `character` string giving the name of the column that
+#' represents a user/actor identifier. If not provided and neither `time` nor
+#' `order` is specified, the entire dataset is treated as a single session.
+#' @param time A `character` string giving the name of the column representing
+#' timestamps of the action events.
+#' @param action A `character` string giving the name of the column holding
+#' the information about the action taken.
+#' @param order A `character` string giving the name of a column with sequence
+#' numbers or non-unique orderable values that indicate order within an actor
+#' group, if not present it will be ordered with all the data if no actor is
+#' available, used when widening the data.
+#' @param time_threshold An `integer` specifying the time threshold in seconds
+#' for creating new time-based sessions. Defaults to 900 seconds.
 #' @param custom_format A `character` string giving the format used to
 #' parse the time column.
 #' @param is_unix_time A `logical` value indicating whether the time column
 #' is in Unix time. The default is `FALSE`.
-#' @param unix_time_unit A `character` string giving the Unix time unit. The
-#' default is `"seconds"`,
+#' @param unix_time_unit A `character` string giving the Unix time unit when
+#' `is_unix_time` is `TRUE`. The default is `"seconds"`. Valid options are
+#' `"seconds"`, `"milliseconds"`, or `"microseconds"`.
 #' @param verbose A `logical` value indicating whether to print informative
 #' messages during the parsing process. The default is `TRUE`.
-#' @return TODO.
-#' @examples
-#' # TODO
+#' @return A `list` with the following elements:
 #'
-event2sequence <- function(data, actor_col, time_col, action_col,
-                           time_threshold = 900, custom_format = NULL,
-                           is_unix_time = FALSE, unix_time_unit = "seconds",
-                           verbose = TRUE) {
+#' * `long_format`: The processed data in long format.
+#' * `wide_format`: The processed data in wide format, with actions/events as
+#' different variables structured with sequences.
+#' * `statistics`: A `list` containing summary statistics: total
+#' sessions, total actions, unique users, time range (if applicable), and
+#' top sessions and user by activities.
+#'
+#' @examples
+#' data <- tibble::tibble(
+#'   user = c("A", "A", "A", "B", "B", "C", "C", "C"),
+#'   time = c(
+#'     "2023-01-01 10:00:00", "2023-01-01 10:05:00",
+#'     "2023-01-01 10:20:00", "2023-01-01 12:00:00",
+#'     "2023-01-01 12:02:00", "2023-01-01 14:00:00",
+#'     "2023-01-01 14:05:00", "2023-01-01 14:10:00"
+#'   ),
+#'   action = c(
+#'     "view", "click", "add_cart", "view",
+#'     "checkout", "view", "click", "share"
+#'    )
+#' )
+#' results <- prepare_data(
+#'   data, actor = "user", time = "time", action = "action"
+#' )
+#' print(results$wide_format)
+#' print(results$statistics)
+#'
+#' data_ordered <- tibble::tibble(
+#'    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
+#'    order = c(1, 2, 3, 1, 2, 1, 2, 3),
+#'    action = c(
+#'      "view", "click", "add_cart", "view",
+#'      "checkout", "view", "click", "share"
+#'    )
+#' )
+#' results_ordered <- prepare_data(
+#'   data_ordered, actor = "user", order = "order", action = "action"
+#' )
+#' print(results_ordered$wide_format)
+#' print(results_ordered$statistics)
+#'
+#' data_single_session <- tibble::tibble(
+#'   action = c(
+#'     "view", "click", "add_cart", "view", "checkout", "view", "click", "share"
+#'    )
+#' )
+#' results_single <- prepare_data(data_single_session, action = "action")
+#' print(results_single$wide_format)
+#' print(results_single$statistics)
+#'
+prepare_data <- function(data, actor, time, action, order,
+                         time_threshold = 900, custom_format = NULL,
+                         is_unix_time = FALSE, unix_time_unit = "seconds",
+                         verbose = TRUE) {
   check_missing(data)
-  stopifnot_(
-    !missing(actor_col),
-    "Argument {.arg actor_col} must be provided
-     for user/actor identification."
-  )
-  stopifnot_(
-    !missing(time_col),
-    "Argument {.arg time_col} must be provided for timestamps."
-  )
-  stopifnot_(
-    !missing(action_col),
-    "Argument {.arg action_col} must be provided for activities/actions."
-  )
+  check_missing(action)
+  check_string(actor)
+  check_string(time)
+  check_string(action)
+  check_string(order)
   check_nonnegative(time_threshold, type = "numeric")
   check_flag(is_unix_time)
   check_match(unix_time_unit, c("seconds", "milliseconds", "microseconds"))
   check_flag(verbose)
+
+  # Create some NULLs for R CMD Check
+  session_id <- session_nr <- new_session <- time_gap <-
+    standardized_time <- sequence <- n_sessions <- n_actions <- NULL
+
   if (verbose) {
     message_("Initializing session computation...")
     message_(
@@ -50,8 +109,13 @@ event2sequence <- function(data, actor_col, time_col, action_col,
   }
   data <- tibble::as_tibble(data)
 
-  # Enhanced column validation
-  cols_req <- c(actor_col, time_col, action_col)
+  # Column validation
+  cols_req <- c(
+    action,
+    onlyif(!missing(actor), actor),
+    onlyif(!missing(time), time),
+    onlyif(!missing(order), order)
+  )
   cols_obs <- cols_req %in% names(data)
   cols_mis <- cols_req[!cols_obs]
   stopifnot_(
@@ -62,86 +126,148 @@ event2sequence <- function(data, actor_col, time_col, action_col,
     )
   )
 
-  # Time parsing with enhanced error handling and feedback
-  if (verbose) {
-    message_("Parsing time values...")
-    message_("First few time values: {.val {utils::head(data[[time_col]], 3)}}")
-  }
-  if (is.numeric(data[[time_col]])) {
+  if (!missing(time) && missing(order)) {
     if (verbose) {
+      message_("Parsing time values...")
       message_(
-        "Detected {.cls numeric} time values - treating as Unix timestamp"
+        "First few time values: {.val {utils::head(data[[time]], 3)}}"
       )
     }
-    is_unix_time <- TRUE
-  }
-  parsed_times <- parse_time(
-    time = data[[time_col]],
-    custom_format = custom_format,
-    is_unix_time = is_unix_time,
-    unix_time_unit = unix_time_unit,
-    verbose = verbose
-  )
-  if (verbose) {
-    message_("Sample of parsed times: {.val {utils::head(parsed_times, 3)}}")
-    message_("Creating sessions based on time threshold...")
-    message_("Time threshold for new session: {.val {time_threshold}} seconds")
-  }
-
-  # Create some NULLs for R CMD Check
-  session_id <- session_nr <- new_session <- Time_gap <-
-    Standardized_Time <- sequence <- n_sessions <- n_actions <- NULL
-
-  # Create processed data (long format)
-  long_format <- data |>
-    dplyr::mutate(Standardized_Time = parsed_times) |>
-    dplyr::arrange(!!rlang::sym(actor_col), Standardized_Time) |>
-    dplyr::group_by(!!rlang::sym(actor_col)) |>
-    dplyr::mutate(
-      Time_gap = as.numeric(
-        difftime(
-          Standardized_Time,
-          dplyr::lag(Standardized_Time),
-          units = "secs"
+    if (is.numeric(data[[time]])) {
+      if (verbose) {
+        message_(
+          "Detected {.cls numeric} time values - treating as Unix timestamp."
         )
-      ),
-      new_session = is.na(Time_gap) | Time_gap > time_threshold,
-      session_nr = cumsum(new_session),
-      session_id = paste0(!!rlang::sym(actor_col), " session", session_nr)
-    ) |>
-    dplyr::group_by(session_id) |>
-    dplyr::mutate(sequence = dplyr::row_number()) |>
-    dplyr::ungroup()
+      }
+      is_unix_time <- TRUE
+    }
+    parsed_times <- parse_time(
+      time = data[[time]],
+      custom_format = custom_format,
+      is_unix_time = is_unix_time,
+      unix_time_unit = unix_time_unit,
+      verbose = verbose
+    )
+    if (verbose) {
+      message_("Sample of parsed times: {.val {utils::head(parsed_times, 3)}}")
+      message_("Creating sessions based on time threshold...")
+      message_(
+        "Time threshold for new session: {.val {time_threshold}} seconds"
+      )
+    }
+    # Create processed data (long format)
+    if (missing(actor)) {
+      long_format <- data |>
+        dplyr::mutate(standardized_time = parsed_times) |>
+        dplyr::mutate(
+          time_gap = NA,
+          new_session = TRUE,
+          session_nr = 1,
+          session_id = "session"
+        )
+        dplyr::mutate(sequence = dplyr::row_number())
+    } else {
+      long_format <- data |>
+        dplyr::mutate(standardized_time = parsed_times) |>
+        dplyr::arrange(!!rlang::sym(actor), standardized_time) |>
+        dplyr::group_by(!!rlang::sym(actor)) |>
+        dplyr::mutate(
+          time_gap = as.numeric(
+            difftime(
+              standardized_time,
+              dplyr::lag(standardized_time),
+              units = "secs"
+            )
+          ),
+          new_session = is.na(time_gap) | time_gap > time_threshold,
+          session_nr = cumsum(new_session),
+          session_id = paste0(!!rlang::sym(actor), " session", session_nr)
+        ) |>
+        dplyr::group_by(session_id) |>
+        dplyr::mutate(sequence = dplyr::row_number()) |>
+        dplyr::ungroup()
+    }
+  } else if (!missing(order)) {
+    if (verbose) {
+      message_("Using provided order column to create sequences.")
+    }
+    if (missing(actor)) {
+      long_format <- data |>
+        dplyr::mutate(
+          session_id = !!rlang::sym(actor) ,
+          sequence = base::order(!!rlang::sym(order))
+        ) |>
+        dplyr::ungroup()
+    } else {
+      long_format <- data |>
+        dplyr::group_by(!!rlang::sym(actor)) |>
+        dplyr::mutate(
+          session_id = !!rlang::sym(actor) ,
+          sequence = base::order(!!rlang::sym(order))
+        ) %>%
+        dplyr::ungroup()
+    }
+  } else {
+    if (missing(actor)) {
+      if (verbose) {
+        message_("Using provided {.arg order} column to create sequences.")
+      }
+      long_format <- data |>
+        dplyr::mutate(
+          session_id = "session",
+          sequence = dplyr::row_number()
+        )
+    } else {
+      if (verbose) {
+        message_(
+          "No {.arg time} or {.arg order} column provided.
+          Using {.arg actor} as session identifier."
+        )
+      }
+      long_format <- data |>
+        dplyr::group_by(!!rlang::sym(actor)) |>
+        dplyr::mutate(
+          session_id = !!rlang::sym(actor),
+          sequence = dplyr::row_number()
+        ) |>
+        dplyr::ungroup()
+    }
+  }
 
   # Create wide format
   if (verbose) {
     message_("Creating wide format view of sessions...")
   }
   wide_format <- long_format |>
-    dplyr::select(session_id, sequence, !!rlang::sym(action_col)) |>
+    dplyr::select(session_id, sequence, !!rlang::sym(action)) |>
     tidyr::pivot_wider(
       id_cols = session_id,
       names_from = sequence,
-      values_from = !!rlang::sym(action_col)
+      values_from = !!rlang::sym(action)
     ) |>
     dplyr::arrange(session_id)
 
   # Calculate statistics
   stats <- list(
     total_sessions = dplyr::n_distinct(long_format$session_id),
-    unique_users = dplyr::n_distinct(long_format[[actor_col]]),
     total_actions = nrow(long_format),
-    max_sequence_length = max(long_format$sequence),
-    time_range = range(long_format$Standardized_Time),
-    sessions_per_user = long_format |>
-      dplyr::group_by(!!rlang::sym(actor_col)) |>
-      dplyr::summarize(n_sessions = dplyr::n_distinct(session_id)) |>
-      dplyr::arrange(dplyr::desc(n_sessions)),
-    actions_per_session = long_format |>
-      dplyr::group_by(session_id) |>
-      dplyr::summarize(n_actions = dplyr::n()) |>
-      dplyr::arrange(dplyr::desc(n_actions))
+    max_sequence_length = max(long_format$sequence)
   )
+  if (!missing(actor)) {
+    stats$unique_users <- dplyr::n_distinct(long_format[[actor]])
+    stats$sessions_per_user <- long_format |>
+      dplyr::group_by(!!rlang::sym(actor)) |>
+      dplyr::summarize(n_sessions = dplyr::n_distinct(session_id)) |>
+      dplyr::arrange(dplyr::desc(n_sessions))
+  }
+  stats$actions_per_session <- long_format |>
+    dplyr::group_by(session_id) |>
+    dplyr::summarize(n_actions = dplyr::n()) |>
+    dplyr::arrange(dplyr::desc(n_actions))
+
+  if(!missing(time) && missing(order)) {
+    stats$time_range <- range(long_format$standardized_time)
+  }
 
   # Print summary statistics
   if (verbose) {
@@ -149,19 +275,27 @@ event2sequence <- function(data, actor_col, time_col, action_col,
     message_("Session Analysis Summary")
     message_("------------------------")
     message_("Total number of sessions: {.val {stats$total_sessions}}")
-    message_("Number of unique users: {.val {stats$unique_users}}")
+    if (!missing(actor)) {
+      message_("Number of unique users: {.val {stats$unique_users}}")
+    }
     message_("Total number of actions: {.val {stats$total_actions}}")
     message_(
       "Maximum sequence length: {.val {stats$max_sequence_length}} actions"
     )
-    message_(
-      "Time range: {.val {stats$time_range[1]}} to {.val {stats$time_range[2]}}"
-    )
-    message_("\nSessions per user:")
-    print(stats$sessions_per_user)
+    if (!missing(time) && missing(order)) {
+      message_(
+        "Time range: {.val {stats$time_range[1]}} to
+        {.val {stats$time_range[2]}}"
+      )
+    }
+    if (!missing(actor)) {
+      message_("\nSessions per user:")
+      print(stats$sessions_per_user)
+    }
     message_("Top 5 longest sessions:")
     print(utils::head(stats$actions_per_session, 5))
   }
+
   list(
     long_format = long_format,
     wide_format = wide_format,
@@ -169,13 +303,18 @@ event2sequence <- function(data, actor_col, time_col, action_col,
   )
 }
 
-#' Parse Various Time Formats
+#' Robustly Parse Date and Time Values
+#'
+#' This function parses a variety of date and time formats into a standardized
+#' POSIXct datetime object in R. It handles different separators,
+#' time zone indicators, and partial dates. It also deals with missing
+#' values and treats them as NA
 #'
 #' @param time A `vector` of time values.
-#' @inheritParams event2sequence
+#' @inheritParams prepare_data
 #' @noRd
 parse_time <- function(time, custom_format,
-                                is_unix_time, unix_time_unit, verbose) {
+                       is_unix_time, unix_time_unit, verbose) {
   if (verbose) {
     message_("Starting time parsing process...")
     message_("Number of values to parse: {.val {length(time)}}")
@@ -195,13 +334,26 @@ parse_time <- function(time, custom_format,
   if (inherits(time, c("POSIXct", "POSIXlt"))) {
     return(time)
   }
+  time_empty <- is.na(time) | !nzchar(time)
+  if (any(time_empty)) {
+    if (verbose) {
+      message_(
+        "Found missing or empty time values; these will be treated as NA."
+      )
+    }
+    time[time_empty] <- NA
+  }
+  # Remove whitespace
   time <- trimws(as.character(time))
+  # Remove timezone indicators like Z
+  # or other trailing chars and handle milliseconds
+  time <- gsub("(\\.\\d{1,3})?[A-Za-z ]*$", "", time)
   # Try custom format first if provided
   if (!is.null(custom_format)) {
     parsed_time <- as.POSIXct(strptime(time, format = custom_format))
     if (!all(is.na(parsed_time))) {
       if (verbose) {
-        message_("Successfully parsed using custom format")
+        message_("Successfully parsed using custom format.")
       }
       return(parsed_time)
     }
@@ -217,6 +369,16 @@ parse_time <- function(time, custom_format,
     "%Y.%m.%d %H:%M:%S",
     "%Y.%m.%d %H:%M",
 
+    "%Y-%m-%dT%H:%M:%S",  # ISO8601 formats
+    "%Y-%m-%dT%H:%M",     # ISO8601 formats
+    "%Y-%m-%dT%H:%M:%OS", # ISO with optional second fraction
+    "%Y-%m-%d %H:%M:%S%z",  # timezone offset with colon like +00:00
+    "%Y-%m-%d %H:%M%z", # timezone offset with colon like +00:00 without seconds
+    "%Y-%m-%d %H:%M:%S %z", # timezone offset with space colon like  +00:00
+    "%Y-%m-%d %H:%M %z", # timezone offset with space and colon like +00:00
+    "%Y%m%d%H%M%S",      # compact without separators like 20240201204530
+    "%Y%m%d%H%M",        # compact without separators like 202402012045
+
     # Day first formats
     "%d-%m-%Y %H:%M:%S",
     "%d-%m-%Y %H:%M",
@@ -225,6 +387,9 @@ parse_time <- function(time, custom_format,
     "%d.%m.%Y %H:%M:%S",
     "%d.%m.%Y %H:%M",
 
+    "%d-%m-%YT%H:%M:%S",  # ISO8601 dayfirst
+    "%d-%m-%YT%H:%M",     # ISO8601 dayfirst
+
     # Month first formats
     "%m-%d-%Y %H:%M:%S",
     "%m-%d-%Y %H:%M",
@@ -232,6 +397,8 @@ parse_time <- function(time, custom_format,
     "%m/%d/%Y %H:%M",
     "%m.%d.%Y %H:%M:%S",
     "%m.%d.%Y %H:%M",
+    "%m-%d-%YT%H:%M:%S", # ISO8601 month first
+    "%m-%d-%YT%H:%M",    # ISO8601 month first
 
     # Formats with month names
     "%d %b %Y %H:%M:%S",
@@ -243,7 +410,7 @@ parse_time <- function(time, custom_format,
     "%B %d %Y %H:%M:%S",
     "%B %d %Y %H:%M",
 
-    # Date-only formats
+    # Date only formats
     "%Y-%m-%d",
     "%Y/%m/%d",
     "%Y.%m.%d",
@@ -265,7 +432,7 @@ parse_time <- function(time, custom_format,
     if (!all(is.na(parsed_time))) {
       if (verbose) {
         message_("Successfully parsed using format: {.val {fmt}}")
-        message_("Sample parsed time: {.val {format(parsed_times[1])}}")
+        message_("Sample parsed time: {.val {format(parsed_time[1])}}")
       }
       return(parsed_time)
     }
@@ -279,9 +446,13 @@ parse_time <- function(time, custom_format,
       "2. YYYY/MM/DD HH:MM:SS (e.g., 2023/01/09 18:44:00)",
       "3. DD-MM-YYYY HH:MM:SS (e.g., 09-01-2023 18:44:00)",
       "4. MM-DD-YYYY HH:MM:SS (e.g., 01-09-2023 18:44:00)",
-      "5. Month names (e.g., 09 Jan 2023 18:44:00, January 09 2023 18:44:00)",
-      "6. All above formats without seconds (HH:MM)",
-      "7. Unix timestamps ({.cls numeric})",
+      "5. YYYY-MM-DDTHH:MM:SS (ISO8601 Format)",
+      "6. YYYY-MM-DDTHH:MM:SS.milliseconds (ISO8601 with milliseconds)",
+      "7. Compact Formats (YYYYMMDDHHMMSS)",
+      "8. With or without Timezone offset (e.g, +00:00 or +01:00)",
+      "9. Month names (e.g., 09 Jan 2023 18:44:00, January 09 2023 18:44:00)",
+      "10. All above formats without seconds (HH:MM)",
+      "11. Unix timestamps (numeric)",
       "Sample of problematic values: {.val {utils::head(time, 3)}}.",
       "Consider providing a custom format
        using the {.arg custom_format} argument."

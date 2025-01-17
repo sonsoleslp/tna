@@ -1,3 +1,7 @@
+# tna 0.3.2
+
+* `event2sequence()` has been renamed to `prepare_data()`. The function is now also more general and handles more date formats.
+
 # tna 0.3.1
 
 * Fixed an issue when checking the validity of `character` type arguments.
