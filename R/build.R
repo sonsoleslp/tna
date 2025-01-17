@@ -272,21 +272,32 @@ create_seqdata <- function(x) {
     vals <- sort(unique(unlist(x)))
     alphabet <- labels <- vals[!is.na(vals)]
     colors <- color_palette(length(labels))
-    out <- x |>
-      dplyr::mutate(
-        dplyr::across(
-          dplyr::everything(),
-          ~ factor(.x, levels = vals)
-        )
-      )
+    out <- as.data.frame(
+      lapply(x, function(y) factor(y, levels = vals))
+    )
+    # out <- x |>
+    #   dplyr::mutate(
+    #     dplyr::across(
+    #       dplyr::everything(),
+    #       ~ factor(.x, levels = vals)
+    #     )
+    #   )
   }
-  out <- out |>
-    dplyr::mutate(
-      dplyr::across(
-        dplyr::everything(), ~ replace(.x, which(!.x %in% alphabet), NA)
-      )
-    ) |>
-    dplyr::mutate(dplyr::across(dplyr::everything(), as.integer))
+  out <- as.data.frame(
+    lapply(
+      out,
+      function(y) {
+        as.integer(replace(y, which(!y %in% alphabet), NA))
+      }
+    )
+  )
+  # out <- out |>
+  #   dplyr::mutate(
+  #     dplyr::across(
+  #       dplyr::everything(), ~ replace(.x, which(!.x %in% alphabet), NA)
+  #     )
+  #   ) |>
+  #   dplyr::mutate(dplyr::across(dplyr::everything(), as.integer))
   structure(
     out,
     class = "data.frame",

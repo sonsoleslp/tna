@@ -472,8 +472,9 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     dplyr::arrange(
       x, !!rlang::sym("name"), dplyr::desc(!!rlang::sym("State"))
     )
-  ) |>
-    dplyr::mutate(rank = dplyr::row_number())
+  ) # |>
+    # dplyr::mutate(rank = dplyr::row_number())
+  x$rank <- dplyr::row_number(x)
 
   ggplot2::ggplot(x) +
     ggplot2::scale_fill_manual(values = colors) +
@@ -525,7 +526,9 @@ plot_centralities_multiple <- function(x, reorder, ncol,
                                        scales, colors, labels) {
   measures <- names(x)[3:ncol(x)]
   n_clusters <- length(unique(x$Group))
-  dplyr::mutate(x, State = factor(!!rlang::sym("State"))) |>
+  x$State <- factor(x$State)
+  # dplyr::mutate(x, State = factor(!!rlang::sym("State"))) |>
+  x |>
     data.frame() |>
     stats::reshape(
       varying = measures,
@@ -564,7 +567,6 @@ plot_centralities_multiple <- function(x, reorder, ncol,
       legend.position = "bottom"
     )
 }
-
 
 #' Plot the difference network between two models
 #'

@@ -22,6 +22,18 @@ test_that("data preparation works when actor and time are provided", {
     ),
     NA
   )
+  expect_error(
+    capture.output(
+      prepare_data(
+        data,
+        actor = "user",
+        time = "time",
+        action = "action",
+        verbose = FALSE
+      )
+    ),
+    NA
+  )
 })
 
 test_that("data preparation works when actor and order are provided", {
@@ -43,6 +55,18 @@ test_that("data preparation works when actor and order are provided", {
     ),
     NA
   )
+  expect_error(
+    capture.output(
+      prepare_data(
+        data_ordered,
+        actor = "user",
+        order = "order",
+        action = "action",
+        verbose = FALSE
+      )
+    ),
+    NA
+  )
 })
 
 test_that("data preparation works when only action is provided", {
@@ -55,4 +79,11 @@ test_that("data preparation works when only action is provided", {
     prepare_data(data_single_session, action = "action", verbose = FALSE),
     NA
   )
+  expect_error(
+    capture.output(
+      prepare_data(data_single_session, action = "action", verbose = FALSE)
+    ),
+    NA
+  )
 })
+
