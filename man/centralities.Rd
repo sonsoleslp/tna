@@ -16,7 +16,8 @@ centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
 \method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object, a \code{group_tna} object, or a  square \code{matrix} representing edge weights.}
+\item{x}{A \code{tna} object, a \code{group_tna} object, or
+a square \code{matrix} representing edge weights.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{FALSE}).}

@@ -36,7 +36,8 @@
 #' @export
 #' @family core
 #' @rdname centralities
-#' @param x A `tna` object, a `group_tna` object, or a  square `matrix` representing edge weights.
+#' @param x A `tna` object, a `group_tna` object, or
+#' a square `matrix` representing edge weights.
 #' @param loops A `logical` value indicating whether to include loops in the
 #'   network when computing the centrality measures (default is `FALSE`).
 #' @param normalize  A `logical` value indicating whether the centralities

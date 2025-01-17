@@ -204,7 +204,7 @@ prepare_data <- function(data, actor, time, action, order,
         dplyr::mutate(
           session_id = !!rlang::sym(actor) ,
           sequence = base::order(!!rlang::sym(order))
-        ) %>%
+        ) |>
         dplyr::ungroup()
     }
   } else {

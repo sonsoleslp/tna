@@ -1,7 +1,11 @@
 test_that("bootstrap can be applied", {
   model <- tna(mock_sequence)
   expect_error(
-    bootstrap(model, iter = 20),
+    bootstrap(model, iter = 20, method = "stability"),
+    NA
+  )
+  expect_error(
+    bootstrap(model, iter = 20, method = "threshold"),
     NA
   )
 })

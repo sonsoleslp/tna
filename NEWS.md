@@ -1,6 +1,7 @@
 # tna 0.3.2
 
 * `event2sequence()` has been renamed to `prepare_data()`. The function is now also more general and handles more date formats.
+* Added a `method` argument to `bootstrap()`. The new default option `"stability"` implements a bootstrapping scheme where the edge weights are compared against a range of "consistent" weights (see the documentation for details). The old functionality can be accessed with `method = "threshold"`.
 
 # tna 0.3.1
 
