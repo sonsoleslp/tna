@@ -43,7 +43,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   # TODO check that networks can be compared
   data_x <- x$data
   data_y <- y$data
-  combined_data <- rbind(data_x, data_y)
+  combined_data <- dplyr::bind_rows(data_x, data_y)
   n_data_x <- nrow(data_x)
   n_combined <- n_data_x + nrow(data_y)
   weights_x <- x$weights
