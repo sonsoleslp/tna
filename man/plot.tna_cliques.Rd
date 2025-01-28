@@ -12,6 +12,7 @@
   minimum = 1e-05,
   mar = rep(5, 4),
   ask = TRUE,
+  colors,
   ...
 )
 }
@@ -33,6 +34,8 @@ in the plots or not.}
 
 \item{ask}{A \code{logical} value. When \code{TRUE}, show plots one by one and asks
 to plot the next plot in interactive mode.}
+
+\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Ignored.}
 }

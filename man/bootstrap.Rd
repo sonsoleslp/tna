@@ -14,7 +14,7 @@ bootstrap(x, ...)
   level = 0.05,
   method = "stability",
   threshold,
-  consistency_range = c(0.95, 1.05),
+  consistency_range = c(0.75, 1.25),
   ...
 )
 
@@ -46,7 +46,7 @@ The default is the 10th percentile of the edge weights. Used only when
 \item{consistency_range}{A \code{numeric} vector of length 2. Determines how much
 the edge weights may deviate (multiplicatively) from their observed values
 (below and above) before they are considered insignificant. The default is
-\code{c(0.95, 1.05)} which corresponds to a symmetric 5\% deviation range. Used
+\code{c(0.75, 1.25)} which corresponds to a symmetric 25\% deviation range. Used
 only when \code{method = "stability"}.}
 }
 \value{

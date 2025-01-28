@@ -8,14 +8,20 @@
 \usage{
 communities(x, ...)
 
-\method{communities}{tna}(x, gamma = 1, ...)
+\method{communities}{tna}(x, methods, gamma = 1, ...)
 
-\method{communities}{group_tna}(x, gamma = 1, ...)
+\method{communities}{group_tna}(x, methods, gamma = 1, ...)
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object.}
 
 \item{...}{Ignored.}
+
+\item{methods}{A \code{character} vector of community detection algorithms to
+apply to the network. The supported options are: \code{"walktrap"},
+\code{"fast_greedy"}, \code{"label_prop"}, \code{"infomap"}, \code{"edge_betweenness"},
+\code{"leading_eigen"}, \code{"spinglass"}. If missing, all supported algorithms are
+applied (the default).}
 
 \item{gamma}{A \code{numeric} value depicting a parameter that affects the
 behavior of certain algorithms like the Spin Glass method. Defaults to \code{1}.}
