@@ -111,6 +111,7 @@ plot.tna <- function(x, labels, colors, pie,
     input = x$weights,
     color = colors,
     edge.labels = edge.labels,
+    edge.label.position = 0.65,
     labels = labels,
     layout = layout,
     pie = pie,
@@ -174,7 +175,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #'
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
                              minimum = 0.00001, mar = rep(5, 4),
-                             ask = TRUE, ...) {
+                             ask = TRUE, colors, ...) {
   check_class(x, "tna_cliques")
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
@@ -182,7 +183,11 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     warning_("No {size}-cliques were found in the network.")
     return(invisible(NULL))
   }
-  colors <- attr(x, "colors")
+  colors <- ifelse_(
+    missing(colors),
+    attr(x, "colors"),
+    colors
+  )
   labels <- attr(x, "labels")
   max_cliques <- min(first + n - 1L, n_cliques)
   if (interactive()) {
@@ -651,6 +656,7 @@ plot_model <- function(x, labels, colors,
     input = x,
     color = colors,
     edge.labels = edge.labels,
+    edge.label.position = 0.65,
     labels = labels,
     layout = layout,
     mar = mar,

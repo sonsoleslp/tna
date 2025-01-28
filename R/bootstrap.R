@@ -37,7 +37,7 @@
 #' @param consistency_range A `numeric` vector of length 2. Determines how much
 #' the edge weights may deviate (multiplicatively) from their observed values
 #' (below and above) before they are considered insignificant. The default is
-#' `c(0.95, 1.05)` which corresponds to a symmetric 5% deviation range. Used
+#' `c(0.75, 1.25)` which corresponds to a symmetric 25% deviation range. Used
 #' only when `method = "stability"`.
 #' @param threshold A `numeric` value to compare edge weights against.
 #' The default is the 10th percentile of the edge weights. Used only when
@@ -74,7 +74,7 @@ bootstrap <- function(x, ...) {
 #' @rdname bootstrap
 #' @export
 bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
-                          threshold, consistency_range = c(0.95, 1.05), ...) {
+                          threshold, consistency_range = c(0.75, 1.25), ...) {
   check_missing(x)
   check_tna_seq(x)
   check_positive(iter)
