@@ -15,6 +15,11 @@
 #' @family patterns
 #' @rdname communities
 #' @param x A `tna` or a `group_tna` object.
+#' @param methods A `character` vector of community detection algorithms to
+#' apply to the network. The supported options are: `"walktrap"`,
+#' `"fast_greedy"`, `"label_prop"`, `"infomap"`, `"edge_betweenness"`,
+#' `"leading_eigen"`, `"spinglass"`. If missing, all supported algorithms are
+#' applied (the default).
 #' @param gamma A `numeric` value depicting a parameter that affects the
 #' behavior of certain algorithms like the Spin Glass method. Defaults to `1`.
 #' @param ... Ignored.
@@ -40,82 +45,62 @@ communities <- function(x, ...) {
 
 #' @export
 #' @rdname communities
-communities.tna <- function(x, gamma = 1, ...) {
+communities.tna <- function(x, methods, gamma = 1, ...) {
   check_missing(x)
   check_class(x, "tna")
+  if (missing(methods)) {
+    methods <- names(supported_communities)
+  }
+  methods <- check_match(
+    methods,
+    names(supported_communities),
+    several.ok = TRUE
+  )
   stopifnot_(
     checkmate::test_number(x = gamma),
     "Argument {.arg gamma} must be a single {.cls numeric} value."
   )
   g <- as.igraph(x)
   g_un <- igraph::as_undirected(
-    g,
+    graph = g,
     mode = "collapse",
     edge.attr.comb = list(weight = "sum")
   )
   communities <- list()
   mapping <- list()
-
-  # Walktrap algorithm
-  communities$walktrap <- igraph::cluster_walktrap(
-    g,
-    weights = igraph::E(g)$weight
-  )
-  mapping$walktrap <- igraph::membership(communities$walktrap) |>
-    as.numeric()
-
-  # Fast greedy algorithm (requires undirected graph)
-
-  communities$fast_greedy <- igraph::cluster_fast_greedy(
-    g_un,
-    weights = igraph::E(g_un)$weight
-  )
-  mapping$fast_greedy <- igraph::membership(communities$fast_greedy) |>
-    as.numeric()
-
-  # Label propagation algorithm
-  communities$label_prop <- igraph::cluster_label_prop(
-    g,
-    weights = igraph::E(g)$weight
-  )
-  mapping$label_prop <- igraph::membership(communities$label_prop) |>
-    as.numeric()
-
-  # Infomap algorithm
-  communities$infomap <- igraph::cluster_infomap(
-    g,
-    e.weights = igraph::E(g)$weight
-  )
-  mapping$infomap <- igraph::membership(communities$infomap) |>
-    as.numeric()
-
-  # Edge betweenness algorithm
-  # TODO warning? supressing for now...
-  communities$edge_betweenness <- suppressWarnings(igraph::cluster_edge_betweenness(
-    g,
-    weights = igraph::E(g)$weight
-  ))
-  mapping$edge_betweenness <-
-    igraph::membership(communities$edge_betweenness) |>
-    as.numeric()
-
-  # Leading eigenvector algorithm
-  communities$leading_eigen <- igraph::cluster_leading_eigen(
-    g_un,
-    weights = igraph::E(g_un)$weight
-  )
-  mapping$leading_eigen <- igraph::membership(communities$leading_eigen) |>
-    as.numeric()
-
-  # Spin glass algorithm (requires undirected graph)
-  communities$spinglass <- igraph::cluster_spinglass(
-    g_un,
-    weights = igraph::E(g_un)$weight,
-    gamma = gamma
-  )
-  mapping$spinglass <- igraph::membership(communities$spinglass) |>
-    as.numeric()
-
+  w <- igraph::E(g)$weight
+  w_un <- igraph::E(g_un)$weight
+  for (method in methods) {
+    directed <- supported_communities[[method]]$directed
+    args <- list(
+      graph = ifelse_(directed, g, g_un),
+      weights = ifelse_(directed, w, w_un)
+    )
+    args$gamma <- onlyif(
+      !is.null(supported_communities[[method]]$gamma),
+      gamma
+    )
+    if (!is.null(supported_communities[[method]]$e_weights)) {
+      args$e.weights <- args$weights
+      args$weights <- NULL
+    }
+    if (method == "edge_betweenness") {
+      # TODO warning? supressing for now...
+      communities[[method]] <- suppressWarnings(
+        communities[[method]] <- do.call(
+          supported_communities[[method]]$fun,
+          args = args
+        )
+      )
+    } else {
+      communities[[method]] <- do.call(
+        supported_communities[[method]]$fun,
+        args = args
+      )
+    }
+    mapping[[method]] <- igraph::membership(communities[[method]]) |>
+      as.numeric()
+  }
   structure(
     list(
       counts = lengths(communities),
@@ -134,11 +119,50 @@ communities.tna <- function(x, gamma = 1, ...) {
 #' @export
 #' @family clusters
 #' @rdname communities
-communities.group_tna <- function(x, gamma = 1, ...) {
+communities.group_tna <- function(x, methods, gamma = 1, ...) {
   check_missing(x)
   check_class(x, "group_tna")
+  if (missing(methods)) {
+    methods <- names(supported_communities)
+  }
   structure(
-    lapply(x, \(i) communities.tna(i, gamma = gamma, ...)),
+    lapply(x, \(i) communities.tna(i, methods, gamma = gamma, ...)),
     class = "group_tna_communities"
   )
 }
+
+
+# Supported community detection algorithms --------------------------------
+
+supported_communities <- list(
+  `walktrap` = list(
+    fun = igraph::cluster_walktrap,
+    directed = TRUE
+  ),
+  `fast_greedy` = list(
+    fun = igraph::cluster_fast_greedy,
+    directed = FALSE
+  ),
+  `label_prop` = list(
+    fun = igraph::cluster_label_prop,
+    directed = TRUE
+  ),
+  `infomap` = list(
+    fun = igraph::cluster_infomap,
+    directed = TRUE,
+    e_weights = TRUE
+  ),
+  `edge_betweenness` = list(
+    fun = igraph::cluster_edge_betweenness,
+    directed = TRUE
+  ),
+  `leading_eigen` = list(
+    fun = igraph::cluster_leading_eigen,
+    directed = FALSE
+  ),
+  `spinglass` = list(
+    fun = igraph::cluster_spinglass,
+    directed = FALSE,
+    gamma = TRUE
+  )
+)
