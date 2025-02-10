@@ -124,18 +124,12 @@ centralities_ <- function(x, loops, normalize, measures) {
   names(measures_out) <- measures
   out <- as.data.frame(measures_out)
   if (normalize) {
-    # out <- out |>
-    #   dplyr::mutate(dplyr::across(dplyr::all_of(measures), ranger))
     out[, measures] <- as.data.frame(lapply(out[, measures], ranger))
   }
   rn <- rownames(out)
   out <- tibble::rownames_to_column(out, "State")
   out$State <- factor(out$State, levels = rn)
   structure(
-    #tibble::rownames_to_column(out, "State") |>
-    #  dplyr::mutate(
-    #    State = factor(!!rlang::sym("State"), levels = rownames(out))
-    #  ),
     out,
     class = c("tna_centralities", "tbl_df", "tbl", "data.frame")
   )

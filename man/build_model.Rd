@@ -20,9 +20,23 @@ build_model(x, type = "relative", scaling = character(0L), ...)
 
 \method{build_model}{matrix}(x, type = "relative", scaling = character(0L), inits, ...)
 
-\method{build_model}{stslist}(x, type = "relative", scaling = character(0L), ...)
+\method{build_model}{stslist}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  from = 1L,
+  to = ncol(x),
+  ...
+)
 
-\method{build_model}{data.frame}(x, type = "relative", scaling = character(0L), ...)
+\method{build_model}{data.frame}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  from = 1L,
+  to = ncol(x),
+  ...
+)
 
 tna(x, scaling = character(0L), ...)
 
@@ -76,6 +90,12 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
 be scaled to unity.}
+
+\item{from}{An \code{integer} giving the index of the first column to consider
+as sequence data. Defaults to 1.}
+
+\item{to}{An \code{integer} giving the index of the last column to consider
+as sequence data. Defaults to \code{ncol(x)}.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

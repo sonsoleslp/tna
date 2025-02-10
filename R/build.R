@@ -151,15 +151,19 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
+#' @param from An `integer` giving the index of the first column to consider
+#' as sequence data. Defaults to 1.
+#' @param to An `integer` giving the index of the last column to consider
+#' as sequence data. Defaults to `ncol(x)`.
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
-                                ...) {
+                                from = 1L, to = ncol(x), ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x)
+  x <- create_seqdata(x, from, to)
   model <- initialize_model(x, type, scaling, ...)
   build_model_(
     weights = model$weights,
@@ -174,14 +178,15 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 #' @export
 #' @rdname build_model
 build_model.data.frame <- function(x, type = "relative",
-                                   scaling = character(0L), ...) {
+                                   scaling = character(0L),
+                                   from = 1L, to = ncol(x), ...) {
   stopifnot_(
     !missing(x),
     "Argument {.arg x} is missing."
   )
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x)
+  x <- create_seqdata(x, from, to)
   model <- initialize_model(x, type, scaling, ...)
   build_model_(
     weights = model$weights,
@@ -257,7 +262,7 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #'
 #' @param x A `data.frame` or a `stslist` object.
 #' @noRd
-create_seqdata <- function(x) {
+create_seqdata <- function(x, from, to) {
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
@@ -275,14 +280,8 @@ create_seqdata <- function(x) {
     out <- as.data.frame(
       lapply(x, function(y) factor(y, levels = vals))
     )
-    # out <- x |>
-    #   dplyr::mutate(
-    #     dplyr::across(
-    #       dplyr::everything(),
-    #       ~ factor(.x, levels = vals)
-    #     )
-    #   )
   }
+  out <- out[, seq(from, to)]
   out <- as.data.frame(
     lapply(
       out,
@@ -291,13 +290,6 @@ create_seqdata <- function(x) {
       }
     )
   )
-  # out <- out |>
-  #   dplyr::mutate(
-  #     dplyr::across(
-  #       dplyr::everything(), ~ replace(.x, which(!.x %in% alphabet), NA)
-  #     )
-  #   ) |>
-  #   dplyr::mutate(dplyr::across(dplyr::everything(), as.integer))
   structure(
     out,
     class = "data.frame",

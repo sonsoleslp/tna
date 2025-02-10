@@ -164,15 +164,6 @@ prepare_data <- function(data, actor, time, action, order,
       long_format$session_nr <- 1
       long_format$session_id <- "session"
       long_format$sequence <- dplyr::row_number(data)
-      # long_format <- data |>
-      #   dplyr::mutate(standardized_time = parsed_times) |>
-      #   dplyr::mutate(
-      #     time_gap = NA,
-      #     new_session = TRUE,
-      #     session_nr = 1,
-      #     session_id = "session"
-      #   )
-      #   dplyr::mutate(sequence = dplyr::row_number())
     } else {
       long_format <- data |>
         dplyr::mutate(standardized_time = parsed_times) |>
@@ -202,11 +193,6 @@ prepare_data <- function(data, actor, time, action, order,
       long_format <- data
       long_format$session_id <- data$actor
       long_format$sequence <- base::order(data[[order]])
-      # long_format <- data |>
-      #   dplyr::mutate(
-      #     session_id = !!rlang::sym(actor) ,
-      #     sequence = base::order(!!rlang::sym(order))
-      #   )
     } else {
       long_format <- data |>
         dplyr::group_by(!!rlang::sym(actor)) |>
@@ -227,11 +213,6 @@ prepare_data <- function(data, actor, time, action, order,
       long_format <- data
       long_format$session_id <- "session"
       long_format$sequence <- dplyr::row_number(data)
-      # long_format <- data |>
-      #   dplyr::mutate(
-      #     session_id = "session",
-      #     sequence = dplyr::row_number()
-      #   )
     } else {
       if (verbose) {
         message_(
