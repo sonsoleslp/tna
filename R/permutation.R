@@ -37,7 +37,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
                              measures = character(0), ...) {
   check_tna_seq(x)
   check_tna_seq(y)
-  check_positive(iter)
+  check_values(iter, strict = TRUE)
   check_flag(paired)
   check_probability(level)
   # TODO check that networks can be compared

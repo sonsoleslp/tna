@@ -24,8 +24,7 @@ build_model(x, type = "relative", scaling = character(0L), ...)
   x,
   type = "relative",
   scaling = character(0L),
-  from = 1L,
-  to = ncol(x),
+  cols = seq(1, ncol(x)),
   ...
 )
 
@@ -33,8 +32,7 @@ build_model(x, type = "relative", scaling = character(0L), ...)
   x,
   type = "relative",
   scaling = character(0L),
-  from = 1L,
-  to = ncol(x),
+  cols = seq(1, ncol(x)),
   ...
 )
 
@@ -91,11 +89,9 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
 be scaled to unity.}
 
-\item{from}{An \code{integer} giving the index of the first column to consider
-as sequence data. Defaults to 1.}
-
-\item{to}{An \code{integer} giving the index of the last column to consider
-as sequence data. Defaults to \code{ncol(x)}.}
+\item{cols}{An \code{integer} vector giving the indices of the columns that
+should be considered as sequence data. Defaults to all columns, i.e.,
+\code{seq(1, ncol(x))}.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

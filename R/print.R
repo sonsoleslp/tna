@@ -52,7 +52,7 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
     NextMethod(generic = "print", object = x, ...)
     return()
   }
-  check_nonnegative(digits)
+  check_values(digits)
   type <- attr(x, "type")
   mat_type <- switch(type,
     `relative` = "Transition Probability",
@@ -93,7 +93,7 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
                                 type = "both", ...) {
   check_missing(x)
   check_class(x, "tna_bootstrap")
-  check_nonnegative(digits)
+  check_values(digits)
   type <- check_match(type, c("both", "sig", "nonsig"))
   sig <- x$summary$sig
   edges <- x$summary |>
@@ -176,9 +176,9 @@ print.tna_cliques <- function(x, n = 6, first = 1,
     cat("No ", attr(x, "size"), "-cliques were found in the network.", sep = "")
     return(invisible(x))
   }
-  check_positive(n)
-  check_positive(first)
-  check_nonnegative(digits)
+  check_values(n, strict = TRUE)
+  check_values(first, strict = TRUE)
+  check_values(digits)
   n <- min(n, n_cliques)
   threshold <- attr(x, "threshold")
   cluster <- attr(x, "cluster")

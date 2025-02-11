@@ -27,8 +27,6 @@
 #' @param unix_time_unit A `character` string giving the Unix time unit when
 #' `is_unix_time` is `TRUE`. The default is `"seconds"`. Valid options are
 #' `"seconds"`, `"milliseconds"`, or `"microseconds"`.
-#' @param verbose A `logical` value indicating whether to print informative
-#' messages during the parsing process. The default is `TRUE`.
 #' @return A `list` with the following elements:
 #'
 #' * `long_format`: The processed data in long format.
@@ -83,30 +81,26 @@
 #'
 prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
-                         is_unix_time = FALSE, unix_time_unit = "seconds",
-                         verbose = TRUE) {
+                         is_unix_time = FALSE, unix_time_unit = "seconds") {
   check_missing(data)
   check_missing(action)
   check_string(actor)
   check_string(time)
   check_string(action)
   check_string(order)
-  check_nonnegative(time_threshold, type = "numeric")
+  check_values(time_threshold, type = "numeric")
   check_flag(is_unix_time)
   check_match(unix_time_unit, c("seconds", "milliseconds", "microseconds"))
-  check_flag(verbose)
 
   # Create some NULLs for R CMD Check
   session_id <- session_nr <- new_session <- time_gap <-
     standardized_time <- sequence <- n_sessions <- n_actions <- NULL
 
-  if (verbose) {
-    message_("Initializing session computation...")
-    message_(
-      "Input data dimensions:
-      {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
-    )
-  }
+  message_("Initializing session computation...")
+  message_(
+    "Input data dimensions:
+    {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
+  )
   data <- tibble::as_tibble(data)
 
   # Column validation
@@ -125,76 +119,87 @@ prepare_data <- function(data, actor, time, action, order,
       `x` = "The following columns were not found in the data: {cols_mis}."
     )
   )
-
-  if (!missing(time) && missing(order)) {
-    if (verbose) {
-      message_("Parsing time values...")
+  long_format <- data
+  default_actor <- FALSE
+  if (missing(actor)) {
+    # Placeholder actor column
+    actor <- ".actor"
+    long_format$.actor <- "session"
+    default_actor <- TRUE
+  }
+  if (!missing(time)) {
+    if (!missing(order)) {
       message_(
-        "First few time values: {.val {utils::head(data[[time]], 3)}}"
+        "Both {.arg time} and {.arg order} provided: ignoring {.arg order}."
       )
+      order <- rlang::missing_arg()
     }
+    message_("Parsing time values...")
+    message_(
+      "First few time values: {.val {utils::head(data[[time]], 3)}}"
+    )
     if (is.numeric(data[[time]])) {
-      if (verbose) {
-        message_(
-          "Detected {.cls numeric} time values - treating as Unix timestamp."
-        )
-      }
+      message_(
+        "Detected {.cls numeric} time values - treating as Unix timestamp."
+      )
       is_unix_time <- TRUE
     }
     parsed_times <- parse_time(
       time = data[[time]],
       custom_format = custom_format,
       is_unix_time = is_unix_time,
-      unix_time_unit = unix_time_unit,
-      verbose = verbose
+      unix_time_unit = unix_time_unit
     )
-    if (verbose) {
-      message_("Sample of parsed times: {.val {utils::head(parsed_times, 3)}}")
-      message_("Creating sessions based on time threshold...")
-      message_(
-        "Time threshold for new session: {.val {time_threshold}} seconds"
-      )
-    }
+    message_("Sample of parsed times: {.val {utils::head(parsed_times, 3)}}")
+    message_("Creating sessions based on time threshold...")
+    message_(
+      "Time threshold for new session: {.val {time_threshold}} seconds"
+    )
     # Create processed data (long format)
-    if (missing(actor)) {
-      long_format <- data
-      long_format$standardized_time <- parsed_times
-      long_format$time_gap <- NA
-      long_format$new_session <- TRUE
-      long_format$session_nr <- 1
-      long_format$session_id <- "session"
-      long_format$sequence <- dplyr::row_number(data)
-    } else {
-      long_format <- data |>
-        dplyr::mutate(standardized_time = parsed_times) |>
-        dplyr::arrange(!!rlang::sym(actor), standardized_time) |>
+    long_format <- long_format |>
+      dplyr::mutate(standardized_time = parsed_times) |>
+      dplyr::arrange(!!rlang::sym(actor), standardized_time) |>
+      dplyr::group_by(!!rlang::sym(actor)) |>
+      dplyr::mutate(
+        time_gap = as.numeric(
+          difftime(
+            standardized_time,
+            dplyr::lag(standardized_time),
+            units = "secs"
+          )
+        ),
+        new_session = is.na(time_gap) | time_gap > time_threshold,
+        session_nr = cumsum(new_session),
+        session_id = ifelse_(
+          default_actor,
+          paste0("session", session_nr),
+          paste0(!!rlang::sym(actor), " session", session_nr)
+        )
+      ) |>
+      dplyr::group_by(session_id) |>
+      dplyr::mutate(sequence = dplyr::row_number()) |>
+      dplyr::ungroup()
+  } else {
+    if (missing(order)) {
+      msg <- paste0(
+        "No {.arg time} or {.arg order} column provided. ",
+        ifelse_(
+          default_actor,
+          "Treating entire dataset as one session.",
+          "Using {.arg actor} as session identifier."
+        )
+      )
+      message_(msg)
+      long_format <- long_format |>
         dplyr::group_by(!!rlang::sym(actor)) |>
         dplyr::mutate(
-          time_gap = as.numeric(
-            difftime(
-              standardized_time,
-              dplyr::lag(standardized_time),
-              units = "secs"
-            )
-          ),
-          new_session = is.na(time_gap) | time_gap > time_threshold,
-          session_nr = cumsum(new_session),
-          session_id = paste0(!!rlang::sym(actor), " session", session_nr)
+          session_id = !!rlang::sym(actor),
+          sequence = dplyr::row_number()
         ) |>
-        dplyr::group_by(session_id) |>
-        dplyr::mutate(sequence = dplyr::row_number()) |>
         dplyr::ungroup()
-    }
-  } else if (!missing(order)) {
-    if (verbose) {
-      message_("Using provided {.arg order} column to create sequences.")
-    }
-    if (missing(actor)) {
-      long_format <- data
-      long_format$session_id <- data$actor
-      long_format$sequence <- base::order(data[[order]])
     } else {
-      long_format <- data |>
+      message_("Using provided {.arg order} column to create sequences.")
+      long_format <- long_format |>
         dplyr::group_by(!!rlang::sym(actor)) |>
         dplyr::mutate(
           session_id = !!rlang::sym(actor) ,
@@ -202,38 +207,13 @@ prepare_data <- function(data, actor, time, action, order,
         ) |>
         dplyr::ungroup()
     }
-  } else {
-    if (missing(actor)) {
-      if (verbose) {
-        message_(
-          "No time or actor column provided.
-          Treating entire dataset as one session."
-        )
-      }
-      long_format <- data
-      long_format$session_id <- "session"
-      long_format$sequence <- dplyr::row_number(data)
-    } else {
-      if (verbose) {
-        message_(
-          "No {.arg time} or {.arg order} column provided.
-          Using {.arg actor} as session identifier."
-        )
-      }
-      long_format <- data |>
-        dplyr::group_by(!!rlang::sym(actor)) |>
-        dplyr::mutate(
-          session_id = !!rlang::sym(actor),
-          sequence = dplyr::row_number()
-        ) |>
-        dplyr::ungroup()
-    }
+  }
+  if (default_actor) {
+    long_format$actor <- NULL
   }
 
   # Create wide format
-  if (verbose) {
-    message_("Creating wide format view of sessions...")
-  }
+  message_("Creating wide format view of sessions...")
   wide_format <- long_format |>
     dplyr::select(session_id, sequence, !!rlang::sym(action)) |>
     tidyr::pivot_wider(
@@ -249,7 +229,7 @@ prepare_data <- function(data, actor, time, action, order,
     total_actions = nrow(long_format),
     max_sequence_length = max(long_format$sequence)
   )
-  if (!missing(actor)) {
+  if (!default_actor) {
     stats$unique_users <- dplyr::n_distinct(long_format[[actor]])
     stats$sessions_per_user <- long_format |>
       dplyr::group_by(!!rlang::sym(actor)) |>
@@ -261,37 +241,40 @@ prepare_data <- function(data, actor, time, action, order,
     dplyr::summarize(n_actions = dplyr::n()) |>
     dplyr::arrange(dplyr::desc(n_actions))
 
-  if(!missing(time) && missing(order)) {
+  if (!missing(time) && missing(order)) {
     stats$time_range <- range(long_format$standardized_time)
   }
 
   # Print summary statistics
-  if (verbose) {
-    cat("\n")
-    message_("Session Analysis Summary")
-    message_("------------------------")
-    message_("Total number of sessions: {.val {stats$total_sessions}}")
-    if (!missing(actor)) {
-      message_("Number of unique users: {.val {stats$unique_users}}")
-    }
-    message_("Total number of actions: {.val {stats$total_actions}}")
-    message_(
-      "Maximum sequence length: {.val {stats$max_sequence_length}} actions"
-    )
-    if (!missing(time) && missing(order)) {
-      message_(
-        "Time range: {.val {stats$time_range[1]}} to
-        {.val {stats$time_range[2]}}"
-      )
-    }
-    if (!missing(actor)) {
-      message_("\nSessions per user:")
-      print(stats$sessions_per_user)
-    }
-    message_("Top 5 longest sessions:")
-    print(utils::head(stats$actions_per_session, 5))
+  rlang_verbose <- getOption("rlib_message_verbosity")
+  message_("\nSession Analysis Summary")
+  message_("------------------------")
+  message_("Total number of sessions: {.val {stats$total_sessions}}")
+  if (!default_actor) {
+    message_("Number of unique users: {.val {stats$unique_users}}")
   }
-
+  message_("Total number of actions: {.val {stats$total_actions}}")
+  message_(
+    "Maximum sequence length: {.val {stats$max_sequence_length}} actions"
+  )
+  if (!missing(time) && missing(order)) {
+    message_(
+      "Time range: {.val {stats$time_range[1]}} to
+      {.val {stats$time_range[2]}}"
+    )
+  }
+  if (!default_actor) {
+    message_("\nSessions per user:")
+    onlyif(
+      is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
+      print(stats$sessions_per_user)
+    )
+  }
+  message_("Top 5 longest sessions:")
+  onlyif(
+    is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
+    print(utils::head(stats$actions_per_session, 5))
+  )
   list(
     long_format = long_format,
     wide_format = wide_format,
@@ -309,13 +292,10 @@ prepare_data <- function(data, actor, time, action, order,
 #' @param time A `vector` of time values.
 #' @inheritParams prepare_data
 #' @noRd
-parse_time <- function(time, custom_format,
-                       is_unix_time, unix_time_unit, verbose) {
-  if (verbose) {
-    message_("Starting time parsing process...")
-    message_("Number of values to parse: {.val {length(time)}}")
-    message_("Sample values: {.val {utils::head(time, 3)}}")
-  }
+parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
+  message_("Starting time parsing process...")
+  message_("Number of values to parse: {.val {length(time)}}")
+  message_("Sample values: {.val {utils::head(time, 3)}}")
   # Handle Unix timestamps
   if (is.numeric(time) && is_unix_time) {
     parsed_time <- switch(
@@ -332,11 +312,9 @@ parse_time <- function(time, custom_format,
   }
   time_empty <- is.na(time) | !nzchar(time)
   if (any(time_empty)) {
-    if (verbose) {
-      message_(
-        "Found missing or empty time values; these will be treated as NA."
-      )
-    }
+    message_(
+      "Found missing or empty time values; these will be treated as NA."
+    )
     time[time_empty] <- NA
   }
   # Remove whitespace
@@ -348,9 +326,7 @@ parse_time <- function(time, custom_format,
   if (!is.null(custom_format)) {
     parsed_time <- as.POSIXct(strptime(time, format = custom_format))
     if (!all(is.na(parsed_time))) {
-      if (verbose) {
-        message_("Successfully parsed using custom format.")
-      }
+      message_("Successfully parsed using custom format.")
       return(parsed_time)
     }
   }
@@ -426,23 +402,20 @@ parse_time <- function(time, custom_format,
   for (fmt in formats) {
     parsed_time <- as.POSIXct(strptime(time, format = fmt))
     if (!all(is.na(parsed_time))) {
-      if (verbose) {
-        message_("Successfully parsed using format: {.val {fmt}}")
-        message_("Sample parsed time: {.val {format(parsed_time[1])}}")
-      }
+      message_("Successfully parsed using format: {.val {fmt}}")
+      message_("Sample parsed time: {.val {format(parsed_time[1])}}")
       return(parsed_time)
     }
   }
 
   # Finally, try Unix time
-  if (verbose) {
-    message_(
-      "Unable to parse using supported formats.
-      Trying to convert to {.cls numeric} and assuming Unix time."
-    )
-  }
-  time <- try(as.numeric(time), silent = TRUE)
-  if (!inherits(time, "try-error")) {
+  message_(
+    "Unable to parse using supported formats.
+    Trying to convert to {.cls numeric} and assuming Unix time."
+  )
+  # TODO suppress for now
+  time <- suppressWarnings(try(as.numeric(time), silent = TRUE))
+  if (!inherits(time, "try-error") && all(!is.na(time))) {
     parsed_time <- switch(
       unix_time_unit,
       "seconds" = as.POSIXct(time, origin = "1970-01-01"),

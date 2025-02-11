@@ -12,25 +12,13 @@ test_that("data preparation works when actor and time are provided", {
       "checkout", "view", "click", "share"
     )
   )
+  rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
     prepare_data(
       data,
       actor = "user",
       time = "time",
-      action = "action",
-      verbose = FALSE
-    ),
-    NA
-  )
-  expect_error(
-    capture.output(
-      prepare_data(
-        data,
-        actor = "user",
-        time = "time",
-        action = "action",
-        verbose = FALSE
-      )
+      action = "action"
     ),
     NA
   )
@@ -45,25 +33,13 @@ test_that("data preparation works when actor and order are provided", {
       "checkout", "view", "click", "share"
     )
   )
+  rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
     prepare_data(
       data_ordered,
       actor = "user",
       order = "order",
-      action = "action",
-      verbose = FALSE
-    ),
-    NA
-  )
-  expect_error(
-    capture.output(
-      prepare_data(
-        data_ordered,
-        actor = "user",
-        order = "order",
-        action = "action",
-        verbose = FALSE
-      )
+      action = "action"
     ),
     NA
   )
@@ -75,14 +51,9 @@ test_that("data preparation works when only action is provided", {
       "view", "click", "add_cart", "view", "checkout", "view", "click", "share"
     )
   )
+  rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
-    prepare_data(data_single_session, action = "action", verbose = FALSE),
-    NA
-  )
-  expect_error(
-    capture.output(
-      prepare_data(data_single_session, action = "action", verbose = FALSE)
-    ),
+    prepare_data(data_single_session, action = "action"),
     NA
   )
 })

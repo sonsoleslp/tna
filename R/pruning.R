@@ -58,7 +58,7 @@ prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
     method,
     c("threshold", "lowest", "bootstrap", "disparity")
   )
-  check_nonnegative(threshold, type = "numeric")
+  check_values(threshold, type = "numeric")
   check_probability(lowest)
   check_probability(level)
   stopifnot_(

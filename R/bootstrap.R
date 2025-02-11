@@ -77,13 +77,13 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
                           threshold, consistency_range = c(0.75, 1.25), ...) {
   check_missing(x)
   check_tna_seq(x)
-  check_positive(iter)
+  check_values(iter, strict = TRUE)
   check_probability(level)
   method <- check_match(method, c("stability", "threshold"))
   if (missing(threshold)) {
     threshold <- unname(stats::quantile(x$weights, probs = 0.1))
   }
-  check_nonnegative(threshold, type = "numeric")
+  check_values(threshold, type = "numeric")
   stopifnot_(
     checkmate::test_numeric(
       x = consistency_range,

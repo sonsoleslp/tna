@@ -108,40 +108,37 @@ check_probability <- function(x) {
   )
 }
 
-#' Check that `x` is Non-Negative
+#' Check that `x` is a non-negative
 #'
-#' @param x An \R object expected to be a single  `numeric` or `integer` value.
+#' @param x An \R object expected to be a `numeric` or `integer`
+#' value or a vector.
 #' @param type A `character` string corresponding to
 #' the type that `x` should be.
+#' @param strict A `logical` value. If `FALSE` (the default), expects
+#' non-negative values and positive otherwise.
+#' @param scalar A `logical` value indicating if `x` should be expected
+#' to be a single value.
 #' @noRd
-check_nonnegative <- function(x, type = "integer") {
+check_values <- function(x, type = "integer", strict = FALSE,
+                         scalar = TRUE) {
   arg <- deparse(substitute(x))
-  suffix <- ifelse_(type == "numeric", " value", "")
+  suffix <- ifelse_(
+    scalar,
+    ifelse_(type == "integer", "", " value"),
+    " vector"
+  )
   test_fun <- ifelse_(
     type == "numeric",
-    checkmate::test_number,
-    checkmate::test_int
+    ifelse_(scalar, checkmate::test_number, checkmate::test_numeric),
+    ifelse_(scalar, checkmate::test_int, checkmate::test_integer)
   )
+  strictness <- ifelse_(strict, "positive", "non-negative")
   stopifnot_(
-    test_fun(x = x, lower = 0),
-    "Argument {.arg {arg}} must be a single
-    non-negative {.cls {type}}{suffix}."
+    test_fun(x = x, lower = as.integer(strict)),
+    "Argument {.arg {arg}} must be a single {strictness} {.cls {type}}{suffix}."
   )
 }
 
-#' Check that `x` is Positive
-#'
-#' @inheritParams check_nonnegative
-#' @noRd
-check_positive <- function(x, type = "integer") {
-  arg <- deparse(substitute(x))
-  suffix <- ifelse_(type == "numeric", " value", "")
-  stopifnot_(
-    checkmate::test_int(x = x, lower = 1),
-    "Argument {.arg {arg}} must be a single
-    positive {.cls {type}}{suffix}."
-  )
-}
 
 #' Check That `x` is a Logical Value
 #'

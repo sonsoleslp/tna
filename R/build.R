@@ -71,10 +71,7 @@ build_model <- function(x, type = "relative", scaling = character(0L), ...) {
 #' @rdname build_model
 build_model.default <- function(x, type = "relative", scaling = character(0L),
                                 inits, ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
+  check_missing(x)
   x <- try_(as.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
@@ -87,10 +84,7 @@ build_model.default <- function(x, type = "relative", scaling = character(0L),
 #' @rdname build_model
 build_model.matrix <- function(x, type = "relative", scaling = character(0L),
                                inits, ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
+  check_missing(x)
   x <- try_(data.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
@@ -151,19 +145,16 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-#' @param from An `integer` giving the index of the first column to consider
-#' as sequence data. Defaults to 1.
-#' @param to An `integer` giving the index of the last column to consider
-#' as sequence data. Defaults to `ncol(x)`.
+#' @param cols An `integer` vector giving the indices of the columns that
+#' should be considered as sequence data. Defaults to all columns, i.e.,
+#' `seq(1, ncol(x))`.
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
-                                from = 1L, to = ncol(x), ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
+                                cols = seq(1, ncol(x)), ...) {
+  check_missing(x)
+  check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, from, to)
+  x <- create_seqdata(x, cols)
   model <- initialize_model(x, type, scaling, ...)
   build_model_(
     weights = model$weights,
@@ -179,14 +170,12 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 #' @rdname build_model
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
-                                   from = 1L, to = ncol(x), ...) {
-  stopifnot_(
-    !missing(x),
-    "Argument {.arg x} is missing."
-  )
+                                   cols = seq(1, ncol(x)), ...) {
+  check_missing(x)
+  check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, from, to)
+  x <- create_seqdata(x, cols)
   model <- initialize_model(x, type, scaling, ...)
   build_model_(
     weights = model$weights,
@@ -262,7 +251,7 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #'
 #' @param x A `data.frame` or a `stslist` object.
 #' @noRd
-create_seqdata <- function(x, from, to) {
+create_seqdata <- function(x, cols) {
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
@@ -281,7 +270,7 @@ create_seqdata <- function(x, from, to) {
       lapply(x, function(y) factor(y, levels = vals))
     )
   }
-  out <- out[, seq(from, to)]
+  out <- out[, cols]
   out <- as.data.frame(
     lapply(
       out,

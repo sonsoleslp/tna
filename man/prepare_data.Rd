@@ -13,8 +13,7 @@ prepare_data(
   time_threshold = 900,
   custom_format = NULL,
   is_unix_time = FALSE,
-  unix_time_unit = "seconds",
-  verbose = TRUE
+  unix_time_unit = "seconds"
 )
 }
 \arguments{
@@ -47,9 +46,6 @@ is in Unix time. The default is \code{FALSE}.}
 \item{unix_time_unit}{A \code{character} string giving the Unix time unit when
 \code{is_unix_time} is \code{TRUE}. The default is \code{"seconds"}. Valid options are
 \code{"seconds"}, \code{"milliseconds"}, or \code{"microseconds"}.}
-
-\item{verbose}{A \code{logical} value indicating whether to print informative
-messages during the parsing process. The default is \code{TRUE}.}
 }
 \value{
 A \code{list} with the following elements:
