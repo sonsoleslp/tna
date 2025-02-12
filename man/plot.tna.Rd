@@ -9,7 +9,11 @@
   labels,
   colors,
   pie,
+  show_pruned = TRUE,
+  pruned_edge_color = "red",
+  edge.color = NA,
   edge.labels = TRUE,
+  edge.label.position = 0.65,
   layout = "circle",
   layout_args = list(),
   mar = rep(5, 4),
@@ -26,7 +30,18 @@
 
 \item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
+\item{show_pruned}{A \code{logical} value indicating if pruned edges removed by
+\code{\link[=pruning]{pruning()}} should be shown in the plot.  The default is \code{TRUE}, and the
+edges are drawn as dashed with a different color to distinguish them.}
+
+\item{pruned_edge_color}{A \code{character} string for the color to use for
+pruned edges when \code{show_pruned = TRUE}. The default is \code{"red"}.}
+
+\item{edge.color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{layout}{One of the following:
 \itemize{

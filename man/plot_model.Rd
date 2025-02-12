@@ -9,6 +9,7 @@ plot_model(
   labels,
   colors,
   edge.labels = TRUE,
+  edge.label.position = 0.65,
   layout = "circle",
   mar = rep(5, 4),
   theme = "colorblind",
@@ -23,6 +24,8 @@ plot_model(
 \item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{layout}{One of the following:
 \itemize{

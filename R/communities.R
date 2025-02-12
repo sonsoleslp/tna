@@ -16,10 +16,19 @@
 #' @rdname communities
 #' @param x A `tna` or a `group_tna` object.
 #' @param methods A `character` vector of community detection algorithms to
-#' apply to the network. The supported options are: `"walktrap"`,
-#' `"fast_greedy"`, `"label_prop"`, `"infomap"`, `"edge_betweenness"`,
-#' `"leading_eigen"`, `"spinglass"`. If missing, all supported algorithms are
-#' applied (the default).
+#' apply to the network. The supported options are:
+#'
+#'   * `"walktrap"`: A community detection method using short random walks.
+#'   * `"fast_greedy"`: A method based on modularity optimization.
+#'   * `"label_prop"`: A method that uses label propagation.
+#'   * `"infomap"`: A method that uses information flow to detect communities.
+#'   * `"edge_betweenness"`: A method that uses edge betweenness to find
+#'     communities.
+#'   * `"leading_eigen"`: A method using the leading eigenvector of the
+#'     modularity matrix.
+#'   * `"spinglass"`: A method based on the spinglass model.
+#'
+#' If not provided, all methods are applied.
 #' @param gamma A `numeric` value depicting a parameter that affects the
 #' behavior of certain algorithms like the Spin Glass method. Defaults to `1`.
 #' @param ... Ignored.
@@ -106,7 +115,7 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
       counts = lengths(communities),
       assignments = as.data.frame(
         c(
-          list(node = igraph::V(g)$name),
+          list(State = igraph::V(g)$name),
           mapping
         )
       )

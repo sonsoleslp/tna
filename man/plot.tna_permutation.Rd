@@ -4,7 +4,7 @@
 \alias{plot.tna_permutation}
 \title{Plot the Significant Differences from a Permutation Test}
 \usage{
-\method{plot}{tna_permutation}(x, ...)
+\method{plot}{tna_permutation}(x, colors, ...)
 }
 \arguments{
 \item{x}{A \code{tna_permutation} object.}

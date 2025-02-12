@@ -9,10 +9,17 @@
   n = 6,
   first = 1,
   show_loops = FALSE,
+  edge.labels = TRUE,
+  edge.label.position = 0.65,
   minimum = 1e-05,
   mar = rep(5, 4),
+  layout = "circle",
+  layout_args = list(),
+  cut = 0.01,
+  normalize = TRUE,
   ask = TRUE,
   colors,
+  theme = "colorblind",
   ...
 )
 }
@@ -28,14 +35,31 @@ The default index is \code{1}.}
 \item{show_loops}{A \code{logical} value indicating whether to include loops
 in the plots or not.}
 
+\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{layout}{One of the following:
+\itemize{
+\item A \code{character} string describing a \code{qgraph} layout.
+\item A \code{matrix} of node positions to use, with a row for each node and
+\code{x} and \code{y} columns for the node positions.
+\item A layout function from \code{igraph}.
+}}
+
+\item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
+function when \code{layout} is a function.}
 
 \item{ask}{A \code{logical} value. When \code{TRUE}, show plots one by one and asks
 to plot the next plot in interactive mode.}
 
 \item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Ignored.}
 }

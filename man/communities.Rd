@@ -18,10 +18,20 @@ communities(x, ...)
 \item{...}{Ignored.}
 
 \item{methods}{A \code{character} vector of community detection algorithms to
-apply to the network. The supported options are: \code{"walktrap"},
-\code{"fast_greedy"}, \code{"label_prop"}, \code{"infomap"}, \code{"edge_betweenness"},
-\code{"leading_eigen"}, \code{"spinglass"}. If missing, all supported algorithms are
-applied (the default).}
+apply to the network. The supported options are:
+\itemize{
+\item \code{"walktrap"}: A community detection method using short random walks.
+\item \code{"fast_greedy"}: A method based on modularity optimization.
+\item \code{"label_prop"}: A method that uses label propagation.
+\item \code{"infomap"}: A method that uses information flow to detect communities.
+\item \code{"edge_betweenness"}: A method that uses edge betweenness to find
+communities.
+\item \code{"leading_eigen"}: A method using the leading eigenvector of the
+modularity matrix.
+\item \code{"spinglass"}: A method based on the spinglass model.
+}
+
+If not provided, all methods are applied.}
 
 \item{gamma}{A \code{numeric} value depicting a parameter that affects the
 behavior of certain algorithms like the Spin Glass method. Defaults to \code{1}.}

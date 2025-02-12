@@ -85,6 +85,23 @@ as.igraph.tna <- function(x, ...) {
   )
 }
 
+#' Coerce a weight matrix to an `igraph` object.
+#'
+#' @export
+#' @inheritParams igraph::as.igraph
+#' @param mode Either `"directed"` or `"undirected"`
+#' @return An `igraph` object.
+as.igraph.matrix <- function(x, directed = TRUE, ...) {
+  check_missing(x)
+  check_class(x, "matrix")
+  mode <- ifelse_(directed, "directed", "undirected")
+  igraph::graph_from_adjacency_matrix(
+    adjmatrix = x,
+    mode = mode,
+    weighted = TRUE
+  )
+}
+
 #' Coerce  a specific group from a `group_tna` object to an `igraph` object.
 #'
 #' @export
@@ -178,4 +195,15 @@ message_ <- function(message, ...) {
 #' @noRd
 cs <- function(...) {
   paste0(c(...), collapse = ", ")
+}
+
+#' Log-sum-exp function
+#'
+#' @param x A `numeric` vector.
+#' @param na.rm A `logical` evaluating to `TRUE` or `FALSE` indicating whether
+#' `NA` values should be stripped before the computation proceeds.
+#' @noRd
+log_sum_exp <- function(x, na.rm = FALSE) {
+  max_x <- max(x, na.rm = na.rm)
+  max_x + log(sum(exp(x - max_x), na.rm = na.rm))
 }

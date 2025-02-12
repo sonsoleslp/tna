@@ -99,13 +99,21 @@ check_measures <- function(x) {
 #'
 #' @param x An \R object expected to be a single  `numeric` or `integer` value.
 #' @noRd
-check_probability <- function(x) {
+check_probability <- function(x, scalar = TRUE) {
   arg <- deparse(substitute(x))
-  stopifnot_(
-    checkmate::test_number(x = x, lower = 0.0, upper = 1.0),
-    "Argument {.arg {arg}} must be a single
-    {.cls numeric} value between 0 and 1."
-  )
+  if (scalar) {
+    stopifnot_(
+      checkmate::test_number(x = x, lower = 0.0, upper = 1.0),
+      "Argument {.arg {arg}} must be a single
+      {.cls numeric} value between 0 and 1."
+    )
+  } else {
+    stopifnot_(
+      checkmate::test_numeric(x = x, lower = 0.0, upper = 1.0),
+      "Argument {.arg {arg}} must only contain
+      {.cls numeric} values between 0 and 1."
+    )
+  }
 }
 
 #' Check that `x` is a non-negative
@@ -154,11 +162,12 @@ check_flag <- function(x) {
 
 #' Check a `layout` Argument
 #'
-#' @param x A `tna` object
+#' @param x A `tna` or a `tna_cliques` tobject
 #' @param layout A `character` string, a `matrix`, or a `function`.
 #' @param args A `list` of arguments to pass to the layout function.
+#' @param ... Additional arguments passed to `as.igraph`.
 #' @noRd
-check_layout <- function(x, layout, args = list()) {
+check_layout <- function(x, layout, args = list(), ...) {
   if (is.character(layout)) {
     layout <- tolower(layout)
     layout <- try(
@@ -197,7 +206,7 @@ check_layout <- function(x, layout, args = list()) {
     "Argument {.arg layout} must be a {.cls character} string,
      a {.cls matrix}, or a {.cls function}."
   )
-  args$graph <- as.igraph(x)
+  args$graph <- as.igraph(x, ...)
   do.call(what = layout, args = args)
 }
 
