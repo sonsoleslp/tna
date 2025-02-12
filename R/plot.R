@@ -65,7 +65,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param x A `tna` object from [tna()].
 #' @param colors See [qgraph::qgraph()].
 #' @param show_pruned A `logical` value indicating if pruned edges removed by
-#' [pruning()] should be shown in the plot.  The default is `TRUE`, and the
+#' [prune()] should be shown in the plot.  The default is `TRUE`, and the
 #' edges are drawn as dashed with a different color to distinguish them.
 #' @param pruned_edge_color A `character` string for the color to use for
 #' pruned edges when `show_pruned = TRUE`. The default is `"red"`.
@@ -186,6 +186,8 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @export
 #' @inheritParams print.tna_cliques
 #' @inheritParams plot.tna
+#' @param cut See [qgraph::qgraph()].
+#' @param normalize See [qgraph::qgraph()].
 #' @param show_loops A `logical` value indicating whether to include loops
 #' in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
@@ -301,10 +303,149 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
   plot(y, colors = map_to_color(x$assignment[[method]], colors), ...)
 }
 
+#' Plot the results of comparing two `tna` models or matrices
+#'
+#' @export
+#' @family patterns
+#' @param x A `tna_comparison` object.
+#' @param type A `character` string naming the type of plot to produce. The
+#' available options are `"heatmap"` (the default), `"scatterplot"`,
+#' `"centrality_heatmap"`, and `"weight_density"`.
+#' @param population A `"character"` string naming the population for which
+#' to produce the heatmaps, i.e, one of `"x"`, `"y"`, or `"diff"` for the
+#' differences. Ignored for `type = "scatterplot"`. Defaults to `"diff"`.
+#' @param name_x An optional `character` string to use as the name of the
+#' first population in the plots. The default is `"x"`.
+#' @param name_y An optional `character` string to use as the name of the
+#' second population in the plots. The default is `"y"`.
+#' @param ... Ignored.
+#' @return A `ggplot` object.
+#' @examples
+#' model_x <- tna(group_regulation[1:200, ])
+#' model_y <- tna(group_regulation[1001:1200, ])
+#' comp <- compare(model_x, model_y)
+#' plot(comp)
+#'
+plot.tna_comparison <- function(x, type = "heatmap", population = "diff",
+                                name_x = "x", name_y = "y", ...) {
+  check_class(x, "tna_comparison")
+  check_match(
+    type,
+    c("heatmap", "scatterplot", "centrality_heatmap", "weight_density")
+  )
+  check_match(population, c("x", "y", "diff"))
+  if (type == "heatmap") {
+    weight_col <- switch(
+      population,
+      x = "weight_x",
+      y = "weight_y",
+      diff = "raw_difference"
+    )
+    title <- switch(
+      population,
+      x = paste0("Heatmap ", name_x),
+      y = paste0("Heatmap ", name_y),
+      diff = paste0("Difference Matrix Heatmap (", name_x, " vs. ", name_y, ")")
+    )
+    edges <- x$edge_metrics[, c("Source", "Target", weight_col)]
+    names(edges)[3] <- "value"
+    return(create_heatmap(edges, title))
+  }
+  if (type == "scatterplot") {
+    edges <- x$edge_metrics[, c("Source", "Target", "weight_x", "weight_y")]
+    corr <- stats::cor(edges$weight_x, edges$weight_y, use = "complete.obs")
+    out <-
+      ggplot2::ggplot(
+        edges,
+        ggplot2::aes(
+          !!rlang::sym("weight_x"),
+          !!rlang::sym("weight_y")
+        )
+      ) +
+      ggplot2::geom_point(alpha = 0.6, color = "blue") +
+      ggplot2::geom_smooth(
+        formula = y ~ x, method = "lm", color = "red", linetype = "dashed"
+      ) +
+      ggplot2::labs(
+        title = paste0("Correlation between ", name_x, " and ", name_y),
+        subtitle = paste0("Pearson's R = ", round(corr, 3)),
+        x = paste0("Weights (", name_x, ")"),
+        y = paste0("Weights (", name_y, ")")
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(size = 12, face = "bold"),
+        plot.subtitle = ggplot2::element_text(size = 10),
+        axis.title = ggplot2::element_text(size = 10)) +
+      ggplot2::annotate(
+        "text",
+        x = min(edges$weight_x, na.rm = TRUE),
+        y = max(edges$weight_y, na.rm = TRUE),
+        hjust = 0,
+        vjust = 1,
+        label = paste0("R = ", round(corr, 3))
+      )
+    return(out)
+  }
+  if (type == "centrality_heatmap") {
+    out <-
+      ggplot2::ggplot(
+        x$centrality_differences,
+        ggplot2::aes(
+          x = !!rlang::sym("Centrality"),
+          y = !!rlang::sym("State"),
+          fill = !!rlang::sym("difference")
+        )
+      ) +
+      ggplot2::geom_tile() +
+      ggplot2::scale_fill_gradient2(
+        low = "blue",
+        high = "red",
+        mid = "white"
+      ) +
+      ggplot2::labs(
+        title = paste0(
+          "Centrality Difference Heatmap (", name_x, " vs ", name_y, ")"
+        ),
+        x = "Centrality Measure",
+        y = "Node"
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+        axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 8),
+        axis.text.y = ggplot2::element_text( size = 8),
+        plot.title = ggplot2::element_text(size = 12, face = "bold")
+      )
+    return(out)
+  }
+  if (type == "weight_density") {
+    edges <- x$edge_metrics[, c("Source", "Target", "weight_x", "weight_y")]
+    out <-
+      ggplot2::ggplot(
+        edges,
+        ggplot2::aes(x = !!rlang::sym("weight_x"), color = name_x)
+      ) +
+      ggplot2::geom_density(alpha = 0.5) +
+      ggplot2::geom_density(
+        ggplot2::aes(x = !!rlang::sym("weight_y"), color = name_y),
+        alpha = 0.5
+      ) +
+      ggplot2::labs(
+        title = "Density Plot of Model Weights",
+        x = "Weight",
+        y = "Density",
+        color = "Model"
+      ) +
+      ggplot2::theme_minimal()
+    return(out)
+  }
+}
+
 #' Plot the Significant Differences from a Permutation Test
 #'
 #' @export
 #' @param x A `tna_permutation` object.
+#' @param colors See [qgraph::qgraph()].
 #' @param ... Arguments passed to [plot_model()].
 #' @return A `qgraph` object containing only the significant edges according
 #' to the permutation test.
@@ -692,6 +833,36 @@ plot_model <- function(x, labels, colors,
     mar = mar,
     ...
   )
+}
+
+#' Create a heatmap from edgelist data
+#'
+#' @param data A `data.frame` with source and target columns and edge weights.
+#' @param title A `character` string giving the plot title.
+#' @noRd
+create_heatmap <- function(data, title) {
+  ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      x = !!rlang::sym("Target"),
+      y = !!rlang::sym("Source"),
+      fill = !!rlang::sym("value")
+  )) +
+    ggplot2::geom_tile() +
+    ggplot2::scale_fill_gradient2(
+      low = "blue",
+      high = "red",
+      mid = "white",
+      limits = c(-1, 1),
+      na.value = "grey50"
+    ) +
+    ggplot2::labs(title = title, x = "Target", y = "Source") +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 8),
+      axis.text.y = ggplot2::element_text(size = 8),
+      plot.title = ggplot2::element_text(size = 12, face = "bold")
+    )
 }
 
 # Clusters ----------------------------------------------------------------

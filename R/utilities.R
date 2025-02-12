@@ -89,7 +89,8 @@ as.igraph.tna <- function(x, ...) {
 #'
 #' @export
 #' @inheritParams igraph::as.igraph
-#' @param mode Either `"directed"` or `"undirected"`
+#' @param directed A `logical` value. If `TRUE`, assumes that the graph is
+#' directed and undirected otherwise.
 #' @return An `igraph` object.
 as.igraph.matrix <- function(x, directed = TRUE, ...) {
   check_missing(x)

@@ -31,7 +31,7 @@
 \item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{show_pruned}{A \code{logical} value indicating if pruned edges removed by
-\code{\link[=pruning]{pruning()}} should be shown in the plot.  The default is \code{TRUE}, and the
+\code{\link[=prune]{prune()}} should be shown in the plot.  The default is \code{TRUE}, and the
 edges are drawn as dashed with a different color to distinguish them.}
 
 \item{pruned_edge_color}{A \code{character} string for the color to use for

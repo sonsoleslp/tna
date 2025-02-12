@@ -1,3 +1,7 @@
+# tna 0.4.0
+
+* Added the function `compare()` to compare `tna` models and weight matrices. This function produces an object of class `tna_comparison` which has `print()` and `plot()` methods.
+
 # tna 0.3.2
 
 * `event2sequence()` has been renamed to `prepare_data()`. The function is now also more general and handles more date formats.

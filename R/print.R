@@ -149,6 +149,32 @@ print.tna_communities <- function(x, ...) {
   invisible(x)
 }
 
+#' Print Comparison Results
+#'
+#' @export
+#' @param x A `tna_comparison` object.
+#' @param ... Ignored.
+#' @return `x` (invisibly).
+#' @examples
+#' model_x <- tna(group_regulation[1:200, ])
+#' model_y <- tna(group_regulation[1001:1200, ])
+#' comp <- compare(model_x, model_y)
+#' print(comp)
+#'
+print.tna_comparison <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "tna_comparison")
+  cat("Edge difference metrics\n")
+  print(x$edge_metrics)
+  cat("\nSummary metrics of differences\n")
+  print(x$summary_metrics)
+  cat("\nCentrality differences\n")
+  print(x$centrality_differences)
+  cat("\nCentrality correlations\n")
+  print(x$centrality_correlations)
+  invisible(x)
+}
+
 #' Print Found Cliques of a TNA Network
 #'
 #' @export

@@ -35,6 +35,7 @@ plot(comm, method = "leading_eigen")
 }
 \seealso{
 Pattern-finding functions
-\code{\link{communities}()}
+\code{\link{communities}()},
+\code{\link{plot.tna_comparison}()}
 }
 \concept{patterns}

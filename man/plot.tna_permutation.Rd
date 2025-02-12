@@ -9,6 +9,8 @@
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
 
+\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }
 \value{

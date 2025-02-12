@@ -9,9 +9,10 @@
 \arguments{
 \item{x}{The object to convert.}
 
-\item{...}{Additional arguments. None currently.}
+\item{directed}{A \code{logical} value. If \code{TRUE}, assumes that the graph is
+directed and undirected otherwise.}
 
-\item{mode}{Either \code{"directed"} or \code{"undirected"}}
+\item{...}{Additional arguments. None currently.}
 }
 \value{
 An \code{igraph} object.

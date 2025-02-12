@@ -69,7 +69,8 @@ comm <- communities(model)
 }
 \seealso{
 Pattern-finding functions
-\code{\link{plot.tna_communities}()}
+\code{\link{plot.tna_communities}()},
+\code{\link{plot.tna_comparison}()}
 
 Cluster-related functions
 \code{\link{bootstrap}()},

@@ -54,6 +54,10 @@ in the plots or not.}
 \item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
 function when \code{layout} is a function.}
 
+\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{normalize}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
 \item{ask}{A \code{logical} value. When \code{TRUE}, show plots one by one and asks
 to plot the next plot in interactive mode.}
 
