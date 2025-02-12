@@ -104,7 +104,7 @@ compare <- function(x, y, ...) {
     Category = "Dissimilarities",
     Metric = c("Euclidean", "Manhattan", "Chebyshev", "Canberra", "Bray-Curtis"),
     Value = c(
-      sum(sqrt(abs_diff^2)),
+      sqrt(sum(abs_diff^2)),
       sum(abs_diff),
       max(abs_diff),
       sum(abs_diff / (abs_x + abs_y)),
