@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A \code{tna_comparison} object.}
 
-\item{...}{Ignored.}
+\item{...}{Additional arguments passed to the tibble \code{print} method.}
 }
 \value{
 \code{x} (invisibly).

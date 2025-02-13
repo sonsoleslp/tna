@@ -4,21 +4,38 @@
 \alias{compare}
 \title{Compare Two Matrices or Models with Comprehensive Metrics and Visualizations}
 \usage{
-compare(x, y, ...)
+compare(x, y, scaling = "none")
 }
 \arguments{
 \item{x}{A \code{tna} object or a \code{matrix} of weights.}
 
 \item{y}{A \code{tna} object or a \code{matrix} of weights.}
 
-\item{...}{Ignored.}
+\item{scaling}{A  \code{character} string naming a scaling method to
+apply to the weights before comparing them. The supported options are:
+\itemize{
+\item \code{"none"}: No scaling is performed. The weights are used as is.
+\item \code{"minmax"}: Performs min-max normalization, i.e., the minimum value is
+subtracted and the differences are scaled by the range.
+\item \code{"rank"}: Applies min-max normalization to the ranks of the weights
+(computed with \code{ties.method = "average"}).
+\item \code{"zscore"}: Computes the standard score, i.e. the mean weight is
+subtracted and the differences are scaled by the standard deviation.
+\item \code{"robust"}: Computes the robust z-score, i.e. the median weight is
+subtracted and the differences are scaled by the median absolute deviation
+(using \link[stats:mad]{stats::mad}).
+\item \code{"log"}: Simply the natural logarithm of the weights.
+\item \code{"softmax"}: Performs softmax normalization.
+\item \code{"quantile"}: Uses the empirical quantiles of the weights
+via \link[stats:ecdf]{stats::ecdf}.
+}}
 }
 \value{
 A \code{tna_compare} object, which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{matrices}: A \code{list} containing the original matrices of the input \code{tna}
-objects or the inputs themselves in case of matrices.
+\item \code{matrices}: A \code{list} containing the scaled matrices of the input \code{tna}
+objects or the scaled inputs themselves in the case of matrices.
 \item \code{difference_matrix}: A \code{matrix} of differences \code{x - y}.
 \item \code{edge_metrics}: A \code{data.frame} of edge-level metrics about the differences.
 \item \code{summary_metrics}: A \code{data.frame} of summary metrics of the differences
@@ -33,11 +50,8 @@ centrality measures between \code{x} and \code{y}.
 Compare Two Matrices or Models with Comprehensive Metrics and Visualizations
 }
 \examples{
-# Create two example matrices
-matrix1 <- matrix(runif(100, 0, 1), nrow = 10, ncol = 10)
-matrix2 <- matrix(runif(100, 0, 1), nrow = 10, ncol = 10)
-rownames(matrix1) <- rownames(matrix2) <- paste0("Gene", 1:10)
-colnames(matrix1) <- colnames(matrix2) <- paste0("Sample", 1:10)
-result <- compare(matrix1, matrix2)
+model_x <- tna(group_regulation[1:200, ])
+model_y <- tna(group_regulation[1001:1200, ])
+comp <- compare(model_x, model_y)
 
 }

@@ -153,7 +153,7 @@ print.tna_communities <- function(x, ...) {
 #'
 #' @export
 #' @param x A `tna_comparison` object.
-#' @param ... Ignored.
+#' @param ... Additional arguments passed to the tibble `print` method.
 #' @return `x` (invisibly).
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
@@ -165,13 +165,13 @@ print.tna_comparison <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_comparison")
   cat("Edge difference metrics\n")
-  print(x$edge_metrics)
+  print(x$edge_metrics, ...)
   cat("\nSummary metrics of differences\n")
-  print(x$summary_metrics)
+  print(x$summary_metrics, ...)
   cat("\nCentrality differences\n")
-  print(x$centrality_differences)
+  print(x$centrality_differences, ...)
   cat("\nCentrality correlations\n")
-  print(x$centrality_correlations)
+  print(x$centrality_correlations, ...)
   invisible(x)
 }
 

@@ -4,7 +4,15 @@
 \alias{plot.tna_comparison}
 \title{Plot the results of comparing two \code{tna} models or matrices}
 \usage{
-\method{plot}{tna_comparison}(x, type = "heatmap", population = "diff", name_x = "x", name_y = "y", ...)
+\method{plot}{tna_comparison}(
+  x,
+  type = "heatmap",
+  population = "difference",
+  method = "pearson",
+  name_x = "x",
+  name_y = "y",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{tna_comparison} object.}
@@ -14,8 +22,12 @@ available options are \code{"heatmap"} (the default), \code{"scatterplot"},
 \code{"centrality_heatmap"}, and \code{"weight_density"}.}
 
 \item{population}{A \code{"character"} string naming the population for which
-to produce the heatmaps, i.e, one of \code{"x"}, \code{"y"}, or \code{"diff"} for the
+to produce the heatmaps, i.e, one of \code{"x"}, \code{"y"}, or \code{"difference"} for the
 differences. Ignored for \code{type = "scatterplot"}. Defaults to \code{"diff"}.}
+
+\item{method}{A \code{character} string naming the correlation coefficient to
+use when plotting a scatterplot. The available options are \code{"pearson"}
+(the default), \code{"kendall"}, \code{"spearman"}, and \code{"distance"}.}
 
 \item{name_x}{An optional \code{character} string to use as the name of the
 first population in the plots. The default is \code{"x"}.}

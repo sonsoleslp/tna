@@ -1,6 +1,9 @@
 # tna 0.4.0
 
 * Added the function `compare()` to compare `tna` models and weight matrices. This function produces an object of class `tna_comparison` which has `print()` and `plot()` methods.
+* Added the function `plot_mosaic()` which can be used to produce mosaic plots of transition counts for frequency-based transition network models.
+* Made several arguments in the package plot methods accessible to the user.
+* Fixed an issue with `plot.tna_communities()` which now checks for the availability of a particular method before plotting.
 
 # tna 0.3.2
 

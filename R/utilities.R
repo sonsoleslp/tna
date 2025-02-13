@@ -120,6 +120,19 @@ as.igraph.group_tna <- function(x, which, ...) {
   as.igraph(x[[which]])
 }
 
+#' Log-sum-exp function
+#'
+#' @param x A `numeric` vector.
+#' @noRd
+log_sum_exp <- function(x) {
+  n <- length(x)
+  L <- x[1]
+  for (i in seq_len(n - 1)) {
+    L <- max(x[i + 1], L) + log1p(exp(-abs(x[i + 1] - L)))
+  }
+  L
+}
+
 # Functions borrowed from the `dynamite` package --------------------------
 # https://github.com/ropensci/dynamite
 
@@ -196,15 +209,4 @@ message_ <- function(message, ...) {
 #' @noRd
 cs <- function(...) {
   paste0(c(...), collapse = ", ")
-}
-
-#' Log-sum-exp function
-#'
-#' @param x A `numeric` vector.
-#' @param na.rm A `logical` evaluating to `TRUE` or `FALSE` indicating whether
-#' `NA` values should be stripped before the computation proceeds.
-#' @noRd
-log_sum_exp <- function(x, na.rm = FALSE) {
-  max_x <- max(x, na.rm = na.rm)
-  max_x + log(sum(exp(x - max_x), na.rm = na.rm))
 }

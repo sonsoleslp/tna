@@ -3,12 +3,29 @@
 #' @export
 #' @param x A `tna` object or a `matrix` of weights.
 #' @param y A `tna` object or a `matrix` of weights.
-#' @param ... Ignored.
+#' @param scaling A  `character` string naming a scaling method to
+#' apply to the weights before comparing them. The supported options are:
+#'
+#' * `"none"`: No scaling is performed. The weights are used as is.
+#' * `"minmax"`: Performs min-max normalization, i.e., the minimum value is
+#'   subtracted and the differences are scaled by the range.
+#' * `"rank"`: Applies min-max normalization to the ranks of the weights
+#'   (computed with `ties.method = "average"`).
+#' * `"zscore"`: Computes the standard score, i.e. the mean weight is
+#'   subtracted and the differences are scaled by the standard deviation.
+#' * `"robust"`: Computes the robust z-score, i.e. the median weight is
+#'   subtracted and the differences are scaled by the median absolute deviation
+#'   (using [stats::mad]).
+#' * `"log"`: Simply the natural logarithm of the weights.
+#' * `"softmax"`: Performs softmax normalization.
+#' * `"quantile"`: Uses the empirical quantiles of the weights
+#'   via [stats::ecdf].
+#'
 #' @return A `tna_compare` object, which is a `list` containing the
 #' following elements:
 #'
-#' * `matrices`: A `list` containing the original matrices of the input `tna`
-#'   objects or the inputs themselves in case of matrices.
+#' * `matrices`: A `list` containing the scaled matrices of the input `tna`
+#'   objects or the scaled inputs themselves in the case of matrices.
 #' * `difference_matrix`: A `matrix` of differences `x - y`.
 #' * `edge_metrics`: A `data.frame` of edge-level metrics about the differences.
 #' * `summary_metrics`: A `data.frame` of summary metrics of the differences
@@ -19,14 +36,11 @@
 #'   centrality measures between `x` and `y`.
 #'
 #' @examples
-#' # Create two example matrices
-#' matrix1 <- matrix(runif(100, 0, 1), nrow = 10, ncol = 10)
-#' matrix2 <- matrix(runif(100, 0, 1), nrow = 10, ncol = 10)
-#' rownames(matrix1) <- rownames(matrix2) <- paste0("Gene", 1:10)
-#' colnames(matrix1) <- colnames(matrix2) <- paste0("Sample", 1:10)
-#' result <- compare(matrix1, matrix2)
+#' model_x <- tna(group_regulation[1:200, ])
+#' model_y <- tna(group_regulation[1001:1200, ])
+#' comp <- compare(model_x, model_y)
 #'
-compare <- function(x, y, ...) {
+compare <- function(x, y, scaling = "none") {
   stopifnot_(
     is_tna(x) || is.matrix(x),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
@@ -57,17 +71,25 @@ compare <- function(x, y, ...) {
     all(!is.na(y)),
     "Weight matrix {.arg {y_arg}} must not contain missing values."
   )
-
-  #check_match(scaling, names(scaling_methods))
-
-  #x[] <- scaling_methods[[type]](as.vector(x))
-  #y[] <- scaling_methods[[type]](as.vector(y))
+  scaling_methods <- list(
+    none = identity,
+    minmax = ranger,
+    rank = function(w) ranger(rank(w, ties.method = "average")),
+    zscore = function(w) (w - mean(w)) / stats::sd(w),
+    log = log,
+    softmax = function(w) exp(w - log_sum_exp(w)),
+    quantile = function(w) stats::ecdf(w)(w)
+  )
+  scaling <- check_match(scaling, names(scaling_methods))
+  x[, ] <- scaling_methods[[scaling]](as.vector(x))
+  y[, ] <- scaling_methods[[scaling]](as.vector(y))
   d <- x - y
   x_vec <- as.vector(x)
   y_vec <- as.vector(y)
   abs_diff <- abs(x_vec - y_vec)
   abs_x <- abs(x_vec)
   abs_y <- abs(y_vec)
+  pos <- abs_x > 0 & abs_y > 0
   rn <- rownames(x)
 
   # Edge level metrics
@@ -96,18 +118,51 @@ compare <- function(x, y, ...) {
   edges_combined$standardized_weight_y <- (y_vec - mean(y)) / stats::sd(y)
   edges_combined$standardized_score_inflation <-
     edges_combined$standardized_weight_x / edges_combined$standardized_weight_y
-  edges_combined$coefficient_variation_inflation <- (stats::sd(x) / mean(x)) /
-    (stats::sd(y) / mean(y))
 
   # Summary metrics
+  weight_dev <- data.frame(
+    Category = "Weight Deviations",
+    Metric = c(
+      "Mean Abs. Diff.",
+      "Median Abs. Diff.",
+      "RMS Diff.",
+      "Max Abs. Diff.",
+      "Rel. Mean Abs. Diff.",
+      "CV Ratio"
+    ),
+    Value = c(
+      mean(abs_diff),
+      stats::median(abs_diff),
+      sqrt(mean(abs_diff^2)),
+      max(abs_diff),
+      mean(abs_diff) / mean(abs_y),
+      stats::sd(x_vec) * mean(y_vec) / (mean(x_vec) * stats::sd(y_vec))
+    )
+  )
+  correlations <- data.frame(
+    Category = "Correlations",
+    Metric = c("Pearson", "Spearman", "Kendall", "Distance"),
+    Value = c(
+      stats::cor(x_vec, y_vec, method = "pearson", use = "complete.obs"),
+      stats::cor(x_vec, y_vec, method = "spearman", use = "complete.obs"),
+      stats::cor(x_vec, y_vec, method = "kendall", use = "complete.obs"),
+      distance_correlation(x_vec, y_vec)
+    )
+  )
   dissimilarities <- data.frame(
     Category = "Dissimilarities",
-    Metric = c("Euclidean", "Manhattan", "Chebyshev", "Canberra", "Bray-Curtis"),
+    Metric = c(
+      "Euclidean",
+      "Manhattan",
+      "Chebyshev",
+      "Canberra",
+      "Bray-Curtis"
+    ),
     Value = c(
       sqrt(sum(abs_diff^2)),
       sum(abs_diff),
       max(abs_diff),
-      sum(abs_diff / (abs_x + abs_y)),
+      sum(abs_diff[pos] / (abs_x[pos] + abs_y[pos])),
       sum(abs_diff) / sum(abs_x + abs_y)
     )
   )
@@ -130,7 +185,13 @@ compare <- function(x, y, ...) {
       mean(sign(x) == sign(y))
     )
   )
-  summary_metrics <- rbind(dissimilarities, similarities, pattern_metrics)
+  summary_metrics <- rbind(
+    weight_dev,
+    correlations,
+    dissimilarities,
+    similarities,
+    pattern_metrics
+  )
 
   # Centralities
   State <- NULL # for CRAN
@@ -164,44 +225,28 @@ compare <- function(x, y, ...) {
       summary_metrics = tibble::tibble(summary_metrics),
       centrality_differences = cents_xy,
       centrality_correlations = cents_corr
-      #heatmaps = list(matrix1 = heatmap1, matrix2 = heatmap2, difference = heatmap_diff),
-      #scatter_plot = scatter_plot,
-      #centrality_heatmap = centrality_heatmap,
     ),
     class = "tna_comparison"
   )
 }
 
-# scaling_methods <- list(
-#   none = function(w) w,
-#   linear = function(w) (w - min(w)) / diff(range(w)),
-#   equidistant = function(w) {
-#     (rank(w, ties.method = "average") - 1) / (length(w) - 1)
-#   },
-#   zscore = function(w) (w - mean(w)) / stats::sd(w),
-#   log = function(w) log1p(w - min(w)),
-#   softmax = function(w) exp(w - log_sum_exp(w)),
-#   quantile = function(w) ecdf(w)(w)
-# )
-
-
-# distance_correlation <- function(x, y) {
-#   dist_x <- as.matrix(dist(x, diag = TRUE, upper = TRUE))
-#   dist_y <- as.matrix(dist(y, diag = TRUE, upper = TRUE))
-#   n <- ncol(x)
-#   dist_row_means_x <- matrix(rowMeans(dist_x), n, n)
-#   dist_row_means_y <- matrix(rowMeans(dist_y), n, n)
-#   dist_col_means_x <- matrix(colMeans(dist_x), n, n, byrow = TRUE)
-#   dist_col_means_y <- matrix(colMeans(dist_y), n, n, byrow = TRUE)
-#   dist_mean_x <- mean(dist_x)
-#   dist_mean_y <- mean(dist_y)
-#   xx <- dist_x - dist_row_means_x - dist_col_means_x + dist_mean_x
-#   yy <- dist_y - dist_row_means_y - dist_col_means_y + dist_mean_y
-#   v_xy <- n^-2 * sum(xx * yy)
-#   v_x <- n^-2 * sum(xx^2)
-#   v_y <- n^-2 * sum(yy^2)
-#   v_xy / sqrt(v_x * v_y)
-# }
+distance_correlation <- function(x, y) {
+  dist_x <- as.matrix(stats::dist(x, diag = TRUE, upper = TRUE))
+  dist_y <- as.matrix(stats::dist(y, diag = TRUE, upper = TRUE))
+  n <- ncol(dist_x)
+  dist_row_means_x <- matrix(.rowMeans(dist_x, n, n), n, n)
+  dist_row_means_y <- matrix(.rowMeans(dist_y, n, n), n, n)
+  dist_col_means_x <- matrix(.colMeans(dist_x, n, n), n, n, byrow = TRUE)
+  dist_col_means_y <- matrix(.colMeans(dist_y, n, n), n, n, byrow = TRUE)
+  dist_mean_x <- mean(dist_x)
+  dist_mean_y <- mean(dist_y)
+  xx <- dist_x - dist_row_means_x - dist_col_means_x + dist_mean_x
+  yy <- dist_y - dist_row_means_y - dist_col_means_y + dist_mean_y
+  v_xy <- n^-2 * sum(xx * yy)
+  v_x <- n^-2 * sum(xx^2)
+  v_y <- n^-2 * sum(yy^2)
+  v_xy / sqrt(v_x * v_y)
+}
 
 rv_coefficient <- function(x, y) {
   x <- scale(x, scale = FALSE)

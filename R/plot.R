@@ -312,8 +312,11 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
 #' available options are `"heatmap"` (the default), `"scatterplot"`,
 #' `"centrality_heatmap"`, and `"weight_density"`.
 #' @param population A `"character"` string naming the population for which
-#' to produce the heatmaps, i.e, one of `"x"`, `"y"`, or `"diff"` for the
+#' to produce the heatmaps, i.e, one of `"x"`, `"y"`, or `"difference"` for the
 #' differences. Ignored for `type = "scatterplot"`. Defaults to `"diff"`.
+#' @param method A `character` string naming the correlation coefficient to
+#' use when plotting a scatterplot. The available options are `"pearson"`
+#' (the default), `"kendall"`, `"spearman"`, and `"distance"`.
 #' @param name_x An optional `character` string to use as the name of the
 #' first population in the plots. The default is `"x"`.
 #' @param name_y An optional `character` string to use as the name of the
@@ -326,34 +329,51 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
 #' comp <- compare(model_x, model_y)
 #' plot(comp)
 #'
-plot.tna_comparison <- function(x, type = "heatmap", population = "diff",
+plot.tna_comparison <- function(x, type = "heatmap",
+                                population = "difference", method = "pearson",
                                 name_x = "x", name_y = "y", ...) {
   check_class(x, "tna_comparison")
-  check_match(
+  check_string(name_x)
+  check_string(name_y)
+  type <- check_match(
     type,
     c("heatmap", "scatterplot", "centrality_heatmap", "weight_density")
   )
-  check_match(population, c("x", "y", "diff"))
   if (type == "heatmap") {
+    population <- check_match(population, c("x", "y", "difference"))
     weight_col <- switch(
       population,
       x = "weight_x",
       y = "weight_y",
-      diff = "raw_difference"
+      difference = "raw_difference"
     )
     title <- switch(
       population,
       x = paste0("Heatmap ", name_x),
       y = paste0("Heatmap ", name_y),
-      diff = paste0("Difference Matrix Heatmap (", name_x, " vs. ", name_y, ")")
+      difference = paste0(
+        "Difference Matrix Heatmap (", name_x, " vs. ", name_y, ")"
+      )
     )
     edges <- x$edge_metrics[, c("Source", "Target", weight_col)]
     names(edges)[3] <- "value"
     return(create_heatmap(edges, title))
   }
   if (type == "scatterplot") {
+    method <- check_match(
+      method,
+      c("pearson", "kendall", "spearman", "distance")
+    )
     edges <- x$edge_metrics[, c("Source", "Target", "weight_x", "weight_y")]
-    corr <- stats::cor(edges$weight_x, edges$weight_y, use = "complete.obs")
+    metric_idx <- tolower(x$summary_metrics$Metric) == method
+    corr <- round(x$summary_metrics$Value[metric_idx], 3)
+    corr_subtitle <- switch(
+      method,
+      pearson = bquote("Pearson's" ~ {rho} ~~ "=" ~~ .(corr)),
+      spearman = bquote("Spearman's" ~ {rho} ~~ "=" ~~ .(corr)),
+      kendall = bquote("Kendall's" ~ {tau} ~~ "=" ~~ .(corr)),
+      distance = paste0("Distance correlation = ", corr)
+    )
     out <-
       ggplot2::ggplot(
         edges,
@@ -368,7 +388,7 @@ plot.tna_comparison <- function(x, type = "heatmap", population = "diff",
       ) +
       ggplot2::labs(
         title = paste0("Correlation between ", name_x, " and ", name_y),
-        subtitle = paste0("Pearson's R = ", round(corr, 3)),
+        subtitle = corr_subtitle,
         x = paste0("Weights (", name_x, ")"),
         y = paste0("Weights (", name_y, ")")
       ) +
@@ -376,15 +396,7 @@ plot.tna_comparison <- function(x, type = "heatmap", population = "diff",
       ggplot2::theme(
         plot.title = ggplot2::element_text(size = 12, face = "bold"),
         plot.subtitle = ggplot2::element_text(size = 10),
-        axis.title = ggplot2::element_text(size = 10)) +
-      ggplot2::annotate(
-        "text",
-        x = min(edges$weight_x, na.rm = TRUE),
-        y = max(edges$weight_y, na.rm = TRUE),
-        hjust = 0,
-        vjust = 1,
-        label = paste0("R = ", round(corr, 3))
-      )
+        axis.title = ggplot2::element_text(size = 10))
     return(out)
   }
   if (type == "centrality_heatmap") {
@@ -413,7 +425,7 @@ plot.tna_comparison <- function(x, type = "heatmap", population = "diff",
       ggplot2::theme_minimal() +
       ggplot2::theme(
         axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, size = 8),
-        axis.text.y = ggplot2::element_text( size = 8),
+        axis.text.y = ggplot2::element_text(size = 8),
         plot.title = ggplot2::element_text(size = 12, face = "bold")
       )
     return(out)
@@ -834,6 +846,115 @@ plot_model <- function(x, labels, colors,
     ...
   )
 }
+
+#' Create a mosaic plot of transitions
+#'
+#' @export
+#' @param x A `tna` object.
+#' @param digits An `integer` that determines the number of digits to use
+#' for the chi-square test statistic and the p-value in the plot.
+#' @return A `ggplot` object.
+#' @examples
+#' ftna_model <- ftna(group_regulation)
+#' plot_mosaic(ftna_model)
+#'
+plot_mosaic <- function(x, digits = 1) {
+  # from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
+  # Based on the code by Jake Fisher and cpsyctc.
+  check_missing(x)
+  check_class(x, "tna")
+  stopifnot_(
+    attr(x, "type") %in% c("frequency", "co-occurrence"),
+    "Mosaic plots are supported only for integer-valued weight matrices."
+  )
+  tab <- as.table(x$weights)
+  n <- ncol(x$weights)
+  widths <- c(0, cumsum(apply(tab, 1L, sum))) / sum(tab)
+  heights <- apply(tab, 1L, function(y) c(0, cumsum(y / sum(y))))
+  d <- data.frame(xmin = rep(0, n^2), xmax = 0, ymin = 0, ymax = 0)
+  for (i in seq_len(n)) {
+    for (j in seq_len(n)) {
+      row <- (i - 1) * n + j
+      row_offset <- (i - 1) * n * 0.0025
+      col_offset <- (j - 1) * n * 0.0025
+      d[row, "xmin"] <- widths[i] + row_offset
+      d[row, "xmax"] <- widths[i + 1] + row_offset
+      d[row, "ymin"] <- heights[j, i] + col_offset
+      d[row, "ymax"] <- heights[j + 1, i] + col_offset
+    }
+  }
+  d$from <- rep(dimnames(tab)[[1]], rep(n, n))
+  d$to <- rep(dimnames(tab)[[2]], n)
+  chisq <- stats::chisq.test(tab)
+  df <- chisq$parameter
+  pval <- chisq$p.value
+  chisqval <- chisq$statistic
+  # stdResids <- chisq$stdres
+  d$xcent <- (d$xmin + d$xmax) / 2
+  d$ycent <- (d$ymin + d$ymax) / 2
+  d$stdres <- as.vector(t(chisq$stdres))
+  d$sig <- cut(
+    d$stdres,
+    breaks = c(-Inf, -4, -2, 0, 2, 4, Inf),
+    labels = c("<-4", "-4:-2", "-2:0", "0:2", "2:4", ">4"),
+    ordered_result = TRUE
+  )
+  title_text <- "Mosaic plot of outgoing against incoming transitions:"
+  title_chi <- bquote(
+    .(title_text) ~~
+    {chi^2}[.(df)] ~ " = " ~
+      .(round(chisqval, digits)) * ", p =" ~ .(format.pval(pval, digits))
+  )
+  out <-
+    ggplot2::ggplot(
+      d,
+      ggplot2::aes(
+        xmin = !!rlang::sym("xmin"),
+        xmax = !!rlang::sym("xmax"),
+        ymin = !!rlang::sym("ymin"),
+        ymax = !!rlang::sym("ymax"),
+        fill = !!rlang::sym("sig"),
+        linetype = !!rlang::sym("sig")
+      )
+    ) +
+    ggplot2::geom_rect(color = "black", show.legend = TRUE) +
+    ggplot2::scale_fill_manual(
+      name = "Standardized\nresidual",
+      values = c(
+        "#D33F6A", "#E495A5", "#E2E2E2", "#E2E2E2", "#9DA8E2", "#4A6FE3"
+      ),
+      guide = ggplot2::guide_legend(reverse = TRUE),
+      drop = FALSE
+    ) +
+    ggplot2::scale_linetype_manual(
+      name = "Standardized\nresidual",
+      values = c(2, 2, 2, 1, 1, 1),
+      guide = ggplot2::guide_legend(reverse = TRUE),
+      drop = FALSE
+    ) +
+    ggplot2::scale_x_continuous(
+      breaks = unique(d$xcent),
+      labels = dimnames(tab)[[1]],
+      expand = c(0.01, 0)
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = d$ycent[d$xmin == 0],
+      labels = dimnames(tab)[[2]],
+      expand = c(0.01, 0)
+    ) +
+    ggplot2::ggtitle(title_chi) +
+    ggplot2::theme_classic() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      plot.subtitle = ggplot2::element_text(hjust = 0.5),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5),
+      axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
+    )
+  out
+}
+
 
 #' Create a heatmap from edgelist data
 #'
