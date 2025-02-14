@@ -22,8 +22,10 @@
 #' @return A `tna_permutation` object which is a `list` with two elements:
 #' `edges` and `centralities`, both containing the following elements
 #'
-#'   * `stats`: A `data.frame` of original differences and p-values for
-#'     each edge or centrality measure
+#'   * `stats`: A `data.frame` of original differences, effect sizes, and
+#'     p-values for each edge or centrality measure. The effect size is
+#'     computed as the observed difference divided by the standard deviation
+#'     of the differences of the permuted samples.
 #'   * `diffs_true`: A `matrix` of differences in the data.
 #'   * `diffs_sig`: A `matrix` showing the significant differences.
 #'
@@ -107,10 +109,12 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
       1L * (abs(edge_diffs_perm[i, , ]) >= edge_diffs_true_abs)
   }
   edge_p_values <- edge_p_values / iter
+  edge_diffs_sd <- apply(edge_diffs_perm, c(2, 3), stats::sd)
   edge_diffs_sig <- edge_diffs_true * (edge_p_values < level)
   edge_stats <- data.frame(
     edge_name = edge_names,
     diff_true = c(edge_diffs_true),
+    effect_size = c(edge_diffs_true) / c(edge_diffs_sd),
     p_value = c(edge_p_values),
     stringsAsFactors = FALSE
   )
@@ -123,9 +127,11 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   )
   if (include_centralities) {
     cent_p_values <- cent_p_values / iter
+    cent_diffs_sd <- apply(cent_diffs_perm, c(2, 3), stats::sd)
     cent_diffs_sig <- cent_diffs_true * (cent_p_values < level)
     cent_stats <- expand.grid(State = cent_x$State, Centrality = measures)
-    cent_stats$diff_true <- as.vector(cent_diffs_true)
+    cent_stats$diff_true <- c(cent_diffs_true)
+    cent_stats$effect_size <- c(cent_diffs_true) / c(cent_diffs_sd)
     cent_stats$p_value <- c(cent_p_values)
     cent_diffs_true <- cbind(
       data.frame(State = cent_x$State),
