@@ -1,4 +1,10 @@
-#' Compare Two Matrices or Models with Comprehensive Metrics and Visualizations
+#' Compare Two Matrices or TNA Models with Comprehensive Metrics
+#'
+#' Various distances, measures of dissimilarity and similarity, correlations
+#' and other metrics are computed to compare the models. Optionally, the weight
+#' matrices of the models can be scaled before comparison. The resulting object
+#' can be used to produce heatmap plots and scatterplots to further illustrate
+#' the differences.
 #'
 #' @export
 #' @param x A `tna` object or a `matrix` of weights.
@@ -17,11 +23,13 @@
 #'   subtracted and the differences are scaled by the median absolute deviation
 #'   (using [stats::mad]).
 #' * `"log"`: Simply the natural logarithm of the weights.
+#' * `"log1p"`: As above, but adds 1 to the values before taking the logarithm.
+#'    Useful for scenarios with zero weights.
 #' * `"softmax"`: Performs softmax normalization.
 #' * `"quantile"`: Uses the empirical quantiles of the weights
 #'   via [stats::ecdf].
 #'
-#' @return A `tna_compare` object, which is a `list` containing the
+#' @return A `tna_comparison` object, which is a `list` containing the
 #' following elements:
 #'
 #' * `matrices`: A `list` containing the scaled matrices of the input `tna`
@@ -30,6 +38,7 @@
 #' * `edge_metrics`: A `data.frame` of edge-level metrics about the differences.
 #' * `summary_metrics`: A `data.frame` of summary metrics of the differences
 #'   across all edges.
+#' * `network_metrics`: A `data.frame` of network metrics for both `x` and `y`.
 #' * `centrality_differences`: A `data.frame` of differences in centrality
 #'   measures computes from `x` and `y`.
 #' * `centrality_correlations`: A `numeric` vector of correlations of the
@@ -48,6 +57,16 @@ compare <- function(x, y, scaling = "none") {
   stopifnot_(
     is_tna(y) || is.matrix(y),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
+  )
+  metrics_x <- ifelse_(
+    is.matrix(x),
+    summary(build_model_(x)),
+    summary(x)
+  )
+  metrics_y <- ifelse_(
+    is.matrix(y),
+    summary(build_model_(y)),
+    summary(y)
   )
   x <- ifelse_(is_tna(x), x$weights, x)
   y <- ifelse_(is_tna(y), y$weights, y)
@@ -77,6 +96,7 @@ compare <- function(x, y, scaling = "none") {
     rank = function(w) ranger(rank(w, ties.method = "average")),
     zscore = function(w) (w - mean(w)) / stats::sd(w),
     log = log,
+    log1p = log1p,
     softmax = function(w) exp(w - log_sum_exp(w)),
     quantile = function(w) stats::ecdf(w)(w)
   )
@@ -130,7 +150,7 @@ compare <- function(x, y, scaling = "none") {
       "Rel. Mean Abs. Diff.",
       "CV Ratio"
     ),
-    Value = c(
+    value = c(
       mean(abs_diff),
       stats::median(abs_diff),
       sqrt(mean(abs_diff^2)),
@@ -142,7 +162,7 @@ compare <- function(x, y, scaling = "none") {
   correlations <- data.frame(
     Category = "Correlations",
     Metric = c("Pearson", "Spearman", "Kendall", "Distance"),
-    Value = c(
+    value = c(
       stats::cor(x_vec, y_vec, method = "pearson", use = "complete.obs"),
       stats::cor(x_vec, y_vec, method = "spearman", use = "complete.obs"),
       stats::cor(x_vec, y_vec, method = "kendall", use = "complete.obs"),
@@ -158,7 +178,7 @@ compare <- function(x, y, scaling = "none") {
       "Canberra",
       "Bray-Curtis"
     ),
-    Value = c(
+    value = c(
       sqrt(sum(abs_diff^2)),
       sum(abs_diff),
       max(abs_diff),
@@ -169,7 +189,7 @@ compare <- function(x, y, scaling = "none") {
   similarities <- data.frame(
     Category = "Similarities",
     Metric = c("Cosine", "Jaccard", "Dice", "Overlap", "RV"),
-    Value = c(
+    value = c(
       sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2))),
       sum(pmin(abs_x, abs_y)) / sum(pmax(abs_x, abs_y)),
       2 * sum(pmin(abs_x, abs_y)) / (sum(abs_x) + sum(abs_y)),
@@ -180,7 +200,7 @@ compare <- function(x, y, scaling = "none") {
   pattern_metrics <- data.frame(
     Category = "Pattern Similarities",
     Metric = c("Rank Agreement", "Sign Agreement"),
-    Value = c(
+    value = c(
       mean(sign(diff(x)) == sign(diff(y))),
       mean(sign(x) == sign(y))
     )
@@ -192,6 +212,10 @@ compare <- function(x, y, scaling = "none") {
     similarities,
     pattern_metrics
   )
+
+  # Network metrics
+  network_metrics <- cbind(metrics_x, metrics_y[, -1L])
+  names(network_metrics) <- c("Metric", "x", "y")
 
   # Centralities
   State <- NULL # for CRAN
@@ -223,6 +247,7 @@ compare <- function(x, y, scaling = "none") {
       difference_matrix = d,
       edge_metrics = tibble::tibble(edges_combined),
       summary_metrics = tibble::tibble(summary_metrics),
+      network_metrics = tibble::tibble(network_metrics),
       centrality_differences = cents_xy,
       centrality_correlations = cents_corr
     ),
@@ -230,6 +255,11 @@ compare <- function(x, y, scaling = "none") {
   )
 }
 
+#' Distance correlation coefficient
+#'
+#' @param x A `numeric` vector.
+#' @param y A `numeric` vector.
+#' @noRd
 distance_correlation <- function(x, y) {
   dist_x <- as.matrix(stats::dist(x, diag = TRUE, upper = TRUE))
   dist_y <- as.matrix(stats::dist(y, diag = TRUE, upper = TRUE))
@@ -248,6 +278,11 @@ distance_correlation <- function(x, y) {
   v_xy / sqrt(v_x * v_y)
 }
 
+#' RV Coefficient
+#'
+#' @param x A `matrix`.
+#' @param y A `matrix`.
+#' @noRd
 rv_coefficient <- function(x, y) {
   x <- scale(x, scale = FALSE)
   y <- scale(y, scale = FALSE)
@@ -256,5 +291,5 @@ rv_coefficient <- function(x, y) {
   tr_xx_yy <- sum(diag(xx %*% yy))
   tr_xx_xx <- sum(diag(xx %*% xx))
   tr_yy_yy <- sum(diag(yy %*% yy))
-  tr_xx_yy / (tr_xx_xx * tr_yy_yy)^0.5
+  tr_xx_yy / sqrt(tr_xx_xx * tr_yy_yy)
 }

@@ -168,6 +168,8 @@ print.tna_comparison <- function(x, ...) {
   print(x$edge_metrics, ...)
   cat("\nSummary metrics of differences\n")
   print(x$summary_metrics, ...)
+  cat("\nNetwork metrics\n")
+  print(x$network_metrics, ...)
   cat("\nCentrality differences\n")
   print(x$centrality_differences, ...)
   cat("\nCentrality correlations\n")

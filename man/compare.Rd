@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare.R
 \name{compare}
 \alias{compare}
-\title{Compare Two Matrices or Models with Comprehensive Metrics and Visualizations}
+\title{Compare Two Matrices or TNA Models with Comprehensive Metrics}
 \usage{
 compare(x, y, scaling = "none")
 }
@@ -25,13 +25,15 @@ subtracted and the differences are scaled by the standard deviation.
 subtracted and the differences are scaled by the median absolute deviation
 (using \link[stats:mad]{stats::mad}).
 \item \code{"log"}: Simply the natural logarithm of the weights.
+\item \code{"log1p"}: As above, but adds 1 to the values before taking the logarithm.
+Useful for scenarios with zero weights.
 \item \code{"softmax"}: Performs softmax normalization.
 \item \code{"quantile"}: Uses the empirical quantiles of the weights
 via \link[stats:ecdf]{stats::ecdf}.
 }}
 }
 \value{
-A \code{tna_compare} object, which is a \code{list} containing the
+A \code{tna_comparison} object, which is a \code{list} containing the
 following elements:
 \itemize{
 \item \code{matrices}: A \code{list} containing the scaled matrices of the input \code{tna}
@@ -40,6 +42,7 @@ objects or the scaled inputs themselves in the case of matrices.
 \item \code{edge_metrics}: A \code{data.frame} of edge-level metrics about the differences.
 \item \code{summary_metrics}: A \code{data.frame} of summary metrics of the differences
 across all edges.
+\item \code{network_metrics}: A \code{data.frame} of network metrics for both \code{x} and \code{y}.
 \item \code{centrality_differences}: A \code{data.frame} of differences in centrality
 measures computes from \code{x} and \code{y}.
 \item \code{centrality_correlations}: A \code{numeric} vector of correlations of the
@@ -47,7 +50,11 @@ centrality measures between \code{x} and \code{y}.
 }
 }
 \description{
-Compare Two Matrices or Models with Comprehensive Metrics and Visualizations
+Various distances, measures of dissimilarity and similarity, correlations
+and other metrics are computed to compare the models. Optionally, the weight
+matrices of the models can be scaled before comparison. The resulting object
+can be used to produce heatmap plots and scatterplots to further illustrate
+the differences.
 }
 \examples{
 model_x <- tna(group_regulation[1:200, ])

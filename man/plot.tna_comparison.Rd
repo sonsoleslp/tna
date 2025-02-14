@@ -27,7 +27,10 @@ differences. Ignored for \code{type = "scatterplot"}. Defaults to \code{"diff"}.
 
 \item{method}{A \code{character} string naming the correlation coefficient to
 use when plotting a scatterplot. The available options are \code{"pearson"}
-(the default), \code{"kendall"}, \code{"spearman"}, and \code{"distance"}.}
+(the default), \code{"kendall"}, \code{"spearman"}, and \code{"distance"}. The final option
+is the distance correlation coefficient of
+Szekely, Rizzo, and Bakirov (2007). See also the \code{energy} package for
+further information on this measure.}
 
 \item{name_x}{An optional \code{character} string to use as the name of the
 first population in the plots. The default is \code{"x"}.}
@@ -49,6 +52,12 @@ model_y <- tna(group_regulation[1001:1200, ])
 comp <- compare(model_x, model_y)
 plot(comp)
 
+}
+\references{
+Szekely, G.J., Rizzo, M.L., and Bakirov, N.K. (2007),
+Measuring and Testing Dependence by Correlation of Distances,
+\emph{Annals of Statistics}, Vol. 35 No. 6, pp. 2769-2794.
+doi:10.1214/009053607000000505
 }
 \seealso{
 Pattern-finding functions

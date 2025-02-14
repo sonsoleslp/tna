@@ -316,13 +316,21 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
 #' differences. Ignored for `type = "scatterplot"`. Defaults to `"diff"`.
 #' @param method A `character` string naming the correlation coefficient to
 #' use when plotting a scatterplot. The available options are `"pearson"`
-#' (the default), `"kendall"`, `"spearman"`, and `"distance"`.
+#' (the default), `"kendall"`, `"spearman"`, and `"distance"`. The final option
+#' is the distance correlation coefficient of
+#' Szekely, Rizzo, and Bakirov (2007). See also the `energy` package for
+#' further information on this measure.
 #' @param name_x An optional `character` string to use as the name of the
 #' first population in the plots. The default is `"x"`.
 #' @param name_y An optional `character` string to use as the name of the
 #' second population in the plots. The default is `"y"`.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
+#' @references
+#' Szekely, G.J., Rizzo, M.L., and Bakirov, N.K. (2007),
+#' Measuring and Testing Dependence by Correlation of Distances,
+#' *Annals of Statistics*, Vol. 35 No. 6, pp. 2769-2794.
+#' doi:10.1214/009053607000000505
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
