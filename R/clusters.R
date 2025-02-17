@@ -9,12 +9,13 @@
 #' @rdname group_model
 #' @param x An `stslist` object describing a sequence of events or states to
 #'   be used for building the Markov model. The argument `x` also accepts
-#'   a `data.frame` object in wide format.
-#'   (each column is a time point with no extra columns). Alternatively, the
+#'   a `data.frame` object in wide format. Alternatively, the
 #'   function accepts a mixture Markov model from the library `seqHMM`.
 #' @param group A vector indicating the cluster assignment of each
 #'  row of the data / sequence. Must have the same length as the number of
-#'  rows/sequences of `x`.
+#'  rows/sequences of `x`. Alternatively, a single `character` string giving
+#'  the column name of the data that defines the group when `x` is a wide
+#'  format `data.frame` or a `tna_data` object.
 #' @param ... Ignored.
 #' @return An object of class `group_tna` which is a `list` containing one
 #'   element per cluster. Each element is a `tna` object.
@@ -37,19 +38,35 @@ group_model.default <- function(x, group, ...) {
     "Argument {.arg group} is missing."
   )
   stopifnot_(
-    inherits(x, "stslist") || inherits(x, "data.frame"),
-    "Argument {.arg x} must be {.cls stslist} (sequence object)
-     or a {.cls data.frame}."
+    inherits(x, "stslist") ||
+      inherits(x, "data.frame") || inherits(x, "tna_data"),
+    "Argument {.arg x} must be {.cls stslist} (sequence object), a
+    {.cls data.frame} or a {.cls tna_data} object."
   )
+  if (inherits(x, "tna_data")) {
+    x <- x$wide_format
+    cols <- attr(x, "time_cols")
+  }
   group_len <- length(group)
   stopifnot_(
-    group_len == nrow(x),
-    "Argument {.arg group} must have the same length as number of
-     rows/sequences in {.arg x}."
+    group_len == nrow(x) || group_len == 1L,
+    "Argument {.arg group} must be of length one or the same length as the
+     number of rows/sequences in {.arg x}."
   )
-  if (!is.factor(group)) {
-    group <- factor(group)
+  if (group_len == 1L) {
+    stopifnot_(
+      group %in% names(x),
+      "Argument {.arg group} must be a column name of {.arg x}
+       when of length one."
+    )
+    group <- x[[group]]
   }
+  cols <- seq_len(ncol(x))
+  group <- ifelse_(
+    is.factor(group),
+    group,
+    factor(group)
+  )
   levs <- levels(group)
   n_group <- length(levs)
   clusters <- stats::setNames(
@@ -57,7 +74,7 @@ group_model.default <- function(x, group, ...) {
     levs
   )
   for (i in levs) {
-    clusters[[i]] <- build_model(x[group == i, ], ...)
+    clusters[[i]] <- build_model(x[group == i, ], cols = cols, ...)
   }
   structure(clusters, class = "group_tna")
 }

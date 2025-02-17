@@ -27,7 +27,7 @@
 #' @param unix_time_unit A `character` string giving the Unix time unit when
 #' `is_unix_time` is `TRUE`. The default is `"seconds"`. Valid options are
 #' `"seconds"`, `"milliseconds"`, or `"microseconds"`.
-#' @return A `list` with the following elements:
+#' @return A `tna_data` object, which is a `list` with the following elements:
 #'
 #' * `long_format`: The processed data in long format.
 #' * `wide_format`: The processed data in wide format, with actions/events as
@@ -218,6 +218,7 @@ prepare_data <- function(data, actor, time, action, order,
     dplyr::select(session_id, sequence, !!rlang::sym(action)) |>
     tidyr::pivot_wider(
       id_cols = session_id,
+      names_prefix = "T",
       names_from = sequence,
       values_from = !!rlang::sym(action)
     ) |>
@@ -275,10 +276,14 @@ prepare_data <- function(data, actor, time, action, order,
     is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
     print(utils::head(stats$actions_per_session, 5))
   )
-  list(
-    long_format = long_format,
-    wide_format = wide_format,
-    statistics = stats
+  structure(
+    list(
+      long_format = long_format,
+      wide_format = wide_format,
+      statistics = stats
+    ),
+    time_cols = grepl("^T[0-9]+$", names(wide_format), perl = TRUE),
+    class = "tna_data"
   )
 }
 

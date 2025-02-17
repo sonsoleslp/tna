@@ -37,8 +37,10 @@ See \code{\link[=centralities]{centralities()}} for a list of available centrali
 A \code{tna_permutation} object which is a \code{list} with two elements:
 \code{edges} and \code{centralities}, both containing the following elements
 \itemize{
-\item \code{stats}: A \code{data.frame} of original differences and p-values for
-each edge or centrality measure
+\item \code{stats}: A \code{data.frame} of original differences, effect sizes, and
+p-values for each edge or centrality measure. The effect size is
+computed as the observed difference divided by the standard deviation
+of the differences of the permuted samples.
 \item \code{diffs_true}: A \code{matrix} of differences in the data.
 \item \code{diffs_sig}: A \code{matrix} showing the significant differences.
 }

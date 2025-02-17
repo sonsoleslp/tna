@@ -1,5 +1,6 @@
 # tna 0.4.0
 
+* The `prepare_data()` function now produces an object of class `tna_data`, which can be directly used as an argument to `build_model`.
 * Added the function `compare()` to compare `tna` models and weight matrices. This function produces an object of class `tna_comparison` which has `print()` and `plot()` methods.
 * Added the function `plot_mosaic()` which can be used to produce mosaic plots of transition counts for frequency-based transition network models.
 * Made several arguments in the package plot methods accessible to the user.

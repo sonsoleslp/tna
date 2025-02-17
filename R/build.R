@@ -11,14 +11,15 @@
 #' @export
 #' @family core
 #' @rdname build_model
-#' @param x A `stslist` (from `TraMineR`), `data.frame`, or a `matrix`.
+#' @param x A `stslist` (from `TraMineR`), `data.frame`, a `matrix`, or
+#'   a `tna_data` object (see [prepare_data()]).
 #'   For `stslist` and `data.frame` objects `x`
 #'   should describe a sequence of events or states to be used for building the
 #'   Markov model.  If `x` is a matrix, it is assumed that the element on row
 #'   `i` and column `j` is the weight of the edge representing the transition
 #'   from state `i` to state `j`. If `x` is a `data.frame`, then
-#'   it must be in wide format (each column is a time point with
-#'   no extra columns).
+#'   it must be in wide format (see `cols` on how to define columns for the
+#'   time points).
 #' @param type A `character` string describing the weight matrix type.
 #'   Currently supports the following types:
 #'
@@ -145,12 +146,13 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-#' @param cols An `integer` vector giving the indices of the columns that
-#' should be considered as sequence data. Defaults to all columns, i.e.,
-#' `seq(1, ncol(x))`.
+#' @param cols An `integer`/`character` vector giving the indices/names of the
+#' columns that should be considered as sequence data.
+#' Defaults to all columns, i.e., `seq(1, ncol(x))`.
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = seq(1, ncol(x)), ...) {
   check_missing(x)
+  check_class(x, "stslist")
   check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
@@ -172,10 +174,31 @@ build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
                                    cols = seq(1, ncol(x)), ...) {
   check_missing(x)
+  check_class(x, "data.frame")
   check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x, cols)
+  model <- initialize_model(x, type, scaling, ...)
+  build_model_(
+    weights = model$weights,
+    inits = model$inits,
+    labels = model$labels,
+    type = type,
+    scaling = scaling,
+    data = x
+  )
+}
+
+#' @export
+#' @rdname build_model
+build_model.tna_data <- function(x, type = "relative",
+                                 scaling = character(0), ...) {
+  check_missing(x)
+  check_class(x, "tna_data")
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
+  x <- create_seqdata(x$wide_format, cols = attr(x, "time_cols"))
   model <- initialize_model(x, type, scaling, ...)
   build_model_(
     weights = model$weights,
@@ -252,7 +275,14 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param x A `data.frame` or a `stslist` object.
 #' @noRd
 create_seqdata <- function(x, cols) {
+  time_cols <- NULL
+  cols <- ifelse_(
+    is.character(cols),
+    which(names(x) %in% cols),
+    cols
+  )
   if (inherits(x, "stslist")) {
+    time_cols <- seq_len(ncol(x)) %in% cols
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
     colors <- attr(x, "cpal")
@@ -263,17 +293,22 @@ create_seqdata <- function(x, cols) {
     )
     out <- as.data.frame(x)
   } else if (is.data.frame(x)) {
-    vals <- sort(unique(unlist(x)))
+    time_cols <- ifelse_(
+      is.logical(cols),
+      cols,
+      seq_len(ncol(x)) %in% cols
+    )
+    vals <- sort(unique(unlist(x[, time_cols])))
     alphabet <- labels <- vals[!is.na(vals)]
     colors <- color_palette(length(labels))
-    out <- as.data.frame(
-      lapply(x, function(y) factor(y, levels = vals))
+    out <- x
+    out[, time_cols] <- as.data.frame(
+      lapply(x[, time_cols], function(y) factor(y, levels = vals))
     )
   }
-  out <- out[, cols]
-  out <- as.data.frame(
+  out[, time_cols] <- as.data.frame(
     lapply(
-      out,
+      out[, time_cols],
       function(y) {
         as.integer(replace(y, which(!y %in% alphabet), NA))
       }
@@ -284,7 +319,8 @@ create_seqdata <- function(x, cols) {
     class = "data.frame",
     alphabet = alphabet,
     labels = labels,
-    colors = colors
+    colors = colors,
+    time_cols = time_cols
   )
 }
 
@@ -299,7 +335,8 @@ create_seqdata <- function(x, cols) {
 initialize_model <- function(x, type, scaling, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
-  m <- as.matrix(x)
+  time_cols <- attr(x, "time_cols")
+  m <- as.matrix(x[, time_cols])
   n <- nrow(m)
   p <- ncol(m)
   a <- length(alphabet)

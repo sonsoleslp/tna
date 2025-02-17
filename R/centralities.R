@@ -47,7 +47,7 @@
 #'   returned. See 'Details' for available measures. The elements are partially
 #'   matched ignoring case.
 #' @param ... Ignored.
-#' @return A `centralities` object which is a tibble (`tbl_df`)
+#' @return A `tna_centralities` object which is a tibble (`tbl_df`).
 #'   containing centrality measures for each state.
 #' @examples
 #' model <- tna(engagement)

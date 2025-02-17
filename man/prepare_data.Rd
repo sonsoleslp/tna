@@ -48,7 +48,7 @@ is in Unix time. The default is \code{FALSE}.}
 \code{"seconds"}, \code{"milliseconds"}, or \code{"microseconds"}.}
 }
 \value{
-A \code{list} with the following elements:
+A \code{tna_data} object, which is a \code{list} with the following elements:
 \itemize{
 \item \code{long_format}: The processed data in long format.
 \item \code{wide_format}: The processed data in wide format, with actions/events as

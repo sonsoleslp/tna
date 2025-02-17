@@ -15,13 +15,14 @@ group_model(x, group, ...)
 \arguments{
 \item{x}{An \code{stslist} object describing a sequence of events or states to
 be used for building the Markov model. The argument \code{x} also accepts
-a \code{data.frame} object in wide format.
-(each column is a time point with no extra columns). Alternatively, the
+a \code{data.frame} object in wide format. Alternatively, the
 function accepts a mixture Markov model from the library \code{seqHMM}.}
 
 \item{group}{A vector indicating the cluster assignment of each
 row of the data / sequence. Must have the same length as the number of
-rows/sequences of \code{x}.}
+rows/sequences of \code{x}. Alternatively, a single \code{character} string giving
+the column name of the data that defines the group when \code{x} is a wide
+format \code{data.frame} or a \code{tna_data} object.}
 
 \item{...}{Ignored.}
 }

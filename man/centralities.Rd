@@ -33,7 +33,7 @@ matched ignoring case.}
 \item{...}{Ignored.}
 }
 \value{
-A \code{centralities} object which is a tibble (\code{tbl_df})
+A \code{tna_centralities} object which is a tibble (\code{tbl_df}).
 containing centrality measures for each state.
 }
 \description{

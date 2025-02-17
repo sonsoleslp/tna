@@ -6,6 +6,7 @@
 \alias{build_model.matrix}
 \alias{build_model.stslist}
 \alias{build_model.data.frame}
+\alias{build_model.tna_data}
 \alias{tna}
 \alias{ftna}
 \alias{ctna}
@@ -36,6 +37,8 @@ build_model(x, type = "relative", scaling = character(0L), ...)
   ...
 )
 
+\method{build_model}{tna_data}(x, type = "relative", scaling = character(0), ...)
+
 tna(x, scaling = character(0L), ...)
 
 ftna(x, scaling = character(0L), ...)
@@ -49,14 +52,15 @@ group_ftna(x, scaling = character(0L), ...)
 group_ctna(x, scaling = character(0L), ...)
 }
 \arguments{
-\item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, or a \code{matrix}.
+\item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, a \code{matrix}, or
+a \code{tna_data} object (see \code{\link[=prepare_data]{prepare_data()}}).
 For \code{stslist} and \code{data.frame} objects \code{x}
 should describe a sequence of events or states to be used for building the
 Markov model.  If \code{x} is a matrix, it is assumed that the element on row
 \code{i} and column \code{j} is the weight of the edge representing the transition
 from state \code{i} to state \code{j}. If \code{x} is a \code{data.frame}, then
-it must be in wide format (each column is a time point with
-no extra columns).}
+it must be in wide format (see \code{cols} on how to define columns for the
+time points).}
 
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:
@@ -89,9 +93,9 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
 be scaled to unity.}
 
-\item{cols}{An \code{integer} vector giving the indices of the columns that
-should be considered as sequence data. Defaults to all columns, i.e.,
-\code{seq(1, ncol(x))}.}
+\item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
+columns that should be considered as sequence data.
+Defaults to all columns, i.e., \code{seq(1, ncol(x))}.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
