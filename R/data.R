@@ -185,6 +185,9 @@ prepare_data <- function(data, actor, time, action, order,
       dplyr::group_by(session_id) |>
       dplyr::mutate(sequence = dplyr::row_number()) |>
       dplyr::ungroup()
+
+    long_format$time_gap <- NULL
+    long_format$new_session <- NULL
   } else {
     msg <- ifelse_(
       default_order,
@@ -244,7 +247,7 @@ prepare_data <- function(data, actor, time, action, order,
     dplyr::summarize(n_actions = dplyr::n()) |>
     dplyr::arrange(dplyr::desc(n_actions))
 
-  if (!missing(time) && missing(order)) {
+  if (!missing(time)) {
     stats$time_range <- range(long_format$standardized_time)
   }
 
