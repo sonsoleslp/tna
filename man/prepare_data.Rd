@@ -30,17 +30,19 @@ timestamps of the action events.}
 the information about the action taken.}
 
 \item{order}{A \code{character} string giving the name of a column with sequence
-numbers or non-unique orderable values that indicate order within an actor
-group, if not present it will be ordered with all the data if no actor is
-available, used when widening the data.}
+numbers or non-unique orderable values that indicate order within an \code{actor}
+group, if not present it will be ordered with all the data if no \code{actor} is
+available, used when widening the data. If both \code{actor} and \code{time} are
+specified, then the sequence order should be specified such that it
+determines the order of events within \code{actor} and \code{time}.}
 
 \item{time_threshold}{An \code{integer} specifying the time threshold in seconds
 for creating new time-based sessions. Defaults to 900 seconds.}
 
 \item{custom_format}{A \code{character} string giving the format used to
-parse the time column.}
+parse the \code{time} column.}
 
-\item{is_unix_time}{A \code{logical} value indicating whether the time column
+\item{is_unix_time}{A \code{logical} value indicating whether the \code{time} column
 is in Unix time. The default is \code{FALSE}.}
 
 \item{unix_time_unit}{A \code{character} string giving the Unix time unit when

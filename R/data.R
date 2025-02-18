@@ -15,14 +15,16 @@
 #' @param action A `character` string giving the name of the column holding
 #' the information about the action taken.
 #' @param order A `character` string giving the name of a column with sequence
-#' numbers or non-unique orderable values that indicate order within an actor
-#' group, if not present it will be ordered with all the data if no actor is
-#' available, used when widening the data.
+#' numbers or non-unique orderable values that indicate order within an `actor`
+#' group, if not present it will be ordered with all the data if no `actor` is
+#' available, used when widening the data. If both `actor` and `time` are
+#' specified, then the sequence order should be specified such that it
+#' determines the order of events within `actor` and `time`.
 #' @param time_threshold An `integer` specifying the time threshold in seconds
 #' for creating new time-based sessions. Defaults to 900 seconds.
 #' @param custom_format A `character` string giving the format used to
-#' parse the time column.
-#' @param is_unix_time A `logical` value indicating whether the time column
+#' parse the `time` column.
+#' @param is_unix_time A `logical` value indicating whether the `time` column
 #' is in Unix time. The default is `FALSE`.
 #' @param unix_time_unit A `character` string giving the Unix time unit when
 #' `is_unix_time` is `TRUE`. The default is `"seconds"`. Valid options are
@@ -127,13 +129,8 @@ prepare_data <- function(data, actor, time, action, order,
     long_format$.actor <- "session"
     default_actor <- TRUE
   }
+  grouping_col <- actor
   if (!missing(time)) {
-    if (!missing(order)) {
-      message_(
-        "Both {.arg time} and {.arg order} provided: ignoring {.arg order}."
-      )
-      order <- rlang::missing_arg()
-    }
     message_("Parsing time values...")
     message_(
       "First few time values: {.val {utils::head(data[[time]], 3)}}"
@@ -176,9 +173,17 @@ prepare_data <- function(data, actor, time, action, order,
           paste0(!!rlang::sym(actor), " session", session_nr)
         )
       ) |>
-      dplyr::group_by(session_id) |>
-      dplyr::mutate(sequence = dplyr::row_number()) |>
-      dplyr::ungroup()
+      dplyr::group_by(session_id)
+
+    if (missing(order)) {
+      long_format <- long_format |>
+        dplyr::mutate(sequence = dplyr::row_number()) |>
+        dplyr::ungroup()
+    } else {
+      long_format <- long_format |>
+        dplyr::mutate(sequence = base::order(!!rlang::sym(order))) |>
+        dplyr::ungroup()
+    }
   } else {
     if (missing(order)) {
       msg <- paste0(
