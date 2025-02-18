@@ -164,7 +164,11 @@ prepare_data <- function(data, actor, time, action, order,
     # Create processed data (long format)
     long_format <- long_format |>
       dplyr::mutate(standardized_time = parsed_times) |>
-      dplyr::arrange(!!rlang::sym(actor), standardized_time, order) |>
+      dplyr::arrange(
+        !!rlang::sym(actor),
+        standardized_time,
+        !!rlang::sym(order)
+      ) |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
         time_gap = as.numeric(
