@@ -57,8 +57,17 @@ can be used to produce heatmap plots and scatterplots to further illustrate
 the differences.
 }
 \examples{
+# Comparing TNA models
 model_x <- tna(group_regulation[1:200, ])
 model_y <- tna(group_regulation[1001:1200, ])
-comp <- compare(model_x, model_y)
+comp1 <- compare(model_x, model_y)
+
+# Comparing matrices
+mat_x <- model_x$weights
+mat_y <- model_y$weights
+comp2 <- compare(mat_x, mat_y)
+
+# Comparing matric to a TNA model
+comp3 <- compare(mat_x, model_y)
 
 }

@@ -2,6 +2,7 @@
 
 * The `prepare_data()` function now produces an object of class `tna_data`, which can be directly used as an argument to `build_model()`.
 * The `prepare_data()` function now supports `order` when used together with `time` and `actor`.
+* The `prepare_data()` function gains the `unused_fn` argument of `tidyr::pivot_wider()` to process any extra columns. The default is to keep all columns and use the first value.
 * Added the function `compare()` to compare `tna` models and weight matrices. This function produces an object of class `tna_comparison` which has `print()` and `plot()` methods.
 * Added the function `plot_mosaic()` which can be used to produce mosaic plots of transition counts for frequency-based transition network models.
 * Made several arguments in the package plot methods accessible to the user.
@@ -9,7 +10,7 @@
 
 # tna 0.3.2
 
-* `event2sequence()` has been renamed to `prepare_data()`. The function is now also more general and handles more date formats.
+* `event2sequence()` has been renamed to `prepare_data()`. The function is now also more general and can process more date formats.
 * Added a `method` argument to `bootstrap()`. The new default option `"stability"` implements a bootstrapping scheme where the edge weights are compared against a range of "consistent" weights (see the documentation for details). The old functionality can be accessed with `method = "threshold"`.
 * Fixed an issue with `permutatation_test()` when `x` and `y` had a differing number of columns.
 * Community detection methods can now be selected using the `methods` argument in `communities()`.

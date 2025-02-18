@@ -255,7 +255,7 @@ ctna <- function(x, scaling = character(0L), ...) {
 #' @return A `tna` object.
 #' @noRd
 build_model_ <- function(weights, inits = NULL, labels = NULL,
-                         type, scaling = character(0L), data = NULL) {
+                         type = NULL, scaling = character(0L), data = NULL) {
   structure(
     list(
       weights = weights,

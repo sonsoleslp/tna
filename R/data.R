@@ -19,7 +19,7 @@
 #' group, if not present it will be ordered with all the data if no `actor` is
 #' available, used when widening the data. If both `actor` and `time` are
 #' specified, then the sequence order should be specified such that it
-#' determines the order of events within `actor` and `time`.
+#' determines the order of events within `actor` and each session.
 #' @param time_threshold An `integer` specifying the time threshold in seconds
 #' for creating new time-based sessions. Defaults to 900 seconds.
 #' @param custom_format A `character` string giving the format used to
@@ -29,6 +29,9 @@
 #' @param unix_time_unit A `character` string giving the Unix time unit when
 #' `is_unix_time` is `TRUE`. The default is `"seconds"`. Valid options are
 #' `"seconds"`, `"milliseconds"`, or `"microseconds"`.
+#' @param unused_fn How to handle extra columns when pivoting to wide format.
+#' See [tidyr::pivot_wider()]. The default is to keep all columns and to
+#' use the first value.
 #' @return A `tna_data` object, which is a `list` with the following elements:
 #'
 #' * `long_format`: The processed data in long format.
@@ -83,7 +86,8 @@
 #'
 prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
-                         is_unix_time = FALSE, unix_time_unit = "seconds") {
+                         is_unix_time = FALSE, unix_time_unit = "seconds",
+                         unused_fn = dplyr::first) {
   check_missing(data)
   check_missing(action)
   check_string(actor)
@@ -123,13 +127,18 @@ prepare_data <- function(data, actor, time, action, order,
   )
   long_format <- data
   default_actor <- FALSE
+  default_order <- FALSE
   if (missing(actor)) {
     # Placeholder actor column
     actor <- ".actor"
     long_format$.actor <- "session"
     default_actor <- TRUE
   }
-  grouping_col <- actor
+  if (missing(order)) {
+    order <- ".order"
+    long_format$.order <- seq_len(nrow(data))
+    default_order <- TRUE
+  }
   if (!missing(time)) {
     message_("Parsing time values...")
     message_(
@@ -155,7 +164,7 @@ prepare_data <- function(data, actor, time, action, order,
     # Create processed data (long format)
     long_format <- long_format |>
       dplyr::mutate(standardized_time = parsed_times) |>
-      dplyr::arrange(!!rlang::sym(actor), standardized_time) |>
+      dplyr::arrange(!!rlang::sym(actor), standardized_time, order) |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
         time_gap = as.numeric(
@@ -173,59 +182,47 @@ prepare_data <- function(data, actor, time, action, order,
           paste0(!!rlang::sym(actor), " session", session_nr)
         )
       ) |>
-      dplyr::group_by(session_id)
-
-    if (missing(order)) {
-      long_format <- long_format |>
-        dplyr::mutate(sequence = dplyr::row_number()) |>
-        dplyr::ungroup()
-    } else {
-      long_format <- long_format |>
-        dplyr::mutate(sequence = base::order(!!rlang::sym(order))) |>
-        dplyr::ungroup()
-    }
+      dplyr::group_by(session_id) |>
+      dplyr::mutate(sequence = dplyr::row_number()) |>
+      dplyr::ungroup()
   } else {
-    if (missing(order)) {
-      msg <- paste0(
+    msg <- ifelse_(
+      default_order,
+      paste0(
         "No {.arg time} or {.arg order} column provided. ",
         ifelse_(
           default_actor,
           "Treating entire dataset as one session.",
           "Using {.arg actor} as session identifier."
         )
-      )
-      message_(msg)
-      long_format <- long_format |>
-        dplyr::group_by(!!rlang::sym(actor)) |>
-        dplyr::mutate(
-          session_id = !!rlang::sym(actor),
-          sequence = dplyr::row_number()
-        ) |>
-        dplyr::ungroup()
-    } else {
-      message_("Using provided {.arg order} column to create sequences.")
-      long_format <- long_format |>
-        dplyr::group_by(!!rlang::sym(actor)) |>
-        dplyr::mutate(
-          session_id = !!rlang::sym(actor) ,
-          sequence = base::order(!!rlang::sym(order))
-        ) |>
-        dplyr::ungroup()
-    }
+      ),
+      "Using provided {.arg order} column to create sequences."
+    )
+    message_(msg)
+    long_format <- long_format |>
+      dplyr::group_by(!!rlang::sym(actor)) |>
+      dplyr::mutate(
+        session_id = !!rlang::sym(actor),
+        sequence = dplyr::row_number()
+      ) |>
+      dplyr::ungroup()
   }
   if (default_actor) {
-    long_format$actor <- NULL
+    long_format$.actor <- NULL
+  }
+  if (default_order) {
+    long_format$.order <- NULL
   }
 
   # Create wide format
   message_("Creating wide format view of sessions...")
   wide_format <- long_format |>
-    dplyr::select(session_id, sequence, !!rlang::sym(action)) |>
     tidyr::pivot_wider(
       id_cols = session_id,
       names_prefix = "T",
       names_from = sequence,
-      values_from = !!rlang::sym(action)
+      values_from = !!rlang::sym(action),
+      unused_fn = unused_fn
     ) |>
     dplyr::arrange(session_id)
 
@@ -263,7 +260,7 @@ prepare_data <- function(data, actor, time, action, order,
   message_(
     "Maximum sequence length: {.val {stats$max_sequence_length}} actions"
   )
-  if (!missing(time) && missing(order)) {
+  if (!missing(time) && default_order) {
     message_(
       "Time range: {.val {stats$time_range[1]}} to
       {.val {stats$time_range[2]}}"

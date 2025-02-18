@@ -13,7 +13,8 @@ prepare_data(
   time_threshold = 900,
   custom_format = NULL,
   is_unix_time = FALSE,
-  unix_time_unit = "seconds"
+  unix_time_unit = "seconds",
+  unused_fn = dplyr::first
 )
 }
 \arguments{
@@ -34,7 +35,7 @@ numbers or non-unique orderable values that indicate order within an \code{actor
 group, if not present it will be ordered with all the data if no \code{actor} is
 available, used when widening the data. If both \code{actor} and \code{time} are
 specified, then the sequence order should be specified such that it
-determines the order of events within \code{actor} and \code{time}.}
+determines the order of events within \code{actor} and each session.}
 
 \item{time_threshold}{An \code{integer} specifying the time threshold in seconds
 for creating new time-based sessions. Defaults to 900 seconds.}
@@ -48,6 +49,10 @@ is in Unix time. The default is \code{FALSE}.}
 \item{unix_time_unit}{A \code{character} string giving the Unix time unit when
 \code{is_unix_time} is \code{TRUE}. The default is \code{"seconds"}. Valid options are
 \code{"seconds"}, \code{"milliseconds"}, or \code{"microseconds"}.}
+
+\item{unused_fn}{How to handle extra columns when pivoting to wide format.
+See \code{\link[tidyr:pivot_wider]{tidyr::pivot_wider()}}. The default is to keep all columns and to
+use the first value.}
 }
 \value{
 A \code{tna_data} object, which is a \code{list} with the following elements:
