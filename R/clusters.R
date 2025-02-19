@@ -9,8 +9,8 @@
 #' @rdname group_model
 #' @param x An `stslist` object describing a sequence of events or states to
 #'   be used for building the Markov model. The argument `x` also accepts
-#'   a `data.frame` object in wide format. Alternatively, the
-#'   function accepts a mixture Markov model from the library `seqHMM`.
+#'   `data.frame` objects in wide format, and `tna_data` objects.
+#'   Alternatively, the function accepts a mixture Markov model from `seqHMM`.
 #' @param group A vector indicating the cluster assignment of each
 #'  row of the data / sequence. Must have the same length as the number of
 #'  rows/sequences of `x`. Alternatively, a single `character` string giving

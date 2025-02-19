@@ -99,8 +99,8 @@ prepare_data <- function(data, actor, time, action, order,
   check_match(unix_time_unit, c("seconds", "milliseconds", "microseconds"))
 
   # Create some NULLs for R CMD Check
-  session_id <- session_nr <- new_session <- time_gap <-
-    standardized_time <- sequence <- n_sessions <- n_actions <- NULL
+  .session_id <- .session_nr <- .new_session <- .time_gap <-
+    .standardized_time <- .sequence <- n_sessions <- n_actions <- NULL
 
   message_("Initializing session computation...")
   message_(
@@ -163,35 +163,35 @@ prepare_data <- function(data, actor, time, action, order,
     )
     # Create processed data (long format)
     long_format <- long_format |>
-      dplyr::mutate(standardized_time = parsed_times) |>
+      dplyr::mutate(.standardized_time = parsed_times) |>
       dplyr::arrange(
         !!rlang::sym(actor),
-        standardized_time,
+        .standardized_time,
         !!rlang::sym(order)
       ) |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
-        time_gap = as.numeric(
+        .time_gap = as.numeric(
           difftime(
-            standardized_time,
-            dplyr::lag(standardized_time),
+            .standardized_time,
+            dplyr::lag(.standardized_time),
             units = "secs"
           )
         ),
-        new_session = is.na(time_gap) | time_gap > time_threshold,
-        session_nr = cumsum(new_session),
-        session_id = ifelse_(
+        .new_session = is.na(.time_gap) | .time_gap > time_threshold,
+        .session_nr = cumsum(.new_session),
+        .session_id = ifelse_(
           default_actor,
-          paste0("session", session_nr),
-          paste0(!!rlang::sym(actor), " session", session_nr)
+          paste0("session", .session_nr),
+          paste0(!!rlang::sym(actor), " session", .session_nr)
         )
       ) |>
-      dplyr::group_by(session_id) |>
-      dplyr::mutate(sequence = dplyr::row_number()) |>
+      dplyr::group_by(.session_id) |>
+      dplyr::mutate(.sequence = dplyr::row_number()) |>
       dplyr::ungroup()
 
-    long_format$time_gap <- NULL
-    long_format$new_session <- NULL
+    long_format$.time_gap <- NULL
+    long_format$.new_session <- NULL
   } else {
     msg <- ifelse_(
       default_order,
@@ -199,8 +199,8 @@ prepare_data <- function(data, actor, time, action, order,
         "No {.arg time} or {.arg order} column provided. ",
         ifelse_(
           default_actor,
-          "Treating entire dataset as one session.",
-          "Using {.arg actor} as session identifier."
+          "Treating the entire dataset as one session.",
+          "Using {.arg actor} as a session identifier."
         )
       ),
       "Using provided {.arg order} column to create sequences."
@@ -209,8 +209,8 @@ prepare_data <- function(data, actor, time, action, order,
     long_format <- long_format |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
-        session_id = !!rlang::sym(actor),
-        sequence = dplyr::row_number()
+        .session_id = !!rlang::sym(actor),
+        .sequence = dplyr::row_number()
       ) |>
       dplyr::ungroup()
   }
@@ -225,34 +225,34 @@ prepare_data <- function(data, actor, time, action, order,
   message_("Creating wide format view of sessions...")
   wide_format <- long_format |>
     tidyr::pivot_wider(
-      id_cols = session_id,
+      id_cols = .session_id,
       names_prefix = "T",
-      names_from = sequence,
+      names_from = .sequence,
       values_from = !!rlang::sym(action),
       unused_fn = unused_fn
     ) |>
-    dplyr::arrange(session_id)
+    dplyr::arrange(.session_id)
 
   # Calculate statistics
   stats <- list(
-    total_sessions = dplyr::n_distinct(long_format$session_id),
+    total_sessions = dplyr::n_distinct(long_format$.session_id),
     total_actions = nrow(long_format),
-    max_sequence_length = max(long_format$sequence)
+    max_sequence_length = max(long_format$.sequence)
   )
   if (!default_actor) {
     stats$unique_users <- dplyr::n_distinct(long_format[[actor]])
     stats$sessions_per_user <- long_format |>
       dplyr::group_by(!!rlang::sym(actor)) |>
-      dplyr::summarize(n_sessions = dplyr::n_distinct(session_id)) |>
+      dplyr::summarize(n_sessions = dplyr::n_distinct(.session_id)) |>
       dplyr::arrange(dplyr::desc(n_sessions))
   }
   stats$actions_per_session <- long_format |>
-    dplyr::group_by(session_id) |>
+    dplyr::group_by(.session_id) |>
     dplyr::summarize(n_actions = dplyr::n()) |>
     dplyr::arrange(dplyr::desc(n_actions))
 
   if (!missing(time)) {
-    stats$time_range <- range(long_format$standardized_time)
+    stats$time_range <- range(long_format$.standardized_time)
   }
 
   # Print summary statistics

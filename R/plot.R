@@ -774,8 +774,8 @@ plot_centralities_multiple <- function(x, reorder, ncol,
 #'
 #' @export
 #' @family core
-#' @param x An object of class `tna`. It will be the principal model.
-#' @param y An object of class `tna`. It will be the model subtracted from the
+#' @param x A `tna` object. It will be the principal model.
+#' @param y A `tna` object. It will be the model subtracted from the
 #'   principal model.
 #' @param theme See [qgraph::qgraph()].
 #' @param palette See [qgraph::qgraph()].
@@ -787,7 +787,13 @@ plot_centralities_multiple <- function(x, reorder, ncol,
 #' model_y <- tna(engagement[engagement[, 1] != "Active", ])
 #' plot_compare(model_x, model_y)
 #'
-plot_compare <- function(x, y, theme = NULL, palette = "colorblind", ...) {
+plot_compare <- function(x, ...) {
+  UseMethod("plot_compare")
+}
+
+#' @export
+#' @rdname plot_compare
+plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", ...) {
   check_class(x, "tna")
   check_class(y, "tna")
   # TODO check that x and y are comparable
@@ -1157,4 +1163,49 @@ plot.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
   invisible(lapply(x, \(i) plot.tna_stability(i, ...)))
+}
+
+#' Plot the difference network between two clusters
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna` object.
+#' @param i An `integer` index or the name of the principal cluster as a
+#' `character` string.
+#' @param j An `integer` index or the name of the secondary cluster as a
+#' `character` string.
+#' @param ... Additional arguments passed to [plot_compare.tna()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' plot_compare(model)
+#'
+plot_compare.group_tna <- function(x, i = 1, j = 2, ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  stopifnot_(
+    !identical(i, j),
+    "Arguments {.arg i} and {.arg j} must be different."
+  )
+  i <- ifelse_(is.numeric(i), as.integer(i), i)
+  j <- ifelse_(is.numeric(j), as.integer(j), j)
+  n <- length(x)
+  for (arg in c("i", "j")) {
+    idx <- eval(rlang::sym(arg))
+    stopifnot_(
+      length(idx) == 1L && (is.integer(idx) || is.character(idx)),
+      "Argument {.arg {arg}} must be a {.cls numeric} or a {.cls character}
+      vector of length 1."
+    )
+    stopifnot_(
+      is.integer(idx) || idx %in% names(x),
+      "Argument {.arg {arg}} must be a name of {.arg x} when of type
+      {.cls character}."
+    )
+    stopifnot_(
+      is.character(idx) || (idx >= 1 && idx <= n),
+      "Argument {.arg {arg}} must be between 1 and {n} when of type
+      {.cls numeric}."
+    )
+  }
+  plot_compare(x = x[[i]], y = x[[j]], ...)
 }

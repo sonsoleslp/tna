@@ -15,8 +15,8 @@ group_model(x, group, ...)
 \arguments{
 \item{x}{An \code{stslist} object describing a sequence of events or states to
 be used for building the Markov model. The argument \code{x} also accepts
-a \code{data.frame} object in wide format. Alternatively, the
-function accepts a mixture Markov model from the library \code{seqHMM}.}
+\code{data.frame} objects in wide format, and \code{tna_data} objects.
+Alternatively, the function accepts a mixture Markov model from \code{seqHMM}.}
 
 \item{group}{A vector indicating the cluster assignment of each
 row of the data / sequence. Must have the same length as the number of
@@ -55,6 +55,7 @@ Cluster-related functions
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.group_tna_stability}()},
+\code{\link{plot_compare.group_tna}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},
@@ -84,6 +85,7 @@ Cluster-related functions
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.group_tna_stability}()},
+\code{\link{plot_compare.group_tna}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},
@@ -113,6 +115,7 @@ Cluster-related functions
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.group_tna_stability}()},
+\code{\link{plot_compare.group_tna}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},

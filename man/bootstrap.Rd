@@ -118,6 +118,7 @@ Cluster-related functions
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.group_tna_stability}()},
+\code{\link{plot_compare.group_tna}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},

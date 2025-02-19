@@ -2,21 +2,24 @@
 % Please edit documentation in R/plot.R
 \name{plot_compare}
 \alias{plot_compare}
+\alias{plot_compare.tna}
 \title{Plot the difference network between two models}
 \usage{
-plot_compare(x, y, theme = NULL, palette = "colorblind", ...)
+plot_compare(x, ...)
+
+\method{plot_compare}{tna}(x, y, theme = NULL, palette = "colorblind", ...)
 }
 \arguments{
-\item{x}{An object of class \code{tna}. It will be the principal model.}
+\item{x}{A \code{tna} object. It will be the principal model.}
 
-\item{y}{An object of class \code{tna}. It will be the model subtracted from the
+\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{y}{A \code{tna} object. It will be the model subtracted from the
 principal model.}
 
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{palette}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
 A \code{qgraph} object displaying the difference network between the
