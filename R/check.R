@@ -93,6 +93,7 @@ check_measures <- function(x) {
       `x` = "Measure{?s} {.val {invalid_measures}} {?is/are} not recognized."
     )
   )
+  available_centrality_measures[measures_match]
 }
 
 #' Check that `x` is Between 0 and 1.

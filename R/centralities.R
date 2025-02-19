@@ -108,7 +108,7 @@ centralities_ <- function(x, loops, normalize, measures) {
     available_centrality_measures,
     measures
   )
-  check_measures(measures)
+  measures <- check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
   g <- igraph::graph_from_adjacency_matrix(
     adjmatrix = x,
@@ -508,8 +508,7 @@ available_centrality_measures <- c(
   "Clustering"
 )
 
-
-# Centrality measure function wrappers --------------------------------------------
+# Centrality measure function wrappers ----------------------------------------
 
 centrality_funs <- list()
 
