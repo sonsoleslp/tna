@@ -133,6 +133,13 @@ log_sum_exp <- function(x) {
   L
 }
 
+# Define the null coalescing operator for older R versions
+if (base::getRversion() < "4.4.0") {
+  `%||%` <- function(x, y) {
+    if (is.null(x)) y else x
+  }
+}
+
 # Functions borrowed from the `dynamite` package --------------------------
 # https://github.com/ropensci/dynamite
 
