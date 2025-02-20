@@ -12,10 +12,14 @@
 #'   `data.frame` objects in wide format, and `tna_data` objects.
 #'   Alternatively, the function accepts a mixture Markov model from `seqHMM`.
 #' @param group A vector indicating the cluster assignment of each
-#'  row of the data / sequence. Must have the same length as the number of
-#'  rows/sequences of `x`. Alternatively, a single `character` string giving
-#'  the column name of the data that defines the group when `x` is a wide
-#'  format `data.frame` or a `tna_data` object.
+#'   row of the data / sequence. Must have the same length as the number of
+#'   rows/sequences of `x`. Alternatively, a single `character` string giving
+#'   the column name of the data that defines the group when `x` is a wide
+#'   format `data.frame` or a `tna_data` object.
+#' @param cols An `integer`/`character` vector giving the indices/names of the
+#'   columns that should be considered as sequence data.
+#'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
+#'   automatically determined for `tna_data` objects.
 #' @param ... Ignored.
 #' @return An object of class `group_tna` which is a `list` containing one
 #'   element per cluster. Each element is a `tna` object.
@@ -31,7 +35,7 @@ group_model <- function(x, group, ...) {
 #' @export
 #' @family clusters
 #' @rdname group_model
-group_model.default <- function(x, group, ...) {
+group_model.default <- function(x, group, cols, ...) {
   check_missing(x)
   stopifnot_(
     !missing(group),
@@ -44,8 +48,10 @@ group_model.default <- function(x, group, ...) {
     {.cls data.frame} or a {.cls tna_data} object."
   )
   if (inherits(x, "tna_data")) {
+    cols <- which(attr(x, "time_cols"))
     x <- x$wide_format
-    cols <- attr(x, "time_cols")
+  } else {
+    cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
   }
   group_len <- length(group)
   stopifnot_(
@@ -61,7 +67,6 @@ group_model.default <- function(x, group, ...) {
     )
     group <- x[[group]]
   }
-  cols <- seq_len(ncol(x))
   group <- ifelse_(
     is.factor(group),
     group,
@@ -207,13 +212,13 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
 
   # Create a data frame with all results in the desired order
   results <- data.frame(
-    Cluster = cluster_list,
-    Variable = variable_list,
-    Estimate = coef_flat,
+    cluster = cluster_list,
+    variable = variable_list,
+    estimate = coef_flat,
     p_value = p_value,
-    CI_Lower = ci_lower,
-    CI_Upper = ci_upper,
-    Std_Error = se_flat,
+    ci_lower = ci_lower,
+    ci_Upper = ci_upper,
+    std_rrror = se_flat,
     t_value = statistic # or z_value depending on distribution
   )
   rownames(results) <- NULL

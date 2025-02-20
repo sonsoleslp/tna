@@ -53,6 +53,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   a <- length(attr(data_x, "alphabet"))
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
+  params <- attr(x, "params")
   n_measures <- length(measures)
   include_centralities <- n_measures > 0L
   if (include_centralities) {
@@ -74,6 +75,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     combined_data,
     type,
     scaling,
+    params,
     transitions = TRUE
   )
   combined_trans <- combined_model$trans
@@ -93,8 +95,8 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     }
     trans_perm_x <- combined_trans[perm_idx[perm_x], , ]
     trans_perm_y <- combined_trans[perm_idx[perm_y], , ]
-    weights_perm_x <- compute_weights(trans_perm_x, type, scaling, s = a)
-    weights_perm_y <- compute_weights(trans_perm_y, type, scaling, s = a)
+    weights_perm_x <- compute_weights(trans_perm_x, type, scaling, a)
+    weights_perm_y <- compute_weights(trans_perm_y, type, scaling, a)
     if (include_centralities) {
       cent_perm_x <- centralities(weights_perm_x, measures = measures, ...)
       cent_perm_y <- centralities(weights_perm_y, measures = measures, ...)
@@ -115,8 +117,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     edge_name = edge_names,
     diff_true = c(edge_diffs_true),
     effect_size = c(edge_diffs_true) / c(edge_diffs_sd),
-    p_value = c(edge_p_values),
-    stringsAsFactors = FALSE
+    p_value = c(edge_p_values)
   )
   out <- list(
     edges = list(
@@ -129,16 +130,16 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     cent_p_values <- cent_p_values / iter
     cent_diffs_sd <- apply(cent_diffs_perm, c(2, 3), stats::sd)
     cent_diffs_sig <- cent_diffs_true * (cent_p_values < level)
-    cent_stats <- expand.grid(State = cent_x$State, Centrality = measures)
+    cent_stats <- expand.grid(state = cent_x$state, centrality = measures)
     cent_stats$diff_true <- c(cent_diffs_true)
     cent_stats$effect_size <- c(cent_diffs_true) / c(cent_diffs_sd)
     cent_stats$p_value <- c(cent_p_values)
     cent_diffs_true <- cbind(
-      data.frame(State = cent_x$State),
+      data.frame(state = cent_x$state),
       as.data.frame(cent_diffs_true)
     )
     cent_diffs_sig <- cbind(
-      data.frame(State = cent_x$State),
+      data.frame(state = cent_x$state),
       as.data.frame(cent_diffs_sig)
     )
     out$centralities <- list(

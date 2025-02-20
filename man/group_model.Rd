@@ -8,7 +8,7 @@
 \usage{
 group_model(x, group, ...)
 
-\method{group_model}{default}(x, group, ...)
+\method{group_model}{default}(x, group, cols, ...)
 
 \method{group_model}{mhmm}(x, ...)
 }
@@ -25,6 +25,11 @@ the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object.}
 
 \item{...}{Ignored.}
+
+\item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
+columns that should be considered as sequence data.
+Defaults to all columns, i.e., \code{seq(1, ncol(x))}. The columns are
+automatically determined for \code{tna_data} objects.}
 }
 \value{
 An object of class \code{group_tna} which is a \code{list} containing one

@@ -97,7 +97,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   d <- x$data
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
-  model <- initialize_model(d, type, scaling, transitions = TRUE)
+  params <- attr(x, "params")
+  model <- initialize_model(d, type, scaling, params, transitions = TRUE)
   trans <- model$trans
   alphabet <- attr(d, "alphabet")
   dim_names <- list(alphabet, alphabet)
@@ -179,7 +180,10 @@ bootstrap.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
-    lapply(x, \(i) bootstrap.tna(i, ...)),
+    stats::setNames(
+      lapply(x, bootstrap, ...),
+      names(x)
+    ),
     class = "group_tna_bootstrap"
   )
 }

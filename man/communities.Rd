@@ -10,7 +10,7 @@ communities(x, ...)
 
 \method{communities}{tna}(x, methods, gamma = 1, ...)
 
-\method{communities}{group_tna}(x, methods, gamma = 1, ...)
+\method{communities}{group_tna}(x, methods, ...)
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object.}

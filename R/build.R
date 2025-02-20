@@ -26,6 +26,14 @@
 #'   * `"relative"` for relative frequencies (probabilities, the default)
 #'   * `"frequency"` for frequencies.
 #'   * `"co-occurrence"` for co-occurrences.
+#'   * `"n-gram"` for n-gram transitions. Captures higher-order transitions by
+#'       considering sequences of n states, useful for identifying longer
+#'       patterns.
+#'   * `"gap"` allows transitions between non-adjacent states, with
+#'       transitions weighted by the gap size.
+#'   * `"window"` creates transitions between all states within a
+#'       sliding window, capturing local relationships
+#'       (several sequences together).
 #'
 #' @param scaling A `character` vector describing how to scale the weights
 #'   defined by `type`. When a vector is provided, the scaling options are
@@ -46,6 +54,16 @@
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. Can be provided only if `x` is a `matrix`. The vector will
 #'   be scaled to unity.
+#' @param params A `list` of additional arguments for models of specific
+#'   `type`. The potential elements of this list are:
+#'
+#'   * `n_gram`: An `integer` for n-gram transitions specifying the number of
+#'       adjacent events. The default value is 2.
+#'   * `max_gap`: An `integer` for the gap-allowed transitions specifying the
+#'       largest allowed gap size. The default is 1.
+#'   * `window_size`: An `integer` for the sliding window transitions
+#'       specifying the window size. The default is 2.
+#'
 #' @param ... Ignored.
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
@@ -64,21 +82,22 @@
 #' model <- build_model(engagement)
 #' print(model)
 #'
-build_model <- function(x, type = "relative", scaling = character(0L), ...) {
+build_model <- function(x, type = "relative", scaling = character(0L),
+                        ...) {
   UseMethod("build_model")
 }
 
 #' @export
 #' @rdname build_model
 build_model.default <- function(x, type = "relative", scaling = character(0L),
-                                inits, ...) {
+                                inits, params = list(), ...) {
   check_missing(x)
   x <- try_(as.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  build_model.matrix(x, type, scaling, inits, ...)
+  build_model.matrix(x, type, scaling, inits, params, ...)
 }
 
 #' @export
@@ -131,7 +150,7 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- check_weights(x, type = type)
-  x <- scale_weights(x, scaling = scaling)
+  x <- scale_weights(x, type = type, scaling = scaling, a = nc)
   if (is.null(colnames(x))) {
     dimnames(x) <- list(seq_len(nc), seq_len(nc))
   }
@@ -150,21 +169,22 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 #' columns that should be considered as sequence data.
 #' Defaults to all columns, i.e., `seq(1, ncol(x))`.
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
-                                cols = seq(1, ncol(x)), ...) {
+                                cols = seq(1, ncol(x)), params = list(), ...) {
   check_missing(x)
   check_class(x, "stslist")
   check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x, cols)
-  model <- initialize_model(x, type, scaling, ...)
+  model <- initialize_model(x, type, scaling, params, ...)
   build_model_(
     weights = model$weights,
     inits = model$inits,
     labels = attr(x, "labels"),
     type = type,
     scaling = scaling,
-    data = x
+    data = x,
+    params = params
   )
 }
 
@@ -172,41 +192,44 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 #' @rdname build_model
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
-                                   cols = seq(1, ncol(x)), ...) {
+                                   cols = seq(1, ncol(x)),
+                                   params = list(), ...) {
   check_missing(x)
   check_class(x, "data.frame")
   check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x, cols)
-  model <- initialize_model(x, type, scaling, ...)
+  model <- initialize_model(x, type, scaling, params, ...)
   build_model_(
     weights = model$weights,
     inits = model$inits,
     labels = model$labels,
     type = type,
     scaling = scaling,
-    data = x
+    data = x,
+    params = params
   )
 }
 
 #' @export
 #' @rdname build_model
-build_model.tna_data <- function(x, type = "relative",
-                                 scaling = character(0), ...) {
+build_model.tna_data <- function(x, type = "relative", scaling = character(0),
+                                 params = list(), ...) {
   check_missing(x)
   check_class(x, "tna_data")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x$wide_format, cols = attr(x, "time_cols"))
-  model <- initialize_model(x, type, scaling, ...)
+  model <- initialize_model(x, type, scaling, params, ...)
   build_model_(
     weights = model$weights,
     inits = model$inits,
     labels = model$labels,
     type = type,
     scaling = scaling,
-    data = x
+    data = x,
+    params = params
   )
 }
 
@@ -217,9 +240,9 @@ build_model.tna_data <- function(x, type = "relative",
 #' @examples
 #' model <- tna(engagement)
 #'
-tna <- function(x, scaling = character(0L), ...) {
+tna <- function(x, ...) {
   check_missing(x)
-  build_model(x = x, type = "relative", scaling = scaling, ...)
+  build_model(x = x, type = "relative", ...)
 }
 
 #' @export
@@ -227,8 +250,8 @@ tna <- function(x, scaling = character(0L), ...) {
 #' @examples
 #' model <- ftna(engagement)
 #'
-ftna <- function(x, scaling = character(0L), ...) {
-  build_model(x = x, type = "frequency", scaling = scaling, ...)
+ftna <- function(x, ...) {
+  build_model(x = x, type = "frequency", ...)
 }
 
 #' @export
@@ -236,8 +259,8 @@ ftna <- function(x, scaling = character(0L), ...) {
 #' @examples
 #' model <- ctna(engagement)
 #'
-ctna <- function(x, scaling = character(0L), ...) {
-  build_model(x = x, type = "co-occurrence", scaling = scaling, ...)
+ctna <- function(x, ...) {
+  build_model(x = x, type = "co-occurrence", ...)
 }
 
 
@@ -252,10 +275,12 @@ ctna <- function(x, scaling = character(0L), ...) {
 #' @param scaling A `character` string defining the scaling of the weights
 #' @param data A `tna_seqdata` object when `weights` is
 #'   created from sequence data.
+#' @param params A `list` of parameters for computing the transitions
 #' @return A `tna` object.
 #' @noRd
 build_model_ <- function(weights, inits = NULL, labels = NULL,
-                         type = NULL, scaling = character(0L), data = NULL) {
+                         type = NULL, scaling = character(0L), data = NULL,
+                         params = NULL) {
   structure(
     list(
       weights = weights,
@@ -266,6 +291,7 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
     ),
     type = type,
     scaling = scaling,
+    params = params,
     class = "tna"
   )
 }
@@ -328,44 +354,20 @@ create_seqdata <- function(x, cols) {
 #'
 #' @param x A data object from `create_seqdata()`
 #' @param type The type of transition network model to build.
-#' @param type The type of scaling to apply to the weights
+#' @param scaling The scaling methods to apply to the weights.
+#' @param params A list of parameters for the transition model.
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
-initialize_model <- function(x, type, scaling, transitions = FALSE) {
+initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
   time_cols <- attr(x, "time_cols")
   m <- as.matrix(x[, time_cols])
-  n <- nrow(m)
-  p <- ncol(m)
   a <- length(alphabet)
-  idx <- seq_len(n)
-  trans <- array(0L, dim = c(n, a, a))
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  if (type == "co-occurrence") {
-    for (i in seq_len(p - 1)) {
-      for (j in seq(i + 1, p)) {
-        from <- m[, i]
-        to <- m[, j]
-        any_na <- is.na(from) | is.na(to)
-        new_trans <- rbind(
-          cbind(idx, from, to)[!any_na, , drop = FALSE],
-          cbind(idx, to, from)[!any_na, , drop = FALSE]
-        )
-        trans[new_trans] <- trans[new_trans] + 1L
-      }
-    }
-  } else {
-    for (i in seq_len(p - 1)) {
-      from <- m[, i]
-      to <- m[, i + 1L]
-      any_na <- is.na(from) | is.na(to)
-      new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-      trans[new_trans] <- trans[new_trans] + 1L
-    }
-  }
+  trans <- compute_transitions(m, a, type, params)
   weights <- compute_weights(trans, type, scaling, a)
   inits <- inits / sum(inits)
   names(inits) <- alphabet
@@ -378,32 +380,107 @@ initialize_model <- function(x, type, scaling, transitions = FALSE) {
   )
 }
 
+#' Compute Network Transitions Based on TNA Type
+#'
+#' @param m A `matrix` of sequences
+#' @param a An `integer`, the number of states.
+#' @param type Type of the transition network as a `character` string.
+#' @param params Parameters for the transition model.
+#' @noRd
+compute_transitions <- function(m, a, type, params) {
+  n <- nrow(m)
+  p <- ncol(m)
+  idx <- seq_len(n)
+  trans <- array(0L, dim = c(n, a, a))
+  if (type %in% c("relative", "frequency")) {
+    for (i in seq_len(p - 1L)) {
+      from <- m[, i]
+      to <- m[, i + 1L]
+      any_na <- is.na(from) | is.na(to)
+      new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+      trans[new_trans] <- trans[new_trans] + 1L
+    }
+  } else if (type == "co-occurrence") {
+    for (i in seq_len(p - 1L)) {
+      for (j in seq(i + 1L, p)) {
+        from <- m[, i]
+        to <- m[, j]
+        any_na <- is.na(from) | is.na(to)
+        new_trans <- rbind(
+          cbind(idx, from, to)[!any_na, , drop = FALSE],
+          cbind(idx, to, from)[!any_na, , drop = FALSE]
+        )
+        trans[new_trans] <- trans[new_trans] + 1L
+      }
+    }
+  } else if (type == "n-gram") {
+    n_gram <- params$n_gram %||% 2L
+    for (i in seq_len(p - n_gram + 1L)) {
+      for (j in seq(i, i + n_gram - 2L)) {
+        from <- m[, j]
+        to <- m[, j + 1L]
+        any_na <- is.na(from) | is.na(to)
+        new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+        trans[new_trans] <- trans[new_trans] + 1L
+      }
+    }
+  } else if (type == "gap") {
+    max_gap <- params$max_gap %||% 1L
+    for (i in seq_len(p - 1L)) {
+      max_j <- min(i + max_gap + 1L, p)
+      for (j in seq(i + 1L, max_j)) {
+        from <- m[, i]
+        to <- m[, j]
+        any_na <- is.na(from) | is.na(to)
+        new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+        trans[new_trans] <- trans[new_trans] + 1.0 / (j - i)
+      }
+    }
+  } else if (type == "window") {
+    window_size <- params$window_size %||% 2L
+    for (i in seq_len(p - window_size + 1L)) {
+      for (j in seq(i, i + window_size - 2L)) {
+        from <- m[, j]
+        for (k in seq(j + 1L, i + window_size - 1L)) {
+          to <- m[, k]
+          any_na <- is.na(from) | is.na(to)
+          new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+          trans[new_trans] <- trans[new_trans] + 1L
+        }
+      }
+    }
+  }
+  trans
+}
+
 #' Compute Network Weights Based On TNA Type
 #'
 #' @param transitions An `array` of the individual-level transitions.
 #' @param type Type of the transition network as a `character` string.
-#' @param scaling Scalings to apply as a `character` vectors.
-#' @param s An `integer`, the number of states.
+#' @param scaling Scaling methods to apply as a `character` vector.
+#' @param a An `integer`, the number of states.
 #' @return A `matrix` of transition probabilities or frequencies,
 #' based on `type`.
 #' @noRd
-compute_weights <- function(transitions, type, scaling, s) {
+compute_weights <- function(transitions, type, scaling, a) {
   weights <- apply(transitions, c(2, 3), sum)
-  if (type == "relative") {
-    rs <- .rowSums(weights, m = s, n = s)
-    pos <- which(rs > 0)
-    weights[pos, ] <- weights[pos, ] / rs[pos]
-    weights[!pos, ] <- NA
-  }
-  scale_weights(weights, scaling)
+  scale_weights(weights, type, scaling, a)
 }
 
 #' Scale Transition Network Weights
 #'
 #' @param weights A `matrix` of edge weights
-#' @param scaling Scalings to apply as a `character` vector.
+#' @param type Type of the transition network as a `character` string.
+#' @param scaling Scaling methods to apply as a `character` vector.
+#' @param a An `integer`, the number of states.
 #' @noRd
-scale_weights <- function(weights, scaling) {
+scale_weights <- function(weights, type, scaling, a) {
+  if (type == "relative") {
+    rs <- .rowSums(weights, m = a, n = a)
+    pos <- which(rs > 0)
+    weights[pos, ] <- weights[pos, ] / rs[pos]
+    weights[!pos, ] <- NA
+  }
   for (i in seq_along(scaling)) {
     if (scaling[i] == "minmax") {
       weights[] <- ranger(weights)

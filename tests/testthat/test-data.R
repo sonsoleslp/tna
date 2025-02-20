@@ -57,4 +57,3 @@ test_that("data preparation works when only action is provided", {
     NA
   )
 })
-

@@ -318,7 +318,10 @@ prune.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
-    lapply(x, \(i) prune.tna(i, ...)),
+    stats::setNames(
+      lapply(x, prune, ...),
+      names(x)
+    ),
     class = "group_tna"
   )
 }
@@ -346,7 +349,10 @@ deprune.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
-    lapply(x, \(i) deprune.tna(i, ...)),
+    stats::setNames(
+      lapply(x, deprune, ...),
+      names(x)
+    ),
     class = "group_tna"
   )
 }
@@ -358,7 +364,10 @@ reprune.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
-    lapply(x, \(i) reprune.tna(i, ...)),
+    stats::setNames(
+      lapply(x, reprune, ...),
+      names(x)
+    ),
     class = "group_tna"
   )
 }

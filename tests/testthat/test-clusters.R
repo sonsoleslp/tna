@@ -79,4 +79,39 @@ test_that("group model can be summarized", {
     summary(model),
     NA
   )
+  expect_error(
+    summary(model, combined = FALSE),
+    NA
+  )
+})
+
+test_that("grouped model can be constructed from tna_data objects", {
+  data <- tibble::tibble(
+    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
+    time = c(
+      "2023-01-01 10:00:00", "2023-01-01 10:05:00",
+      "2023-01-01 10:20:00", "2023-01-01 12:00:00",
+      "2023-01-01 12:02:00", "2023-01-01 14:00:00",
+      "2023-01-01 14:05:00", "2023-01-01 14:10:00"
+    ),
+    action = c(
+      "view", "click", "add_cart", "view",
+      "checkout", "view", "click", "share"
+    ),
+    group = c(rep("Group 1", 5), rep("Group 2", 3))
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  results <- prepare_data(
+    data, actor = "user", time = "time", action = "action"
+  )
+  expect_error(
+    model <- group_model(results, group = "group"),
+    NA
+  )
+  expect_true(
+    length(model) == 2L
+  )
+  expect_true(
+    all(names(model) == c("Group 1", "Group 2"))
+  )
 })

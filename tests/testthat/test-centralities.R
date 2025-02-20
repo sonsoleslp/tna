@@ -52,3 +52,28 @@ test_that("centrality stability can be estimated for clusters", {
     NA
   )
 })
+
+test_that("progressbar works", {
+  expect_error(
+    capture.output(
+      estimate_cs(
+        mmm_model,
+        drop_prop = seq(0.3, 0.9, by = 0.1),
+        iter = 10,
+        progressbar = TRUE
+      )
+    ),
+    NA
+  )
+})
+
+test_that("no cases dropped warns", {
+  expect_warning(
+    estimate_cs(
+      mmm_model[[1]],
+      drop_prop = 0.001,
+      iter = 10
+    ),
+    "No cases dropped for proportion 0\\.001\\. Skipping\\.\\.\\."
+  )
+})

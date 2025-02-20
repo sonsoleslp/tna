@@ -115,7 +115,7 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
       counts = lengths(communities),
       assignments = as.data.frame(
         c(
-          list(State = igraph::V(g)$name),
+          list(state = igraph::V(g)$name),
           mapping
         )
       )
@@ -128,14 +128,17 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
 #' @export
 #' @family clusters
 #' @rdname communities
-communities.group_tna <- function(x, methods, gamma = 1, ...) {
+communities.group_tna <- function(x, methods, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   if (missing(methods)) {
     methods <- names(supported_communities)
   }
   structure(
-    lapply(x, \(i) communities.tna(i, methods, gamma = gamma, ...)),
+    stats::setNames(
+      lapply(x, communities, methods = methods, ...),
+      names(x)
+    ),
     class = "group_tna_communities"
   )
 }

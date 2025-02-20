@@ -17,7 +17,14 @@
 \usage{
 build_model(x, type = "relative", scaling = character(0L), ...)
 
-\method{build_model}{default}(x, type = "relative", scaling = character(0L), inits, ...)
+\method{build_model}{default}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  inits,
+  params = list(),
+  ...
+)
 
 \method{build_model}{matrix}(x, type = "relative", scaling = character(0L), inits, ...)
 
@@ -26,6 +33,7 @@ build_model(x, type = "relative", scaling = character(0L), ...)
   type = "relative",
   scaling = character(0L),
   cols = seq(1, ncol(x)),
+  params = list(),
   ...
 )
 
@@ -34,16 +42,17 @@ build_model(x, type = "relative", scaling = character(0L), ...)
   type = "relative",
   scaling = character(0L),
   cols = seq(1, ncol(x)),
+  params = list(),
   ...
 )
 
-\method{build_model}{tna_data}(x, type = "relative", scaling = character(0), ...)
+\method{build_model}{tna_data}(x, type = "relative", scaling = character(0), params = list(), ...)
 
-tna(x, scaling = character(0L), ...)
+tna(x, ...)
 
-ftna(x, scaling = character(0L), ...)
+ftna(x, ...)
 
-ctna(x, scaling = character(0L), ...)
+ctna(x, ...)
 
 group_tna(x, scaling = character(0L), ...)
 
@@ -68,6 +77,14 @@ Currently supports the following types:
 \item \code{"relative"} for relative frequencies (probabilities, the default)
 \item \code{"frequency"} for frequencies.
 \item \code{"co-occurrence"} for co-occurrences.
+\item \code{"n-gram"} for n-gram transitions. Captures higher-order transitions by
+considering sequences of n states, useful for identifying longer
+patterns.
+\item \code{"gap"} allows transitions between non-adjacent states, with
+transitions weighted by the gap size.
+\item \code{"window"} creates transitions between all states within a
+sliding window, capturing local relationships
+(several sequences together).
 }}
 
 \item{scaling}{A \code{character} vector describing how to scale the weights
@@ -92,6 +109,17 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
 be scaled to unity.}
+
+\item{params}{A \code{list} of additional arguments for models of specific
+\code{type}. The potential elements of this list are:
+\itemize{
+\item \code{n_gram}: An \code{integer} for n-gram transitions specifying the number of
+adjacent events. The default value is 2.
+\item \code{max_gap}: An \code{integer} for the gap-allowed transitions specifying the
+largest allowed gap size. The default is 1.
+\item \code{window_size}: An \code{integer} for the sliding window transitions
+specifying the window size. The default is 2.
+}}
 
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
 columns that should be considered as sequence data.

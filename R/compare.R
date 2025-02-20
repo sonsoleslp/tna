@@ -122,7 +122,7 @@ compare <- function(x, y, scaling = "none") {
   rn <- rownames(x)
 
   # Edge level metrics
-  edges <- expand.grid(Source = rn, Target = rn)
+  edges <- expand.grid(source = rn, target = rn)
   edges_x <- edges
   edges_y <- edges
   # edges_diff <- edges
@@ -150,8 +150,8 @@ compare <- function(x, y, scaling = "none") {
 
   # Summary metrics
   weight_dev <- data.frame(
-    Category = "Weight Deviations",
-    Metric = c(
+    category = "Weight Deviations",
+    metric = c(
       "Mean Abs. Diff.",
       "Median Abs. Diff.",
       "RMS Diff.",
@@ -169,8 +169,8 @@ compare <- function(x, y, scaling = "none") {
     )
   )
   correlations <- data.frame(
-    Category = "Correlations",
-    Metric = c("Pearson", "Spearman", "Kendall", "Distance"),
+    category = "Correlations",
+    metric = c("Pearson", "Spearman", "Kendall", "Distance"),
     value = c(
       stats::cor(x_vec, y_vec, method = "pearson", use = "complete.obs"),
       stats::cor(x_vec, y_vec, method = "spearman", use = "complete.obs"),
@@ -179,8 +179,8 @@ compare <- function(x, y, scaling = "none") {
     )
   )
   dissimilarities <- data.frame(
-    Category = "Dissimilarities",
-    Metric = c(
+    category = "Dissimilarities",
+    metric = c(
       "Euclidean",
       "Manhattan",
       "Chebyshev",
@@ -196,8 +196,8 @@ compare <- function(x, y, scaling = "none") {
     )
   )
   similarities <- data.frame(
-    Category = "Similarities",
-    Metric = c("Cosine", "Jaccard", "Dice", "Overlap", "RV"),
+    category = "Similarities",
+    metric = c("Cosine", "Jaccard", "Dice", "Overlap", "RV"),
     value = c(
       sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2))),
       sum(pmin(abs_x, abs_y)) / sum(pmax(abs_x, abs_y)),
@@ -207,8 +207,8 @@ compare <- function(x, y, scaling = "none") {
     )
   )
   pattern_metrics <- data.frame(
-    Category = "Pattern Similarities",
-    Metric = c("Rank Agreement", "Sign Agreement"),
+    category = "Pattern Similarities",
+    metric = c("Rank Agreement", "Sign Agreement"),
     value = c(
       mean(sign(diff(x)) == sign(diff(y))),
       mean(sign(x) == sign(y))
@@ -224,25 +224,24 @@ compare <- function(x, y, scaling = "none") {
 
   # Network metrics
   network_metrics <- cbind(metrics_x, metrics_y[, -1L])
-  names(network_metrics) <- c("Metric", "x", "y")
+  names(network_metrics) <- c("metric", "x", "y")
 
   # Centralities
-  State <- NULL # for CRAN
   cents_x <- centralities(x) |>
     tidyr::pivot_longer(
-      cols = !(!!rlang::sym("State")), names_to = "Centrality", values_to = "x"
+      cols = !(!!rlang::sym("state")), names_to = "centrality", values_to = "x"
     )
   cents_y <- centralities(y) |>
     tidyr::pivot_longer(
-      cols = !(!!rlang::sym("State")), names_to = "Centrality", values_to = "y"
+      cols = !(!!rlang::sym("state")), names_to = "centrality", values_to = "y"
     )
   cents_xy <- cents_x
   cents_xy$y <- cents_y$y
   cents_xy$difference <- cents_xy$x - cents_xy$y
   cents_corr <- cents_xy |>
-    dplyr::group_by(!!rlang::sym("Centrality")) |>
+    dplyr::group_by(!!rlang::sym("centrality")) |>
     dplyr::summarize(
-      Centrality = dplyr::first(!!rlang::sym("Centrality")),
+      Centrality = dplyr::first(!!rlang::sym("centrality")),
       correlation = stats::cor(
         !!rlang::sym("x"),
         !!rlang::sym("y"),

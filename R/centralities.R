@@ -127,8 +127,8 @@ centralities_ <- function(x, loops, normalize, measures) {
     out[, measures] <- as.data.frame(lapply(out[, measures], ranger))
   }
   rn <- rownames(out)
-  out <- tibble::rownames_to_column(out, "State")
-  out$State <- factor(out$State, levels = rn)
+  out <- tibble::rownames_to_column(out, "state")
+  out$state <- factor(out$state, levels = rn)
   structure(
     out,
     class = c("tna_centralities", "tbl_df", "tbl", "data.frame")
@@ -290,7 +290,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
     n_drop <- floor(n * prop)
     if (n_drop == 0) {
       warning_(
-        paste0("No cases dropped for proportion ", prop, " skipping...")
+        paste0("No cases dropped for proportion ", prop, ". Skipping...")
       )
       next
     }
@@ -446,7 +446,7 @@ centralities.group_tna <- function(x, loops = FALSE,
         )
       }
     ),
-    .id = "Group"
+    .id = "group"
   )
   structure(
     out,

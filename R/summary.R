@@ -87,10 +87,10 @@ summary.tna <- function(object, ...) {
     "Centralization (In-Degree)",
     "Reciprocity"
   )
-  out <- data.frame(metric = out_names, value = unname(out))
+  out <- tibble::tibble(metric = out_names, value = unname(out))
   structure(
     out,
-    class = c("summary.tna", "data.frame")
+    class = c("summary.tna", "tbl_df", "tbl", "data.frame")
   )
 }
 
@@ -172,14 +172,14 @@ summary.group_tna <- function(object, combined = TRUE, ...) {
   check_missing(object)
   check_class(object, "group_tna")
   if (!combined) {
-    out <- lapply(object, \(i) summary(i))
+    out <- lapply(object, summary)
     out_class <- "summary.group_tna"
   } else {
     out <- dplyr::bind_rows(
-      lapply(object, \(i) summary.tna(i)),
-      .id = "Group"
+      lapply(object, summary),
+      .id = "group"
     ) |>
-      tidyr::pivot_wider(names_from = "Group", values_from = "value")
+      tidyr::pivot_wider(names_from = "group", values_from = "value")
     out_class <- c("summary.group_tna", "tbl_df", "tbl", "data.frame")
   }
   structure(
@@ -209,7 +209,7 @@ summary.group_tna_bootstrap <- function(object, ...) {
   structure(
     dplyr::bind_rows(
       lapply(object, function(x) x$summary),
-      .id = "Group"
+      .id = "group"
     ),
     class = c("summary.group_tna_bootstrap", "data.frame")
   )

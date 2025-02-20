@@ -27,7 +27,17 @@ check_na <- function(x) {
 #' @param type Type of the transition network.
 #' @noRd
 check_model_type <- function(type) {
-  check_match(type, c("relative", "frequency", "co-occurrence"))
+  check_match(
+    type,
+    c(
+      "relative",
+      "frequency",
+      "co-occurrence",
+      "n-gram",
+      "gap",
+      "window"
+    )
+  )
 }
 
 #' Check Transition Network Weight Scaling for Validity
@@ -38,7 +48,11 @@ check_model_scaling <- function(scaling) {
   if (length(scaling) == 0L) {
     return(character(0L))
   }
-  check_match(scaling, c("minmax", "max", "rank"), several.ok = TRUE)
+  check_match(
+    scaling,
+    c("minmax", "max", "rank"),
+    several.ok = TRUE
+  )
 }
 
 #' Check that `x` is of specific class

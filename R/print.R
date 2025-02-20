@@ -58,6 +58,9 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
     `relative` = "Transition Probability",
     `frequency` = "Transition Frequency",
     `co-occurrence` = "Co-occurrence",
+    `n-gram` = "N-gram Transition",
+    `gap` = "Gap-allowed Transition",
+    `window` = "Sliding Window Transition",
     `betweenness` = "Edge Betweenness"
   )
   cat("State Labels\n\n")
@@ -142,9 +145,9 @@ print.tna_centralities <- function(x, ...) {
 print.tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_communities")
-  cat("Number of communities found by each algorithm:\n")
+  cat("Number of communities found by each algorithm:\n\n")
   print(x$counts)
-  cat("\nCommunity assignments:\n")
+  cat("\nCommunity assignments:\n\n")
   print(x$assignments)
   invisible(x)
 }
@@ -326,7 +329,14 @@ print.tna_permutation <- function(x, ...) {
 print.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  lapply(x, \(i) print(i, ...))
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], ":\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
+  }
   invisible(x)
 }
 
@@ -346,7 +356,14 @@ print.group_tna <- function(x, ...) {
 print.group_tna_bootstrap <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_bootstrap")
-  lapply(x, \(i) print(i, ...))
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], ":\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
+  }
   invisible(x)
 }
 
@@ -364,10 +381,13 @@ print.group_tna_bootstrap <- function(x, ...) {
 print.summary.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "summary.group_tna")
-  if (inherits(x, "data.frame")) {
-    NextMethod(generic = "print", object = x, ...)
-  } else {
-    lapply(x, \(i) print(x = i, ...))
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], ":\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
   }
   invisible(x)
 }
@@ -422,14 +442,14 @@ print.group_tna_centralities <- function(x, ...) {
 print.group_tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
-  Map(
-    function(y, i) {
-      print(i)
-      print(y, ...)
-    },
-    x,
-    names(x)
-  )
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], ":\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
+  }
   invisible(x)
 }
 
@@ -448,14 +468,14 @@ print.group_tna_communities <- function(x, ...) {
 print.group_tna_cliques <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
-  Map(
-    function(y, i) {
-      print(i)
-      print(y, ...)
-    },
-    x,
-    names(x)
-  )
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], ":\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
+  }
   invisible(x)
 }
 
@@ -479,13 +499,13 @@ print.group_tna_cliques <- function(x, ...) {
 print.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
-  Map(
-    function(y, i) {
-      cat(i, ":\n\n", sep = "")
-      print(y, ...)
-    },
-    x,
-    names(x)
-  )
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], ":\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
+  }
   invisible(x)
 }

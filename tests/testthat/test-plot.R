@@ -169,3 +169,26 @@ test_that("histogram of edge weights can be plotted", {
     NA
   )
 })
+
+test_that("comparison results can be plotted", {
+  model_x <- tna(group_regulation[1:200, ])
+  model_y <- tna(group_regulation[1001:1200, ])
+  # Comparing models
+  comp <- compare(model_x, model_y)
+  expect_error(
+    plot(comp, type = "heatmap"),
+    NA
+  )
+  expect_error(
+    plot(comp, type = "scatterplot"),
+    NA
+  )
+  expect_error(
+    plot(comp, type = "centrality_heatmap"),
+    NA
+  )
+  expect_error(
+    plot(comp, type = "weight_density"),
+    NA
+  )
+})

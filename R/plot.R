@@ -363,7 +363,7 @@ plot.tna_comparison <- function(x, type = "heatmap",
         "Difference Matrix Heatmap (", name_x, " vs. ", name_y, ")"
       )
     )
-    edges <- x$edge_metrics[, c("Source", "Target", weight_col)]
+    edges <- x$edge_metrics[, c("source", "target", weight_col)]
     names(edges)[3] <- "value"
     return(create_heatmap(edges, title))
   }
@@ -372,9 +372,9 @@ plot.tna_comparison <- function(x, type = "heatmap",
       method,
       c("pearson", "kendall", "spearman", "distance")
     )
-    edges <- x$edge_metrics[, c("Source", "Target", "weight_x", "weight_y")]
-    metric_idx <- tolower(x$summary_metrics$Metric) == method
-    corr <- round(x$summary_metrics$Value[metric_idx], 3)
+    edges <- x$edge_metrics[, c("source", "target", "weight_x", "weight_y")]
+    metric_idx <- tolower(x$summary_metrics$metric) == method
+    corr <- round(x$summary_metrics$value[metric_idx], 3)
     corr_subtitle <- switch(
       method,
       pearson = bquote("Pearson's" ~ {rho} ~~ "=" ~~ .(corr)),
@@ -412,8 +412,8 @@ plot.tna_comparison <- function(x, type = "heatmap",
       ggplot2::ggplot(
         x$centrality_differences,
         ggplot2::aes(
-          x = !!rlang::sym("Centrality"),
-          y = !!rlang::sym("State"),
+          x = !!rlang::sym("centrality"),
+          y = !!rlang::sym("state"),
           fill = !!rlang::sym("difference")
         )
       ) +
@@ -439,7 +439,7 @@ plot.tna_comparison <- function(x, type = "heatmap",
     return(out)
   }
   if (type == "weight_density") {
-    edges <- x$edge_metrics[, c("Source", "Target", "weight_x", "weight_y")]
+    edges <- x$edge_metrics[, c("source", "target", "weight_x", "weight_y")]
     out <-
       ggplot2::ggplot(
         edges,
@@ -636,9 +636,9 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
     colors <- attr(x, "colors")
   }
   if (missing(colors)) {
-    colors <- rep("black", length.out = length(unique(x$State)))
+    colors <- rep("black", length.out = length(unique(x$state)))
   } else if (!is.list(colors) && length(colors) == 1) {
-    colors <- rep(colors, length.out = length(unique(x$State)))
+    colors <- rep(colors, length.out = length(unique(x$state)))
   }
   ifelse_(
     is_tna_centralities(x),
@@ -654,11 +654,11 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
   x <- stats::reshape(
     as.data.frame(x),
-    idvar = "State",
-    ids = x[["State"]],
+    idvar = "state",
+    ids = x[["state"]],
     times = names(x)[-1L],
     timevar = "name",
-    drop = "State",
+    drop = "state",
     varying = list(names(x)[-1L]),
     direction = "long",
     v.names = "value"
@@ -669,7 +669,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
       x, !!rlang::sym("name"), !!rlang::sym("value")
     ),
     dplyr::arrange(
-      x, !!rlang::sym("name"), dplyr::desc(!!rlang::sym("State"))
+      x, !!rlang::sym("name"), dplyr::desc(!!rlang::sym("state"))
     )
   )
   x$rank <- dplyr::row_number(x)
@@ -678,7 +678,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     ggplot2::scale_fill_manual(values = colors) +
     ggplot2::geom_col(
       ggplot2::aes(
-        fill = !!rlang::sym("State"),
+        fill = !!rlang::sym("state"),
         x = !!rlang::sym("rank"),
         y = !!rlang::sym("value")
       ),
@@ -703,7 +703,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
       name = NULL,
       expand = c(0, 0.5),
       breaks = x$rank,
-      labels = x$State
+      labels = x$state
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(
@@ -723,8 +723,8 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 plot_centralities_multiple <- function(x, reorder, ncol,
                                        scales, colors, labels) {
   measures <- names(x)[3:ncol(x)]
-  n_clusters <- length(unique(x$Group))
-  x$State <- factor(x$State)
+  n_clusters <- length(unique(x$group))
+  x$state <- factor(x$state)
   x |>
     data.frame() |>
     stats::reshape(
@@ -737,10 +737,10 @@ plot_centralities_multiple <- function(x, reorder, ncol,
     ggplot2::ggplot(
       ggplot2::aes(
         x = !!rlang::sym("value"),
-        y = !!rlang::sym("State"),
-        color = !!rlang::sym("Group"),
-        fill = !!rlang::sym("Group"),
-        group = !!rlang::sym("Group")
+        y = !!rlang::sym("state"),
+        color = !!rlang::sym("group"),
+        fill = !!rlang::sym("group"),
+        group = !!rlang::sym("group")
       )
     ) +
     ggplot2::facet_wrap("name", ncol = ncol, scales = scales) +
@@ -979,8 +979,8 @@ create_heatmap <- function(data, title) {
   ggplot2::ggplot(
     data,
     ggplot2::aes(
-      x = !!rlang::sym("Target"),
-      y = !!rlang::sym("Source"),
+      x = !!rlang::sym("target"),
+      y = !!rlang::sym("source"),
       fill = !!rlang::sym("value")
   )) +
     ggplot2::geom_tile() +
@@ -1017,7 +1017,7 @@ create_heatmap <- function(data, title) {
 hist.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  invisible(lapply(x, \(i) hist.tna(i, ...)))
+  invisible(lapply(x, hist.tna, ...))
 }
 
 #' Plot a grouped Transition Network Analysis Model
@@ -1116,18 +1116,19 @@ plot.group_tna_cliques <- function(x, title, ...) {
 plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
+  n <- length(x)
   colors <- ifelse_(
     missing(colors),
-    lapply(x, \(x) default_colors),
+    replicate(n, default_colors, simplify = FALSE),
     ifelse_(
       is.vector(colors) & is.atomic(colors),
-      lapply(x, function(x) colors),
+      replicate(n, colors, simplify = FALSE),
       colors
     )
   )
   if (is.null(title) ||
     (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
-    title <- lapply(x, \(x) title)
+    title <- replicate(n, title, simplify = FALSE)
   }
   invisible(
     Map(
@@ -1162,7 +1163,7 @@ plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
 plot.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
-  invisible(lapply(x, \(i) plot.tna_stability(i, ...)))
+  invisible(lapply(x, plot.tna_stability, ...))
 }
 
 #' Plot the difference network between two clusters
