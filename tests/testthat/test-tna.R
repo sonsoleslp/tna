@@ -142,3 +142,41 @@ test_that("igraph conversion works for clusters", {
     NA
   )
 })
+
+test_that("different model types work", {
+  expect_error(
+    build_model(mock_sequence, type = "relative"),
+    NA
+  )
+  expect_error(
+    build_model(mock_sequence, type = "frequency"),
+    NA
+  )
+  expect_error(
+    build_model(mock_sequence, type = "co-occurrence"),
+    NA
+  )
+  expect_error(
+    build_model(mock_sequence, type = "reverse"),
+    NA
+  )
+  expect_error(
+    build_model(mock_sequence, type = "n-gram"),
+    NA
+  )
+  expect_error(
+    build_model(mock_sequence, type = "window"),
+    NA
+  )
+  expect_error(
+    build_model(mock_sequence, type = "gap"),
+    NA
+  )
+})
+
+test_that("models can be constructed from tna_data objects", {
+  expect_error(
+    tna(mock_tna_data),
+    NA
+  )
+})

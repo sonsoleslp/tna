@@ -35,7 +35,8 @@ check_model_type <- function(type) {
       "co-occurrence",
       "n-gram",
       "gap",
-      "window"
+      "window",
+      "reverse"
     )
   )
 }
@@ -239,7 +240,7 @@ check_weights <- function(x, type) {
       "At least one element of each row of {.arg x} must be positive."
     )
     x[] <- x / rs
-  } else if (type %in% c("frequency", "co-occurrence")) {
+  } else if (type %in% c("frequency", "co-occurrence", "reverse", "window")) {
     x_int <- as.integer(x)
     stopifnot_(
       all(x == x_int) && all(x >= 0),

@@ -192,3 +192,19 @@ test_that("comparison results can be plotted", {
     NA
   )
 })
+
+test_that("pruned models can be plotted", {
+  model_pruned <- prune(mock_tna)
+  expect_error(
+    plot(model_pruned),
+    NA
+  )
+})
+
+test_that("mosaic can be plotted", {
+  ftna_model <- ftna(engagement)
+  expect_error(
+    plot_mosaic(ftna_model),
+    NA
+  )
+})

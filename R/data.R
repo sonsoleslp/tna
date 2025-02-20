@@ -311,6 +311,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
   message_("Number of values to parse: {.val {length(time)}}")
   message_("Sample values: {.val {utils::head(time, 3)}}")
   # Handle Unix timestamps
+  time_original <- time
   if (is.numeric(time) && is_unix_time) {
     parsed_time <- switch(
       unix_time_unit,
@@ -454,7 +455,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
       "9. Month names (e.g., 09 Jan 2023 18:44:00, January 09 2023 18:44:00)",
       "10. All above formats without seconds (HH:MM)",
       "11. Unix timestamps (numeric)",
-      "Sample of problematic values: {.val {utils::head(time, 3)}}.",
+      "Sample of problematic values: {.val {utils::head(time_original, 3)}}.",
       "Consider providing a custom format
        using the {.arg custom_format} argument."
     )

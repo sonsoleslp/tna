@@ -34,6 +34,10 @@
 #'   * `"window"` creates transitions between all states within a
 #'       sliding window, capturing local relationships
 #'       (several sequences together).
+#'   * `"reverse"` considers the sequences in reverse order
+#'       (resulting in what is called a reply network in some contexts).
+#'       The resulting weight matrix is the transpose of the `"frequency"`
+#'       option.
 #'
 #' @param scaling A `character` vector describing how to scale the weights
 #'   defined by `type`. When a vector is provided, the scaling options are
@@ -48,7 +52,7 @@
 #'   * `"max"` Multiplies the weights by the reciprocal of the largest weight
 #'       to scale the weights to the unit interval. This options preserves
 #'       positive ranks, unlike `"minmax"` when all weights are positive.
-#'   * `"rank"` Computes the ranks of the weights using [rank()] with
+#'   * `"rank"` Computes the ranks of the weights using [base::rank()] with
 #'       `ties.method = "average"`.
 #'
 #' @param inits An optional `numeric` vector of initial state probabilities
@@ -63,6 +67,10 @@
 #'       largest allowed gap size. The default is 1.
 #'   * `window_size`: An `integer` for the sliding window transitions
 #'       specifying the window size. The default is 2.
+#'   * `weighted`: A `logical` value. If `TRUE`, the transitions
+#'      are weighted by the inverse of the sequence length. Can be used for
+#'      frequency, co-occurrence and reverse model types. The default is
+#'      `FALSE`.
 #'
 #' @param ... Ignored.
 #' @return An object of class `tna` which is a `list` containing the
@@ -392,15 +400,27 @@ compute_transitions <- function(m, a, type, params) {
   p <- ncol(m)
   idx <- seq_len(n)
   trans <- array(0L, dim = c(n, a, a))
+  seq_lengths <- apply(m, 1L, function(x) sum(!is.na(x)))
+  weight <- ifelse_(isTRUE(params$weighted), 1.0 / seq_lengths, rep(1L, n))
   if (type %in% c("relative", "frequency")) {
+    weight <- ifelse_(type == "frequency", weight, rep(1L, n))
     for (i in seq_len(p - 1L)) {
       from <- m[, i]
       to <- m[, i + 1L]
       any_na <- is.na(from) | is.na(to)
       new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-      trans[new_trans] <- trans[new_trans] + 1L
+      trans[new_trans] <- trans[new_trans] + weight[!any_na]
     }
-  } else if (type == "co-occurrence") {
+  } else if (type == "reverse") {
+    for (i in seq_len(p - 1L)) {
+      from <- m[, i + 1L]
+      to <- m[, i]
+      any_na <- is.na(from) | is.na(to)
+      new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+      trans[new_trans] <- trans[new_trans] + weight[!any_na]
+    }
+  }
+  else if (type == "co-occurrence") {
     for (i in seq_len(p - 1L)) {
       for (j in seq(i + 1L, p)) {
         from <- m[, i]
@@ -410,7 +430,7 @@ compute_transitions <- function(m, a, type, params) {
           cbind(idx, from, to)[!any_na, , drop = FALSE],
           cbind(idx, to, from)[!any_na, , drop = FALSE]
         )
-        trans[new_trans] <- trans[new_trans] + 1L
+        trans[new_trans] <- trans[new_trans] + weight[!any_na]
       }
     }
   } else if (type == "n-gram") {

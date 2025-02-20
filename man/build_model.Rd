@@ -85,6 +85,10 @@ transitions weighted by the gap size.
 \item \code{"window"} creates transitions between all states within a
 sliding window, capturing local relationships
 (several sequences together).
+\item \code{"reverse"} considers the sequences in reverse order
+(resulting in what is called a reply network in some contexts).
+The resulting weight matrix is the transpose of the \code{"frequency"}
+option.
 }}
 
 \item{scaling}{A \code{character} vector describing how to scale the weights
@@ -100,7 +104,7 @@ will be zero after scaling.
 \item \code{"max"} Multiplies the weights by the reciprocal of the largest weight
 to scale the weights to the unit interval. This options preserves
 positive ranks, unlike \code{"minmax"} when all weights are positive.
-\item \code{"rank"} Computes the ranks of the weights using \code{\link[=rank]{rank()}} with
+\item \code{"rank"} Computes the ranks of the weights using \code{\link[base:rank]{base::rank()}} with
 \code{ties.method = "average"}.
 }}
 
@@ -119,6 +123,10 @@ adjacent events. The default value is 2.
 largest allowed gap size. The default is 1.
 \item \code{window_size}: An \code{integer} for the sliding window transitions
 specifying the window size. The default is 2.
+\item \code{weighted}: A \code{logical} value. If \code{TRUE}, the transitions
+are weighted by the inverse of the sequence length. Can be used for
+frequency, co-occurrence and reverse model types. The default is
+\code{FALSE}.
 }}
 
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the

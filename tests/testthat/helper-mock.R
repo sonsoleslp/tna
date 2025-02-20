@@ -29,3 +29,20 @@ mock_tna <- tna(
 )
 
 mmm_model <- group_tna(engagement_mmm)
+
+mock_long <- data.frame(
+  time = rep(1:5, 4),
+  group = rep(1:4, each = 5),
+  event =  as.vector(t(as.matrix(mock_sequence)))
+)
+
+{
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  mock_tna_data <- prepare_data(
+    mock_long,
+    time = "time",
+    actor = "group",
+    action = "event"
+  )
+}
+

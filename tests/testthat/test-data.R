@@ -57,3 +57,34 @@ test_that("data preparation works when only action is provided", {
     NA
   )
 })
+
+test_that("unix time from character column works", {
+  mock_long_unix <- mock_long
+  mock_long_unix$time <- as.POSIXct("2023-01-01 00:00:00") |>
+    as.numeric() |>
+    as.character()
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_error(
+    data_out <- prepare_data(
+      mock_long_unix,
+      time = "time",
+      actor = "group",
+      action = "event"
+    ),
+    NA
+  )
+})
+
+test_that("unsupported date format fails", {
+  time <- rep("2025#02#02", 5)
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_error(
+    parse_time(
+      time,
+      custom_format = NULL,
+      is_unix_time = FALSE,
+      unix_time_unit = "secs"
+    ),
+    "Could not parse time values"
+  )
+})
