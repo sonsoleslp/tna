@@ -35,17 +35,19 @@ Transition Network Analysis (TNA). TNA provides tools for building TNA models,
 plotting transition networks, calculating centrality measures, and identifying 
 dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
 and permutation tests) ensure the reliability of observed insights and confirm
-that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.48550/arXiv.2411.15486) for more details on TNA.
+that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.1145/3706468.3706513) for more details on TNA. Also, check out our tutorials on the [basics](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)  of TNA, [frequency-based ](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html) TNA, and  [clustering](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) with TNA.
 
+![Outline of TNA](man/figures/method.png)
 
 ## Installation
 
 You can install the most recent stable version of `tna` from [CRAN](https://cran.r-project.org/package=tna) or the development version from [GitHub](https://github.com/) by running one of the following:
 
 ```{r, eval = FALSE}
-# install.packages("devtools")
 install.packages("tna")
-devtools::install_github("sonsoleslp/tna")
+
+# install.packages("devtools")
+# devtools::install_github("sonsoleslp/tna")
 ```
 
 ## Example
@@ -71,13 +73,17 @@ summary(tna_model)
 ```{r, echo=FALSE}
 summary(tna_model) |>
   gt::gt() |>
-  gt::fmt_number(decimals  = 2) |>
+  gt::fmt_number(decimals = 2) |>
   gt::as_raw_html()
 ```
 
 Plot the transition network
 ```{r tnaplot}
-plot(tna_model, cut = 0.3)
+# Default plot
+plot(tna_model) 
+# Optimized plot
+plot(tna_model, cut = 0.2, minimum = 0.05, 
+     edge.label.position= 0.8, edge.label.cex = 0.7)
 ```
 Calculate the centrality measures
 ```{r}
@@ -143,6 +149,7 @@ Compare centralities
 ```{r, eval = FALSE}
 print(comparison$centralities$stats)
 ```
+
 ```{r, echo = FALSE}
 comparison$centralities$stats |> 
   gt::gt() |> 
