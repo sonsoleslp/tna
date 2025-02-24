@@ -39,6 +39,7 @@ Cluster-related functions
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot_compare.group_tna}()},
+\code{\link{plot_mosaic.group_tna}()},
 \code{\link{plot_mosaic.tna_data}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},

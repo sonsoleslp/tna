@@ -55,6 +55,7 @@ group_model.default <- function(x, group, cols, ...) {
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
   }
   group_len <- length(group)
+  label <- NULL
   stopifnot_(
     group_len == nrow(x) || group_len == 1L,
     "Argument {.arg group} must be of length one or the same length as the
@@ -66,6 +67,7 @@ group_model.default <- function(x, group, cols, ...) {
       "Argument {.arg group} must be a column name of {.arg x}
        when of length one."
     )
+    label <- group
     group <- x[[group]]
   }
   group <- ifelse_(
@@ -82,7 +84,13 @@ group_model.default <- function(x, group, cols, ...) {
   for (i in levs) {
     clusters[[i]] <- build_model(x[group == i, ], cols = cols, ...)
   }
-  structure(clusters, class = "group_tna")
+  structure(
+    clusters,
+    group = group,
+    label = label,
+    cols = cols,
+    class = "group_tna"
+  )
 }
 
 #' @export

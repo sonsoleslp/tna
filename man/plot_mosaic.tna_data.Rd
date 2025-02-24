@@ -7,7 +7,7 @@
 \method{plot_mosaic}{tna_data}(x, group, label = "Group", digits = 1, ...)
 }
 \arguments{
-\item{x}{A \code{group_tna} object.}
+\item{x}{A \code{tna_data} object.}
 
 \item{group}{A \code{character} string giving the column name of the (meta) data
 to contrast the frequencies with or a vector of group indicators with the
@@ -56,6 +56,7 @@ Cluster-related functions
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot_compare.group_tna}()},
+\code{\link{plot_mosaic.group_tna}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_centralities}()},

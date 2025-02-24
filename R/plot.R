@@ -1210,7 +1210,7 @@ plot_compare.group_tna <- function(x, i = 1, j = 2, ...) {
 #'
 #' @export
 #' @family clusters
-#' @param x A `group_tna` object.
+#' @param x A `tna_data` object.
 #' @param digits An `integer` that determines the number of digits to use
 #' for the chi-square test statistic and the p-value in the plot.
 #' @param group A `character` string giving the column name of the (meta) data
@@ -1260,6 +1260,50 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
   )
   wide <- cbind(x$sequence_data, group)
   names(wide) <- c(names(x$sequence_data), label)
+  long <- wide |>
+    tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
+    tidyr::drop_na()
+  tab <- table(long[[label]], long$value)
+  plot_mosaic_(
+    tab,
+    digits,
+    title = paste0("State frequency by ", label),
+    xlab = label,
+    ylab = "State"
+  )
+}
+
+#' Plot state frequencies as a mosaic between two groups
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna` object.
+#' @param label A `character` string that can be provided to specify the
+#' grouping factor name if `x` was not constructed using a column name of the
+#' original data.
+#' @inheritParams plot_mosaic.tna_data
+#' @param ... Ignored.
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' plot_mosaic(model)
+#'
+plot_mosaic.group_tna <- function(x, label = NULL, digits = 1, ...) {
+  check_class(x, "group_tna")
+  d <- dplyr::bind_rows(
+    lapply(x, "[[", "data")
+  )
+  cols <- attr(x, "cols")
+  label <- ifelse_(
+    is.null(label),
+    attr(x, "label")
+  )
+  label <- ifelse_(
+    is.null(label),
+    "Cluster"
+  )
+  group <- attr(x, "group")
+  wide <- cbind(d[, cols], group)
+  names(wide) <- c(names(d[, cols]), label)
   long <- wide |>
     tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
     tidyr::drop_na()
