@@ -4,14 +4,15 @@
 \alias{print.tna_data}
 \title{Print a TNA data object}
 \usage{
-\method{print}{tna_data}(x, format = "wide", ...)
+\method{print}{tna_data}(x, data = "sequence", ...)
 }
 \arguments{
 \item{x}{A \code{tna_data} object.}
 
-\item{format}{A \code{character} string that defines the format of the printed
-tibble. Accepts either \code{"wide"} (default) for wide format data or \code{"long"}
-for long format.}
+\item{data}{A \code{character} string that defines the data to be printed
+tibble. Accepts either \code{"sequence"} (default) for wide format sequence data,
+\code{"meta"}, for the wide format metadata, or \code{"long"} for the long format
+data.}
 
 \item{...}{Arguments passed to the tibble \code{print} method.}
 }
@@ -28,7 +29,8 @@ data_single_session <- tibble::tibble(
    )
 )
 results_single <- prepare_data(data_single_session, action = "action")
-print(results_single, format = "wide")
-print(results_single, format = "long")
+print(results_single, which = "sequence")
+print(results_single, which = "meta")
+print(results_single, which = "long")
 
 }

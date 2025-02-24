@@ -864,15 +864,22 @@ plot_model <- function(x, labels, colors,
 #' Create a mosaic plot of transitions
 #'
 #' @export
-#' @param x A `tna` object.
+#' @param x A `tna` or a `group_tna` object.
 #' @param digits An `integer` that determines the number of digits to use
 #' for the chi-square test statistic and the p-value in the plot.
+#' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
 #' ftna_model <- ftna(group_regulation)
 #' plot_mosaic(ftna_model)
 #'
-plot_mosaic <- function(x, digits = 1) {
+plot_mosaic <- function(x, ...) {
+  UseMethod("plot_mosaic")
+}
+
+#' @export
+#' @rdname plot_mosaic
+plot_mosaic.tna <- function(x, digits = 1, ...) {
   # from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
   # Based on the code by Jake Fisher and cpsyctc.
   check_missing(x)
@@ -881,25 +888,37 @@ plot_mosaic <- function(x, digits = 1) {
     attr(x, "type") %in% c("frequency", "co-occurrence"),
     "Mosaic plots are supported only for integer-valued weight matrices."
   )
-  tab <- as.table(x$weights)
-  n <- ncol(x$weights)
+  plot_mosaic_(
+    as.table(t(x$weights)),
+    digits,
+    title = "Mosaic plot of outgoing against incoming transitions:",
+    xlab = "Incoming",
+    ylab = "Outgoing"
+  )
+}
+
+plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
+  n <- nrow(tab)
+  m <- ncol(tab)
   widths <- c(0, cumsum(apply(tab, 1L, sum))) / sum(tab)
   heights <- apply(tab, 1L, function(y) c(0, cumsum(y / sum(y))))
-  d <- data.frame(xmin = rep(0, n^2), xmax = 0, ymin = 0, ymax = 0)
+  d <- data.frame(xmin = rep(0, n * m), xmax = 0, ymin = 0, ymax = 0)
   for (i in seq_len(n)) {
-    for (j in seq_len(n)) {
-      row <- (i - 1) * n + j
+    for (j in seq_len(m)) {
+      row <- (i - 1) * m + j
       row_offset <- (i - 1) * n * 0.0025
-      col_offset <- (j - 1) * n * 0.0025
+      col_offset <- (j - 1) * m * 0.0025
       d[row, "xmin"] <- widths[i] + row_offset
       d[row, "xmax"] <- widths[i + 1] + row_offset
       d[row, "ymin"] <- heights[j, i] + col_offset
       d[row, "ymax"] <- heights[j + 1, i] + col_offset
+      d[row, "freq"] <- tab[i, j]
     }
   }
-  d$from <- rep(dimnames(tab)[[1]], rep(n, n))
-  d$to <- rep(dimnames(tab)[[2]], n)
-  chisq <- stats::chisq.test(tab)
+  d$row <- rep(dimnames(tab)[[1]], m)
+  d$col <- rep(dimnames(tab)[[2]], each = n)
+  # TODO suppress for now
+  chisq <- suppressWarnings(stats::chisq.test(tab))
   df <- chisq$parameter
   pval <- chisq$p.value
   chisqval <- chisq$statistic
@@ -913,10 +932,9 @@ plot_mosaic <- function(x, digits = 1) {
     labels = c("<-4", "-4:-2", "-2:0", "0:2", "2:4", ">4"),
     ordered_result = TRUE
   )
-  title_text <- "Mosaic plot of outgoing against incoming transitions:"
   title_chi <- bquote(
-    .(title_text) ~~
-    {chi^2}[.(df)] ~ " = " ~
+    .(title) ~~
+      {chi^2}[.(df)] ~ " = " ~
       .(round(chisqval, digits)) * ", p =" ~ .(format.pval(pval, digits))
   )
   out <-
@@ -965,7 +983,8 @@ plot_mosaic <- function(x, digits = 1) {
       axis.line = ggplot2::element_blank(),
       axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5),
       axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
-    )
+    ) +
+    ggplot2::labs(x = xlab, y = ylab)
   out
 }
 
@@ -1183,30 +1202,73 @@ plot.group_tna_stability <- function(x, ...) {
 plot_compare.group_tna <- function(x, i = 1, j = 2, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  stopifnot_(
-    !identical(i, j),
-    "Arguments {.arg i} and {.arg j} must be different."
-  )
-  i <- ifelse_(is.numeric(i), as.integer(i), i)
-  j <- ifelse_(is.numeric(j), as.integer(j), j)
-  n <- length(x)
-  for (arg in c("i", "j")) {
-    idx <- eval(rlang::sym(arg))
-    stopifnot_(
-      length(idx) == 1L && (is.integer(idx) || is.character(idx)),
-      "Argument {.arg {arg}} must be a {.cls numeric} or a {.cls character}
-      vector of length 1."
-    )
-    stopifnot_(
-      is.integer(idx) || idx %in% names(x),
-      "Argument {.arg {arg}} must be a name of {.arg x} when of type
-      {.cls character}."
-    )
-    stopifnot_(
-      is.character(idx) || (idx >= 1 && idx <= n),
-      "Argument {.arg {arg}} must be between 1 and {n} when of type
-      {.cls numeric}."
-    )
-  }
+  check_clusters(x, i, j)
   plot_compare(x = x[[i]], y = x[[j]], ...)
+}
+
+#' Plot state frequencies as a mosaic between two groups
+#'
+#' @export
+#' @family clusters
+#' @param x A `group_tna` object.
+#' @param digits An `integer` that determines the number of digits to use
+#' for the chi-square test statistic and the p-value in the plot.
+#' @param group A `character` string giving the column name of the (meta) data
+#' to contrast the frequencies with or a vector of group indicators with the
+#' the same length as the number of rows in the sequence data.
+#' @param label An optional `character` string that specifies a label for the
+#' grouping variable when `group` is not a column name of the data.
+#' @param ... Ignored.
+#' @examples
+#' d <- data.frame(
+#'   time = rep(1:5, rep = 4),
+#'   group = rep(1:4, each = 5),
+#'   event = sample(LETTERS[1:3], 20, replace = TRUE)
+#' )
+#' sequence_data <- prepare_data(
+#'   d,
+#'   time = "time",
+#'   actor = "group",
+#'   action = "event"
+#' )
+#' plot_mosaic(sequence_data, group = "group")
+#'
+plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
+  check_missing(x)
+  check_class(x, "tna_data")
+  check_missing(group)
+  check_string(label)
+  group_len <- length(group)
+  stopifnot_(
+    group_len == nrow(x$sequence_data) || group_len == 1L,
+    "Argument {.arg group} must be of length one or the same length as the
+     number of rows/sequences in {.arg x}."
+  )
+  if (group_len == 1L) {
+    stopifnot_(
+      group %in% names(x$meta_data),
+      "Argument {.arg group} must be a column name of the input data
+       when of length one."
+    )
+    label <- group
+    group <- x$meta_data[[group]]
+  }
+  group <- ifelse_(
+    is.factor(group),
+    group,
+    factor(group)
+  )
+  wide <- cbind(x$sequence_data, group)
+  names(wide) <- c(names(x$sequence_data), label)
+  long <- wide |>
+    tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
+    tidyr::drop_na()
+  tab <- table(long[[label]], long$value)
+  plot_mosaic_(
+    tab,
+    digits,
+    title = paste0("State frequency by ", label),
+    xlab = label,
+    ylab = "State"
+  )
 }

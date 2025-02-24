@@ -2,12 +2,17 @@
 % Please edit documentation in R/plot.R
 \name{plot_mosaic}
 \alias{plot_mosaic}
+\alias{plot_mosaic.tna}
 \title{Create a mosaic plot of transitions}
 \usage{
-plot_mosaic(x, digits = 1)
+plot_mosaic(x, ...)
+
+\method{plot_mosaic}{tna}(x, digits = 1, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A \code{tna} or a \code{group_tna} object.}
+
+\item{...}{Ignored.}
 
 \item{digits}{An \code{integer} that determines the number of digits to use
 for the chi-square test statistic and the p-value in the plot.}

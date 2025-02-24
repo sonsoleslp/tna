@@ -29,6 +29,7 @@
 #' * `"quantile"`: Uses the empirical quantiles of the weights
 #'   via [stats::ecdf].
 #'
+#' @param ... Ignored.
 #' @return A `tna_comparison` object, which is a `list` containing the
 #' following elements:
 #'
@@ -55,10 +56,51 @@
 #' mat_y <- model_y$weights
 #' comp2 <- compare(mat_x, mat_y)
 #'
-#' # Comparing matric to a TNA model
+#' # Comparing a matrix to a TNA model
 #' comp3 <- compare(mat_x, model_y)
 #'
-compare <- function(x, y, scaling = "none") {
+compare <- function(x, ...) {
+  UseMethod("compare")
+}
+
+#' @export
+#' @rdname compare
+compare.tna <- function(x, y, scaling = "none", ...) {
+  compare_(x, y, scaling = scaling, ...)
+}
+
+#' @export
+#' @rdname compare
+compare.matrix <- function(x, y, scaling = "none", ...) {
+  compare_(x, y, scaling = scaling, ...)
+}
+
+#' Compare TNA Clusters with Comprehensive Metrics
+#'
+#' @export
+#' @param x A `group_tna` object.
+#' @param i An `integer` index or the name of the principal cluster as a
+#' `character` string.
+#' @param j An `integer` index or the name of the secondary cluster as a
+#' `character` string.
+#' @param scaling See [compare.tna()].
+#' @param ... Additional arguments passed to [compare.tna()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' compare(model, i = 1, j = 2)
+#'
+compare.group_tna <- function(x, i, j, scaling = "none", ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  check_clusters(x, i, j)
+  compare_(x = x[[i]], y = x[[j]], scaling = scaling, ...)
+}
+
+#' Internal compare function
+#'
+#' @inheritParams compare
+#' @noRd
+compare_ <- function(x, y, scaling = "none", ...) {
   stopifnot_(
     is_tna(x) || is.matrix(x),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
@@ -185,24 +227,27 @@ compare <- function(x, y, scaling = "none") {
       "Manhattan",
       "Chebyshev",
       "Canberra",
-      "Bray-Curtis"
+      "Bray-Curtis",
+      "Frobenius"
     ),
     value = c(
       sqrt(sum(abs_diff^2)),
       sum(abs_diff),
       max(abs_diff),
       sum(abs_diff[pos] / (abs_x[pos] + abs_y[pos])),
-      sum(abs_diff) / sum(abs_x + abs_y)
+      sum(abs_diff) / sum(abs_x + abs_y),
+      sqrt(sum(abs_diff^2)) / sqrt(n / 2)
     )
   )
   similarities <- data.frame(
     category = "Similarities",
-    metric = c("Cosine", "Jaccard", "Dice", "Overlap", "RV"),
+    metric = c("Cosine", "Jaccard", "Dice", "Overlap", "Frobenius", "RV"),
     value = c(
       sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2))),
       sum(pmin(abs_x, abs_y)) / sum(pmax(abs_x, abs_y)),
       2 * sum(pmin(abs_x, abs_y)) / (sum(abs_x) + sum(abs_y)),
       sum(pmin(abs_x, abs_y)) / min(sum(abs_x), sum(abs_y)),
+      1.0 / (1.0 + sqrt(sum(abs_diff^2)) / sqrt(n / 2)),
       rv_coefficient(x, y)
     )
   )

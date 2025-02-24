@@ -164,11 +164,15 @@ test_that("tna_data objects can be printed", {
   rlang::local_options(rlib_message_verbosity = "quiet")
   data_out <- prepare_data(data_single_session, action = "action")
   expect_error(
-    capture.output(print(data_out)),
+    capture.output(print(data_out, data = "sequence")),
     NA
   )
   expect_error(
-    capture.output(print(data_out, format = "long")),
+    capture.output(print(data_out, data = "meta")),
+    NA
+  )
+  expect_error(
+    capture.output(print(data_out, data = "long")),
     NA
   )
 })

@@ -228,7 +228,8 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
   check_class(x, "tna_data")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x$wide_format, cols = attr(x, "time_cols"))
+  wide <- cbind(x$sequence_data, x$meta_data)
+  x <- create_seqdata(wide, cols = seq_len(ncol(x$sequence_data)))
   model <- initialize_model(x, type, scaling, params, ...)
   build_model_(
     weights = model$weights,
@@ -309,14 +310,12 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param x A `data.frame` or a `stslist` object.
 #' @noRd
 create_seqdata <- function(x, cols) {
-  time_cols <- NULL
   cols <- ifelse_(
     is.character(cols),
     which(names(x) %in% cols),
     cols
   )
   if (inherits(x, "stslist")) {
-    time_cols <- seq_len(ncol(x)) %in% cols
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
     colors <- attr(x, "cpal")
@@ -327,22 +326,17 @@ create_seqdata <- function(x, cols) {
     )
     out <- as.data.frame(x)
   } else if (is.data.frame(x)) {
-    time_cols <- ifelse_(
-      is.logical(cols),
-      cols,
-      seq_len(ncol(x)) %in% cols
-    )
-    vals <- sort(unique(unlist(x[, time_cols])))
+    vals <- sort(unique(unlist(x[, cols])))
     alphabet <- labels <- vals[!is.na(vals)]
     colors <- color_palette(length(labels))
     out <- x
-    out[, time_cols] <- as.data.frame(
-      lapply(x[, time_cols], function(y) factor(y, levels = vals))
+    out[, cols] <- as.data.frame(
+      lapply(x[, cols], function(y) factor(y, levels = vals))
     )
   }
-  out[, time_cols] <- as.data.frame(
+  out[, cols] <- as.data.frame(
     lapply(
-      out[, time_cols],
+      out[, cols],
       function(y) {
         as.integer(replace(y, which(!y %in% alphabet), NA))
       }
@@ -354,7 +348,7 @@ create_seqdata <- function(x, cols) {
     alphabet = alphabet,
     labels = labels,
     colors = colors,
-    time_cols = time_cols
+    cols = cols
   )
 }
 
@@ -370,8 +364,8 @@ create_seqdata <- function(x, cols) {
 initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
-  time_cols <- attr(x, "time_cols")
-  m <- as.matrix(x[, time_cols])
+  cols <- attr(x, "cols")
+  m <- as.matrix(x[, cols])
   a <- length(alphabet)
   inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))

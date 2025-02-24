@@ -48,8 +48,9 @@ group_model.default <- function(x, group, cols, ...) {
     {.cls data.frame} or a {.cls tna_data} object."
   )
   if (inherits(x, "tna_data")) {
-    cols <- which(attr(x, "time_cols"))
-    x <- x$wide_format
+    wide <- cbind(x$sequence_data, x$meta_data)
+    cols <- seq_len(ncol(x$sequence_data))
+    x <- wide
   } else {
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
   }

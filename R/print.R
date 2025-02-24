@@ -235,9 +235,10 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 #'
 #' @export
 #' @param x A `tna_data` object.
-#' @param format A `character` string that defines the format of the printed
-#' tibble. Accepts either `"wide"` (default) for wide format data or `"long"`
-#' for long format.
+#' @param data A `character` string that defines the data to be printed
+#' tibble. Accepts either `"sequence"` (default) for wide format sequence data,
+#' `"meta"`, for the wide format metadata, or `"long"` for the long format
+#' data.
 #' @param ... Arguments passed to the tibble `print` method.
 #' @return `x` (invisibly).
 #' @examples
@@ -247,18 +248,16 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 #'    )
 #' )
 #' results_single <- prepare_data(data_single_session, action = "action")
-#' print(results_single, format = "wide")
-#' print(results_single, format = "long")
+#' print(results_single, which = "sequence")
+#' print(results_single, which = "meta")
+#' print(results_single, which = "long")
 #'
-print.tna_data <- function(x, format = "wide", ...) {
+print.tna_data <- function(x, data = "sequence", ...) {
   check_missing(x)
   check_class(x, "tna_data")
-  format <- check_match(format, c("wide", "long"))
-  if (format == "wide") {
-    print(x$wide_format, ...)
-  } else {
-    print(x$long_format, ...)
-  }
+  data <- check_match(data, c("sequence", "meta", "long"))
+  idx <- paste0(data, "_data")
+  print(x[[idx]])
 }
 
 #' Print Centrality Stability Results

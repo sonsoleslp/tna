@@ -34,9 +34,10 @@
 #' use the first value.
 #' @return A `tna_data` object, which is a `list` with the following elements:
 #'
-#' * `long_format`: The processed data in long format.
-#' * `wide_format`: The processed data in wide format, with actions/events as
-#' different variables structured with sequences.
+#' * `long_data`: The processed data in long format.
+#' * `sequence_data`: The processed data on the sequences in wide format,
+#' with actions/events as different variables structured with sequences.
+#' * `meta_data`: Other variables from the original data in wide format.
 #' * `statistics`: A `list` containing summary statistics: total
 #' sessions, total actions, unique users, time range (if applicable), and
 #' top sessions and user by activities.
@@ -58,7 +59,8 @@
 #' results <- prepare_data(
 #'   data, actor = "user", time = "time", action = "action"
 #' )
-#' print(results$wide_format)
+#' print(results$sequence_data)
+#' print(results$meta_data)
 #' print(results$statistics)
 #'
 #' data_ordered <- tibble::tibble(
@@ -72,7 +74,8 @@
 #' results_ordered <- prepare_data(
 #'   data_ordered, actor = "user", order = "order", action = "action"
 #' )
-#' print(results_ordered$wide_format)
+#' print(results_ordered$sequence_data)
+#' print(results_ordered$meta_data)
 #' print(results_ordered$statistics)
 #'
 #' data_single_session <- tibble::tibble(
@@ -81,7 +84,8 @@
 #'    )
 #' )
 #' results_single <- prepare_data(data_single_session, action = "action")
-#' print(results_single$wide_format)
+#' print(results_single$sequence_data)
+#' print(results_single$meta_data)
 #' print(results_single$statistics)
 #'
 prepare_data <- function(data, actor, time, action, order,
@@ -125,18 +129,18 @@ prepare_data <- function(data, actor, time, action, order,
       `x` = "The following columns were not found in the data: {cols_mis}."
     )
   )
-  long_format <- data
+  long_data <- data
   default_actor <- FALSE
   default_order <- FALSE
   if (missing(actor)) {
     # Placeholder actor column
     actor <- ".actor"
-    long_format$.actor <- "session"
+    long_data$.actor <- "session"
     default_actor <- TRUE
   }
   if (missing(order)) {
     order <- ".order"
-    long_format$.order <- seq_len(nrow(data))
+    long_data$.order <- seq_len(nrow(data))
     default_order <- TRUE
   }
   if (!missing(time)) {
@@ -162,7 +166,7 @@ prepare_data <- function(data, actor, time, action, order,
       "Time threshold for new session: {.val {time_threshold}} seconds"
     )
     # Create processed data (long format)
-    long_format <- long_format |>
+    long_data <- long_data |>
       dplyr::mutate(.standardized_time = parsed_times) |>
       dplyr::arrange(
         !!rlang::sym(actor),
@@ -190,8 +194,8 @@ prepare_data <- function(data, actor, time, action, order,
       dplyr::mutate(.sequence = dplyr::row_number()) |>
       dplyr::ungroup()
 
-    long_format$.time_gap <- NULL
-    long_format$.new_session <- NULL
+    long_data$.time_gap <- NULL
+    long_data$.new_session <- NULL
   } else {
     msg <- ifelse_(
       default_order,
@@ -206,7 +210,7 @@ prepare_data <- function(data, actor, time, action, order,
       "Using provided {.arg order} column to create sequences."
     )
     message_(msg)
-    long_format <- long_format |>
+    long_data <- long_data |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
         .session_id = !!rlang::sym(actor),
@@ -215,15 +219,15 @@ prepare_data <- function(data, actor, time, action, order,
       dplyr::ungroup()
   }
   if (default_actor) {
-    long_format$.actor <- NULL
+    long_data$.actor <- NULL
   }
   if (default_order) {
-    long_format$.order <- NULL
+    long_data$.order <- NULL
   }
 
   # Create wide format
   message_("Creating wide format view of sessions...")
-  wide_format <- long_format |>
+  wide_data <- long_data |>
     tidyr::pivot_wider(
       id_cols = .session_id,
       names_prefix = "T",
@@ -233,26 +237,30 @@ prepare_data <- function(data, actor, time, action, order,
     ) |>
     dplyr::arrange(.session_id)
 
+  time_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
+  sequence_data <- wide_data[, time_cols]
+  meta_data <- wide_data[, !time_cols]
+
   # Calculate statistics
   stats <- list(
-    total_sessions = dplyr::n_distinct(long_format$.session_id),
-    total_actions = nrow(long_format),
-    max_sequence_length = max(long_format$.sequence)
+    total_sessions = dplyr::n_distinct(long_data$.session_id),
+    total_actions = nrow(long_data),
+    max_sequence_length = max(long_data$.sequence)
   )
   if (!default_actor) {
-    stats$unique_users <- dplyr::n_distinct(long_format[[actor]])
-    stats$sessions_per_user <- long_format |>
+    stats$unique_users <- dplyr::n_distinct(long_data[[actor]])
+    stats$sessions_per_user <- long_data |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::summarize(n_sessions = dplyr::n_distinct(.session_id)) |>
       dplyr::arrange(dplyr::desc(n_sessions))
   }
-  stats$actions_per_session <- long_format |>
+  stats$actions_per_session <- long_data |>
     dplyr::group_by(.session_id) |>
     dplyr::summarize(n_actions = dplyr::n()) |>
     dplyr::arrange(dplyr::desc(n_actions))
 
   if (!missing(time)) {
-    stats$time_range <- range(long_format$.standardized_time)
+    stats$time_range <- range(long_data$.standardized_time)
   }
 
   # Print summary statistics
@@ -287,11 +295,11 @@ prepare_data <- function(data, actor, time, action, order,
   )
   structure(
     list(
-      long_format = long_format,
-      wide_format = wide_format,
+      long_data = long_data,
+      sequence_data = sequence_data,
+      meta_data = meta_data,
       statistics = stats
     ),
-    time_cols = grepl("^T[0-9]+$", names(wide_format), perl = TRUE),
     class = "tna_data"
   )
 }

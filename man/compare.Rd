@@ -2,12 +2,20 @@
 % Please edit documentation in R/compare.R
 \name{compare}
 \alias{compare}
+\alias{compare.tna}
+\alias{compare.matrix}
 \title{Compare Two Matrices or TNA Models with Comprehensive Metrics}
 \usage{
-compare(x, y, scaling = "none")
+compare(x, ...)
+
+\method{compare}{tna}(x, y, scaling = "none", ...)
+
+\method{compare}{matrix}(x, y, scaling = "none", ...)
 }
 \arguments{
 \item{x}{A \code{tna} object or a \code{matrix} of weights.}
+
+\item{...}{Ignored.}
 
 \item{y}{A \code{tna} object or a \code{matrix} of weights.}
 
@@ -67,7 +75,7 @@ mat_x <- model_x$weights
 mat_y <- model_y$weights
 comp2 <- compare(mat_x, mat_y)
 
-# Comparing matric to a TNA model
+# Comparing a matrix to a TNA model
 comp3 <- compare(mat_x, model_y)
 
 }

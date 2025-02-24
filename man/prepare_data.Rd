@@ -57,9 +57,10 @@ use the first value.}
 \value{
 A \code{tna_data} object, which is a \code{list} with the following elements:
 \itemize{
-\item \code{long_format}: The processed data in long format.
-\item \code{wide_format}: The processed data in wide format, with actions/events as
-different variables structured with sequences.
+\item \code{long_data}: The processed data in long format.
+\item \code{sequence_data}: The processed data on the sequences in wide format,
+with actions/events as different variables structured with sequences.
+\item \code{meta_data}: Other variables from the original data in wide format.
 \item \code{statistics}: A \code{list} containing summary statistics: total
 sessions, total actions, unique users, time range (if applicable), and
 top sessions and user by activities.
@@ -88,7 +89,8 @@ data <- tibble::tibble(
 results <- prepare_data(
   data, actor = "user", time = "time", action = "action"
 )
-print(results$wide_format)
+print(results$sequence_data)
+print(results$meta_data)
 print(results$statistics)
 
 data_ordered <- tibble::tibble(
@@ -102,7 +104,8 @@ data_ordered <- tibble::tibble(
 results_ordered <- prepare_data(
   data_ordered, actor = "user", order = "order", action = "action"
 )
-print(results_ordered$wide_format)
+print(results_ordered$sequence_data)
+print(results_ordered$meta_data)
 print(results_ordered$statistics)
 
 data_single_session <- tibble::tibble(
@@ -111,7 +114,8 @@ data_single_session <- tibble::tibble(
    )
 )
 results_single <- prepare_data(data_single_session, action = "action")
-print(results_single$wide_format)
+print(results_single$sequence_data)
+print(results_single$meta_data)
 print(results_single$statistics)
 
 }

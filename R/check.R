@@ -295,3 +295,37 @@ check_string <- function(x) {
     "Argument {.arg {arg}} must be a {.cls character} vector of length 1."
   )
 }
+
+#' Check that indices/names are valid clusters
+#'
+#' @param x A `group_tna` object.
+#' @param i Index of the first cluster.
+#' @param j Index of the second cluster.
+#' @noRd
+check_clusters <- function(x, i, j) {
+  i <- ifelse_(is.numeric(i), as.integer(i), i)
+  j <- ifelse_(is.numeric(j), as.integer(j), j)
+  stopifnot_(
+    !identical(i, j),
+    "Arguments {.arg i} and {.arg j} must be different."
+  )
+  n <- length(x)
+  for (arg in c("i", "j")) {
+    idx <- eval(rlang::sym(arg))
+    stopifnot_(
+      length(idx) == 1L && (is.integer(idx) || is.character(idx)),
+      "Argument {.arg {arg}} must be a {.cls numeric} or a {.cls character}
+      vector of length 1."
+    )
+    stopifnot_(
+      is.integer(idx) || idx %in% names(x),
+      "Argument {.arg {arg}} must be a name of {.arg x} when of type
+      {.cls character}."
+    )
+    stopifnot_(
+      is.character(idx) || (idx >= 1 && idx <= n),
+      "Argument {.arg {arg}} must be between 1 and {n} when of type
+      {.cls numeric}."
+    )
+  }
+}
