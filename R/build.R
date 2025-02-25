@@ -183,8 +183,12 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
   check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, cols)
-  model <- initialize_model(x, type, scaling, params, ...)
+  x <- create_seqdata(
+    x,
+    rows = list(...)$rows,
+    cols
+  )
+  model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
     inits = model$inits,
@@ -207,8 +211,12 @@ build_model.data.frame <- function(x, type = "relative",
   check_values(cols, strict = TRUE, scalar = FALSE)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, cols)
-  model <- initialize_model(x, type, scaling, params, ...)
+  x <- create_seqdata(
+    x,
+    rows = list(...)$rows,
+    cols = cols
+  )
+  model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
     inits = model$inits,
@@ -229,8 +237,12 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
-  x <- create_seqdata(wide, cols = seq_len(ncol(x$sequence_data)))
-  model <- initialize_model(x, type, scaling, params, ...)
+  x <- create_seqdata(
+    wide,
+    rows = list(...)$rows,
+    cols = seq_len(ncol(x$sequence_data))
+  )
+  model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
     inits = model$inits,
@@ -309,7 +321,7 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #'
 #' @param x A `data.frame` or a `stslist` object.
 #' @noRd
-create_seqdata <- function(x, cols) {
+create_seqdata <- function(x, rows = NULL, cols) {
   cols <- ifelse_(
     is.character(cols),
     which(names(x) %in% cols),
@@ -341,6 +353,11 @@ create_seqdata <- function(x, cols) {
         as.integer(replace(y, which(!y %in% alphabet), NA))
       }
     )
+  )
+  out <- ifelse_(
+    is.null(rows),
+    out,
+    out[rows, ]
   )
   structure(
     out,

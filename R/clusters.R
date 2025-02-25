@@ -107,12 +107,14 @@ group_model.default <- function(x, group, cols, na.rm = TRUE, ...) {
   group <- as.integer(group)
   for (i in seq_along(levs)) {
     groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))
-    clusters[[levs[i]]] <- build_model(x[which(group == i), ], cols = cols, ...)
+    rows <- which(group == i)
+    clusters[[levs[i]]] <- build_model(x, rows = rows, cols = cols, ...)
   }
   structure(
     clusters,
     groups = groups,
     group_var = group_var,
+    levels = levs,
     na.rm = na.rm,
     cols = cols,
     class = "group_tna"

@@ -1290,6 +1290,8 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
 plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
   check_class(x, "group_tna")
   cols <- attr(x, "cols")
+  labels <- x[[1L]]$labels
+  levs <- attr(x, "levels")
   groups <- attr(x, "groups")
   group_var <- attr(x, "group_var")
   data <- dplyr::bind_rows(
@@ -1308,6 +1310,7 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
     dplyr::filter(!is.na(!!rlang::sym("value")))
   use_na <- ifelse_(attr(x, "na.rm"), "no", "ifany")
   tab <- table(long[[label]], long$value, useNA = use_na)
+  dimnames(tab) <- list(levs, labels)
   plot_mosaic_(
     tab,
     digits,
