@@ -4,14 +4,14 @@
 \alias{plot_mosaic.group_tna}
 \title{Plot state frequencies as a mosaic between two groups}
 \usage{
-\method{plot_mosaic}{group_tna}(x, label = NULL, digits = 1, ...)
+\method{plot_mosaic}{group_tna}(x, label, digits = 1, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}
 
-\item{label}{A \code{character} string that can be provided to specify the
-grouping factor name if \code{x} was not constructed using a column name of the
-original data.}
+\item{label}{An optional \code{character} string that can be provided to specify
+the grouping factor name if \code{x} was not constructed using a column name of
+the original data.}
 
 \item{digits}{An \code{integer} that determines the number of digits to use
 for the chi-square test statistic and the p-value in the plot.}

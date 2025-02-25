@@ -1278,36 +1278,36 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
 #' @export
 #' @family clusters
 #' @param x A `group_tna` object.
-#' @param label A `character` string that can be provided to specify the
-#' grouping factor name if `x` was not constructed using a column name of the
-#' original data.
+#' @param label An optional `character` string that can be provided to specify
+#' the grouping factor name if `x` was not constructed using a column name of
+#' the original data.
 #' @inheritParams plot_mosaic.tna_data
 #' @param ... Ignored.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot_mosaic(model)
 #'
-plot_mosaic.group_tna <- function(x, label = NULL, digits = 1, ...) {
+plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
   check_class(x, "group_tna")
-  d <- dplyr::bind_rows(
-    lapply(x, "[[", "data")
-  )
   cols <- attr(x, "cols")
-  label <- ifelse_(
-    is.null(label),
-    attr(x, "label")
+  groups <- attr(x, "groups")
+  group_var <- attr(x, "group_var")
+  data <- dplyr::bind_rows(
+    lapply(x, function(y) y$data[, cols])
   )
+  data[[group_var]] <- unlist(groups)
   label <- ifelse_(
-    is.null(label),
-    "Cluster"
+    missing(label) && group_var == ".group",
+    "Cluster",
+    label
   )
-  group <- attr(x, "group")
-  wide <- cbind(d[, cols], group)
-  names(wide) <- c(names(d[, cols]), label)
-  long <- wide |>
+  check_string(label)
+  names(data) <- c(names(data)[-ncol(data)], label)
+  long <- data |>
     tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
-    tidyr::drop_na()
-  tab <- table(long[[label]], long$value)
+    dplyr::filter(!is.na(!!rlang::sym("value")))
+  use_na <- ifelse_(attr(x, "na.rm"), "no", "ifany")
+  tab <- table(long[[label]], long$value, useNA = use_na)
   plot_mosaic_(
     tab,
     digits,

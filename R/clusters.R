@@ -20,6 +20,10 @@
 #'   columns that should be considered as sequence data.
 #'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
 #'   automatically determined for `tna_data` objects.
+#' @param na.rm A `logical` value that determines if observations with `NA`
+#' value in `group` be removed. If `FALSE`, an additional category for `NA`
+#' values will be added. The default is `FALSE` and a warning is issued
+#' if `NA` values are detected.
 #' @param ... Ignored.
 #' @return An object of class `group_tna` which is a `list` containing one
 #'   element per cluster. Each element is a `tna` object.
@@ -28,14 +32,14 @@
 #' group <- c(rep("High", 100), rep("Low", 100))
 #' model <- group_model(engagement, group = group)
 #'
-group_model <- function(x, group, ...) {
+group_model <- function(x, ...) {
   UseMethod("group_model")
 }
 
 #' @export
 #' @family clusters
 #' @rdname group_model
-group_model.default <- function(x, group, cols, ...) {
+group_model.default <- function(x, group, cols, na.rm = TRUE, ...) {
   check_missing(x)
   stopifnot_(
     !missing(group),
@@ -55,25 +59,43 @@ group_model.default <- function(x, group, cols, ...) {
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
   }
   group_len <- length(group)
-  label <- NULL
+  data <- NULL
   stopifnot_(
     group_len == nrow(x) || group_len == 1L,
     "Argument {.arg group} must be of length one or the same length as the
      number of rows/sequences in {.arg x}."
   )
+  group_var <- ".group"
+  prefix <- "Argument"
   if (group_len == 1L) {
     stopifnot_(
       group %in% names(x),
       "Argument {.arg group} must be a column name of {.arg x}
        when of length one."
     )
-    label <- group
+    group_var <- group
     group <- x[[group]]
+    prefix <- "Column"
+  }
+  group_na <- any(is.na(group))
+  if (group_na && na.rm) {
+    warning_(
+      c(
+        "{prefix} {.arg group} contains missing values.",
+        `i` = "The corresponding observations will be excluded. You can
+               use {.code na.rm = FALSE} to keep missing values."
+      )
+    )
   }
   group <- ifelse_(
     is.factor(group),
     group,
     factor(group)
+  )
+  group <- ifelse_(
+    group_na && !na.rm,
+    addNA(group),
+    group
   )
   levs <- levels(group)
   n_group <- length(levs)
@@ -81,13 +103,17 @@ group_model.default <- function(x, group, cols, ...) {
     vector(mode = "list", length = n_group),
     levs
   )
-  for (i in levs) {
-    clusters[[i]] <- build_model(x[group == i, ], cols = cols, ...)
+  groups <- vector(mode = "list", length = n_group)
+  group <- as.integer(group)
+  for (i in seq_along(levs)) {
+    groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))
+    clusters[[levs[i]]] <- build_model(x[which(group == i), ], cols = cols, ...)
   }
   structure(
     clusters,
-    group = group,
-    label = label,
+    groups = groups,
+    group_var = group_var,
+    na.rm = na.rm,
     cols = cols,
     class = "group_tna"
   )
@@ -107,31 +133,31 @@ group_model.mhmm <- function(x, ...) {
 }
 
 #' @export
-#' @rdname build_model
+#' @rdname group_model
 #' @examples
 #' model <- group_tna(engagement, group = gl(2, 100))
 #'
-group_tna <- function(x, scaling = character(0L), ...) {
+group_tna <- function(x, ...) {
   check_missing(x)
-  group_model(x = x, type = "relative", scaling = scaling, ...)
+  group_model(x = x, type = "relative", ...)
 }
 
 #' @export
-#' @rdname build_model
+#' @rdname group_model
 #' @examples
 #' model <- group_ftna(engagement, group = gl(2, 100))
 #'
-group_ftna <- function(x, scaling = character(0L), ...) {
-  group_model(x = x, type = "frequency", scaling = scaling, ...)
+group_ftna <- function(x, ...) {
+  group_model(x = x, type = "frequency", ...)
 }
 
 #' @export
-#' @rdname build_model
+#' @rdname group_model
 #' @examples
 #' model <- group_ctna(engagement, group = gl(2, 100))
 #'
-group_ctna <- function(x, scaling = character(0L), ...) {
-  group_model(x = x, type = "co-occurrence", scaling = scaling, ...)
+group_ctna <- function(x, ...) {
+  group_model(x = x, type = "co-occurrence", ...)
 }
 
 #' Retrieve statistics from a mixture Markov model (MMM)

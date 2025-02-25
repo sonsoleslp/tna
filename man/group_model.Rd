@@ -4,13 +4,22 @@
 \alias{group_model}
 \alias{group_model.default}
 \alias{group_model.mhmm}
+\alias{group_tna}
+\alias{group_ftna}
+\alias{group_ctna}
 \title{Build a grouped Transition Network Analysis Model}
 \usage{
-group_model(x, group, ...)
+group_model(x, ...)
 
-\method{group_model}{default}(x, group, cols, ...)
+\method{group_model}{default}(x, group, cols, na.rm = TRUE, ...)
 
 \method{group_model}{mhmm}(x, ...)
+
+group_tna(x, ...)
+
+group_ftna(x, ...)
+
+group_ctna(x, ...)
 }
 \arguments{
 \item{x}{An \code{stslist} object describing a sequence of events or states to
@@ -18,18 +27,23 @@ be used for building the Markov model. The argument \code{x} also accepts
 \code{data.frame} objects in wide format, and \code{tna_data} objects.
 Alternatively, the function accepts a mixture Markov model from \code{seqHMM}.}
 
+\item{...}{Ignored.}
+
 \item{group}{A vector indicating the cluster assignment of each
 row of the data / sequence. Must have the same length as the number of
 rows/sequences of \code{x}. Alternatively, a single \code{character} string giving
 the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object.}
 
-\item{...}{Ignored.}
-
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
 columns that should be considered as sequence data.
 Defaults to all columns, i.e., \code{seq(1, ncol(x))}. The columns are
 automatically determined for \code{tna_data} objects.}
+
+\item{na.rm}{A \code{logical} value that determines if observations with \code{NA}
+value in \code{group} be removed. If \code{FALSE}, an additional category for \code{NA}
+values will be added. The default is \code{FALSE} and a warning is issued
+if \code{NA} values are detected.}
 }
 \value{
 An object of class \code{group_tna} which is a \code{list} containing one
@@ -43,6 +57,12 @@ or a mixture Markov model.
 \examples{
 group <- c(rep("High", 100), rep("Low", 100))
 model <- group_model(engagement, group = group)
+
+model <- group_tna(engagement, group = gl(2, 100))
+
+model <- group_ftna(engagement, group = gl(2, 100))
+
+model <- group_ctna(engagement, group = gl(2, 100))
 
 }
 \seealso{
