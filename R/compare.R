@@ -85,6 +85,7 @@ compare.matrix <- function(x, y, scaling = "none", ...) {
 #' `character` string.
 #' @param scaling See [compare.tna()].
 #' @param ... Additional arguments passed to [compare.tna()].
+#' @return A `tna_comparison` object. See [compare.tna()] for details.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' compare(model, i = 1, j = 2)

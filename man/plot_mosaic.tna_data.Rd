@@ -21,6 +21,9 @@ for the chi-square test statistic and the p-value in the plot.}
 
 \item{...}{Ignored.}
 }
+\value{
+A \code{ggplot} object.
+}
 \description{
 Plot state frequencies as a mosaic between two groups
 }

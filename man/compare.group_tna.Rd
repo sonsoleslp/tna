@@ -19,6 +19,9 @@
 
 \item{...}{Additional arguments passed to \code{\link[=compare.tna]{compare.tna()}}.}
 }
+\value{
+A \code{tna_comparison} object. See \code{\link[=compare.tna]{compare.tna()}} for details.
+}
 \description{
 Compare TNA Clusters with Comprehensive Metrics
 }

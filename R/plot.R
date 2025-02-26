@@ -1196,6 +1196,8 @@ plot.group_tna_stability <- function(x, ...) {
 #' @param j An `integer` index or the name of the secondary cluster as a
 #' `character` string.
 #' @param ... Additional arguments passed to [plot_compare.tna()].
+#' @return A `qgraph` object displaying the difference network between the
+#'   two clusters
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot_compare(model)
@@ -1220,6 +1222,7 @@ plot_compare.group_tna <- function(x, i = 1, j = 2, ...) {
 #' @param label An optional `character` string that specifies a label for the
 #' grouping variable when `group` is not a column name of the data.
 #' @param ... Ignored.
+#' @return A `ggplot` object.
 #' @examples
 #' d <- data.frame(
 #'   time = rep(1:5, rep = 4),
@@ -1284,6 +1287,7 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
 #' the original data.
 #' @inheritParams plot_mosaic.tna_data
 #' @param ... Ignored.
+#' @return A `ggplot` object.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot_mosaic(model)

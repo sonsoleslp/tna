@@ -115,7 +115,6 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
   invisible(x)
 }
 
-
 #' Print Centrality Measures
 #'
 #' @export
