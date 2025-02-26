@@ -1304,9 +1304,13 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
   )
   data[[group_var]] <- unlist(groups)
   label <- ifelse_(
-    missing(label) && group_var == ".group",
-    "Cluster",
-    label
+    !missing(label),
+    label,
+    ifelse_(
+      group_var == ".group",
+      "Cluster",
+      group_var
+    )
   )
   check_string(label)
   names(data) <- c(names(data)[-ncol(data)], label)
