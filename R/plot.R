@@ -835,8 +835,8 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", ...) {
 #'
 plot_model <- function(x, labels, colors,
                        edge.labels = TRUE, edge.label.position = 0.65,
-                       layout = "circle", mar = rep(5, 4),
-                       theme = "colorblind", ...) {
+                       layout = "circle", layout_args = list(),
+                       mar = rep(5, 4), theme = "colorblind", ...) {
   stopifnot_(
     is.matrix(x) && ncol(x) == nrow(x),
     "Argument {.arg x} must be a square matrix."
@@ -848,6 +848,7 @@ plot_model <- function(x, labels, colors,
   if (missing(colors)) {
     colors <- color_palette(nc)
   }
+  layout <- check_layout(x, layout, layout_args)
   qgraph::qgraph(
     input = x,
     color = colors,

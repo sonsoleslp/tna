@@ -1,12 +1,12 @@
 # tna 0.4.0
 
-* The `prepare_data()` function now produces an object of class `tna_data`, which can be directly used as an argument to `build_model()`.
+* The `prepare_data()` function now produces an object of class `tna_data`, which can be directly used as an argument to `build_model()` and other methods.
 * The `prepare_data()` function now supports `order` when used together with `time` and `actor`.
 * The `prepare_data()` function gains the `unused_fn` argument of `tidyr::pivot_wider()` to process any extra columns. The default is to keep all columns and use the first value.
 * Added the function `compare()` to compare `tna` models and weight matrices. This function produces an object of class `tna_comparison` which has `print()` and `plot()` methods.
-* Added the function `plot_mosaic()` which can be used to produce mosaic plots of transition counts for frequency-based transition network models.
-* Made several arguments in the package plot methods accessible to the user.
+* Added the function `plot_mosaic()` which can be used to produce mosaic plots of transition counts for frequency-based transition network models and to contrast the state counts between groups.
 * Fixed an issue with `plot.tna_communities()` which now checks for the availability of a particular community detection method before plotting.
+* Made several arguments in the plot methods of the package accessible to the user.
 
 # tna 0.3.2
 

@@ -65,9 +65,14 @@ test_that("permutation test significant edges can be plotted", {
 test_that("model comparison can be plotted", {
   model_x <- tna(engagement[engagement[, 1] == "Active", ])
   model_y <- tna(engagement[engagement[, 1] != "Active", ])
+  model_grouped <- group_tna(engagement_mmm)
   pdf(NULL)
   expect_error(
     plot_compare(model_x, model_y),
+    NA
+  )
+  expect_error(
+    plot_compare(model_grouped),
     NA
   )
 })
@@ -96,6 +101,26 @@ test_that("plotting with different layouts works", {
   expect_error(
     plot.tna(
       mock_tna,
+      layout = igraph::layout_as_tree,
+      layout_args = list(flip.y = FALSE)
+    ),
+    NA
+  )
+  expect_error(
+    plot_model(mock_matrix, layout = "circle"),
+    NA
+  )
+  expect_error(
+    plot_model(mock_matrix, layout = matrix(rnorm(8), 4, 2)),
+    NA
+  )
+  expect_error(
+    plot_model(mock_matrix, layout = igraph::layout_nicely),
+    NA
+  )
+  expect_error(
+    plot_model(
+      mock_matrix,
       layout = igraph::layout_as_tree,
       layout_args = list(flip.y = FALSE)
     ),
@@ -203,8 +228,17 @@ test_that("pruned models can be plotted", {
 
 test_that("mosaic can be plotted", {
   ftna_model <- ftna(engagement)
+  group_ftna_model <- group_ftna(engagement_mmm)
   expect_error(
     plot_mosaic(ftna_model),
+    NA
+  )
+  expect_error(
+    plot_mosaic(group_ftna_model),
+    NA
+  )
+  expect_error(
+    plot_mosaic(mock_tna_data, group = "group"),
     NA
   )
 })

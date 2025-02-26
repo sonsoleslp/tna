@@ -2,7 +2,9 @@ citHeader("To cite tna in publications use:")
 
 bibentry(
   key = "tna_lak",
-  bibtype  = "Misc",
+  bibtype  = "InProceedings",
+  booktitle = "Proceedings of the 15th International Learning Analytics and Knowledge Conference (LAK '25)",
+  pages = "351--361",
   doi = "10.1145/3706468.3706513",
   author = c(person("Mohammed", "Saqr"), person("Sonsoles", "L\u00f3pez-Pernas"), person("Tiina", "T\u00f6rm\u00e4nen"), person("Rogers", "Kaliisa"), person("Kamila", "Misiejuk"), person("Santtu", "Tikka")),
   title = "Transition Network Analysis: A Novel Framework for Modeling, Visualizing, and Identifying the Temporal Patterns of Learners and Learning Processes",
@@ -13,8 +15,8 @@ bibentry(
   bibtype = "Misc",
   title = "{tna}: Transition Network Analysis ({TNA})",
   author = c(person("Sonsoles", "L\u00f3pez-Pernas"), person("Mohammed", "Saqr"), person("Santtu", "Tikka")),
-  note = "{R} package version 0.3.0",
-  year = "2024",
+  note = "{R} package version 0.4.0",
+  year = "2025",
   url = "http://dx.doi.org/10.32614/CRAN.package.tna",
   DOI = "10.32614/cran.package.tna",
   journal = "CRAN: Contributed Packages",

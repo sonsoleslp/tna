@@ -115,3 +115,32 @@ test_that("grouped model can be constructed from tna_data objects", {
     all(names(model) == c("Group 1", "Group 2"))
   )
 })
+
+test_that("missing values in group variable warns", {
+  mock_tna_data_mis <- mock_tna_data
+  mock_tna_data_mis$meta_data$group[4] <- NA
+  expect_warning(
+    model <- group_model(mock_tna_data_mis, group = "group"),
+    "Column `group` contains missing values\\."
+  )
+})
+
+test_that("cluster check fails on invalid clusters", {
+  model <- group_tna(engagement_mmm)
+  expect_error(
+    check_clusters(model, i = 1, j = 1),
+    "Arguments `i` and `j` must be different\\."
+  )
+  expect_error(
+    check_clusters(model, i = 1, j = 4),
+    "Argument `j` must be between 1 and 3 when of type <numeric>\\."
+  )
+  expect_error(
+    check_clusters(model, i = c(2, 3), j = 1),
+    "Argument `i` must be a <numeric> or a <character> vector of length 1\\."
+  )
+  expect_error(
+    check_clusters(model, i = 1, j = "Cluster 4"),
+    "Argument `j` must be a name of `x` when of type <character>\\."
+  )
+})
