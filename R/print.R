@@ -2,12 +2,9 @@
 #'
 #' @export
 #' @param x A `summary.tna` object.
+#' @return A `summary.tna` object containing the TNA model network metrics and
+#' values
 #' @param ... Ignored.
-#' @return A `summary.tna` object (invisibly) containing the TNA model network
-#' metrics and values.
-#' @examples
-#' model <- tna(engagement)
-#' print(summary(model))
 #'
 print.summary.tna <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
@@ -17,14 +14,9 @@ print.summary.tna <- function(x, ...) {
 #'
 #' @export
 #' @param x A `summary.tna_bootstrap` object.
+#' @return A `summary.tna_bootstrap` containing the weight, p-value and confidence interval
+#' of each edge
 #' @param ... Arguments passed to the generic `print` method.
-#' @return A `summary.tna_bootstrap` object (invisibly) containing the weight,
-#' p-value and confidence interval of each edge.
-#' @examples
-#' model <- tna(engagement)
-#' # Small number of iterations for CRAN
-#' boot <- bootstrap(model, iter = 10)
-#' print(summary(boot))
 #'
 print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
@@ -39,10 +31,7 @@ print.summary.tna_bootstrap <- function(x, ...) {
 #' @param generic A `logical` value. If `TRUE`, use generic print method
 #' instead. Defaults to `FALSE`.
 #' @param ... Ignored.
-#' @return The `tna` object passed as argument `x` (invisibly).
-#' @examples
-#' model <- tna(engagement)
-#' print(model)
+#' @return The `tna` object passed as argument `x` (invisibly)
 #'
 print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
   check_missing(x)
@@ -52,15 +41,12 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
     NextMethod(generic = "print", object = x, ...)
     return()
   }
-  check_values(digits)
+  check_nonnegative(digits)
   type <- attr(x, "type")
   mat_type <- switch(type,
     `relative` = "Transition Probability",
     `frequency` = "Transition Frequency",
     `co-occurrence` = "Co-occurrence",
-    `n-gram` = "N-gram Transition",
-    `gap` = "Gap-allowed Transition",
-    `window` = "Sliding Window Transition",
     `betweenness` = "Edge Betweenness"
   )
   cat("State Labels\n\n")
@@ -87,7 +73,7 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
 #' @param ... Ignored.
 #' @return `x` (invisibly).
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' # Small number of iterations for CRAN
 #' boot <- bootstrap(model, iter = 10)
 #' print(boot)
@@ -96,7 +82,7 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
                                 type = "both", ...) {
   check_missing(x)
   check_class(x, "tna_bootstrap")
-  check_values(digits)
+  check_nonnegative(digits)
   type <- check_match(type, c("both", "sig", "nonsig"))
   sig <- x$summary$sig
   edges <- x$summary |>
@@ -115,6 +101,7 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
   invisible(x)
 }
 
+
 #' Print Centrality Measures
 #'
 #' @export
@@ -122,7 +109,7 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
 #' @param ... Ignored.
 #' @return `x` (invisibly).
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' cm <- centralities(model)
 #' print(cm)
 #'
@@ -137,45 +124,17 @@ print.tna_centralities <- function(x, ...) {
 #' @param ... Ignored.
 #' @return `x` (invisibly).
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' comm <- communities(model)
 #' print(comm)
 #'
 print.tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_communities")
-  cat("Number of communities found by each algorithm:\n\n")
+  cat("Number of communities found by each algorithm:\n")
   print(x$counts)
-  cat("\nCommunity assignments:\n\n")
+  cat("\nCommunity assignments:\n")
   print(x$assignments)
-  invisible(x)
-}
-
-#' Print Comparison Results
-#'
-#' @export
-#' @param x A `tna_comparison` object.
-#' @param ... Additional arguments passed to the tibble `print` method.
-#' @return `x` (invisibly).
-#' @examples
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
-#' comp <- compare(model_x, model_y)
-#' print(comp)
-#'
-print.tna_comparison <- function(x, ...) {
-  check_missing(x)
-  check_class(x, "tna_comparison")
-  cat("Edge difference metrics\n")
-  print(x$edge_metrics, ...)
-  cat("\nSummary metrics of differences\n")
-  print(x$summary_metrics, ...)
-  cat("\nNetwork metrics\n")
-  print(x$network_metrics, ...)
-  cat("\nCentrality differences\n")
-  print(x$centrality_differences, ...)
-  cat("\nCentrality correlations\n")
-  print(x$centrality_correlations, ...)
   invisible(x)
 }
 
@@ -192,7 +151,7 @@ print.tna_comparison <- function(x, ...) {
 #' @param ... Ignored.
 #' @return `x` (invisibly).
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' cliq <- cliques(model, size = 2)
 #' print(cliq)
 #'
@@ -206,9 +165,9 @@ print.tna_cliques <- function(x, n = 6, first = 1,
     cat("No ", attr(x, "size"), "-cliques were found in the network.", sep = "")
     return(invisible(x))
   }
-  check_values(n, strict = TRUE)
-  check_values(first, strict = TRUE)
-  check_values(digits)
+  check_positive(n)
+  check_positive(first)
+  check_nonnegative(digits)
   n <- min(n, n_cliques)
   threshold <- attr(x, "threshold")
   cluster <- attr(x, "cluster")
@@ -230,35 +189,6 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   invisible(x)
 }
 
-#' Print a TNA data object
-#'
-#' @export
-#' @param x A `tna_data` object.
-#' @param data A `character` string that defines the data to be printed
-#' tibble. Accepts either `"sequence"` (default) for wide format sequence data,
-#' `"meta"`, for the wide format metadata, or `"long"` for the long format
-#' data.
-#' @param ... Arguments passed to the tibble `print` method.
-#' @return `x` (invisibly).
-#' @examples
-#' data_single_session <- tibble::tibble(
-#'   action = c(
-#'     "view", "click", "add_cart", "view", "checkout", "view", "click", "share"
-#'    )
-#' )
-#' results_single <- prepare_data(data_single_session, action = "action")
-#' print(results_single, which = "sequence")
-#' print(results_single, which = "meta")
-#' print(results_single, which = "long")
-#'
-print.tna_data <- function(x, data = "sequence", ...) {
-  check_missing(x)
-  check_class(x, "tna_data")
-  data <- check_match(data, c("sequence", "meta", "long"))
-  idx <- paste0(data, "_data")
-  print(x[[idx]])
-}
-
 #' Print Centrality Stability Results
 #'
 #' @export
@@ -266,7 +196,7 @@ print.tna_data <- function(x, data = "sequence", ...) {
 #' @param ... Ignored.
 #' @return `x` (invisibly).
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' # Small number of iterations and drop proportions for CRAN
 #' cs <- estimate_cs(
 #'   model,
@@ -327,14 +257,7 @@ print.tna_permutation <- function(x, ...) {
 print.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  lapply(x, \(i) print(i, ...))
   invisible(x)
 }
 
@@ -354,14 +277,7 @@ print.group_tna <- function(x, ...) {
 print.group_tna_bootstrap <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_bootstrap")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  lapply(x, \(i) print(i, ...))
   invisible(x)
 }
 
@@ -379,13 +295,10 @@ print.group_tna_bootstrap <- function(x, ...) {
 print.summary.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "summary.group_tna")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
+  if (inherits(x, "data.frame")) {
+    NextMethod(generic = "print", object = x, ...)
+  } else {
+    lapply(x, \(i) print(x = i, ...))
   }
   invisible(x)
 }
@@ -396,7 +309,8 @@ print.summary.group_tna <- function(x, ...) {
 #' @family clusters
 #' @param x A `summary.group_tna_bootstrap` object.
 #' @param ... Arguments passed to the generic `print` method.
-#' @return `x` (invisibly).
+#' @return A `summary.group_tna_bootstrap` containing the weight, p-value and confidence
+#' interval of each edge of each cluster
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Low number of iteration for CRAN
@@ -436,18 +350,17 @@ print.group_tna_centralities <- function(x, ...) {
 #' model <- group_model(engagement_mmm)
 #' comm <- communities(model)
 #' print(comm)
-#'
 print.group_tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  Map(
+    function(y, i) {
+      print(i)
+      print(y, ...)
+    },
+    x,
+    names(x)
+  )
   invisible(x)
 }
 
@@ -462,18 +375,17 @@ print.group_tna_communities <- function(x, ...) {
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
 #' print(cliq)
-#'
 print.group_tna_cliques <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  Map(
+    function(y, i) {
+      print(i)
+      print(y, ...)
+    },
+    x,
+    names(x)
+  )
   invisible(x)
 }
 
@@ -497,13 +409,13 @@ print.group_tna_cliques <- function(x, ...) {
 print.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  Map(
+    function(y, i) {
+      cat(i, ":\n\n", sep = "")
+      print(y, ...)
+    },
+    x,
+    names(x)
+  )
   invisible(x)
 }

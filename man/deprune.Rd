@@ -27,7 +27,7 @@ A \code{tna} or \code{group_tna} object that has not been pruned.
 Restore a Pruned Transition Network Analysis Model
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 pruned_model <- prune(model, method = "threshold", threshold = 0.1)
 depruned_model <- deprune(pruned_model) # restore original model
 

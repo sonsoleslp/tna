@@ -18,7 +18,7 @@
 Print Detected Communities
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 comm <- communities(model)
 print(comm)
 

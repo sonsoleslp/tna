@@ -70,7 +70,7 @@ sizes corresponding to initial state probabilities. Edge labels represent
 the edge weights of the network.
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 plot(model)
 
 }

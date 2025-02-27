@@ -15,7 +15,7 @@ Description: Provides tools for performing Transition Network Analysis (TNA) to
     identified dynamics are meaningful. See (Saqr et al., 2025) 
     <doi:10.1145/3706468.3706513> for more details on TNA.
 License: MIT + file LICENSE
-URL: https://github.com/sonsoleslp/tna/
+URL: https://github.com/sonsoleslp/tna/, http://sonsoles.me/tna/
 BugReports: https://github.com/sonsoleslp/tna/issues/
 Depends:
     R (>= 4.1.0)

@@ -149,14 +149,14 @@ zero diagonal entries (without loops). Also accepts matrices of transition
 probabilities and initial state probabilities directly.
 }
 \examples{
-model <- build_model(engagement)
+model <- build_model(group_regulation)
 print(model)
 
-model <- tna(engagement)
+model <- tna(group_regulation)
 
-model <- ftna(engagement)
+model <- ftna(group_regulation)
 
-model <- ctna(engagement)
+model <- ctna(group_regulation)
 
 }
 \seealso{

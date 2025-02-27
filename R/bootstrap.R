@@ -63,7 +63,7 @@
 #' object, which is a `list` of `tna_bootstrap` objects.
 #'
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' # Small number of iterations for CRAN
 #' bootstrap(model, iter = 10)
 #'

@@ -18,7 +18,7 @@
 Print Centrality Measures
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 cm <- centralities(model)
 print(cm)
 

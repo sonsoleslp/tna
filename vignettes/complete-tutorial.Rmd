@@ -1,0 +1,223 @@
+---
+title: "A showcase of the main tna functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A showcase of the main tna functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 10,
+  fig.height = 6,
+  out.width = "100%",
+  dpi = 300,
+  comment = "#>"
+)
+suppressPackageStartupMessages({
+  library("tna")
+  library("tibble")
+  library("dplyr")
+  library("gt")
+})
+
+options(scipen = 99)
+options(digits = 2)
+options(max.print = 30)
+options(width = 83)
+```
+
+
+# Tutorial of TNA with R
+
+```{r}
+# Install `tna` if you haven't already
+# install.packages("tna")
+library("tna")
+data("group_regulation")
+```
+
+## Building `tna` Model
+
+```{r, message = FALSE, results = FALSE}
+model <- tna(group_regulation)
+print(model)
+```
+
+
+## Plotting and interpreting `tna` models
+
+### Interpretation of the model
+
+```{r fig.height=6, fig.width=6, fig.align='center', layout = c(1,1)}
+# TNA visualization
+plot(model)
+plot(model, minimum = 0.05, cut = 0.1)
+```
+
+### Pruning and retaining edges that "matter"
+
+
+```{r, out.width='49%', fig.show='hold', fig.width=5, fig.height=5 ,layout =c(1,1)}
+# Pruning with different methods (using comparable parameters)
+pruned_threshold <- prune(model, method = "threshold", threshold = 0.15)
+pruned_lowest <- prune(model, method = "lowest", lowest = 0.15)
+pruned_disparity <- prune(model, method = "disparity", level = 0.5)
+
+# Plotting for comparison
+plot(pruned_threshold)
+plot(pruned_lowest)
+plot(pruned_disparity)
+plot(model, minimum = 0.05, cut = 0.1)
+```
+
+## Patterns
+
+```{r }
+# Identify 2-cliques (dyads) from the TNA model, excluding loops in the visualization
+# A clique of size 2 is essentially a pair of connected nodes
+cliques_of_two <- cliques(
+  model, 
+  size = 2, 
+  threshold = 0.1  # Only consider edges with weight > 0.1
+)
+print(cliques_of_two)
+plot(cliques_of_two, vsize = 30, edge.label.cex = 3, esize = 25)
+```
+
+```{r}
+# Identify 3-cliques (triads) from the TNA_Model
+# A clique of size 3 means a fully connected triplet of nodes
+cliques_of_three <- cliques(
+  model, 
+  size = 3, 
+  threshold = 0.05 # Only consider edges with weight > 0.05
+)
+print(cliques_of_three)
+plot(cliques_of_three)
+```
+
+```{r}
+# Identify 4-cliques (quadruples) from the TNA_Model
+# A clique of size 4 means four nodes that are all mutually connected
+cliques_of_four <- cliques(
+  model, 
+  size = 4, 
+  threshold = 0.03 # Only consider edges with weight > 0.03
+)
+print(cliques_of_four)
+plot(cliques_of_four)
+```
+
+
+```{r}
+# Identify 5-cliques (quintuples) from the TNA_Model, summing edge weights
+# Here, the sum of both directions of an edge must meet the threshold
+cliques_of_five <- cliques(
+  model, 
+  size = 5, 
+  threshold = 0.015, # Consider edge weights greater than 0.1
+  sum_weights = TRUE # Sum edge weights in both directions when evaluating thresholds
+)
+print(cliques_of_five)
+plot(cliques_of_five)
+```
+
+
+### Centralities
+
+#### Node-level measures
+
+```{r fig.height=8, fig.width=8, fig.align='center'}
+# Compute centrality measures for the TNA model
+Centralities <- centralities(model)
+
+# Visualize the centrality measures
+plot(Centralities)
+```
+
+
+```{r}
+# Calculate hub scores and the authority scores for the network
+hits_scores <- igraph::hits_scores(as.igraph(model))
+hub_scores <- hits_scores$hub
+authority_scores <- hits_scores$authority
+
+# Print the calculated hub and authority scores for further analysis
+print(hub_scores)
+print(authority_scores)
+```
+
+
+#### Edge-level measures
+
+
+```{r, fig.align='center', fig.width=6, fig.height=5.5, out.width="60%"}
+# Edge betweenness
+Edge_betweeness <- betweenness_network(model)
+plot(Edge_betweeness)
+```
+
+### Community finding
+
+```{r}
+communities <- communities(model)
+print(communities)
+plot(communities, method = "leading_eigen")
+```
+
+## Network inference
+
+### Bootstrapping
+
+```{r}
+# Perform bootstrapping on the TNA model with a fixed seed for reproducibility
+set.seed(265)
+boot <- bootstrap(model, threshold = 0.05)
+
+# Print a summary of the bootstrap results
+print(summary(boot))
+
+# Show the non-significant edges (p-value >= 0.05 in this case)
+# These are edges that are less likely to be stable across bootstrap samples
+print(boot, type = "nonsig")
+```
+
+### Permutation
+
+```{r, fig.align='center', fig.width = 5, fig.height = 5, layout = c(1,1)}
+# Create TNA for the high-achievers subset (rows 1 to 1000)
+Hi <- tna(group_regulation[1:1000, ])
+
+# Create TNA for the low-achievers subset (rows 1001 to 2000)
+Lo <- tna(group_regulation[1001:2000, ])
+
+# Plot a comparison of the "Hi" and "Lo" models
+# The 'minimum' parameter is set to 0.001, so edges with weights >= 0.001 are shown
+plot_compare(Hi, Lo, minimum = 0.01)
+
+# Run a permutation test to determine statistical significance of differences
+# between "Hi" and "Lo"
+# The 'iter' argument is set to 1000, meaning 1000 permutations are performed
+Permutation <- permutation_test(Hi, Lo, iter = 1000, measures = "Betweenness")
+
+# Plot the significant differences identified in the permutation test
+plot(Permutation, minimum = 0.01)
+```
+
+```{r}
+print(Permutation$edges$stats)
+print(Permutation$centralities$stats)
+```
+
+### Interpreting the Results of the Case-Dropping Bootstrap for Centrality Indices
+
+```{r, cache=TRUE, fig.align='center', fig.width=7, fig.height=4}
+# Results of the Case-Dropping Bootstrap for Centrality Indices
+Centrality_stability <- estimate_centrality_stability(model, detailed = FALSE)
+plot(Centrality_stability)
+```
+
+

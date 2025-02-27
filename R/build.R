@@ -87,7 +87,7 @@
 #'     `data.frame` object. Otherwise `NULL`.
 #'
 #' @examples
-#' model <- build_model(engagement)
+#' model <- build_model(group_regulation)
 #' print(model)
 #'
 build_model <- function(x, type = "relative", scaling = character(0L),
@@ -259,7 +259,7 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
 #' @export
 #' @rdname build_model
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #'
 tna <- function(x, ...) {
   check_missing(x)
@@ -269,7 +269,7 @@ tna <- function(x, ...) {
 #' @export
 #' @rdname build_model
 #' @examples
-#' model <- ftna(engagement)
+#' model <- ftna(group_regulation)
 #'
 ftna <- function(x, ...) {
   build_model(x = x, type = "frequency", ...)
@@ -278,7 +278,7 @@ ftna <- function(x, ...) {
 #' @export
 #' @rdname build_model
 #' @examples
-#' model <- ctna(engagement)
+#' model <- ctna(group_regulation)
 #'
 ctna <- function(x, ...) {
   build_model(x = x, type = "co-occurrence", ...)

@@ -18,13 +18,8 @@ instead. Defaults to \code{FALSE}.}
 \item{...}{Ignored.}
 }
 \value{
-The \code{tna} object passed as argument \code{x} (invisibly).
+The \code{tna} object passed as argument \code{x} (invisibly)
 }
 \description{
 Print a \code{tna} object
-}
-\examples{
-model <- tna(engagement)
-print(model)
-
 }

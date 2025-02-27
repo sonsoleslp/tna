@@ -58,8 +58,8 @@ centralized the network is based on the degrees of nodes.
 }
 }
 \examples{
-group <- c(rep("High", 100), rep("Low", 100))
-model <- group_model(engagement, group = group)
+group <- c(rep("High", 1000), rep("Low", 1000))
+model <- group_model(group_regulation, group = group)
 summary(model)
 
 }

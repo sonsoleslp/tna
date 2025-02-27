@@ -93,7 +93,7 @@ estimates, and summary statistics for removed edges, are returned in a
 structured list.
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 # Small number of iterations for CRAN
 bootstrap(model, iter = 10)
 

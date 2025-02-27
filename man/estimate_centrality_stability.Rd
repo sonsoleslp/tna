@@ -149,7 +149,7 @@ along with confidence intervals. The CS-coefficients are displayed in the
 subtitle.
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 # Small number of iterations and drop proportions for CRAN
 estimate_cs(
   model,

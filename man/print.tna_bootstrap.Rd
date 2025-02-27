@@ -26,7 +26,7 @@ prints only the non-significant edges.}
 Print Bootstrap Results
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 # Small number of iterations for CRAN
 boot <- bootstrap(model, iter = 10)
 print(boot)

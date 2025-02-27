@@ -18,7 +18,7 @@
 Print Centrality Stability Results
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 # Small number of iterations and drop proportions for CRAN
 cs <- estimate_cs(
   model,

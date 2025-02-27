@@ -26,7 +26,7 @@
 #' instead, which is a `list` or `tna_cliques` objects.
 #'
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #'
 #' # Find  2-cliques (dyads)
 #' cliq <- cliques(model, size = 2)

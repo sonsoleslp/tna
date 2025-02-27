@@ -74,8 +74,8 @@ to plot the next plot in interactive mode.}
 Plot Cliques of a TNA Network
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 cliq <- cliques(model, size = 2)
-plot(cliq, n = 1)
+plot(cliq, n = 1, ask = FALSE)
 
 }

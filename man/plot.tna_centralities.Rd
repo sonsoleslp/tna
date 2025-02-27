@@ -46,9 +46,9 @@ measure, showing the values for each state. The returned plot is a
 \code{\link[=centralities]{centralities()}} for details on the centrality measures.
 }
 \examples{
-tna_model <- tna(engagement)
+tna_model <- tna(group_regulation)
 cm <- centralities(tna_model)
-plot(cm, ncol = 4, reorder = TRUE)
+plot(cm, ncol = 3, reorder = TRUE)
 
 }
 \seealso{

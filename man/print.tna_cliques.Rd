@@ -27,7 +27,7 @@ The default index is \code{1}.}
 Print Found Cliques of a TNA Network
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 cliq <- cliques(model, size = 2)
 print(cliq)
 

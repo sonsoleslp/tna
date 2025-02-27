@@ -56,7 +56,7 @@ centralized the network is based on the degrees of nodes.
 A summary of the metrics is printed to the console.
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 summary(model)
 
 }

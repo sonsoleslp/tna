@@ -18,7 +18,7 @@ A renamed \code{group_tna} object.
 Rename clusters
 }
 \examples{
-model <- group_model(engagement_mmm)
+model <- group_model(group_regulation_mmm)
 model_renamed <- rename_groups(model, c("A", "B", "C"))
 
 }

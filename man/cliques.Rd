@@ -45,7 +45,7 @@ connected—of size \code{n} in the transition matrix for the specified cluster
 in the \code{tna} object.
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 
 # Find  2-cliques (dyads)
 cliq <- cliques(model, size = 2)

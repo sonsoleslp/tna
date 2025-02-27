@@ -73,7 +73,7 @@ cluster together.
 }
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 
 # Centrality measures including loops in the network
 centralities(model)

@@ -7,7 +7,7 @@
 #' @param xlab A `character` string defining the vertical axis label.
 #' @return A `histogram` object of edge weights.
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' hist(model)
 #'
 hist.tna <- function(x, breaks, col = "lightblue",
@@ -86,7 +86,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' plot(model)
 #'
 plot.tna <- function(x, labels, colors, pie,
@@ -170,9 +170,9 @@ plot.tna <- function(x, labels, colors, pie,
 #' @return A `ggplot` object displaying the lollipop charts for each centrality
 #'   measure.
 #' @examples
-#' tna_model <- tna(engagement)
+#' tna_model <- tna(group_regulation)
 #' cm <- centralities(tna_model)
-#' plot(cm, ncol = 4, reorder = TRUE)
+#' plot(cm, ncol = 3, reorder = TRUE)
 #'
 plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                   scales = c("free_x", "fixed"),
@@ -195,9 +195,9 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' to plot the next plot in interactive mode.
 #' @return `NULL` (invisibly).
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' cliq <- cliques(model, size = 2)
-#' plot(cliq, n = 1)
+#' plot(cliq, n = 1, ask = FALSE)
 #'
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
                              edge.labels = TRUE, edge.label.position = 0.65,
@@ -525,7 +525,7 @@ plot.tna_permutation <- function(x, colors, ...) {
 #'
 #' @return A `ggplot` object displaying the stability analysis plot.
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' cs <- estimate_cs(model, iter = 10)
 #' plot(cs)
 #'
@@ -783,8 +783,8 @@ plot_centralities_multiple <- function(x, reorder, ncol,
 #' @return A `qgraph` object displaying the difference network between the
 #'   two models.
 #' @examples
-#' model_x <- tna(engagement[engagement[, 1] == "Active", ])
-#' model_y <- tna(engagement[engagement[, 1] != "Active", ])
+#' model_x <- tna(group_regulation[group_regulation[, 1] == "plan", ])
+#' model_y <- tna(group_regulation[group_regulation[, 1] != "plan", ])
 #' plot_compare(model_x, model_y)
 #'
 plot_compare <- function(x, ...) {
@@ -1082,7 +1082,7 @@ plot.group_tna <- function(x, title, ...) {
 #' cm <- centralities(model)
 #' plot(cm)
 #'
-plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 4,
+plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                         scales = c("free_x", "fixed"),
                                         colors, labels = TRUE, ...) {
   check_missing(x)
@@ -1103,7 +1103,7 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 4,
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
-#' plot(cliq)
+#' plot(cliq, ask = F)
 #'
 plot.group_tna_cliques <- function(x, title, ...) {
   check_missing(x)

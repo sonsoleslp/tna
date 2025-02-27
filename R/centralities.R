@@ -50,7 +50,7 @@
 #' @return A `tna_centralities` object which is a tibble (`tbl_df`).
 #'   containing centrality measures for each state.
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #'
 #' # Centrality measures including loops in the network
 #' centralities(model)
@@ -224,7 +224,7 @@ estimate_centrality_stability <- estimate_cs
 #' instead, which is a `list` of `tna_stability` objects.
 #'
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' # Small number of iterations and drop proportions for CRAN
 #' estimate_cs(
 #'   model,

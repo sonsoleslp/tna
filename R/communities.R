@@ -45,7 +45,7 @@
 #' instead, which is a `list` of `tna_communities` objects.
 #'
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' comm <- communities(model)
 #'
 communities <- function(x, ...) {

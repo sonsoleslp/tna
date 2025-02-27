@@ -56,13 +56,13 @@ or a mixture Markov model.
 }
 \examples{
 group <- c(rep("High", 100), rep("Low", 100))
-model <- group_model(engagement, group = group)
+model <- group_model(group_regulation, group = group)
 
-model <- group_tna(engagement, group = gl(2, 100))
+model <- group_tna(group_regulation, group = gl(2, 100))
 
-model <- group_ftna(engagement, group = gl(2, 100))
+model <- group_ftna(group_regulation, group = gl(2, 100))
 
-model <- group_ctna(engagement, group = gl(2, 100))
+model <- group_ctna(group_regulation, group = gl(2, 100))
 
 }
 \seealso{

@@ -36,6 +36,7 @@ A general framework for weighted gene co-expression network analysis.
 Useful links:
 \itemize{
   \item \url{https://github.com/sonsoleslp/tna/}
+  \item \url{http://sonsoles.me/tna/}
   \item Report bugs at \url{https://github.com/sonsoleslp/tna/issues/}
 }
 

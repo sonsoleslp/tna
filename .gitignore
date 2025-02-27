@@ -26,3 +26,5 @@ src-x64
 *.bbl
 *.idx
 *.ilg
+docs
+vignettes/*cache

@@ -7,7 +7,7 @@
 \method{plot}{group_tna_centralities}(
   x,
   reorder = TRUE,
-  ncol = 4,
+  ncol = 3,
   scales = c("free_x", "fixed"),
   colors,
   labels = TRUE,

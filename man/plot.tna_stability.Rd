@@ -44,7 +44,7 @@ the CS-coefficient.
 }
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 cs <- estimate_cs(model, iter = 10)
 plot(cs)
 

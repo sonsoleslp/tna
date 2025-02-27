@@ -22,7 +22,7 @@ A \code{data.frame} object.
 Retrieve statistics from a mixture Markov model (MMM)
 }
 \examples{
-mmm_stats(engagement_mmm)
+mmm_stats(group_regulation_mmm)
 
 }
 \seealso{

@@ -44,7 +44,7 @@
 #'   * `reciprocity`: The reciprocity of the network.
 #'
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' summary(model)
 #'
 summary.tna <- function(object, ...) {
@@ -102,7 +102,7 @@ summary.tna <- function(object, ...) {
 #' @return A `summary.tna_bootstrap` object containing the weight,
 #' p-value and confidence interval of each edge.
 #' @examples
-#' model <- tna(engagement)
+#' model <- tna(group_regulation)
 #' # Small number of iterations for CRAN
 #' boot <- bootstrap(model, iter = 50)
 #' summary(boot)
@@ -164,8 +164,8 @@ summary.tna_bootstrap <- function(object, ...) {
 #'   * `reciprocity`: The reciprocity of the network.
 #'
 #' @examples
-#' group <- c(rep("High", 100), rep("Low", 100))
-#' model <- group_model(engagement, group = group)
+#' group <- c(rep("High", 1000), rep("Low", 1000))
+#' model <- group_model(group_regulation, group = group)
 #' summary(model)
 #'
 summary.group_tna <- function(object, combined = TRUE, ...) {

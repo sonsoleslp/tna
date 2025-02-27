@@ -44,7 +44,7 @@ A \code{histogram} object of edge weights.
 Plot a Histogram of Edge Weights in the Network
 }
 \examples{
-model <- tna(engagement)
+model <- tna(group_regulation)
 hist(model)
 
 }
