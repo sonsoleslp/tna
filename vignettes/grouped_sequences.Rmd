@@ -73,6 +73,7 @@ Alternatively, if sequence data is provided to `group_model()`, the group assign
 ```{r, eval = TRUE, echo = FALSE}
 tna_model_clus <- group_model(engagement_mmm)
 ```
+
 ```{r, eval = FALSE}
 tna_model_clus <- group_model(fit_mmm$model)
 ```
@@ -112,7 +113,7 @@ transitions[[3]]
 We can also plot the cluster-specific transitions
 ```{r, fig.width=6, fig.height=2}
 layout(t(1:3))
-plot(tna_model_clus)
+plot(tna_model_clus, vsize = 20, edge.label.cex = 2)
 ```
 
 Just like ordinary TNA models, we can prune the rare transitions
@@ -123,7 +124,7 @@ pruned_clus <- prune(tna_model_clus, threshold = 0.1)
 and plot the cluster transitions after pruning
 ```{r, fig.width=6, fig.height=2, message = FALSE}
 layout(t(1:3))
-plot(pruned_clus)
+plot(pruned_clus, vsize = 20, edge.label.cex = 2)
 ```
  
 Centrality measures can also be computed for each cluster directly.
@@ -139,7 +140,7 @@ centralities_per_cluster <- centralities(
   measures = centrality_measures
 )
 plot(
-  centralities_per_cluster,
+  centralities_per_cluster, ncol = 4,
   colors = c("purple", "orange", "pink")
 )
 ```

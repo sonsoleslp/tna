@@ -829,6 +829,7 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", ...) {
 #' @export
 #' @param x A square `matrix` of edge weights.
 #' @inheritParams plot.tna
+#' @keywords internal
 #' @return See [plot.tna()].
 #' @examples
 #' m <- matrix(rexp(25), 5, 5)

@@ -84,7 +84,7 @@ cliques_of_two <- cliques(
   threshold = 0.1  # Only consider edges with weight > 0.1
 )
 print(cliques_of_two)
-plot(cliques_of_two, vsize = 30, edge.label.cex = 3, esize = 25)
+plot(cliques_of_two, vsize = 15, edge.label.cex = 3, esize = 25)
 ```
 
 ```{r}
@@ -216,7 +216,7 @@ print(Permutation$centralities$stats)
 
 ```{r, cache=TRUE, fig.align='center', fig.width=7, fig.height=4}
 # Results of the Case-Dropping Bootstrap for Centrality Indices
-Centrality_stability <- estimate_centrality_stability(model, detailed = FALSE)
+Centrality_stability <- estimate_centrality_stability(model, detailed = FALSE, iter = 100)
 plot(Centrality_stability)
 ```
 

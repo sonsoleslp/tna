@@ -22,16 +22,15 @@ reference:
   contents:
   - tna-package
   - build_model
-  - plot_model
   - print.tna
   - plot.tna
   - prepare_data
+  - print.tna_data
   - summary.tna
   - hist.tna
   - print.summary.tna
   - plot_mosaic
   - plot_mosaic.tna_data
-  - group_model
   - print.group_tna
   - plot.group_tna
   - summary.group_tna
@@ -68,6 +67,7 @@ reference:
   contents:
   - compare
   - compare.group_tna
+  - print.tna_comparison
   - plot_compare
   - plot_compare.group_tna
   - plot.tna_comparison
@@ -78,11 +78,11 @@ reference:
   - print.tna_permutation
   - plot.tna_permutation
   - print.tna_bootstrap
-  - print.group_tna_bootstrap
   - print.summary.tna_bootstrap
   - print.summary.group_tna_bootstrap
   - print.tna_stability
   - plot.tna_stability
+  - print.group_tna_bootstrap
   - print.group_tna_stability
   - plot.group_tna_stability
   - estimate_centrality_stability
@@ -96,6 +96,7 @@ reference:
 
 - title: Clusters
   contents:
+  - group_model
   - rename_groups
   - mmm_stats
 

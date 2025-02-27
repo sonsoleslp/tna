@@ -106,9 +106,9 @@ prepare_data <- function(data, actor, time, action, order,
   .session_id <- .session_nr <- .new_session <- .time_gap <-
     .standardized_time <- .sequence <- n_sessions <- n_actions <- NULL
 
-  message_("Initializing session computation...")
+  message_("\fInitializing session computation...")
   message_(
-    "Input data dimensions:
+    "\fInput data dimensions:
     {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
   )
   data <- tibble::as_tibble(data)
@@ -125,7 +125,7 @@ prepare_data <- function(data, actor, time, action, order,
   stopifnot_(
     all(cols_obs),
     c(
-      "The columns {.val {cols_req}} must exist in the data.",
+      "\fThe columns {.val {cols_req}} must exist in the data.",
       `x` = "The following columns were not found in the data: {cols_mis}."
     )
   )
@@ -145,13 +145,13 @@ prepare_data <- function(data, actor, time, action, order,
     default_order <- TRUE
   }
   if (!missing(time)) {
-    message_("Parsing time values...")
+    message_("\fParsing time values...")
     message_(
-      "First few time values: {.val {utils::head(data[[time]], 3)}}"
+      "\fFirst few time values: {.val {utils::head(data[[time]], 3)}}"
     )
     if (is.numeric(data[[time]])) {
       message_(
-        "Detected {.cls numeric} time values - treating as Unix timestamp."
+        "\fDetected {.cls numeric} time values - treating as Unix timestamp."
       )
       is_unix_time <- TRUE
     }
@@ -161,10 +161,10 @@ prepare_data <- function(data, actor, time, action, order,
       is_unix_time = is_unix_time,
       unix_time_unit = unix_time_unit
     )
-    message_("Sample of parsed times: {.val {utils::head(parsed_times, 3)}}")
-    message_("Creating sessions based on time threshold...")
+    message_("\fSample of parsed times: {.val {utils::head(parsed_times, 3)}}")
+    message_("\fCreating sessions based on time threshold...")
     message_(
-      "Time threshold for new session: {.val {time_threshold}} seconds"
+      "\fTime threshold for new session: {.val {time_threshold}} seconds"
     )
     # Create processed data (long format)
     long_data <- long_data |>
@@ -201,7 +201,7 @@ prepare_data <- function(data, actor, time, action, order,
     msg <- ifelse_(
       default_order,
       paste0(
-        "No {.arg time} or {.arg order} column provided. ",
+        "\fNo {.arg time} or {.arg order} column provided. ",
         ifelse_(
           default_actor,
           "Treating the entire dataset as one session.",
@@ -211,6 +211,12 @@ prepare_data <- function(data, actor, time, action, order,
       "Using provided {.arg order} column to create sequences."
     )
     message_(msg)
+
+    if (!default_order) {
+      long_data <- long_data |>
+        dplyr::arrange(!!rlang::sym(order))
+    }
+
     long_data <- long_data |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
@@ -227,7 +233,7 @@ prepare_data <- function(data, actor, time, action, order,
   }
 
   # Create wide format
-  message_("Creating wide format view of sessions...")
+  message_("\fCreating wide format view of sessions...")
   wide_data <- long_data |>
     tidyr::pivot_wider(
       id_cols = .session_id,
@@ -266,30 +272,30 @@ prepare_data <- function(data, actor, time, action, order,
 
   # Print summary statistics
   rlang_verbose <- getOption("rlib_message_verbosity")
-  message_("\nSession Analysis Summary")
-  message_("------------------------")
-  message_("Total number of sessions: {.val {stats$total_sessions}}")
+  message_("\fSession Analysis Summary")
+  message_("\f------------------------")
+  message_("\fTotal number of sessions: {.val {stats$total_sessions}}")
   if (!default_actor) {
-    message_("Number of unique users: {.val {stats$unique_users}}")
+    message_("\fNumber of unique users: {.val {stats$unique_users}}")
   }
-  message_("Total number of actions: {.val {stats$total_actions}}")
+  message_("\fTotal number of actions: {.val {stats$total_actions}}")
   message_(
-    "Maximum sequence length: {.val {stats$max_sequence_length}} actions"
+    "\fMaximum sequence length: {.val {stats$max_sequence_length}} actions"
   )
   if (!missing(time) && default_order) {
     message_(
-      "Time range: {.val {stats$time_range[1]}} to
+      "\fTime range: {.val {stats$time_range[1]}} to
       {.val {stats$time_range[2]}}"
     )
   }
   if (!default_actor) {
-    message_("\nSessions per user:")
+    message_("\fSessions per user:")
     onlyif(
       is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
       print(stats$sessions_per_user)
     )
   }
-  message_("Top 5 longest sessions:")
+  message_("\fTop 5 longest sessions:")
   onlyif(
     is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
     print(utils::head(stats$actions_per_session, 5))
@@ -316,9 +322,9 @@ prepare_data <- function(data, actor, time, action, order,
 #' @inheritParams prepare_data
 #' @noRd
 parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
-  message_("Starting time parsing process...")
-  message_("Number of values to parse: {.val {length(time)}}")
-  message_("Sample values: {.val {utils::head(time, 3)}}")
+  message_("\fStarting time parsing process...")
+  message_("\fNumber of values to parse: {.val {length(time)}}")
+  message_("\fSample values: {.val {utils::head(time, 3)}}")
   # Handle Unix timestamps
   time_original <- time
   if (is.numeric(time) && is_unix_time) {
@@ -426,8 +432,8 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
   for (fmt in formats) {
     parsed_time <- as.POSIXct(strptime(time, format = fmt))
     if (!all(is.na(parsed_time))) {
-      message_("Successfully parsed using format: {.val {fmt}}")
-      message_("Sample parsed time: {.val {format(parsed_time[1])}}")
+      message_("\fSuccessfully parsed using format: {.val {fmt}}")
+      message_("\fSample parsed time: {.val {format(parsed_time[1])}}")
       return(parsed_time)
     }
   }

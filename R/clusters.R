@@ -30,8 +30,10 @@
 #'   element per cluster. Each element is a `tna` object.
 #'
 #' @examples
-#' group <- c(rep("High", 100), rep("Low", 100))
+#' group <- c(rep("High", 1000), rep("Low", 1000))
 #' model <- group_model(group_regulation, group = group)
+#'
+#' model <- group_model(engagement_mmm)
 #'
 group_model <- function(x, ...) {
   UseMethod("group_model")
@@ -156,7 +158,7 @@ group_model.mhmm <- function(x, ...) {
 #' @export
 #' @rdname group_model
 #' @examples
-#' model <- group_tna(group_regulation, group = gl(2, 100))
+#' model <- group_tna(group_regulation, group = gl(2, 1000))
 #'
 group_tna <- function(x, ...) {
   check_missing(x)
@@ -166,7 +168,7 @@ group_tna <- function(x, ...) {
 #' @export
 #' @rdname group_model
 #' @examples
-#' model <- group_ftna(group_regulation, group = gl(2, 100))
+#' model <- group_ftna(group_regulation, group = gl(2, 1000))
 #'
 group_ftna <- function(x, ...) {
   group_model(x = x, type = "frequency", ...)
@@ -175,7 +177,7 @@ group_ftna <- function(x, ...) {
 #' @export
 #' @rdname group_model
 #' @examples
-#' model <- group_ctna(group_regulation, group = gl(2, 100))
+#' model <- group_ctna(group_regulation, group = gl(2, 1000))
 #'
 group_ctna <- function(x, ...) {
   group_model(x = x, type = "co-occurrence", ...)
@@ -192,7 +194,7 @@ group_ctna <- function(x, ...) {
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @return A `data.frame` object.
 #' @examples
-#' mmm_stats(group_regulation_mmm)
+#' mmm_stats(engagement_mmm)
 #'
 mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
   stopifnot_(
@@ -289,7 +291,7 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
 #' @param new_names A `character` vector containing one name per cluster.
 #' @return A renamed `group_tna` object.
 #' @examples
-#' model <- group_model(group_regulation_mmm)
+#' model <- group_model(engagement_mmm)
 #' model_renamed <- rename_groups(model, c("A", "B", "C"))
 #'
 rename_groups <- function(x, new_names) {

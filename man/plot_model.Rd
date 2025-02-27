@@ -56,3 +56,4 @@ m <- matrix(rexp(25), 5, 5)
 plot_model(m)
 
 }
+\keyword{internal}

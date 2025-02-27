@@ -12,9 +12,16 @@
 \item{...}{Arguments passed to the generic \code{print} method.}
 }
 \value{
-A \code{summary.tna_bootstrap} containing the weight, p-value and confidence interval
-of each edge
+A \code{summary.tna_bootstrap} object (invisibly) containing the weight,
+p-value and confidence interval of each edge.
 }
 \description{
 Print Bootstrap Summary
+}
+\examples{
+model <- tna(group_regulation)
+# Small number of iterations for CRAN
+boot <- bootstrap(model, iter = 10)
+print(summary(boot))
+
 }

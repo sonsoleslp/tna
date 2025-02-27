@@ -21,6 +21,7 @@ Print Detected Communities
 model <- group_model(engagement_mmm)
 comm <- communities(model)
 print(comm)
+
 }
 \seealso{
 Cluster-related functions

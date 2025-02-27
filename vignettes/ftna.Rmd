@@ -138,7 +138,7 @@ plot(model_scaled, minimum = 0.05, cut = 0.1)
 
 ## Patterns
 
-```{r, fig.align='center'}
+```{r, fig.align='center', fig.width=3, fig.height=2}
 # Identify 2-cliques (dyads) from the FTNA model with a weight threshold, 
 # excluding loops in visualization.
 # A 2-clique represents a pair of nodes that are strongly connected based on 
@@ -152,10 +152,10 @@ cliques_of_two <- cliques(
 
 # Print and visualize the identified 2-cliques (dyads)
 print(cliques_of_two)  # Display details of 2-cliques
-plot(cliques_of_two, ask = F)   # Visualize 2-cliques in the network
+plot(cliques_of_two, ask = F, vsize = 20)   # Visualize 2-cliques in the network
 ```
 ```{r, fig.align='center'}
-layout(matrix(1:5, ncol = 3))
+layout(matrix(1:6, ncol = 3))
 # Identify 3-cliques (triads) from the FTNA model.
 # A 3-clique is a fully connected set of three nodes, indicating a strong 
 # triplet structure.
@@ -171,7 +171,7 @@ print(cliques_of_three) # Display details of 3-cliques
 plot(cliques_of_three, ask = F)  # Visualize 3-cliques in the network
 ```
 ```{r, fig.align='center', fig.width=6, fig.height=4}
-layout(matrix(1:6,ncol = 3))
+layout(matrix(1:6, ncol = 3))
 # Identify 4-cliques (quadruples) from the FTNA model.
 # A 4-clique includes four nodes where each node is connected to every other 
 # node in the group.
@@ -217,7 +217,7 @@ summary(pruned_disparity)
 
 ## Node level measures
 
-```{r}
+```{r, fig.width=7, fig.height=7}
 # Compute centrality measures for the FTNA model
 centrality_measures <- centralities(model_scaled)
 
@@ -296,7 +296,7 @@ plot(Permutation, minimum = 0.01)
 
 ## Centrality stability
 
-```{r, fig.width=7, fig.height=4}
-Centrality_stability <- estimate_centrality_stability(model_scaled, detailed = FALSE)
+```{r, fig.width=5, fig.height=3}
+Centrality_stability <- estimate_centrality_stability(model_scaled, detailed = FALSE, iter = 100)
 plot(Centrality_stability)
 ```

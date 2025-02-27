@@ -21,6 +21,7 @@ Print Found Cliques
 model <- group_model(engagement_mmm)
 cliq <- cliques(model, size = 2)
 print(cliq)
+
 }
 \seealso{
 Cluster-related functions

@@ -58,6 +58,50 @@ test_that("data preparation works when only action is provided", {
   )
 })
 
+test_that("data preparation works when actor and order are provided", {
+  data <- tibble::tibble(
+    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
+    time = c(
+      "2023-01-01 10:00:00", "2023-01-01 10:05:00",
+      "2023-01-01 10:20:00", "2023-01-01 12:00:00",
+      "2023-01-01 12:02:00", "2023-01-01 14:00:00",
+      "2023-01-01 14:05:00", "2023-01-01 14:10:00"
+    ),
+    action = c(
+      "view", "click", "add_cart", "view",
+      "checkout", "view", "click", "share"
+    )
+  )
+
+  data_unarranged <- dplyr::arrange(data, action)
+
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_error(
+    prepare_data(
+      data,
+      actor = "user",
+      order = "time",
+      action = "action"
+    ),
+    NA
+  )
+  expect_equal(
+    prepare_data(
+      data,
+      actor = "user",
+      order = "time",
+      action = "action"
+    ),
+    prepare_data(
+      data_unarranged,
+      actor = "user",
+      order = "time",
+      action = "action"
+    )
+  )
+})
+
+
 test_that("unix time from character column works", {
   mock_long_unix <- mock_long
   mock_long_unix$time <- as.POSIXct("2023-01-01 00:00:00") |>
