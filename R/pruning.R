@@ -59,8 +59,8 @@ prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
     c("threshold", "lowest", "bootstrap", "disparity")
   )
   check_values(threshold, type = "numeric")
-  check_probability(lowest)
-  check_probability(level)
+  check_range(lowest)
+  check_range(level)
   stopifnot_(
     is.null(attr(x, "pruning")),
     "The model has already been pruned."

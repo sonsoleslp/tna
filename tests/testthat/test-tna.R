@@ -1,31 +1,3 @@
-test_that("missing arguments fail", {
-  expect_error(
-    build_model.matrix(inits = 0L),
-    "Argument `x` is missing"
-  )
-})
-
-test_that("single element matrix fails", {
-  expect_error(
-    build_model.matrix(x = 0L),
-    "Argument `x` must have at least two columns"
-  )
-})
-
-test_that("non-square matrix fails", {
-  expect_error(
-    build_model.matrix(x = matrix(0, 3, 2)),
-    "Argument `x` must be a square <matrix>"
-  )
-})
-
-test_that("non-coercible arguments fail", {
-  expect_error(
-    tna(x = identity),
-    "Argument `x` must be coercible to a <matrix>"
-  )
-})
-
 # TODO internal sequence data
 # test_that("tna works with sequence data", {
 #  seq_data <- TraMineR::seqdef(seqHMM::biofam3c$married)

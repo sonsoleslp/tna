@@ -69,7 +69,7 @@ check_class <- function(x, what) {
   )
 }
 
-#' Check that `x` is a `tna` Object Created from Sequence Data
+#' Check that `x` is a `tna` object created from sequence Data
 #'
 #' @param x An \R object.
 #' @noRd
@@ -111,27 +111,6 @@ check_measures <- function(x) {
   available_centrality_measures[measures_match]
 }
 
-#' Check that `x` is Between 0 and 1.
-#'
-#' @param x An \R object expected to be a single  `numeric` or `integer` value.
-#' @noRd
-check_probability <- function(x, scalar = TRUE) {
-  arg <- deparse(substitute(x))
-  if (scalar) {
-    stopifnot_(
-      checkmate::test_number(x = x, lower = 0.0, upper = 1.0),
-      "Argument {.arg {arg}} must be a single
-      {.cls numeric} value between 0 and 1."
-    )
-  } else {
-    stopifnot_(
-      checkmate::test_numeric(x = x, lower = 0.0, upper = 1.0),
-      "Argument {.arg {arg}} must only contain
-      {.cls numeric} values between 0 and 1."
-    )
-  }
-}
-
 #' Check that `x` is a non-negative
 #'
 #' @param x An \R object expected to be a `numeric` or `integer`
@@ -159,10 +138,34 @@ check_values <- function(x, type = "integer", strict = FALSE,
   strictness <- ifelse_(strict, "positive", "non-negative")
   stopifnot_(
     test_fun(x = x, lower = as.integer(strict)),
-    "Argument {.arg {arg}} must be a single {strictness} {.cls {type}}{suffix}."
+    "Argument {.arg {arg}} must be a {strictness} {.cls {type}}{suffix}."
   )
 }
 
+#' Check that `x` is between a minimum and a maximum value
+#'
+#' @param x An \R object expected to be a single  `numeric` or `integer` value.
+#' @noRd
+check_range <- function(x, type = "numeric", scalar = TRUE,
+                        min = 0.0, max = 1.0) {
+  arg <- deparse(substitute(x))
+  prefix <- ifelse_(scalar, "be a single", "only contain")
+  suffix <- ifelse_(
+    scalar,
+    ifelse_(type == "integer", "", " value"),
+    " values"
+  )
+  test_fun <- ifelse_(
+    type == "numeric",
+    ifelse_(scalar, checkmate::test_number, checkmate::test_numeric),
+    ifelse_(scalar, checkmate::test_int, checkmate::test_integer)
+  )
+  stopifnot_(
+    test_fun(x = x, lower = min, upper = max),
+    "Argument {.arg {arg}} must {prefix}
+    {.cls {type}} {suffix} between {min} and {max}."
+  )
+}
 
 #' Check That `x` is a Logical Value
 #'

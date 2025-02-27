@@ -99,7 +99,7 @@ plot.tna <- function(x, labels, colors, pie,
   check_class(x, "tna")
   check_flag(show_pruned)
   check_flag(edge.labels)
-  check_probability(edge.label.position, scalar = FALSE)
+  check_range(edge.label.position, scalar = FALSE)
   layout <- check_layout(x, layout, layout_args)
   if (missing(pie)) {
     pie <- x$inits
@@ -277,7 +277,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' community assignments.
 #' @param method A `character` string naming a community detection method to
 #' use for coloring the plot. See [communities()] for details.
-#' @param ... Additional arguments passed to [qgraph::qgraph].
+#' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object in which the nodes are colored by community.
 #' @examples
 #' model <- tna(group_regulation)
@@ -531,7 +531,7 @@ plot.tna_permutation <- function(x, colors, ...) {
 #'
 plot.tna_stability <- function(x, level = 0.05, ...) {
   check_class(x, "tna_stability")
-  check_probability(level)
+  check_range(level)
   x$detailed_results <- NULL
   x_names <- names(x)
   drop_prop <- attr(x, "drop_prop")

@@ -24,6 +24,7 @@
 #' value in `group` be removed. If `FALSE`, an additional category for `NA`
 #' values will be added. The default is `FALSE` and a warning is issued
 #' if `NA` values are detected.
+#' @inheritParams build_model
 #' @param ... Ignored.
 #' @return An object of class `group_tna` which is a `list` containing one
 #'   element per cluster. Each element is a `tna` object.
@@ -39,12 +40,11 @@ group_model <- function(x, ...) {
 #' @export
 #' @family clusters
 #' @rdname group_model
-group_model.default <- function(x, group, cols, na.rm = TRUE, ...) {
+group_model.default <- function(x, group, type = "relative",
+                                scaling = character(0L), cols, params = list(),
+                                na.rm = TRUE, ...) {
   check_missing(x)
-  stopifnot_(
-    !missing(group),
-    "Argument {.arg group} is missing."
-  )
+  check_missing(group)
   stopifnot_(
     inherits(x, "stslist") ||
       inherits(x, "data.frame") || inherits(x, "tna_data"),
@@ -57,7 +57,10 @@ group_model.default <- function(x, group, cols, na.rm = TRUE, ...) {
     x <- wide
   } else {
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
+    check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   }
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
   group_len <- length(group)
   data <- NULL
   stopifnot_(
@@ -105,10 +108,26 @@ group_model.default <- function(x, group, cols, na.rm = TRUE, ...) {
   )
   groups <- vector(mode = "list", length = n_group)
   group <- as.integer(group)
+  vals <- sort(unique(unlist(x[, cols])))
+  alphabet <- vals[!is.na(vals)]
   for (i in seq_along(levs)) {
     groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))
     rows <- which(group == i)
-    clusters[[levs[i]]] <- build_model(x, rows = rows, cols = cols, ...)
+    d <- create_seqdata(
+      x[rows, ],
+      cols = cols,
+      alphabet = alphabet
+    )
+    model <- initialize_model(d, type, scaling, params)
+    clusters[[levs[i]]] <- build_model_(
+      weights = model$weights,
+      inits = model$inits,
+      labels = model$labels,
+      type = type,
+      scaling = scaling,
+      data = d,
+      params = params
+    )
   }
   structure(
     clusters,
@@ -182,7 +201,7 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
   )
   check_missing(x)
   check_flag(use_t_dist)
-  check_probability(level)
+  check_range(level)
   stopifnot_(
     inherits(x, "mhmm"),
     c(
@@ -267,7 +286,7 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
 #' @export
 #' @family clusters
 #' @param x A `group_tna` object.
-#' @param new_names A `vector` containing one name per cluster.
+#' @param new_names A `character` vector containing one name per cluster.
 #' @return A renamed `group_tna` object.
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -278,8 +297,8 @@ rename_groups <- function(x, new_names) {
   check_missing(new_names)
   check_class(x, "group_tna")
   stopifnot_(
-    is.vector(new_names),
-    "Argument {.arg new_names} must be a vector."
+    is.character(new_names),
+    "Argument {.arg new_names} must be a {.cls character} vector."
   )
   stopifnot_(
     length(new_names) == length(x),

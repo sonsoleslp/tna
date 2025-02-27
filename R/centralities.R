@@ -247,8 +247,8 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   check_flag(progressbar)
   check_flag(detailed)
   check_values(iter, strict = TRUE)
-  check_probability(threshold)
-  check_probability(certainty)
+  check_range(threshold)
+  check_range(certainty)
   check_measures(measures)
   d <- x$data
   type <- attr(x, "type")

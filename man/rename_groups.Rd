@@ -9,7 +9,7 @@ rename_groups(x, new_names)
 \arguments{
 \item{x}{A \code{group_tna} object.}
 
-\item{new_names}{A \code{vector} containing one name per cluster.}
+\item{new_names}{A \code{character} vector containing one name per cluster.}
 }
 \value{
 A renamed \code{group_tna} object.

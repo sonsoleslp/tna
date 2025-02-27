@@ -17,7 +17,7 @@ community assignments.}
 \item{method}{A \code{character} string naming a community detection method to
 use for coloring the plot. See \code{\link[=communities]{communities()}} for details.}
 
-\item{...}{Additional arguments passed to \link[qgraph:qgraph]{qgraph::qgraph}.}
+\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
 A \code{qgraph} object in which the nodes are colored by community.

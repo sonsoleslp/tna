@@ -11,7 +11,16 @@
 \usage{
 group_model(x, ...)
 
-\method{group_model}{default}(x, group, cols, na.rm = TRUE, ...)
+\method{group_model}{default}(
+  x,
+  group,
+  type = "relative",
+  scaling = character(0L),
+  cols,
+  params = list(),
+  na.rm = TRUE,
+  ...
+)
 
 \method{group_model}{mhmm}(x, ...)
 
@@ -35,10 +44,62 @@ rows/sequences of \code{x}. Alternatively, a single \code{character} string givi
 the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object.}
 
+\item{type}{A \code{character} string describing the weight matrix type.
+Currently supports the following types:
+\itemize{
+\item \code{"relative"} for relative frequencies (probabilities, the default)
+\item \code{"frequency"} for frequencies.
+\item \code{"co-occurrence"} for co-occurrences.
+\item \code{"n-gram"} for n-gram transitions. Captures higher-order transitions by
+considering sequences of n states, useful for identifying longer
+patterns.
+\item \code{"gap"} allows transitions between non-adjacent states, with
+transitions weighted by the gap size.
+\item \code{"window"} creates transitions between all states within a
+sliding window, capturing local relationships
+(several sequences together).
+\item \code{"reverse"} considers the sequences in reverse order
+(resulting in what is called a reply network in some contexts).
+The resulting weight matrix is the transpose of the \code{"frequency"}
+option.
+}}
+
+\item{scaling}{A \code{character} vector describing how to scale the weights
+defined by \code{type}. When a vector is provided, the scaling options are
+applied in the respective order. For example, \code{c("rank", "minmax")} would
+first compute the ranks, then scale them to the unit interval using
+min-max normalization. An empty vector corresponds to no scaling.
+Currently supports the following options:
+\itemize{
+\item \code{"minmax"} performs min-max normalization to scale the weights to the
+unit interval. Note that if the smallest weight is positive, it
+will be zero after scaling.
+\item \code{"max"} Multiplies the weights by the reciprocal of the largest weight
+to scale the weights to the unit interval. This options preserves
+positive ranks, unlike \code{"minmax"} when all weights are positive.
+\item \code{"rank"} Computes the ranks of the weights using \code{\link[base:rank]{base::rank()}} with
+\code{ties.method = "average"}.
+}}
+
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
 columns that should be considered as sequence data.
 Defaults to all columns, i.e., \code{seq(1, ncol(x))}. The columns are
 automatically determined for \code{tna_data} objects.}
+
+\item{params}{A \code{list} of additional arguments for models of specific
+\code{type}. The potential elements of this list are:
+\itemize{
+\item \code{n_gram}: An \code{integer} for n-gram transitions specifying the number of
+adjacent events. The default value is 2.
+\item \code{max_gap}: An \code{integer} for the gap-allowed transitions specifying the
+largest allowed gap size. The default is 1.
+\item \code{window_size}: An \code{integer} for the sliding window transitions
+specifying the window size. The default is 2.
+\item \code{weighted}: A \code{logical} value. If \code{TRUE}, the transitions
+are weighted by the inverse of the sequence length. Can be used for
+frequency, co-occurrence and reverse model types. The default is
+\code{FALSE}.
+}}
 
 \item{na.rm}{A \code{logical} value that determines if observations with \code{NA}
 value in \code{group} be removed. If \code{FALSE}, an additional category for \code{NA}
