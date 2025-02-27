@@ -88,3 +88,54 @@ test_that("unsupported date format fails", {
     "Could not parse time values"
   )
 })
+
+test_that("datetime is unaffected", {
+  time <- rep(Sys.time(), 5)
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_equal(
+    time,
+    parse_time(
+      time,
+      custom_format = NULL,
+      is_unix_time = FALSE,
+      unix_time_unit = "secs"
+    )
+  )
+})
+
+test_that("missing values informs", {
+  time <- as.character(rep(Sys.time(), 5))
+  time[c(4, 5)] <- NA
+  out <- utils::capture.output(
+    utils::capture.output(
+      parse_time(
+        time,
+        custom_format = NULL,
+        is_unix_time = FALSE,
+        unix_time_unit = "secs"
+      ),
+      type = "message"
+    ),
+    type = "output"
+  )
+  out <- paste0(out, collapse = "")
+  expect_true(
+    grepl("Found missing or empty time values", out),
+  )
+})
+
+test_that("parsing with custom time format works", {
+  time_raw <- "27---2---2025"
+  fmt <- "%d---%m---%Y"
+  time <- as.POSIXct(strptime(time_raw, format = fmt))
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_equal(
+    time,
+    parse_time(
+      time_raw,
+      custom_format = fmt,
+      is_unix_time = FALSE,
+      unix_time_unit = "secs"
+    )
+  )
+})

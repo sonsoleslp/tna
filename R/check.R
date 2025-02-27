@@ -69,7 +69,7 @@ check_class <- function(x, what) {
   )
 }
 
-#' Check that `x` is a `tna` Object Created from Sequence Data
+#' Check that `x` is a `tna` object created from sequence Data
 #'
 #' @param x An \R object.
 #' @noRd
@@ -111,27 +111,6 @@ check_measures <- function(x) {
   available_centrality_measures[measures_match]
 }
 
-#' Check that `x` is Between 0 and 1.
-#'
-#' @param x An \R object expected to be a single  `numeric` or `integer` value.
-#' @noRd
-check_probability <- function(x, scalar = TRUE) {
-  arg <- deparse(substitute(x))
-  if (scalar) {
-    stopifnot_(
-      checkmate::test_number(x = x, lower = 0.0, upper = 1.0),
-      "Argument {.arg {arg}} must be a single
-      {.cls numeric} value between 0 and 1."
-    )
-  } else {
-    stopifnot_(
-      checkmate::test_numeric(x = x, lower = 0.0, upper = 1.0),
-      "Argument {.arg {arg}} must only contain
-      {.cls numeric} values between 0 and 1."
-    )
-  }
-}
-
 #' Check that `x` is a non-negative
 #'
 #' @param x An \R object expected to be a `numeric` or `integer`
@@ -159,10 +138,34 @@ check_values <- function(x, type = "integer", strict = FALSE,
   strictness <- ifelse_(strict, "positive", "non-negative")
   stopifnot_(
     test_fun(x = x, lower = as.integer(strict)),
-    "Argument {.arg {arg}} must be a single {strictness} {.cls {type}}{suffix}."
+    "Argument {.arg {arg}} must be a {strictness} {.cls {type}}{suffix}."
   )
 }
 
+#' Check that `x` is between a minimum and a maximum value
+#'
+#' @param x An \R object expected to be a single  `numeric` or `integer` value.
+#' @noRd
+check_range <- function(x, type = "numeric", scalar = TRUE,
+                        min = 0.0, max = 1.0) {
+  arg <- deparse(substitute(x))
+  prefix <- ifelse_(scalar, "be a single", "only contain")
+  suffix <- ifelse_(
+    scalar,
+    ifelse_(type == "integer", "", " value"),
+    " values"
+  )
+  test_fun <- ifelse_(
+    type == "numeric",
+    ifelse_(scalar, checkmate::test_number, checkmate::test_numeric),
+    ifelse_(scalar, checkmate::test_int, checkmate::test_integer)
+  )
+  stopifnot_(
+    test_fun(x = x, lower = min, upper = max),
+    "Argument {.arg {arg}} must {prefix}
+    {.cls {type}} {suffix} between {min} and {max}."
+  )
+}
 
 #' Check That `x` is a Logical Value
 #'
@@ -178,7 +181,7 @@ check_flag <- function(x) {
 
 #' Check a `layout` Argument
 #'
-#' @param x A `tna` or a `tna_cliques` tobject
+#' @param x A `tna` or a `tna_cliques` object.
 #' @param layout A `character` string, a `matrix`, or a `function`.
 #' @param args A `list` of arguments to pass to the layout function.
 #' @param ... Additional arguments passed to `as.igraph`.
@@ -196,7 +199,7 @@ check_layout <- function(x, layout, args = list(), ...) {
     stopifnot_(
       !inherits(layout, "try-error"),
       "A {.cls character} layout must be either {.val circle}, {.val groups},
-      or {.val spring}"
+      or {.val spring}."
     )
     return(layout)
   }
@@ -204,14 +207,14 @@ check_layout <- function(x, layout, args = list(), ...) {
     stopifnot_(
       ncol(layout) == 2L,
       c(
-        "A {.cls matrix} layout must have 2 columns.",
+        "A {.cls matrix} layout must have two columns:",
         `x` = "Found {ncol(layout)} columns instead."
       )
     )
     stopifnot_(
       nrow(layout) == nodes(x),
       c(
-        "A {.cls matrix} layout must have a row for each node",
+        "A {.cls matrix} layout must have exactly one row for each node:",
         `x` = "Expected {nodes(x)} rows but {nrow(layout)} were supplied."
       )
     )

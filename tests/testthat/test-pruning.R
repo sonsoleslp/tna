@@ -47,15 +47,6 @@ test_that("pruning function ensures weak connectivity", {
   expect_equal(result$method, "threshold")
 })
 
-test_that("pruning function fails with invalid tna object", {
-  invalid_tna_object <- list()
-  class(invalid_tna_object) <- "not_tna"
-  expect_error(
-    prune(invalid_tna_object, threshold = 0.1),
-    "no applicable method for 'prune' applied to an object of class \"not_tna\""
-  )
-})
-
 test_that("pruning details can be obtained", {
   expect_error(
     pruned_model <- prune(mock_tna, threshold = 0.2),
@@ -151,5 +142,14 @@ test_that("pruned weights are restored by reprune for clusters", {
   expect_equal(
     lapply(pruned_model, "[[", "weights"),
     lapply(repruned_model, "[[", "weights")
+  )
+})
+
+test_that("pruning function fails with invalid tna object", {
+  invalid_tna_object <- list()
+  class(invalid_tna_object) <- "not_tna"
+  expect_error(
+    prune(invalid_tna_object, threshold = 0.1),
+    "no applicable method for 'prune' applied to an object of class \"not_tna\""
   )
 })

@@ -7,7 +7,7 @@
 mmm_stats(x, use_t_dist = TRUE, level = 0.05)
 }
 \arguments{
-\item{x}{An \code{mhmm} object.}
+\item{x}{A \code{mhmm} object.}
 
 \item{use_t_dist}{A \code{logical} value. If \code{TRUE} (the default), the
 t-distribution is used to compute confidence intervals.}

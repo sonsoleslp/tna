@@ -4,7 +4,7 @@
 \alias{plot_compare.group_tna}
 \title{Plot the difference network between two clusters}
 \usage{
-\method{plot_compare}{group_tna}(x, i = 1, j = 2, ...)
+\method{plot_compare}{group_tna}(x, i = 1L, j = 2L, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}

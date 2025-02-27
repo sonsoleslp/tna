@@ -78,7 +78,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   check_missing(x)
   check_tna_seq(x)
   check_values(iter, strict = TRUE)
-  check_probability(level)
+  check_range(level)
   method <- check_match(method, c("stability", "threshold"))
   if (missing(threshold)) {
     threshold <- unname(stats::quantile(x$weights, probs = 0.1))
@@ -88,11 +88,12 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
     checkmate::test_numeric(
       x = consistency_range,
       len = 2L,
+      min = 0,
       any.missing = FALSE,
       sorted = TRUE
     ),
-    "Argument {.arg consistency_range} must be
-    a sorted {.cls numeric} vector of length 2."
+    "Argument {.arg consistency_range} must be a sorted {.cls numeric}
+     vector of length 2 containing positive values."
   )
   d <- x$data
   type <- attr(x, "type")

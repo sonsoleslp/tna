@@ -1,12 +1,10 @@
 #' Build a Transition Network Analysis Model
 #'
-#' This function constructs a transition network analysis (TNA) model from a
-#' given sequence. It takes a sequence of events or states and builds a Markov
-#' model. It extracts the transition probabilities
-#' and initial probabilities from the model and stores them in a `list` along
-#' with the state labels. Additionally, it creates a transition matrix with
-#' zero diagonal entries (without loops). Also accepts matrices of transition
-#' probabilities and initial state probabilities directly.
+#' Construct a transition network analysis (TNA) model from sequence data.
+#' The function takes a data set of sequence of events or states as input and
+#' builds a TNA model. It extracts the edge weights and initial probabilities
+#' from the data along with the state labels. THe function also accepts weight
+#' matrices and initial state probabilities directly.
 #'
 #' @export
 #' @family core
@@ -180,14 +178,10 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = seq(1, ncol(x)), params = list(), ...) {
   check_missing(x)
   check_class(x, "stslist")
-  check_values(cols, strict = TRUE, scalar = FALSE)
+  check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(
-    x,
-    rows = list(...)$rows,
-    cols
-  )
+  x <- create_seqdata(x, cols)
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -208,14 +202,10 @@ build_model.data.frame <- function(x, type = "relative",
                                    params = list(), ...) {
   check_missing(x)
   check_class(x, "data.frame")
-  check_values(cols, strict = TRUE, scalar = FALSE)
+  check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(
-    x,
-    rows = list(...)$rows,
-    cols = cols
-  )
+  x <- create_seqdata(x, cols = cols)
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -237,11 +227,7 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
-  x <- create_seqdata(
-    wide,
-    rows = list(...)$rows,
-    cols = seq_len(ncol(x$sequence_data))
-  )
+  x <- create_seqdata(wide, cols = seq_len(ncol(x$sequence_data)))
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -320,8 +306,11 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' Convert Sequence Data to an Internal Format
 #'
 #' @param x A `data.frame` or a `stslist` object.
+#' @param cols An `integer` vector of column indices or a `character` vector
+#' of column names.
+#' @param alphabet Optional `character` vector of the alphabet.
 #' @noRd
-create_seqdata <- function(x, rows = NULL, cols) {
+create_seqdata <- function(x, cols, alphabet) {
   cols <- ifelse_(
     is.character(cols),
     which(names(x) %in% cols),
@@ -330,37 +319,34 @@ create_seqdata <- function(x, rows = NULL, cols) {
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
-    colors <- attr(x, "cpal")
     colors <- ifelse_(
-      is.null(colors),
+      is.null(attr(x, "cpal")),
       color_palette(length(labels)),
-      colors
+      attr(x, "cpal")
     )
-    out <- as.data.frame(x)
+    x <- as.data.frame(x)
   } else if (is.data.frame(x)) {
-    vals <- sort(unique(unlist(x[, cols])))
-    alphabet <- labels <- vals[!is.na(vals)]
+    if (missing(alphabet)) {
+      vals <- sort(unique(unlist(x[, cols])))
+      alphabet <- labels <- vals[!is.na(vals)]
+    } else {
+      labels <- alphabet
+    }
     colors <- color_palette(length(labels))
-    out <- x
-    out[, cols] <- as.data.frame(
-      lapply(x[, cols], function(y) factor(y, levels = vals))
+    x[, cols] <- as.data.frame(
+      lapply(x[, cols], function(y) factor(y, levels = alphabet))
     )
   }
-  out[, cols] <- as.data.frame(
+  x[, cols] <- as.data.frame(
     lapply(
-      out[, cols],
+      x[, cols],
       function(y) {
         as.integer(replace(y, which(!y %in% alphabet), NA))
       }
     )
   )
-  out <- ifelse_(
-    is.null(rows),
-    out,
-    out[rows, ]
-  )
   structure(
-    out,
+    x,
     class = "data.frame",
     alphabet = alphabet,
     labels = labels,

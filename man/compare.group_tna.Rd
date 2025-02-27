@@ -4,7 +4,7 @@
 \alias{compare.group_tna}
 \title{Compare TNA Clusters with Comprehensive Metrics}
 \usage{
-\method{compare}{group_tna}(x, i, j, scaling = "none", ...)
+\method{compare}{group_tna}(x, i = 1L, j = 2L, scaling = "none", ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}

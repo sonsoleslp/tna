@@ -90,7 +90,7 @@ compare.matrix <- function(x, y, scaling = "none", ...) {
 #' model <- group_model(engagement_mmm)
 #' compare(model, i = 1, j = 2)
 #'
-compare.group_tna <- function(x, i, j, scaling = "none", ...) {
+compare.group_tna <- function(x, i = 1L, j = 2L, scaling = "none", ...) {
   check_missing(x)
   check_class(x, "group_tna")
   check_clusters(x, i, j)
