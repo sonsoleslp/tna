@@ -139,6 +139,7 @@ prepare_data <- function(data, actor, time, action, order,
     default_actor <- TRUE
   }
   if (missing(order)) {
+    # Placeholder order column
     order <- ".order"
     long_data$.order <- seq_len(nrow(data))
     default_order <- TRUE

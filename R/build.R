@@ -1,12 +1,10 @@
 #' Build a Transition Network Analysis Model
 #'
-#' This function constructs a transition network analysis (TNA) model from a
-#' given sequence. It takes a sequence of events or states and builds a Markov
-#' model. It extracts the transition probabilities
-#' and initial probabilities from the model and stores them in a `list` along
-#' with the state labels. Additionally, it creates a transition matrix with
-#' zero diagonal entries (without loops). Also accepts matrices of transition
-#' probabilities and initial state probabilities directly.
+#' Construct a transition network analysis (TNA) model from sequence data.
+#' The function takes a data set of sequence of events or states as input and
+#' builds a TNA model. It extracts the edge weights and initial probabilities
+#' from the data along with the state labels. THe function also accepts weight
+#' matrices and initial state probabilities directly.
 #'
 #' @export
 #' @family core

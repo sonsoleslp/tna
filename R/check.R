@@ -181,7 +181,7 @@ check_flag <- function(x) {
 
 #' Check a `layout` Argument
 #'
-#' @param x A `tna` or a `tna_cliques` tobject
+#' @param x A `tna` or a `tna_cliques` object.
 #' @param layout A `character` string, a `matrix`, or a `function`.
 #' @param args A `list` of arguments to pass to the layout function.
 #' @param ... Additional arguments passed to `as.igraph`.
@@ -199,7 +199,7 @@ check_layout <- function(x, layout, args = list(), ...) {
     stopifnot_(
       !inherits(layout, "try-error"),
       "A {.cls character} layout must be either {.val circle}, {.val groups},
-      or {.val spring}"
+      or {.val spring}."
     )
     return(layout)
   }
@@ -207,14 +207,14 @@ check_layout <- function(x, layout, args = list(), ...) {
     stopifnot_(
       ncol(layout) == 2L,
       c(
-        "A {.cls matrix} layout must have 2 columns.",
+        "A {.cls matrix} layout must have two columns:",
         `x` = "Found {ncol(layout)} columns instead."
       )
     )
     stopifnot_(
       nrow(layout) == nodes(x),
       c(
-        "A {.cls matrix} layout must have a row for each node",
+        "A {.cls matrix} layout must have exactly one row for each node:",
         `x` = "Expected {nodes(x)} rows but {nrow(layout)} were supplied."
       )
     )

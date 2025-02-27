@@ -20,3 +20,10 @@ test_that("models can be compared", {
   )
 })
 
+test_that("clusters can be compared", {
+  expect_error(
+    comp <- compare(mmm_model, i = 1, j = 3),
+    NA
+  )
+})
+

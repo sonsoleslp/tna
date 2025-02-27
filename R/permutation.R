@@ -45,9 +45,15 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   # TODO check that networks can be compared
   data_x <- x$data
   data_y <- y$data
+  n_x <- nrow(data_x)
+  n_y <- nrow(data_y)
+  stopifnot_(
+    !paired || n_x == n_y,
+    "The number of observations must be the same in {.arg x} and {.arg y}
+     for a paired test."
+  )
   combined_data <- dplyr::bind_rows(data_x, data_y)
-  n_data_x <- nrow(data_x)
-  n_combined <- n_data_x + nrow(data_y)
+  n_xy <- n_x + n_y
   weights_x <- x$weights
   weights_y <- y$weights
   a <- length(attr(data_x, "alphabet"))
@@ -69,8 +75,8 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     to = colnames(weights_y)
   )
   edge_names <- paste0(edge_names$from, " -> ", edge_names$to)
-  perm_x <- seq_len(n_data_x)
-  perm_y <- seq(n_data_x + 1L, n_combined)
+  idx_x <- seq_len(n_x)
+  idx_y <- seq(n_x + 1L, n_xy)
   combined_model <- initialize_model(
     combined_data,
     type,
@@ -86,15 +92,15 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   for (i in seq_len(iter)) {
     if (paired) {
       # For paired data, permute within pairs
-      pair_idx <- matrix(seq_len(n_combined), ncol = 2, byrow = TRUE)
+      pair_idx <- matrix(seq_len(n_xy), ncol = 2)
       permuted_pairs <- t(apply(pair_idx, 1, sample))
       perm_idx <- c(permuted_pairs)
     } else {
       # For unpaired data, perform complete randomization
-      perm_idx <- sample(n_combined)
+      perm_idx <- sample(n_xy)
     }
-    trans_perm_x <- combined_trans[perm_idx[perm_x], , ]
-    trans_perm_y <- combined_trans[perm_idx[perm_y], , ]
+    trans_perm_x <- combined_trans[perm_idx[idx_x], , ]
+    trans_perm_y <- combined_trans[perm_idx[idx_y], , ]
     weights_perm_x <- compute_weights(trans_perm_x, type, scaling, a)
     weights_perm_y <- compute_weights(trans_perm_y, type, scaling, a)
     if (include_centralities) {

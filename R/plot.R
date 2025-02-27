@@ -219,10 +219,10 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
   )
   labels <- attr(x, "labels")
   max_cliques <- min(first + n - 1L, n_cliques)
-  if (interactive()) {
+  if (interactive()) { # nocov start
     op <- graphics::par(ask = ask)
     on.exit(graphics::par(op))
-  }
+  } # nocov end
   for (i in seq(first, max_cliques)) {
     clique_weights <- x$weights[[i]]
     directed <- !attr(x, "sum_weights")
@@ -375,13 +375,14 @@ plot.tna_comparison <- function(x, type = "heatmap",
     edges <- x$edge_metrics[, c("source", "target", "weight_x", "weight_y")]
     metric_idx <- tolower(x$summary_metrics$metric) == method
     corr <- round(x$summary_metrics$value[metric_idx], 3)
-    corr_subtitle <- switch(
+    # switch tracking does not seem to work here
+    corr_subtitle <- switch( # nocov start
       method,
       pearson = bquote("Pearson's" ~ {rho} ~~ "=" ~~ .(corr)),
       spearman = bquote("Spearman's" ~ {rho} ~~ "=" ~~ .(corr)),
       kendall = bquote("Kendall's" ~ {tau} ~~ "=" ~~ .(corr)),
       distance = paste0("Distance correlation = ", corr)
-    )
+    ) # nocov end
     out <-
       ggplot2::ggplot(
         edges,
@@ -541,14 +542,14 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
   for (i in seq_along(x)) {
     measure <- x_names[i]
     corr <- x[[measure]]$correlations
-    # Check if measure_results has valid dimensions
-    if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
-      warning_(
-        paste0("Warning: No valid data for measure ", measure, ". Skipping.")
-      )
-      next
-    }
-    means <- apply(corr, 2, mean, na.rm = TRUE)
+    # TODO Check if measure_results has valid dimensions?
+    # if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
+    #   warning_(
+    #     paste0("Warning: No valid data for measure ", measure, ". Skipping.")
+    #   )
+    #   next
+    # }
+    means <- apply(corr, 2L, mean, na.rm = TRUE)
     ci_lower <- apply(
       corr,
       2L,
@@ -1141,13 +1142,13 @@ plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
     missing(colors),
     replicate(n, default_colors, simplify = FALSE),
     ifelse_(
-      is.vector(colors) & is.atomic(colors),
+      is.vector(colors) && is.atomic(colors),
       replicate(n, colors, simplify = FALSE),
       colors
     )
   )
   if (is.null(title) ||
-    (is.vector(title) & is.atomic(title) & (length(title) == 1))) {
+    (is.vector(title) && is.atomic(title) && (length(title) == 1))) {
     title <- replicate(n, title, simplify = FALSE)
   }
   invisible(
@@ -1202,7 +1203,7 @@ plot.group_tna_stability <- function(x, ...) {
 #' model <- group_model(engagement_mmm)
 #' plot_compare(model)
 #'
-plot_compare.group_tna <- function(x, i = 1, j = 2, ...) {
+plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   check_clusters(x, i, j)

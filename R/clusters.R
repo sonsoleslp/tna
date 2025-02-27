@@ -185,7 +185,7 @@ group_ctna <- function(x, ...) {
 #'
 #' @export
 #' @family clusters
-#' @param x An `mhmm` object.
+#' @param x A `mhmm` object.
 #' @param use_t_dist A `logical` value. If `TRUE` (the default), the
 #' t-distribution is used to compute confidence intervals.
 #' @param level A `numeric` value representing the significance level for

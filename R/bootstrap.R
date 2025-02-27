@@ -92,8 +92,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
       any.missing = FALSE,
       sorted = TRUE
     ),
-    "Argument {.arg consistency_range} must be
-    a sorted {.cls numeric} vector of length 2 containing positive values."
+    "Argument {.arg consistency_range} must be a sorted {.cls numeric}
+     vector of length 2 containing positive values."
   )
   d <- x$data
   type <- attr(x, "type")

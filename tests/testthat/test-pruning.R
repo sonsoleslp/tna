@@ -144,3 +144,12 @@ test_that("pruned weights are restored by reprune for clusters", {
     lapply(repruned_model, "[[", "weights")
   )
 })
+
+test_that("pruning function fails with invalid tna object", {
+  invalid_tna_object <- list()
+  class(invalid_tna_object) <- "not_tna"
+  expect_error(
+    prune(invalid_tna_object, threshold = 0.1),
+    "no applicable method for 'prune' applied to an object of class \"not_tna\""
+  )
+})

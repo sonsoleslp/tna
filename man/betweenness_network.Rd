@@ -10,34 +10,16 @@ betweenness_network(x, ...)
 \method{betweenness_network}{tna}(x, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object containing transition matrices and
-associated metadata.}
+\item{x}{A \code{tna} object.}
 
 \item{...}{Ignored.}
 }
 \value{
-A \code{tna} object where edge betweenness represents the edge weights.
+A \code{tna} object where the edge weights are edge betweenness values.
 }
 \description{
 This function builds a network from a transition matrix in a \code{tna} object
-and computes edge betweenness for the network. Optionally, it visualizes the
-network using the \code{qgraph} package, with the edge thickness representing the
-edge betweenness values.
-}
-\details{
-The function first converts the transition matrix for the specified cluster
-into a directed graph using the \code{igraph} package. It then calculates the
-edge betweenness of the graph, which is a measure of how often an edge lies
-on the shortest paths between pairs of nodes.
-
-If \code{plot = TRUE}, the function uses \code{qgraph} to visualize the network,
-where edge thickness is proportional to edge betweenness, node colors are
-derived from the \code{tna} object, and \code{Pie} values from the \code{tna} object are
-displayed on the nodes.
-
-The layout of the network can be customized via the \code{layout} parameter,
-which can either be a predefined layout from \code{qgraph} or a user-specified
-matrix of node positions.
+and computes edge betweenness for the network.
 }
 \examples{
 model <- tna(group_regulation)

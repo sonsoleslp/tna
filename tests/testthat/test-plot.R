@@ -21,6 +21,14 @@ test_that("centralities can be plotted", {
     plot.tna_centralities(cm),
     NA
   )
+  expect_error(
+    plot.tna_centralities(cm, colors = color_palette(4)),
+    NA
+  )
+  expect_error(
+    plot.tna_centralities(cm, colors = "red"),
+    NA
+  )
 })
 
 test_that("cliques can be plotted", {
@@ -183,6 +191,10 @@ test_that("communities can plotted for clusters", {
   comm <- communities(mmm_model)
   expect_error(
     plot(comm),
+    NA
+  )
+  expect_error(
+    plot(comm, title = "Community detection"),
     NA
   )
 })
