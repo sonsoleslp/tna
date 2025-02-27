@@ -1,0 +1,14 @@
+pandoc: 3.1.11
+pkgdown: 2.1.1
+pkgdown_sha: ~
+articles:
+  communities_and_cliques: communities_and_cliques.html
+  complete-tutorial: complete-tutorial.html
+  ftna: ftna.html
+  getting_started: getting_started.html
+  grouped_sequences: grouped_sequences.html
+  prepare-data: prepare-data.html
+last_built: 2025-02-27T22:07Z
+urls:
+  reference: http://sonsoles.me/tna/reference
+  article: http://sonsoles.me/tna/articles
