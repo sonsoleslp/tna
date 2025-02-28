@@ -87,7 +87,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="compare.html">compare</a></span><span class="op">(</span><span class="va">model</span>, i <span class="op">=</span> <span class="fl">1</span>, j <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There was 1 warning in `dplyr::summarize()`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> In argument: `correlation = stats::cor(x, y, use = "complete.obs")`.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> In argument: `correlation = corr_fun(x, y)`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> In group 1: `centrality = "Betweenness"`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Caused by warning in `stats::cor()`:</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> the standard deviation is zero</span>
