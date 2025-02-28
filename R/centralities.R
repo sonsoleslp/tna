@@ -394,11 +394,19 @@ calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
 #' @noRd
 rsp_bet <- function(mat, beta = 0.01) {
   n <- ncol(mat)
-  W <- mat * exp(-beta * mat^-1)
+  D <- .rowSums(mat, m = n, n = n)
+  if (any(D == 0)) {
+    return(NA)
+  }
+  P_ref <- diag(D^-1) %*% mat
+  C <- mat^-1
+  C[is.infinite(C)] <- 0
+  W <- P_ref * exp(-beta * C)
   Z <- solve(diag(1, n, n) - W)
-  Zrecip <- Z^-1
-  Zrecip_diag <- diag(Zrecip) * diag(1, n, n)
-  out <- diag(tcrossprod(Z, Zrecip - n * Zrecip_diag) %*% Z)
+  Z_recip <- Z^-1
+  Z_recip[is.infinite(Z_recip)] <- 0
+  Z_recip_diag <- diag(Z_recip) * diag(1, n, n)
+  out <- diag(tcrossprod(Z, Z_recip - n * Z_recip_diag) %*% Z)
   out <- round(out)
   out <- out - min(out) + 1
   out

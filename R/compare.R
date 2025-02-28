@@ -284,15 +284,23 @@ compare_ <- function(x, y, scaling = "none", ...) {
   cents_xy <- cents_x
   cents_xy$y <- cents_y$y
   cents_xy$difference <- cents_xy$x - cents_xy$y
+  corr_fun <- function(x, y) {
+    out <- try(
+      stats::cor(x, y, use = "complete.obs"),
+      silent = TRUE
+    )
+    # Return NA in case of not insufficient pairs
+    ifelse_(
+      inherits(out, "try-error"),
+      NA_real_,
+      out
+    )
+  }
   cents_corr <- cents_xy |>
     dplyr::group_by(!!rlang::sym("centrality")) |>
     dplyr::summarize(
       Centrality = dplyr::first(!!rlang::sym("centrality")),
-      correlation = stats::cor(
-        !!rlang::sym("x"),
-        !!rlang::sym("y"),
-        use = "complete.obs"
-      )
+      correlation = corr_fun(!!rlang::sym("x"), !!rlang::sym("y"))
     )
 
   structure(
