@@ -211,13 +211,11 @@ prepare_data <- function(data, actor, time, action, order,
       "Using provided {.arg order} column to create sequences."
     )
     message_(msg)
-
-    if (!default_order) {
-      long_data <- long_data |>
-        dplyr::arrange(!!rlang::sym(order))
-    }
-
     long_data <- long_data |>
+      dplyr::arrange(
+        !!rlang::sym(actor),
+        !!rlang::sym(order)
+      ) |>
       dplyr::group_by(!!rlang::sym(actor)) |>
       dplyr::mutate(
         .session_id = !!rlang::sym(actor),

@@ -1,8 +1,8 @@
 ---
-title: "How to prepare data for `tna`"
+title: "How to prepare data for tna"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to prepare data for `tna`}
+  %\VignetteIndexEntry{How to prepare data for tna}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   fig.height = 4,
   out.width = "100%",
   dpi = 300,
-  message = F,
+  message = FALSE,
   fig.show = TRUE,
   results = "hide",  
   comment = "#>"
