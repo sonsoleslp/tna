@@ -10,8 +10,11 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.width = 10,
-  fig.height = 6,
+  fig.width = 6,
+  fig.height = 4,
+  dev = "svg",
+  fig.ext = "svg",
+  dpi = 50,
   out.width = "100%",
   dpi = 100,
   comment = "#>"

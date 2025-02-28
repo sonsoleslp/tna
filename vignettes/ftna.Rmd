@@ -10,9 +10,11 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.width = 10,
-  fig.height = 6,
+  fig.width = 6,
+  fig.height = 4,
   cache = TRUE,
+  dev = "svg",
+  fig.ext="svg",
   out.width = "100%",
   dpi = 100,
   comment = "#>"
@@ -122,7 +124,7 @@ plot_abs_ranked
 
 ## Pruning
 
-```{r, out.width='49%', fig.show='hold', fig.width=9, fig.height=9}
+```{r, fig.show='hold', fig.width=9, fig.height=9}
 layout(matrix(1:4, ncol = 2))
 # Pruning with different methods
 pruned_threshold <- prune(model_scaled, method = "threshold", threshold = 0.1)
