@@ -12,103 +12,112 @@ figures:
   fig.asp: NULL
   bg: NA
 
+authors:
+  Mohammed Saqr:
+    href: https://saqr.me
+  Santtu Tikka:
+    href: http://users.jyu.fi/~santikka/
+  Sonsoles López-Pernas:
+    href: https://sonsoles.me
+
+
 navbar:
   structure:
-    left:  [intro, reference, articles, news]
+    left:  [intro, reference, articles, news, resources]
     right: [search, github, lightswitch]
 
 reference:
-- title: Basic functions
-  contents:
-  - tna-package
-  - build_model
-  - print.tna
-  - plot.tna
-  - prepare_data
-  - print.tna_data
-  - summary.tna
-  - hist.tna
-  - print.summary.tna
-  - plot_mosaic
-  - plot_mosaic.tna_data
-  - print.group_tna
-  - plot.group_tna
-  - summary.group_tna
-  - hist.group_tna
-  - plot_mosaic.group_tna
-  - print.summary.group_tna
+  - title: Basic functions
+    contents:
+    - tna-package
+    - build_model
+    - print.tna
+    - plot.tna
+    - prepare_data
+    - print.tna_data
+    - summary.tna
+    - hist.tna
+    - print.summary.tna
+    - plot_mosaic
+    - plot_mosaic.tna_data
+    - print.group_tna
+    - plot.group_tna
+    - summary.group_tna
+    - hist.group_tna
+    - plot_mosaic.group_tna
+    - print.summary.group_tna
 
-- title: Centralities
-  contents:
-  - centralities
-  - betweenness_network
-  - print.tna_centralities
-  - plot.tna_centralities
-  - print.group_tna_centralities
-  - plot.group_tna_centralities
+  - title: Centralities
+    contents:
+    - centralities
+    - betweenness_network
+    - print.tna_centralities
+    - plot.tna_centralities
+    - print.group_tna_centralities
+    - plot.group_tna_centralities
 
-- title: Communities
-  contents:
-  - communities
-  - print.tna_communities
-  - plot.tna_communities
-  - print.group_tna_communities
-  - plot.group_tna_communities
+  - title: Communities
+    contents:
+    - communities
+    - print.tna_communities
+    - plot.tna_communities
+    - print.group_tna_communities
+    - plot.group_tna_communities
 
-- title: Cliques
-  contents:
-  - cliques
-  - print.tna_cliques
-  - plot.tna_cliques
-  - print.group_tna_cliques
-  - plot.group_tna_cliques
+  - title: Cliques
+    contents:
+    - cliques
+    - print.tna_cliques
+    - plot.tna_cliques
+    - print.group_tna_cliques
+    - plot.group_tna_cliques
 
-- title: Comparison
-  contents:
-  - compare
-  - compare.group_tna
-  - print.tna_comparison
-  - plot_compare
-  - plot_compare.group_tna
-  - plot.tna_comparison
+  - title: Comparison
+    contents:
+    - compare
+    - compare.group_tna
+    - print.tna_comparison
+    - plot_compare
+    - plot_compare.group_tna
+    - plot.tna_comparison
 
-- title: Validation
-  contents:
-  - permutation_test
-  - print.tna_permutation
-  - plot.tna_permutation
-  - print.tna_bootstrap
-  - print.summary.tna_bootstrap
-  - print.summary.group_tna_bootstrap
-  - print.tna_stability
-  - plot.tna_stability
-  - print.group_tna_bootstrap
-  - print.group_tna_stability
-  - plot.group_tna_stability
-  - estimate_centrality_stability
-  - prune
-  - deprune
-  - reprune
-  - pruning_details
-  - bootstrap
-  - summary.tna_bootstrap
-  - summary.group_tna_bootstrap
+  - title: Validation
+    contents:
+    - permutation_test
+    - print.tna_permutation
+    - plot.tna_permutation
+    - print.tna_bootstrap
+    - print.summary.tna_bootstrap
+    - print.summary.group_tna_bootstrap
+    - print.tna_stability
+    - plot.tna_stability
+    - print.group_tna_bootstrap
+    - print.group_tna_stability
+    - plot.group_tna_stability
+    - estimate_centrality_stability
+    - prune
+    - deprune
+    - reprune
+    - pruning_details
+    - bootstrap
+    - summary.tna_bootstrap
+    - summary.group_tna_bootstrap
 
-- title: Clusters
-  contents:
-  - group_model
-  - rename_groups
-  - mmm_stats
+  - title: Clusters
+    contents:
+    - group_model
+    - rename_groups
+    - mmm_stats
 
-- title: Helpers
-  contents:
-  - as.igraph.group_tna
-  - as.igraph.matrix
-  - as.igraph.tna
+  - title: Helpers
+    contents:
+    - as.igraph.group_tna
+    - as.igraph.matrix
+    - as.igraph.tna
 
-- title: Datasets
-  contents:
-  - engagement
-  - engagement_mmm
-  - group_regulation
+  - title: Datasets
+    contents:
+    - engagement
+    - engagement_mmm
+    - group_regulation
 
