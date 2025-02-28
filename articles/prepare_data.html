@@ -133,7 +133,7 @@ create a <code>tna</code> model.</p>
 <code class="sourceCode R"><span><span class="va">by_classroom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span><span class="va">df</span>, action <span class="op">=</span> <span class="st">"event"</span><span class="op">)</span></span>
 <span><span class="va">tna_by_classroom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">by_classroom</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_by_classroom</span><span class="op">)</span></span></code></pre></div>
-<p><img src="prepare_data_files/figure-html/unnamed-chunk-3-1.png" width="100%">
+<p><img src="prepare_data_files/figure-html/unnamed-chunk-3-1.svg" width="100%">
 When we want to create a sequence per user, in addition to
 <code>action</code>, we need to specify the <code>actor</code> column,
 which in this case is <code>user</code>. If the data is already ordered,
@@ -144,7 +144,7 @@ ordered, we can provide a column to order the data by, in this case
 <code class="sourceCode R"><span><span class="va">by_user</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span><span class="va">df</span>, actor <span class="op">=</span> <span class="st">"user"</span>, action <span class="op">=</span> <span class="st">"event"</span>, order <span class="op">=</span> <span class="st">"order"</span><span class="op">)</span></span>
 <span><span class="va">tna_by_user</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">by_user</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_by_user</span><span class="op">)</span></span></code></pre></div>
-<p><img src="prepare_data_files/figure-html/unnamed-chunk-4-1.png" width="100%"></p>
+<p><img src="prepare_data_files/figure-html/unnamed-chunk-4-1.svg" width="100%"></p>
 <p>If rather than the order we only have the timestamps, we can provide
 it as <code>time</code> column. By default, events happening less than
 15 minutes apart will be grouped in the same sequence, while events that
@@ -156,7 +156,7 @@ tie, by <code>order</code>.</p>
 <code class="sourceCode R"><span><span class="va">by_session</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span><span class="va">df</span>, actor <span class="op">=</span> <span class="st">"user"</span>, time <span class="op">=</span> <span class="st">"timestamp"</span>, action <span class="op">=</span> <span class="st">"event"</span><span class="op">)</span></span>
 <span><span class="va">tna_by_session</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">by_session</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_by_session</span><span class="op">)</span></span></code></pre></div>
-<p><img src="prepare_data_files/figure-html/unnamed-chunk-5-1.png" width="100%"></p>
+<p><img src="prepare_data_files/figure-html/unnamed-chunk-5-1.svg" width="100%"></p>
 <p>If we want to customize the time gap that marks the start of a new
 sequence, we can do so by customizing the <code>time_threshold</code>
 argument (in minutes).</p>
@@ -165,7 +165,7 @@ argument (in minutes).</p>
 <span>                                  time_threshold <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span> <span class="co"># 10 minutes</span></span>
 <span><span class="va">tna_by_session_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">by_session_custom</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_by_session_custom</span><span class="op">)</span></span></code></pre></div>
-<p><img src="prepare_data_files/figure-html/unnamed-chunk-6-1.png" width="100%">
+<p><img src="prepare_data_files/figure-html/unnamed-chunk-6-1.svg" width="100%">
 Another advantage of using <code>prepare_data</code> prior to
 constructing the <code>tna</code> model is that we get to keep other
 variables of the data and use them in our analysis. For instance, we can
@@ -176,14 +176,14 @@ of the column in the data that we want to group by.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gtna</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_tna</a></span><span class="op">(</span><span class="va">by_user</span>, group <span class="op">=</span> <span class="st">"achievement"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gtna</span><span class="op">)</span></span></code></pre></div>
-<p><img src="prepare_data_files/figure-html/unnamed-chunk-7-1.png" width="100%"></p>
+<p><img src="prepare_data_files/figure-html/unnamed-chunk-7-1.svg" width="100%"></p>
   </main>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Mohammed Saqr, Santtu Tikka, Sonsoles López-Pernas.</p>
+  <p>Developed by <a href="https://saqr.me" class="external-link">Mohammed Saqr</a>, <a href="http://users.jyu.fi/~santikka/" class="external-link">Santtu Tikka</a>, <a href="https://sonsoles.me" class="external-link">Sonsoles López-Pernas</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
