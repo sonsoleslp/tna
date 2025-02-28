@@ -3,12 +3,12 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   communities_and_cliques: communities_and_cliques.html
-  complete-tutorial: complete-tutorial.html
+  complete_tutorial: complete_tutorial.html
   ftna: ftna.html
-  getting_started: getting_started.html
   grouped_sequences: grouped_sequences.html
-  prepare-data: prepare-data.html
-last_built: 2025-02-27T22:07Z
+  prepare_data: prepare_data.html
+  tna: tna.html
+last_built: 2025-02-28T08:06Z
 urls:
   reference: http://sonsoles.me/tna/reference
   article: http://sonsoles.me/tna/articles
