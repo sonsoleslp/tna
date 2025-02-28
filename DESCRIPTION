@@ -2,10 +2,10 @@ Package: tna
 Title: Transition Network Analysis (TNA)
 Version: 0.4.0
 Authors@R: c(
-    person("Sonsoles", "L\u00f3pez-Pernas", 
-           email = "sonsoles.lopez@uef.fi", role = c("aut", "cre")), 
+    person("Mohammed", "Saqr", role = "aut"),
     person("Santtu", "Tikka", role = "aut"),
-    person("Mohammed", "Saqr", role = "aut")
+    person("Sonsoles", "L\u00f3pez-Pernas", 
+           email = "sonsoles.lopez@uef.fi", role = c("aut", "cre"))
   )
 Description: Provides tools for performing Transition Network Analysis (TNA) to 
     study relational dynamics, including functions for building and plotting TNA 

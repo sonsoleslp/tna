@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   fig.width = 10,
   fig.height = 6,
   out.width = "100%",
-  dpi = 300,
+  dpi = 100,
   comment = "#>"
 )
 suppressPackageStartupMessages({
@@ -33,25 +33,26 @@ library("dplyr")
 library("gt")
 ```
 
-We also load the `engagement` data available in the package (see `?engagement` for further information)
+We also load the `group_regulation` data available in the package (see `?group_regulation` for further information)
 ```{r}
-data("engagement", package = "tna")
+data("group_regulation", package = "tna")
 ```
 
 We build a TNA model using this data with the `tna()` function .
 ```{r}
-tna_model <- tna(engagement)
+tna_model <- tna(group_regulation)
 ```
 
 To visualize the model, we can use the standard `plot()` function.
-```{r}
-plot(tna_model)
+```{r, fig.width=5, fig.height=5}
+plot(tna_model, cut = 0.2, minimum = 0.05, 
+     edge.label.position= 0.8, edge.label.cex = 0.7)
 ```
 
 The initial state probabilities are
 ```{r}
 data.frame(`Initial prob.` = tna_model$inits, check.names = FALSE) |>
-  rownames_to_column("Engagement state") |>
+  rownames_to_column("Action") |>
   arrange(desc(`Initial prob.`)) |>
   gt() |>
   fmt_percent()
