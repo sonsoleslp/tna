@@ -109,6 +109,15 @@ if \code{NA} values are detected.}
 \value{
 An object of class \code{group_tna} which is a \code{list} containing one
 element per cluster. Each element is a \code{tna} object.
+
+An object of class \code{group_tna} which is a \code{list} containing one
+element per cluster. Each element is a \code{tna} object.
+
+An object of class \code{group_tna} which is a \code{list} containing one
+element per cluster. Each element is a \code{tna} object.
+
+An object of class \code{group_tna} which is a \code{list} containing one
+element per cluster. Each element is a \code{tna} object.
 }
 \description{
 This function constructs a transition network analysis (TNA) model for

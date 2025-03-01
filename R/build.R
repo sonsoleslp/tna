@@ -107,6 +107,7 @@ build_model.default <- function(x, type = "relative", scaling = character(0L),
 }
 
 #' @export
+#'
 #' @rdname build_model
 build_model.matrix <- function(x, type = "relative", scaling = character(0L),
                                inits, ...) {
@@ -244,6 +245,18 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
 
 #' @export
 #' @rdname build_model
+#' @return An object of class `tna` which is a `list` containing the
+#'   following elements:
+#'
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
+#'     directly provided
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`: The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
 #' @examples
 #' model <- tna(group_regulation)
 #'
@@ -254,6 +267,18 @@ tna <- function(x, ...) {
 
 #' @export
 #' @rdname build_model
+#' @return An object of class `tna` which is a `list` containing the
+#'   following elements:
+#'
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
+#'     directly provided
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`: The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
 #' @examples
 #' model <- ftna(group_regulation)
 #'
@@ -263,6 +288,19 @@ ftna <- function(x, ...) {
 
 #' @export
 #' @rdname build_model
+#' @return An object of class `tna` which is a `list` containing the
+#'   following elements:
+#'
+#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `inits`: A `numeric` vector of initial values for each state.
+#'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
+#'     directly provided
+#'   * `labels`: A `character` vector of the state labels, or `NULL` if
+#'     there are no labels.
+#'   * `data`: The original sequence data that has been converted to an
+#'     internal format used by the package when `x` is a `stslist` or a
+#'     `data.frame` object. Otherwise `NULL`.
+#'
 #' @examples
 #' model <- ctna(group_regulation)
 #'

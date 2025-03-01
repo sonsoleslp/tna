@@ -138,6 +138,48 @@ there are no labels.
 internal format used by the package when \code{x} is a \code{stslist} or a
 \code{data.frame} object. Otherwise \code{NULL}.
 }
+
+An object of class \code{tna} which is a \code{list} containing the
+following elements:
+\itemize{
+\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
+\item \code{inits}: A \code{numeric} vector of initial values for each state.
+For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
+directly provided
+\item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
+there are no labels.
+\item \code{data}: The original sequence data that has been converted to an
+internal format used by the package when \code{x} is a \code{stslist} or a
+\code{data.frame} object. Otherwise \code{NULL}.
+}
+
+An object of class \code{tna} which is a \code{list} containing the
+following elements:
+\itemize{
+\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
+\item \code{inits}: A \code{numeric} vector of initial values for each state.
+For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
+directly provided
+\item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
+there are no labels.
+\item \code{data}: The original sequence data that has been converted to an
+internal format used by the package when \code{x} is a \code{stslist} or a
+\code{data.frame} object. Otherwise \code{NULL}.
+}
+
+An object of class \code{tna} which is a \code{list} containing the
+following elements:
+\itemize{
+\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
+\item \code{inits}: A \code{numeric} vector of initial values for each state.
+For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
+directly provided
+\item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
+there are no labels.
+\item \code{data}: The original sequence data that has been converted to an
+internal format used by the package when \code{x} is a \code{stslist} or a
+\code{data.frame} object. Otherwise \code{NULL}.
+}
 }
 \description{
 Construct a transition network analysis (TNA) model from sequence data.

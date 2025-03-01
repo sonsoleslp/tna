@@ -157,6 +157,8 @@ group_model.mhmm <- function(x, ...) {
 
 #' @export
 #' @rdname group_model
+#' @return An object of class `group_tna` which is a `list` containing one
+#'   element per cluster. Each element is a `tna` object.
 #' @examples
 #' model <- group_tna(group_regulation, group = gl(2, 1000))
 #'
@@ -167,6 +169,8 @@ group_tna <- function(x, ...) {
 
 #' @export
 #' @rdname group_model
+#' @return An object of class `group_tna` which is a `list` containing one
+#'   element per cluster. Each element is a `tna` object.
 #' @examples
 #' model <- group_ftna(group_regulation, group = gl(2, 1000))
 #'
@@ -176,6 +180,8 @@ group_ftna <- function(x, ...) {
 
 #' @export
 #' @rdname group_model
+#' @return An object of class `group_tna` which is a `list` containing one
+#'   element per cluster. Each element is a `tna` object.
 #' @examples
 #' model <- group_ctna(group_regulation, group = gl(2, 1000))
 #'
