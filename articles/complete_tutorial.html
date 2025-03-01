@@ -99,7 +99,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># TNA visualization</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model</span>, minimum <span class="op">=</span> <span class="fl">0.05</span>, cut <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-4-1.svg" width="60%" style="display: block; margin: auto;"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-4-1.svg" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="pruning-and-retaining-edges-that-matter">Pruning and retaining edges that “matter”<a class="anchor" aria-label="anchor" href="#pruning-and-retaining-edges-that-matter"></a>
@@ -116,7 +116,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_lowest</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_disparity</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model</span>, minimum <span class="op">=</span> <span class="fl">0.05</span>, cut <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-5-1.svg" width="60%"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-5-1.svg" width="100%"></p>
 </div>
 </div>
 <div class="section level3">
@@ -145,7 +145,7 @@
 <span><span class="co">#&gt; consensus     0.082    0.19</span></span>
 <span><span class="co">#&gt; discuss       0.321    0.19</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_two</span>, vsize <span class="op">=</span> <span class="fl">15</span>, edge.label.cex <span class="op">=</span> <span class="fl">2</span>, esize <span class="op">=</span> <span class="fl">20</span>, ask <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-6-1.svg" width="60%"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-6-1.svg" width="100%"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Identify 3-cliques (triads) from the TNA_Model</span></span>
@@ -177,7 +177,7 @@
 <span><span class="co">#&gt; coregulate     0.135      0.023    0.27</span></span>
 <span><span class="co">#&gt; discuss        0.321      0.084    0.19</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_three</span>, vsize <span class="op">=</span> <span class="fl">25</span>, edge.label.cex <span class="op">=</span> <span class="fl">4</span>, esize <span class="op">=</span> <span class="fl">20</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-7-1.svg" width="60%"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-7-1.svg" width="100%"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Identify 4-cliques (quadruples) from the TNA_Model</span></span>
 <span><span class="co"># A clique of size 4 means four nodes that are all mutually connected</span></span>
@@ -197,7 +197,7 @@
 <span><span class="co">#&gt; monitor       0.159   0.091   0.018 0.22</span></span>
 <span><span class="co">#&gt; plan          0.290   0.147   0.076 0.37</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_four</span>, ask <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-8-1.svg" width="60%"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-8-1.svg" width="100%"></p>
 <div class="section level4">
 <h4 id="centralities">Centralities<a class="anchor" aria-label="anchor" href="#centralities"></a>
 </h4>
@@ -210,7 +210,7 @@
 <span></span>
 <span><span class="co"># Visualize the centrality measures</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Centralities</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-9-1.svg" width="60%" style="display: block; margin: auto;"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-9-1.svg" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate hub scores and the authority scores for the network</span></span>
 <span><span class="va">hits_scores</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/hits_scores.html" class="external-link">hits_scores</a></span><span class="op">(</span><span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">)</span></span>
@@ -264,7 +264,7 @@
 <span><span class="co">#&gt; 3         1</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 6 rows ]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">communities</span>, method <span class="op">=</span> <span class="st">"leading_eigen"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-12-1.svg" width="60%"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-12-1.svg" width="100%"></p>
 </div>
 </div>
 <div class="section level3">
@@ -313,7 +313,7 @@
 <span><span class="co"># Plot a comparison of the "Hi" and "Lo" models</span></span>
 <span><span class="co"># The 'minimum' parameter is set to 0.001, so edges with weights &gt;= 0.001 are shown</span></span>
 <span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span><span class="va">Hi</span>, <span class="va">Lo</span>, minimum <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-14-1.svg" width="60%" style="display: block; margin: auto;"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-14-1.svg" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Run a permutation test to determine statistical significance of differences</span></span>
@@ -323,7 +323,7 @@
 <span></span>
 <span><span class="co"># Plot the significant differences identified in the permutation test</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Permutation</span>, minimum <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-14-2.svg" width="60%" style="display: block; margin: auto;"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-14-2.svg" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">Permutation</span><span class="op">$</span><span class="va">edges</span><span class="op">$</span><span class="va">stats</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             edge_name diff_true effect_size p_value</span></span>
@@ -353,7 +353,7 @@ Centrality Indices<a class="anchor" aria-label="anchor" href="#interpreting-the-
 <code class="sourceCode R"><span><span class="co"># Results of the Case-Dropping Bootstrap for Centrality Indices</span></span>
 <span><span class="va">Centrality_stability</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_centrality_stability.html">estimate_centrality_stability</a></span><span class="op">(</span><span class="va">model</span>, detailed <span class="op">=</span> <span class="cn">FALSE</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Centrality_stability</span><span class="op">)</span></span></code></pre></div>
-<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-16-1.svg" width="60%" style="display: block; margin: auto;"></p>
+<p><img src="complete_tutorial_files/figure-html/unnamed-chunk-16-1.svg" width="100%" style="display: block; margin: auto;"></p>
 </div>
 </div>
 </div>
