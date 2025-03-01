@@ -1,7 +1,9 @@
 url: http://sonsoles.me/tna/
 template:
   bootstrap: 5
-  bootswatch: flatly
+  bslib:
+    bootswatch: flatly
+    pkgdown-nav-height: 70px
 figures:
   dev: ragg::agg_png
   dpi: 180
@@ -20,12 +22,15 @@ authors:
   Sonsoles López-Pernas:
     href: https://sonsoles.me
 
-
 navbar:
   structure:
-    left:  [intro, reference, articles, news, resources]
-    right: [search, github, lightswitch]
-
+    left:  [intro, reference, articles, news, shiny]
+    right: [search, github]
+  components:
+    shiny:
+      text: Shiny
+      href: https://sonsoleslp.shinyapps.io/tna-app/
+      aria-label: Shiny
 reference:
   - title: Basic functions
     contents:
