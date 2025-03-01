@@ -24,13 +24,8 @@ authors:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news, shiny]
+    left:  [intro, reference, articles, news]
     right: [search, github]
-  components:
-    shiny:
-      text: Shiny
-      href: https://sonsoleslp.shinyapps.io/tna-app/
-      aria-label: Shiny
 reference:
   - title: Basic functions
     contents:

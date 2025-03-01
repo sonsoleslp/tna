@@ -37,9 +37,21 @@ Transition Network Analysis (TNA). TNA provides tools for building TNA models,
 plotting transition networks, calculating centrality measures, and identifying 
 dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
 and permutation tests) ensure the reliability of observed insights and confirm
-that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.1145/3706468.3706513) for more details on TNA. Also, check out our tutorials on the [basics](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)  of TNA, [frequency-based ](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html) TNA, and  [clustering](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) with TNA.
+that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.1145/3706468.3706513) for more details on TNA.
 
-![Outline of TNA](man/figures/method.png)
+
+![](man/figures/method.png)
+
+
+## Resources
+
+Check out our tutorials:
+
+ - [Basics of TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)
+ - [Frequency-based TNA](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
+ - [Clustering](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
+ 
+You can also try our [Shiny app](https://sonsoleslp.shinyapps.io/tna-app/).
 
 ## Installation
 
