@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,37 +69,25 @@
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Cluster-related functions
+    <div class="dont-index"><p>Other validation:
 <code><a href="bootstrap.html">bootstrap</a>()</code>,
-<code><a href="centralities.html">centralities</a>()</code>,
-<code><a href="cliques.html">cliques</a>()</code>,
-<code><a href="communities.html">communities</a>()</code>,
 <code><a href="deprune.html">deprune</a>()</code>,
 <code><a href="estimate_centrality_stability.html">estimate_cs</a>()</code>,
-<code><a href="group_model.html">group_model</a>()</code>,
-<code><a href="hist.group_tna.html">hist.group_tna</a>()</code>,
-<code><a href="mmm_stats.html">mmm_stats</a>()</code>,
-<code><a href="plot.group_tna.html">plot.group_tna</a>()</code>,
-<code><a href="plot.group_tna_centralities.html">plot.group_tna_centralities</a>()</code>,
-<code><a href="plot.group_tna_cliques.html">plot.group_tna_cliques</a>()</code>,
-<code><a href="plot.group_tna_communities.html">plot.group_tna_communities</a>()</code>,
+<code><a href="permutation_test.html">permutation_test</a>()</code>,
 <code><a href="plot.group_tna_stability.html">plot.group_tna_stability</a>()</code>,
-<code><a href="plot_compare.group_tna.html">plot_compare.group_tna</a>()</code>,
-<code><a href="plot_mosaic.group_tna.html">plot_mosaic.group_tna</a>()</code>,
-<code><a href="plot_mosaic.tna_data.html">plot_mosaic.tna_data</a>()</code>,
-<code><a href="print.group_tna.html">print.group_tna</a>()</code>,
-<code><a href="print.group_tna_centralities.html">print.group_tna_centralities</a>()</code>,
-<code><a href="print.group_tna_cliques.html">print.group_tna_cliques</a>()</code>,
-<code><a href="print.group_tna_communities.html">print.group_tna_communities</a>()</code>,
+<code><a href="plot.tna_permutation.html">plot.tna_permutation</a>()</code>,
+<code><a href="plot.tna_stability.html">plot.tna_stability</a>()</code>,
 <code><a href="print.group_tna_stability.html">print.group_tna_stability</a>()</code>,
-<code><a href="print.summary.group_tna.html">print.summary.group_tna</a>()</code>,
 <code><a href="print.summary.group_tna_bootstrap.html">print.summary.group_tna_bootstrap</a>()</code>,
+<code><a href="print.summary.tna_bootstrap.html">print.summary.tna_bootstrap</a>()</code>,
+<code><a href="print.tna_bootstrap.html">print.tna_bootstrap</a>()</code>,
+<code><a href="print.tna_permutation.html">print.tna_permutation</a>()</code>,
+<code><a href="print.tna_stability.html">print.tna_stability</a>()</code>,
 <code><a href="prune.html">prune</a>()</code>,
 <code><a href="pruning_details.html">pruning_details</a>()</code>,
-<code><a href="rename_groups.html">rename_groups</a>()</code>,
 <code><a href="reprune.html">reprune</a>()</code>,
-<code><a href="summary.group_tna.html">summary.group_tna</a>()</code>,
-<code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code></p></div>
+<code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code>,
+<code><a href="summary.tna_bootstrap.html">summary.tna_bootstrap</a>()</code></p></div>
     </div>
 
     <div class="section level2">
@@ -112,57 +100,57 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      from      to    weight p_value  ci_lower  ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Active  Active 0.7061503       0 0.6697489 0.7150304</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Active Average 0.5133929       0 0.4931799 0.5932166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Average  Active 0.2938497       0 0.2849696 0.3302511</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Average Average 0.4598214       0 0.3907866 0.4710970</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      from         to    weight p_value  ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Active     Active 0.7061503       0 0.6579118 0.7427317</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Active    Average 0.5133929       0 0.4928067 0.5956769</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Average     Active 0.2938497       0 0.2572683 0.3420882</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Average    Average 0.4598214       0 0.3632895 0.4755533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Average Disengaged 0.3809524       0 0.3082891 0.4393695</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.33333333     0.7 0.21067708 0.58822115</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.38095238     0.4 0.20588942 0.49583333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.02678571     0.7 0.01500126 0.04123704</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.28571429     0.2 0.19352679 0.33920037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.33333333     0.3 0.23636364 0.46085526</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.02678571     0.5 0.01460828 0.04532297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.28571429     0.3 0.21940789 0.38534483</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 2:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     Active     Active 0.49242424       0 0.48292743 0.52211887</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     Active    Average 0.32495164       0 0.30116344 0.34622200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Average     Active 0.44191919       0 0.40362276 0.45589311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Average    Average 0.58607350       0 0.56020363 0.60642468</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.57333333       0 0.50099353 0.62628041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.08897485       0 0.07374408 0.09871121</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         from      to     weight p_value   ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     Active  Active 0.49242424       0 0.44251510 0.5361081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     Active Average 0.32495164       0 0.28785965 0.3387195</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Average  Active 0.44191919       0 0.40240580 0.4982961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Average Average 0.58607350       0 0.57611194 0.6379991</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged Average 0.08897485       0 0.07029145 0.1084775</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.33333333     0.1 0.28750792 0.42761644</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Disengaged     Active 0.06565657     0.1 0.05496695 0.08202808</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.09333333     0.4 0.05381396 0.14786585</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.33333333     0.2 0.23470100 0.45095890</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.57333333     0.1 0.42387290 0.69686047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Disengaged     Active 0.06565657     0.1 0.05354415 0.08604968</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.09333333     0.6 0.06112957 0.15072152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 3:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     Active     Active 0.30067568       0 0.27508114 0.34291550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     Active    Average 0.15940767       0 0.14355434 0.17487006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.06578947       0 0.05449087 0.07157914</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Average     Active 0.60810811       0 0.57265665 0.62449663</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Average    Average 0.57317073       0 0.55520404 0.59563285</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.47076023       0 0.42877499 0.48918187</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.26742160       0 0.25342277 0.28047773</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.46345029       0 0.44270856 0.50367737</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     Active     Active 0.30067568       0 0.26800128 0.3480854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     Active    Average 0.15940767       0 0.15184945 0.1644986</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Average     Active 0.60810811       0 0.55703259 0.6417999</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Average    Average 0.57317073       0 0.55933275 0.5928319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.47076023       0 0.45319729 0.5012616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Disengaged     Active 0.09121622       0 0.07609533 0.1094881</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.26742160       0 0.25252689 0.2828129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.46345029       0 0.43323670 0.4820144</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         from     to     weight p_value   ci_lower  ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Disengaged Active 0.09121622     0.1 0.07718386 0.1200056</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     from         to     weight p_value   ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Active Disengaged 0.06578947     0.1 0.04148827 0.0795622</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

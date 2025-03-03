@@ -13,7 +13,7 @@ in the tna object."><meta property="og:image" content="http://sonsoles.me/tna/lo
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,37 +103,11 @@ instead, which is a <code>list</code> or <code>tna_cliques</code> objects.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Cluster-related functions
-<code><a href="bootstrap.html">bootstrap</a>()</code>,
-<code><a href="centralities.html">centralities</a>()</code>,
-<code><a href="communities.html">communities</a>()</code>,
-<code><a href="deprune.html">deprune</a>()</code>,
-<code><a href="estimate_centrality_stability.html">estimate_cs</a>()</code>,
-<code><a href="group_model.html">group_model</a>()</code>,
-<code><a href="hist.group_tna.html">hist.group_tna</a>()</code>,
-<code><a href="mmm_stats.html">mmm_stats</a>()</code>,
-<code><a href="plot.group_tna.html">plot.group_tna</a>()</code>,
-<code><a href="plot.group_tna_centralities.html">plot.group_tna_centralities</a>()</code>,
+    <div class="dont-index"><p>Other cliques:
 <code><a href="plot.group_tna_cliques.html">plot.group_tna_cliques</a>()</code>,
-<code><a href="plot.group_tna_communities.html">plot.group_tna_communities</a>()</code>,
-<code><a href="plot.group_tna_stability.html">plot.group_tna_stability</a>()</code>,
-<code><a href="plot_compare.group_tna.html">plot_compare.group_tna</a>()</code>,
-<code><a href="plot_mosaic.group_tna.html">plot_mosaic.group_tna</a>()</code>,
-<code><a href="plot_mosaic.tna_data.html">plot_mosaic.tna_data</a>()</code>,
-<code><a href="print.group_tna.html">print.group_tna</a>()</code>,
-<code><a href="print.group_tna_bootstrap.html">print.group_tna_bootstrap</a>()</code>,
-<code><a href="print.group_tna_centralities.html">print.group_tna_centralities</a>()</code>,
+<code><a href="plot.tna_cliques.html">plot.tna_cliques</a>()</code>,
 <code><a href="print.group_tna_cliques.html">print.group_tna_cliques</a>()</code>,
-<code><a href="print.group_tna_communities.html">print.group_tna_communities</a>()</code>,
-<code><a href="print.group_tna_stability.html">print.group_tna_stability</a>()</code>,
-<code><a href="print.summary.group_tna.html">print.summary.group_tna</a>()</code>,
-<code><a href="print.summary.group_tna_bootstrap.html">print.summary.group_tna_bootstrap</a>()</code>,
-<code><a href="prune.html">prune</a>()</code>,
-<code><a href="pruning_details.html">pruning_details</a>()</code>,
-<code><a href="rename_groups.html">rename_groups</a>()</code>,
-<code><a href="reprune.html">reprune</a>()</code>,
-<code><a href="summary.group_tna.html">summary.group_tna</a>()</code>,
-<code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code></p></div>
+<code><a href="print.tna_cliques.html">print.tna_cliques</a>()</code></p></div>
     </div>
 
     <div class="section level2">
@@ -142,6 +116,63 @@ instead, which is a <code>list</code> or <code>tna_cliques</code> objects.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Find  2-cliques (dyads)</span></span></span>
 <span class="r-in"><span><span class="va">cliq</span> <span class="op">&lt;-</span> <span class="fu">cliques</span><span class="op">(</span><span class="va">model</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="group_model.html">group_tna</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cliques</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of 2-cliques: 2 (weight threshold = 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Showing 2 cliques starting from clique number 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Average Disengaged</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average    0.4598214 0.02678571</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Disengaged 0.3809524 0.28571429</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Active   Average</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Active  0.7061503 0.2938497</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average 0.5133929 0.4598214</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of 2-cliques: 3 (weight threshold = 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Showing 3 cliques starting from clique number 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Average Disengaged</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average    0.5860735 0.08897485</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Disengaged 0.5733333 0.09333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Active   Average</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Active  0.4924242 0.4419192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average 0.3249516 0.5860735</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               Active Disengaged</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Active     0.4924242 0.06565657</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Disengaged 0.3333333 0.09333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of 2-cliques: 3 (weight threshold = 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Showing 3 cliques starting from clique number 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              Average Disengaged</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average    0.5731707  0.2674216</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Disengaged 0.4707602  0.4634503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            Active   Average</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Active  0.3006757 0.6081081</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average 0.1594077 0.5731707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                Active Disengaged</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Active     0.30067568 0.09121622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Disengaged 0.06578947 0.46345029</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

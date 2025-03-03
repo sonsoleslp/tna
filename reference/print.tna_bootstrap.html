@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,6 +79,28 @@ prints only the non-significant edges.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>x</code> (invisibly).</p>
     </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Other validation:
+<code><a href="bootstrap.html">bootstrap</a>()</code>,
+<code><a href="deprune.html">deprune</a>()</code>,
+<code><a href="estimate_centrality_stability.html">estimate_cs</a>()</code>,
+<code><a href="permutation_test.html">permutation_test</a>()</code>,
+<code><a href="plot.group_tna_stability.html">plot.group_tna_stability</a>()</code>,
+<code><a href="plot.tna_permutation.html">plot.tna_permutation</a>()</code>,
+<code><a href="plot.tna_stability.html">plot.tna_stability</a>()</code>,
+<code><a href="print.group_tna_bootstrap.html">print.group_tna_bootstrap</a>()</code>,
+<code><a href="print.group_tna_stability.html">print.group_tna_stability</a>()</code>,
+<code><a href="print.summary.group_tna_bootstrap.html">print.summary.group_tna_bootstrap</a>()</code>,
+<code><a href="print.summary.tna_bootstrap.html">print.summary.tna_bootstrap</a>()</code>,
+<code><a href="print.tna_permutation.html">print.tna_permutation</a>()</code>,
+<code><a href="print.tna_stability.html">print.tna_stability</a>()</code>,
+<code><a href="prune.html">prune</a>()</code>,
+<code><a href="pruning_details.html">pruning_details</a>()</code>,
+<code><a href="reprune.html">reprune</a>()</code>,
+<code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code>,
+<code><a href="summary.tna_bootstrap.html">summary.tna_bootstrap</a>()</code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -89,88 +111,88 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          from         to     weight p_value   ci_lower   ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       adapt    discuss 0.07137434       0 0.06348657 0.08099424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9       adapt  synthesis 0.23466258       0 0.21272779 0.23699189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10   cohesion      adapt 0.27308448       0 0.26305384 0.30787697</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   cohesion   cohesion 0.02713864       0 0.02330384 0.03177955</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13   cohesion coregulate 0.03604061       0 0.02987657 0.04196894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14   cohesion    discuss 0.04758289       0 0.04230633 0.05101607</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15   cohesion    emotion 0.32534367       0 0.31056561 0.33851359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16   cohesion    monitor 0.05582694       0 0.04776232 0.06208833</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17   cohesion       plan 0.02517460       0 0.02128413 0.03057810</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  consensus      adapt 0.47740668       0 0.45386127 0.48493183</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  consensus   cohesion 0.49793510       0 0.48458249 0.50812328</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  consensus  consensus 0.08200348       0 0.07800969 0.08618305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  consensus coregulate 0.13451777       0 0.12929013 0.14862154</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  consensus    discuss 0.32118451       0 0.30804456 0.32536524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24  consensus    emotion 0.32040888       0 0.30450104 0.33694538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  consensus    monitor 0.15910677       0 0.14920041 0.17468452</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  consensus       plan 0.29040117       0 0.28456932 0.30239099</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  consensus  synthesis 0.46625767       0 0.44943706 0.49272703</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 coregulate   cohesion 0.11917404       0 0.10535095 0.12872533</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 coregulate  consensus 0.18770738       0 0.17960516 0.19951225</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 coregulate    discuss 0.08428246       0 0.07729910 0.09040363</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 coregulate    emotion 0.03419105       0 0.03050117 0.03768501</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 coregulate    monitor 0.05792045       0 0.04696763 0.06337494</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 coregulate       plan 0.01721618       0 0.01532915 0.01929869</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38    discuss   cohesion 0.05958702       0 0.04926160 0.06504461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39    discuss  consensus 0.18802338       0 0.17868232 0.19806794</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40    discuss coregulate 0.27360406       0 0.26904263 0.29244461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41    discuss    discuss 0.19488737       0 0.18202403 0.19559620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42    discuss    emotion 0.10186817       0 0.09235798 0.11181148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43    discuss    monitor 0.37543615       0 0.36581044 0.39827111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44    discuss       plan 0.06789021       0 0.06073033 0.07115174</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47    emotion   cohesion 0.11563422       0 0.10105875 0.12442661</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48    emotion  consensus 0.07268131       0 0.06595059 0.07555192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49    emotion coregulate 0.17208122       0 0.15258146 0.18469107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50    emotion    discuss 0.10579600       0 0.09994651 0.11380820</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51    emotion    emotion 0.07684173       0 0.06976067 0.08241250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52    emotion    monitor 0.09071877       0 0.08490015 0.09816890</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53    emotion       plan 0.14682475       0 0.14062275 0.15338833</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54    emotion  synthesis 0.07055215       0 0.06007466 0.08295926</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56    monitor   cohesion 0.03303835       0 0.03011232 0.03828852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57    monitor  consensus 0.04661084       0 0.04382291 0.05042065</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58    monitor coregulate 0.08629442       0 0.07927459 0.09466942</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60    monitor    emotion 0.03630596       0 0.03362938 0.04010115</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62    monitor       plan 0.07552379       0 0.07107939 0.07922775</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65       plan   cohesion 0.14100295       0 0.13168132 0.14950035</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66       plan  consensus 0.39579712       0 0.38210235 0.40138769</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67       plan coregulate 0.23908629       0 0.22246828 0.25328213</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69       plan    emotion 0.09975326       0 0.09060304 0.10546900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70       plan    monitor 0.21563154       0 0.19869750 0.22991653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71       plan       plan 0.37420822       0 0.36775016 0.38409616</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72       plan  synthesis 0.07515337       0 0.06096315 0.08950124</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76  synthesis coregulate 0.01878173       0 0.01669537 0.02125180</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77  synthesis    discuss 0.14097697       0 0.13674126 0.15157504</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       adapt    discuss 0.07137434       0 0.06879830 0.07882252</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       adapt  synthesis 0.23466258       0 0.20738472 0.26215579</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10   cohesion      adapt 0.27308448       0 0.24423412 0.32994227</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   cohesion   cohesion 0.02713864       0 0.02387032 0.03250589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   cohesion  consensus 0.01485227       0 0.01323774 0.01768160</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   cohesion coregulate 0.03604061       0 0.02998887 0.04400990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14   cohesion    discuss 0.04758289       0 0.04519235 0.05279624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15   cohesion    emotion 0.32534367       0 0.31195496 0.33306839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16   cohesion    monitor 0.05582694       0 0.04872169 0.06629924</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17   cohesion       plan 0.02517460       0 0.02186184 0.02734084</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  consensus      adapt 0.47740668       0 0.44267345 0.51742424</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  consensus   cohesion 0.49793510       0 0.47435730 0.51590656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  consensus  consensus 0.08200348       0 0.07657180 0.08330492</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  consensus coregulate 0.13451777       0 0.12257134 0.14591520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  consensus    discuss 0.32118451       0 0.30506140 0.32791621</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  consensus    emotion 0.32040888       0 0.31256799 0.32757362</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  consensus    monitor 0.15910677       0 0.13391430 0.16856088</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  consensus       plan 0.29040117       0 0.28181484 0.30071047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  consensus  synthesis 0.46625767       0 0.42377390 0.51885512</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 coregulate   cohesion 0.11917404       0 0.10280034 0.13523908</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 coregulate  consensus 0.18770738       0 0.18318109 0.19080783</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 coregulate    discuss 0.08428246       0 0.07654286 0.09461530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 coregulate    emotion 0.03419105       0 0.02786401 0.03886402</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 coregulate    monitor 0.05792045       0 0.05192382 0.06435962</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 coregulate       plan 0.01721618       0 0.01488443 0.01891217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38    discuss   cohesion 0.05958702       0 0.05033924 0.06452243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39    discuss  consensus 0.18802338       0 0.18672906 0.19453156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40    discuss coregulate 0.27360406       0 0.25904298 0.27904788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41    discuss    discuss 0.19488737       0 0.19050856 0.20416967</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42    discuss    emotion 0.10186817       0 0.09640263 0.11045981</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43    discuss    monitor 0.37543615       0 0.35227817 0.38826403</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44    discuss       plan 0.06789021       0 0.06354315 0.07110710</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46    emotion      adapt 0.11984283       0 0.10122185 0.13577003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47    emotion   cohesion 0.11563422       0 0.10392108 0.13081261</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48    emotion  consensus 0.07268131       0 0.06763626 0.07712943</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49    emotion coregulate 0.17208122       0 0.15228676 0.18464681</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50    emotion    discuss 0.10579600       0 0.10156220 0.11523829</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51    emotion    emotion 0.07684173       0 0.06514414 0.08229707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52    emotion    monitor 0.09071877       0 0.08240753 0.10347256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53    emotion       plan 0.14682475       0 0.14217448 0.15043632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54    emotion  synthesis 0.07055215       0 0.06349852 0.07655959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56    monitor   cohesion 0.03303835       0 0.02587357 0.03708888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57    monitor  consensus 0.04661084       0 0.04424165 0.05000443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58    monitor coregulate 0.08629442       0 0.07779977 0.09270759</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60    monitor    emotion 0.03630596       0 0.03113778 0.04399990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62    monitor       plan 0.07552379       0 0.06867698 0.08083966</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65       plan   cohesion 0.14100295       0 0.13133484 0.14656545</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66       plan  consensus 0.39579712       0 0.38663157 0.40013626</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67       plan coregulate 0.23908629       0 0.22449513 0.26223338</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68       plan    discuss 0.01164262       0 0.01069256 0.01430065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69       plan    emotion 0.09975326       0 0.08890183 0.10488273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70       plan    monitor 0.21563154       0 0.19858268 0.23060683</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71       plan       plan 0.37420822       0 0.36388166 0.38841316</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72       plan  synthesis 0.07515337       0 0.07283982 0.08794922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77  synthesis    discuss 0.14097697       0 0.13343839 0.14627278</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          from         to       weight p_value     ci_lower    ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       adapt   cohesion 0.0029498525     0.6 0.0011700722 0.005528411</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       adapt  consensus 0.0047400853     0.3 0.0028521662 0.005868705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       adapt coregulate 0.0162436548     0.2 0.0103461444 0.021540675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       adapt    emotion 0.0024673951     0.5 0.0011637313 0.004472447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7       adapt    monitor 0.0111653873     0.3 0.0081916230 0.014171023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       adapt       plan 0.0009745006     0.5 0.0005194638 0.001591307</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   cohesion  consensus 0.0148522673     0.1 0.0124890674 0.018225139</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18   cohesion  synthesis 0.0337423313     0.4 0.0212611070 0.047220972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 coregulate      adapt 0.0216110020     0.4 0.0091991976 0.033621274</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 coregulate coregulate 0.0233502538     0.2 0.0171628787 0.028761038</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 coregulate  synthesis 0.0444785276     0.2 0.0417210641 0.060518041</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37    discuss      adapt 0.0589390963     0.2 0.0440868579 0.073832177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45    discuss  synthesis 0.0628834356     0.2 0.0435760679 0.078226828</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46    emotion      adapt 0.1198428291     0.1 0.0937062498 0.146211234</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55    monitor      adapt 0.0333988212     0.4 0.0262025503 0.052730413</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59    monitor    discuss 0.0222728423     0.1 0.0185202089 0.027612504</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61    monitor    monitor 0.0181437544     0.1 0.0139352029 0.021040082</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63    monitor  synthesis 0.0122699387     0.5 0.0063888520 0.019261377</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64       plan      adapt 0.0157170923     0.4 0.0053042228 0.024514390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68       plan    discuss 0.0116426221     0.1 0.0099493880 0.015457585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74  synthesis   cohesion 0.0035398230     0.4 0.0023272497 0.004929258</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75  synthesis  consensus 0.0075841365     0.1 0.0054522797 0.008799488</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78  synthesis    emotion 0.0028198802     0.5 0.0012470765 0.004039703</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79  synthesis    monitor 0.0160502442     0.4 0.0092235087 0.019968951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80  synthesis       plan 0.0017865844     0.3 0.0010049210 0.002443799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       adapt   cohesion 0.0029498525     0.4 0.0017550137 0.004926479</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       adapt  consensus 0.0047400853     0.2 0.0034331332 0.006213130</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       adapt coregulate 0.0162436548     0.1 0.0128675721 0.020885417</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       adapt    emotion 0.0024673951     0.3 0.0021505918 0.004391937</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       adapt    monitor 0.0111653873     0.3 0.0095491365 0.015587040</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       adapt       plan 0.0009745006     0.5 0.0008056013 0.001942620</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18   cohesion  synthesis 0.0337423313     0.3 0.0187106093 0.042546325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 coregulate      adapt 0.0216110020     0.3 0.0162596924 0.037723244</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 coregulate coregulate 0.0233502538     0.1 0.0216455919 0.029151342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 coregulate  synthesis 0.0444785276     0.3 0.0305046744 0.064914702</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37    discuss      adapt 0.0589390963     0.3 0.0395203317 0.082817002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45    discuss  synthesis 0.0628834356     0.2 0.0467828475 0.084203829</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55    monitor      adapt 0.0333988212     0.2 0.0283873644 0.053488136</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59    monitor    discuss 0.0222728423     0.1 0.0165662331 0.023024561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61    monitor    monitor 0.0181437544     0.2 0.0169098659 0.024263159</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63    monitor  synthesis 0.0122699387     0.5 0.0038742284 0.015247496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64       plan      adapt 0.0157170923     0.4 0.0086708309 0.027746212</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74  synthesis   cohesion 0.0035398230     0.3 0.0020217594 0.005659976</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  synthesis  consensus 0.0075841365     0.2 0.0056413711 0.010242796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76  synthesis coregulate 0.0187817259     0.3 0.0128274116 0.024732357</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78  synthesis    emotion 0.0028198802     0.5 0.0017579660 0.005410704</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79  synthesis    monitor 0.0160502442     0.6 0.0109092251 0.024338140</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80  synthesis       plan 0.0017865844     0.6 0.0011377194 0.002416022</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

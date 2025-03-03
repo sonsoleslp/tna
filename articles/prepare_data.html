@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,8 +161,10 @@ tie, by <code>order</code>.</p>
 sequence, we can do so by customizing the <code>time_threshold</code>
 argument (in minutes).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">by_session_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span><span class="va">df</span>, actor <span class="op">=</span> <span class="st">"user"</span>, time <span class="op">=</span> <span class="st">"timestamp"</span>, action <span class="op">=</span> <span class="st">"event"</span>, </span>
-<span>                                  time_threshold <span class="op">=</span> <span class="fl">10</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span> <span class="co"># 10 minutes</span></span>
+<code class="sourceCode R"><span><span class="va">by_session_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span></span>
+<span>  <span class="va">df</span>, actor <span class="op">=</span> <span class="st">"user"</span>, time <span class="op">=</span> <span class="st">"timestamp"</span>, </span>
+<span>  action <span class="op">=</span> <span class="st">"event"</span>, time_threshold <span class="op">=</span> <span class="fl">10</span> <span class="op">*</span> <span class="fl">60</span> <span class="co"># 10 minutes</span></span>
+<span><span class="op">)</span></span>
 <span><span class="va">tna_by_session_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">by_session_custom</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_by_session_custom</span><span class="op">)</span></span></code></pre></div>
 <p><img src="prepare_data_files/figure-html/unnamed-chunk-6-1.svg" width="100%">

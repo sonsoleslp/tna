@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -144,7 +144,7 @@
 <span><span class="co">#&gt;           consensus discuss</span></span>
 <span><span class="co">#&gt; consensus     0.082    0.19</span></span>
 <span><span class="co">#&gt; discuss       0.321    0.19</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_two</span>, vsize <span class="op">=</span> <span class="fl">15</span>, edge.label.cex <span class="op">=</span> <span class="fl">2</span>, esize <span class="op">=</span> <span class="fl">20</span>, ask <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_two</span>, vsize <span class="op">=</span> <span class="fl">15</span>, edge.label.cex <span class="op">=</span> <span class="fl">2</span>, esize <span class="op">=</span> <span class="fl">20</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="complete_tutorial_files/figure-html/unnamed-chunk-6-1.svg" width="100%"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
@@ -196,7 +196,7 @@
 <span><span class="co">#&gt; emotion       0.320   0.077   0.036 0.10</span></span>
 <span><span class="co">#&gt; monitor       0.159   0.091   0.018 0.22</span></span>
 <span><span class="co">#&gt; plan          0.290   0.147   0.076 0.37</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_four</span>, ask <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_four</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="complete_tutorial_files/figure-html/unnamed-chunk-8-1.svg" width="100%"></p>
 <div class="section level4">
 <h4 id="centralities">Centralities<a class="anchor" aria-label="anchor" href="#centralities"></a>
@@ -351,7 +351,7 @@ Centrality Indices<a class="anchor" aria-label="anchor" href="#interpreting-the-
 </h4>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Results of the Case-Dropping Bootstrap for Centrality Indices</span></span>
-<span><span class="va">Centrality_stability</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_centrality_stability.html">estimate_centrality_stability</a></span><span class="op">(</span><span class="va">model</span>, detailed <span class="op">=</span> <span class="cn">FALSE</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="va">Centrality_stability</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_centrality_stability.html">estimate_centrality_stability</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Centrality_stability</span><span class="op">)</span></span></code></pre></div>
 <p><img src="complete_tutorial_files/figure-html/unnamed-chunk-16-1.svg" width="100%" style="display: block; margin: auto;"></p>
 </div>

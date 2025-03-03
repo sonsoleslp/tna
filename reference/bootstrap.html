@@ -13,7 +13,7 @@ testing."><meta property="og:image" content="http://sonsoles.me/tna/logo.png"></
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,15 @@ testing.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'group_tna'</span></span>
-<span><span class="fu">bootstrap</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">bootstrap</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  iter <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  level <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  method <span class="op">=</span> <span class="st">"stability"</span>,</span>
+<span>  <span class="va">threshold</span>,</span>
+<span>  consistency_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">1.25</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -155,41 +163,25 @@ structured list.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Evaluation and validation functions
-<code><a href="permutation_test.html">permutation_test</a>()</code>,
-<code><a href="prune.html">prune</a>()</code>,
-<code><a href="pruning_details.html">pruning_details</a>()</code></p>
-<p>Cluster-related functions
-<code><a href="centralities.html">centralities</a>()</code>,
-<code><a href="cliques.html">cliques</a>()</code>,
-<code><a href="communities.html">communities</a>()</code>,
+    <div class="dont-index"><p>Other validation:
 <code><a href="deprune.html">deprune</a>()</code>,
 <code><a href="estimate_centrality_stability.html">estimate_cs</a>()</code>,
-<code><a href="group_model.html">group_model</a>()</code>,
-<code><a href="hist.group_tna.html">hist.group_tna</a>()</code>,
-<code><a href="mmm_stats.html">mmm_stats</a>()</code>,
-<code><a href="plot.group_tna.html">plot.group_tna</a>()</code>,
-<code><a href="plot.group_tna_centralities.html">plot.group_tna_centralities</a>()</code>,
-<code><a href="plot.group_tna_cliques.html">plot.group_tna_cliques</a>()</code>,
-<code><a href="plot.group_tna_communities.html">plot.group_tna_communities</a>()</code>,
+<code><a href="permutation_test.html">permutation_test</a>()</code>,
 <code><a href="plot.group_tna_stability.html">plot.group_tna_stability</a>()</code>,
-<code><a href="plot_compare.group_tna.html">plot_compare.group_tna</a>()</code>,
-<code><a href="plot_mosaic.group_tna.html">plot_mosaic.group_tna</a>()</code>,
-<code><a href="plot_mosaic.tna_data.html">plot_mosaic.tna_data</a>()</code>,
-<code><a href="print.group_tna.html">print.group_tna</a>()</code>,
+<code><a href="plot.tna_permutation.html">plot.tna_permutation</a>()</code>,
+<code><a href="plot.tna_stability.html">plot.tna_stability</a>()</code>,
 <code><a href="print.group_tna_bootstrap.html">print.group_tna_bootstrap</a>()</code>,
-<code><a href="print.group_tna_centralities.html">print.group_tna_centralities</a>()</code>,
-<code><a href="print.group_tna_cliques.html">print.group_tna_cliques</a>()</code>,
-<code><a href="print.group_tna_communities.html">print.group_tna_communities</a>()</code>,
 <code><a href="print.group_tna_stability.html">print.group_tna_stability</a>()</code>,
-<code><a href="print.summary.group_tna.html">print.summary.group_tna</a>()</code>,
 <code><a href="print.summary.group_tna_bootstrap.html">print.summary.group_tna_bootstrap</a>()</code>,
+<code><a href="print.summary.tna_bootstrap.html">print.summary.tna_bootstrap</a>()</code>,
+<code><a href="print.tna_bootstrap.html">print.tna_bootstrap</a>()</code>,
+<code><a href="print.tna_permutation.html">print.tna_permutation</a>()</code>,
+<code><a href="print.tna_stability.html">print.tna_stability</a>()</code>,
 <code><a href="prune.html">prune</a>()</code>,
 <code><a href="pruning_details.html">pruning_details</a>()</code>,
-<code><a href="rename_groups.html">rename_groups</a>()</code>,
 <code><a href="reprune.html">reprune</a>()</code>,
-<code><a href="summary.group_tna.html">summary.group_tna</a>()</code>,
-<code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code></p></div>
+<code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code>,
+<code><a href="summary.tna_bootstrap.html">summary.tna_bootstrap</a>()</code></p></div>
     </div>
 
     <div class="section level2">
@@ -282,6 +274,65 @@ structured list.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 78  synthesis    emotion 0.0028198802     0.5 0.0017208090 0.003462984</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 79  synthesis    monitor 0.0160502442     0.1 0.0126187487 0.019941206</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 80  synthesis       plan 0.0017865844     0.3 0.0011731180 0.002271774</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="group_model.html">group_tna</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Small number of iterations for CRAN</span></span></span>
+<span class="r-in"><span><span class="fu">bootstrap</span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      from      to    weight p_value  ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Active  Active 0.7061503       0 0.6728992 0.7482574</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Average  Active 0.2938497       0 0.2517426 0.3271008</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Average Average 0.4598214       0 0.3543395 0.5130755</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     Active    Average 0.51339286     0.1 0.46339108 0.63430012</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.33333333     0.6 0.19031250 0.52279412</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.38095238     0.3 0.24502262 0.49464286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.02678571     0.5 0.00553225 0.04441871</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.28571429     0.5 0.15893665 0.38941176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      from         to    weight p_value  ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Active     Active 0.4924242       0 0.4502979 0.5440377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Active    Average 0.3249516       0 0.2927007 0.3650853</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Active Disengaged 0.3333333       0 0.2665896 0.3814380</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Average     Active 0.4419192       0 0.3948602 0.4781949</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Average    Average 0.5860735       0 0.5502598 0.6235970</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Average Disengaged 0.5733333       0 0.5500463 0.6826315</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Disengaged     Active 0.06565657     0.1 0.05208170 0.08072051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.08897485     0.1 0.06874414 0.11147549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.09333333     0.8 0.05077897 0.13723442</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Significant Edges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to    weight p_value  ci_lower  ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     Active     Active 0.3006757       0 0.2473390 0.3270739</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     Active    Average 0.1594077       0 0.1367731 0.1676231</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    Average     Active 0.6081081       0 0.5690367 0.6285203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    Average    Average 0.5731707       0 0.5570259 0.5986153</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    Average Disengaged 0.4707602       0 0.4465663 0.5000202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Disengaged    Average 0.2674216       0 0.2498145 0.2859661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9 Disengaged Disengaged 0.4634503       0 0.4327551 0.4824233</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Non-significant Edges</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         from         to     weight p_value   ci_lower   ci_upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     Active Disengaged 0.06578947     0.1 0.05189673 0.08148381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Disengaged     Active 0.09121622     0.3 0.08740210 0.13389860</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
