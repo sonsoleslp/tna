@@ -30,3 +30,12 @@ model <- group_model(engagement_mmm)
 compare(model, i = 1, j = 2)
 
 }
+\seealso{
+Other comparison: 
+\code{\link{compare}()},
+\code{\link{plot.tna_comparison}()},
+\code{\link{plot_compare}()},
+\code{\link{plot_compare.group_tna}()},
+\code{\link{print.tna_comparison}()}
+}
+\concept{comparison}

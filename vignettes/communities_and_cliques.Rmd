@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   fig.width = 6,
   fig.height = 4,
   dev = "svg",
-  fig.ext="svg",
+  fig.ext = "svg",
   out.width = "100%",
   dpi = 60,
   comment = "#>"
@@ -43,10 +43,10 @@ plot(cd, method = "leading_eigen")
 Cliques can be obtained with the `cliques` function. Here we look for dyads and triads by setting `size = 2` and `size = 3`, respectively.
 Finally, we plot the results.
 ```{r, figures-side, fig.show="hold", fig.height=6, fig.width=8}
-layout(matrix(1:4, ncol = 2, byrow = T))
+layout(matrix(1:4, ncol = 2, byrow = TRUE))
 dyads <- cliques(tna_model, size = 2, threshold = 0.2)
 triads <- cliques(tna_model, size = 3, threshold = 0.05)
-plot(dyads, ask = F)
-plot(triads, ask = F)
+plot(dyads, ask = FALSE)
+plot(triads, ask = FALSE)
 ```
 

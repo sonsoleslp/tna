@@ -1,3 +1,8 @@
+# tna 0.4.1
+
+* The `detailed` argument of `estimate_centrality_stability()` has been implemented. Previously this argument had no effect on the output of the function.
+* Removed several duplicated entries in the documentation.
+
 # tna 0.4.0
 
 * The `prepare_data()` function now produces an object of class `tna_data`, which can be directly used as an argument to `build_model()` and other methods.

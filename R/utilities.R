@@ -70,9 +70,10 @@ is_tna_centralities <- function(x) {
 #' @export
 igraph::as.igraph
 
-#' Coerce a `tna` object to an `igraph` object.
+#' Coerce a `tna` object into an `igraph` object.
 #'
 #' @export
+#' @family helpers
 #' @inheritParams igraph::as.igraph
 #' @return An `igraph` object.
 as.igraph.tna <- function(x, ...) {
@@ -85,9 +86,10 @@ as.igraph.tna <- function(x, ...) {
   )
 }
 
-#' Coerce a weight matrix to an `igraph` object.
+#' Coerce a weight matrix into an `igraph` object.
 #'
 #' @export
+#' @family helpers
 #' @inheritParams igraph::as.igraph
 #' @param directed A `logical` value. If `TRUE`, assumes that the graph is
 #' directed and undirected otherwise.
@@ -103,9 +105,10 @@ as.igraph.matrix <- function(x, directed = TRUE, ...) {
   )
 }
 
-#' Coerce  a specific group from a `group_tna` object to an `igraph` object.
+#' Coerce  a specific group from a `group_tna` object into an `igraph` object.
 #'
 #' @export
+#' @family helpers
 #' @inheritParams igraph::as.igraph
 #' @param which The number or name of the group.
 #' @return An `igraph` object.

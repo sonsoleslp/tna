@@ -60,8 +60,11 @@ Measuring and Testing Dependence by Correlation of Distances,
 doi:10.1214/009053607000000505
 }
 \seealso{
-Pattern-finding functions
-\code{\link{communities}()},
-\code{\link{plot.tna_communities}()}
+Other comparison: 
+\code{\link{compare}()},
+\code{\link{compare.group_tna}()},
+\code{\link{plot_compare}()},
+\code{\link{plot_compare.group_tna}()},
+\code{\link{print.tna_comparison}()}
 }
-\concept{patterns}
+\concept{comparison}

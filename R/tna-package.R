@@ -1,6 +1,7 @@
 #' The `tna` package.
 #'
 #' @name tna-package
+#' @family basic
 #' @description Provides tools for performing transition network analysis (TNA),
 #' including functions for building TNA models, plotting transition networks,
 #' and calculating centrality measures. The package relies on the `qgraph`
@@ -39,14 +40,14 @@
 #' achievement varies by time, students’ profiles, and achievement state:
 #' A full program study"
 #'
-#' @family examples
+#' @family datasets
 #' @source \doi{10.1016/j.compedu.2023.104787}
 #' @format A `stslist` object (sequence data).
 "engagement"
 
 #' Example mixed Markov model fitted to the `engagement` data
 #'
-#' @family examples
+#' @family datasets
 #' @source The data was generated via `mixed_markov_model.R` in
 #' <https://github.com/sonsoleslp/tna/tree/main/data-raw/>
 #' @format A `mhmm` object.
@@ -58,7 +59,7 @@
 #' were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
 #' "emotion", "monitor", "plan", "synthesis"
 #'
-#' @family examples
+#' @family datasets
 #' @source The data was generated synthetically.
 #' @format A `data.frame` object.
 "group_regulation"

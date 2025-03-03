@@ -4,6 +4,7 @@
 #' and computes edge betweenness for the network.
 #'
 #' @export
+#' @family centralities
 #' @param x A `tna` object.
 #' @param ... Ignored.
 #' @return A `tna` object where the edge weights are edge betweenness values.

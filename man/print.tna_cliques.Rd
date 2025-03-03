@@ -32,3 +32,11 @@ cliq <- cliques(model, size = 2)
 print(cliq)
 
 }
+\seealso{
+Other cliques: 
+\code{\link{cliques}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{plot.tna_cliques}()},
+\code{\link{print.group_tna_cliques}()}
+}
+\concept{cliques}

@@ -23,3 +23,11 @@ comm <- communities(model)
 print(comm)
 
 }
+\seealso{
+Other communities: 
+\code{\link{communities}()},
+\code{\link{plot.group_tna_communities}()},
+\code{\link{plot.tna_communities}()},
+\code{\link{print.group_tna_communities}()}
+}
+\concept{communities}

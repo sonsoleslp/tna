@@ -12,7 +12,7 @@
 #' Edge Betweenness, Leading Eigenvector, and Spin Glass).
 #'
 #' @export
-#' @family patterns
+#' @family communities
 #' @rdname communities
 #' @param x A `tna` or a `group_tna` object.
 #' @param methods A `character` vector of community detection algorithms to
@@ -128,7 +128,7 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
 #' @export
 #' @family clusters
 #' @rdname communities
-communities.group_tna <- function(x, methods, ...) {
+communities.group_tna <- function(x, methods, gamma = 1, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   if (missing(methods)) {
@@ -136,7 +136,7 @@ communities.group_tna <- function(x, methods, ...) {
   }
   structure(
     stats::setNames(
-      lapply(x, communities, methods = methods, ...),
+      lapply(x, communities, methods = methods, gamma = gamma, ...),
       names(x)
     ),
     class = "group_tna_communities"

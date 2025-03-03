@@ -1,6 +1,7 @@
 #' Print a TNA Summary
 #'
 #' @export
+#' @family basic
 #' @param x A `summary.tna` object.
 #' @param ... Ignored.
 #' @return A `summary.tna` object (invisibly) containing the TNA model network
@@ -13,9 +14,10 @@ print.summary.tna <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }
 
-#' Print Bootstrap Summary
+#' Print a Bootstrap Summary
 #'
 #' @export
+#' @family validation
 #' @param x A `summary.tna_bootstrap` object.
 #' @param ... Arguments passed to the generic `print` method.
 #' @return A `summary.tna_bootstrap` object (invisibly) containing the weight,
@@ -33,6 +35,7 @@ print.summary.tna_bootstrap <- function(x, ...) {
 #' Print a `tna` object
 #'
 #' @export
+#' @family basic
 #' @param x A `tna` object.
 #' @param digits An `integer` giving the number of
 #' *significant* digits to print.
@@ -77,6 +80,7 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
 #' Print Bootstrap Results
 #'
 #' @export
+#' @family validation
 #' @param x A `tna_bootstrap` object.
 #' @param digits An `integer` giving the minimal number of
 #' *significant* digits to print.
@@ -118,6 +122,7 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
 #' Print Centrality Measures
 #'
 #' @export
+#' @family centralities
 #' @param x A `centralities` object.
 #' @param ... Ignored.
 #' @return `x` (invisibly).
@@ -133,6 +138,7 @@ print.tna_centralities <- function(x, ...) {
 #' Print Detected Communities
 #'
 #' @export
+#' @family communities
 #' @param x A `tna_communities` object.
 #' @param ... Ignored.
 #' @return `x` (invisibly).
@@ -154,6 +160,7 @@ print.tna_communities <- function(x, ...) {
 #' Print Comparison Results
 #'
 #' @export
+#' @family comparison
 #' @param x A `tna_comparison` object.
 #' @param ... Additional arguments passed to the tibble `print` method.
 #' @return `x` (invisibly).
@@ -182,6 +189,7 @@ print.tna_comparison <- function(x, ...) {
 #' Print Found Cliques of a TNA Network
 #'
 #' @export
+#' @family cliques
 #' @param x A `tna_cliques` object.
 #' @param n An `integer` defining the maximum number of cliques to show.
 #' The defaults is `6`.
@@ -233,6 +241,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 #' Print a TNA data object
 #'
 #' @export
+#' @family basic
 #' @param x A `tna_data` object.
 #' @param data A `character` string that defines the data to be printed
 #' tibble. Accepts either `"sequence"` (default) for wide format sequence data,
@@ -262,6 +271,7 @@ print.tna_data <- function(x, data = "sequence", ...) {
 #' Print Centrality Stability Results
 #'
 #' @export
+#' @family validation
 #' @param x A `tna_stability` object.
 #' @param ... Ignored.
 #' @return `x` (invisibly).
@@ -289,6 +299,7 @@ print.tna_stability <- function(x, ...) {
 #' Print Permutation Test Results
 #'
 #' @export
+#' @family validation
 #' @param x A `tna_permutation` object.
 #' @param ... Additional arguments passed to the `tibble` print method.
 #' @return `x` (invisibly).
@@ -316,7 +327,7 @@ print.tna_permutation <- function(x, ...) {
 #' Print a `group_tna` Object
 #'
 #' @export
-#' @family clusters
+#' @family basic
 #' @param x A `group_tna` object.
 #' @param ... Arguments passed to [print.tna()].
 #' @return `x` (invisibly).
@@ -341,7 +352,7 @@ print.group_tna <- function(x, ...) {
 #' Print `group_tna` Bootstrap Results
 #'
 #' @export
-#' @family clusters
+#' @family validation
 #' @param x A `group_tna_bootstrap` object.
 #' @param ... Arguments passed to [print.tna_bootstrap()].
 #' @return `x` (invisibly).
@@ -368,7 +379,7 @@ print.group_tna_bootstrap <- function(x, ...) {
 #' Print the summary of a grouped Transition Network Analysis Model
 #'
 #' @export
-#' @family clusters
+#' @family basic
 #' @param x A `summary.group_tna` object.
 #' @param ... Arguments passed to [print.summary.tna()].
 #' @return `x` (invisibly).
@@ -393,7 +404,7 @@ print.summary.group_tna <- function(x, ...) {
 #' Print Bootstrap Summary for a Grouped Transition Network
 #'
 #' @export
-#' @family clusters
+#' @family validation
 #' @param x A `summary.group_tna_bootstrap` object.
 #' @param ... Arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
@@ -410,7 +421,7 @@ print.summary.group_tna_bootstrap <- function(x, ...) {
 #' Print Centrality Measures
 #'
 #' @export
-#' @family clusters
+#' @family centralities
 #' @param x A `group_tna_centralities` object.
 #' @param ... Ignored.
 #' @return `x` (invisibly).
@@ -428,7 +439,7 @@ print.group_tna_centralities <- function(x, ...) {
 #' Print Detected Communities
 #'
 #' @export
-#' @family clusters
+#' @family communities
 #' @param x A `group_tna_communities` object.
 #' @param ... Arguments passed to [print.tna_communities()].
 #' @return `x` (invisibly).
@@ -454,7 +465,7 @@ print.group_tna_communities <- function(x, ...) {
 #' Print Found Cliques
 #'
 #' @export
-#' @family clusters
+#' @family cliques
 #' @param x A `group_tna_cliques` object.
 #' @param ... Arguments passed to [print.tna_cliques()].
 #' @return `x` (invisibly).
@@ -480,7 +491,7 @@ print.group_tna_cliques <- function(x, ...) {
 #' Print Centrality Stability Results
 #'
 #' @export
-#' @family clusters
+#' @family validation
 #' @param x A `group_tna_stability` object.
 #' @param ... Arguments passed to [print.tna_stability()].
 #' @return `x` (invisibly).

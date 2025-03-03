@@ -21,7 +21,7 @@
 #' structured list.
 #'
 #' @export
-#' @family evaluation
+#' @family validation
 #' @param x A `tna` or a `group_tna` object created from sequence data.
 #' @param iter An `integer` specifying the number of bootstrap samples to
 #' draw. Defaults to `1000`.
@@ -71,8 +71,8 @@ bootstrap <- function(x, ...) {
   UseMethod("bootstrap")
 }
 
-#' @rdname bootstrap
 #' @export
+#' @rdname bootstrap
 bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
                           threshold, consistency_range = c(0.75, 1.25), ...) {
   check_missing(x)
@@ -175,14 +175,29 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
 }
 
 #' @export
-#' @family clusters
 #' @rdname bootstrap
-bootstrap.group_tna <- function(x, ...) {
+#' @examples
+#' model <- group_tna(engagement_mmm)
+#' # Small number of iterations for CRAN
+#' bootstrap(model, iter = 10)
+#'
+bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
+                                method = "stability", threshold,
+                                consistency_range = c(0.75, 1.25), ...) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
     stats::setNames(
-      lapply(x, bootstrap, ...),
+      lapply(
+        x,
+        bootstrap,
+        iter = iter,
+        level = level,
+        method = method,
+        threshold = threshold,
+        consistency_range = consistency_range,
+        ...
+      ),
       names(x)
     ),
     class = "group_tna_bootstrap"

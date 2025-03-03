@@ -3,7 +3,7 @@
 \name{plot_mosaic}
 \alias{plot_mosaic}
 \alias{plot_mosaic.tna}
-\title{Create a mosaic plot of transitions}
+\title{Create a Mosaic Plot of Transitions or Events}
 \usage{
 plot_mosaic(x, ...)
 
@@ -21,10 +21,30 @@ for the chi-square test statistic and the p-value in the plot.}
 A \code{ggplot} object.
 }
 \description{
-Create a mosaic plot of transitions
+Create a Mosaic Plot of Transitions or Events
 }
 \examples{
 ftna_model <- ftna(group_regulation)
 plot_mosaic(ftna_model)
 
 }
+\seealso{
+Other basic: 
+\code{\link{build_model}()},
+\code{\link{hist.group_tna}()},
+\code{\link{hist.tna}()},
+\code{\link{plot.group_tna}()},
+\code{\link{plot.tna}()},
+\code{\link{plot_mosaic.group_tna}()},
+\code{\link{plot_mosaic.tna_data}()},
+\code{\link{prepare_data}()},
+\code{\link{print.group_tna}()},
+\code{\link{print.summary.group_tna}()},
+\code{\link{print.summary.tna}()},
+\code{\link{print.tna}()},
+\code{\link{print.tna_data}()},
+\code{\link{summary.group_tna}()},
+\code{\link{summary.tna}()},
+\code{\link{tna-package}}
+}
+\concept{basic}

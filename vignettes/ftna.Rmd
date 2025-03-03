@@ -25,8 +25,6 @@ suppressPackageStartupMessages({
   library("dplyr")
   library("ggplot2")
 })
-
- 
 options(scipen = 99)
 options(digits = 2)
 options(max.print = 30)

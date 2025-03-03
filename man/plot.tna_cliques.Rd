@@ -11,7 +11,7 @@
   show_loops = FALSE,
   edge.labels = TRUE,
   edge.label.position = 0.65,
-  minimum = 0.00001,
+  minimum = 1e-05,
   mar = rep(5, 4),
   layout = "circle",
   layout_args = list(),
@@ -79,3 +79,11 @@ cliq <- cliques(model, size = 2)
 plot(cliq, n = 1, ask = FALSE)
 
 }
+\seealso{
+Other cliques: 
+\code{\link{cliques}()},
+\code{\link{plot.group_tna_cliques}()},
+\code{\link{print.group_tna_cliques}()},
+\code{\link{print.tna_cliques}()}
+}
+\concept{cliques}

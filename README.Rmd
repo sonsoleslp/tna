@@ -37,7 +37,7 @@ Transition Network Analysis (TNA). TNA provides tools for building TNA models,
 plotting transition networks, calculating centrality measures, and identifying 
 dominant events and patterns. TNA statistical techniques (e.g., bootstrapping 
 and permutation tests) ensure the reliability of observed insights and confirm
-that identified dynamics are meaningful. See [(Saqr et al., 2024)](https://doi.org/10.1145/3706468.3706513) for more details on TNA.
+that identified dynamics are meaningful. See [(Saqr et al., 2025)](https://doi.org/10.1145/3706468.3706513) for more details on TNA.
 
 
 ![](man/figures/method.png)
@@ -96,8 +96,10 @@ Plot the transition network
 # Default plot
 plot(tna_model) 
 # Optimized plot
-plot(tna_model, cut = 0.2, minimum = 0.05, 
-     edge.label.position= 0.8, edge.label.cex = 0.7)
+plot(
+  tna_model, cut = 0.2, minimum = 0.05, 
+  edge.label.position = 0.8, edge.label.cex = 0.7
+)
 ```
 Calculate the centrality measures
 ```{r}

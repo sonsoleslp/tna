@@ -52,10 +52,11 @@ plot(cm, ncol = 3, reorder = TRUE)
 
 }
 \seealso{
-Core functions
-\code{\link{build_model}()},
+Other centralities: 
+\code{\link{betweenness_network}()},
 \code{\link{centralities}()},
-\code{\link{plot.tna}()},
-\code{\link{plot_compare}()}
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.tna_centralities}()}
 }
-\concept{core}
+\concept{centralities}

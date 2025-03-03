@@ -50,38 +50,15 @@ model <- tna(group_regulation)
 # Find  2-cliques (dyads)
 cliq <- cliques(model, size = 2)
 
+model <- group_tna(engagement_mmm)
+cliques(model)
+
 }
 \seealso{
-Cluster-related functions
-\code{\link{bootstrap}()},
-\code{\link{centralities}()},
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_model}()},
-\code{\link{hist.group_tna}()},
-\code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{plot.group_tna_centralities}()},
+Other cliques: 
 \code{\link{plot.group_tna_cliques}()},
-\code{\link{plot.group_tna_communities}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot_compare.group_tna}()},
-\code{\link{plot_mosaic.group_tna}()},
-\code{\link{plot_mosaic.tna_data}()},
-\code{\link{print.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
+\code{\link{plot.tna_cliques}()},
 \code{\link{print.group_tna_cliques}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna}()},
-\code{\link{summary.group_tna_bootstrap}()}
+\code{\link{print.tna_cliques}()}
 }
-\concept{clusters}
+\concept{cliques}

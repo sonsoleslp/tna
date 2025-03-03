@@ -6,6 +6,7 @@
 #' in the `tna` object.
 #'
 #' @export
+#' @family cliques
 #' @rdname cliques
 #' @param x A `tna` or a `group_tna` object.
 #' @param size An `integer` specifying the size of the cliques to identify.
@@ -99,8 +100,11 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
 }
 
 #' @export
-#' @family clusters
 #' @rdname cliques
+#' @examples
+#' model <- group_tna(engagement_mmm)
+#' cliques(model)
+#'
 cliques.group_tna <- function(x, size = 2, threshold = 0,
                               sum_weights = FALSE, ...) {
   check_missing(x)
@@ -108,15 +112,11 @@ cliques.group_tna <- function(x, size = 2, threshold = 0,
   structure(
     lapply(
       x,
-      function(i) {
-        cliques.tna(
-          i,
-          size = size,
-          threshold = threshold,
-          sum_weights = sum_weights,
-          ...
-        )
-      }
+      cliques,
+      size = size,
+      threshold = threshold,
+      sum_weights = sum_weights,
+      ...
     ),
     class = "group_tna_cliques"
   )

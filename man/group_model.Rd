@@ -109,19 +109,10 @@ if \code{NA} values are detected.}
 \value{
 An object of class \code{group_tna} which is a \code{list} containing one
 element per cluster. Each element is a \code{tna} object.
-
-An object of class \code{group_tna} which is a \code{list} containing one
-element per cluster. Each element is a \code{tna} object.
-
-An object of class \code{group_tna} which is a \code{list} containing one
-element per cluster. Each element is a \code{tna} object.
-
-An object of class \code{group_tna} which is a \code{list} containing one
-element per cluster. Each element is a \code{tna} object.
 }
 \description{
 This function constructs a transition network analysis (TNA) model for
-each cluster from a given sequence, wide-formatted dataframe,
+each cluster from a given sequence, wide-format dataframe,
 or a mixture Markov model.
 }
 \examples{
@@ -139,99 +130,14 @@ model <- group_ctna(group_regulation, group = gl(2, 1000))
 }
 \seealso{
 Cluster-related functions
-\code{\link{bootstrap}()},
 \code{\link{centralities}()},
-\code{\link{cliques}()},
 \code{\link{communities}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
-\code{\link{hist.group_tna}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{plot.group_tna_centralities}()},
-\code{\link{plot.group_tna_cliques}()},
-\code{\link{plot.group_tna_communities}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot_compare.group_tna}()},
-\code{\link{plot_mosaic.group_tna}()},
-\code{\link{plot_mosaic.tna_data}()},
-\code{\link{print.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
-\code{\link{print.group_tna_cliques}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{prune}()},
 \code{\link{pruning_details}()},
 \code{\link{rename_groups}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna}()},
-\code{\link{summary.group_tna_bootstrap}()}
-
-Cluster-related functions
-\code{\link{bootstrap}()},
-\code{\link{centralities}()},
-\code{\link{cliques}()},
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{hist.group_tna}()},
-\code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{plot.group_tna_centralities}()},
-\code{\link{plot.group_tna_cliques}()},
-\code{\link{plot.group_tna_communities}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot_compare.group_tna}()},
-\code{\link{plot_mosaic.group_tna}()},
-\code{\link{plot_mosaic.tna_data}()},
-\code{\link{print.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
-\code{\link{print.group_tna_cliques}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna}()},
-\code{\link{summary.group_tna_bootstrap}()}
-
-Cluster-related functions
-\code{\link{bootstrap}()},
-\code{\link{centralities}()},
-\code{\link{cliques}()},
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{hist.group_tna}()},
-\code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{plot.group_tna_centralities}()},
-\code{\link{plot.group_tna_cliques}()},
-\code{\link{plot.group_tna_communities}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot_compare.group_tna}()},
-\code{\link{plot_mosaic.group_tna}()},
-\code{\link{plot_mosaic.tna_data}()},
-\code{\link{print.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
-\code{\link{print.group_tna_cliques}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna}()},
-\code{\link{summary.group_tna_bootstrap}()}
+\code{\link{reprune}()}
 }
 \concept{clusters}

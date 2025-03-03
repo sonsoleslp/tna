@@ -19,9 +19,9 @@ were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
 "emotion", "monitor", "plan", "synthesis"
 }
 \seealso{
-Other examples: 
+Other datasets: 
 \code{\link{engagement}},
 \code{\link{engagement_mmm}}
 }
-\concept{examples}
+\concept{datasets}
 \keyword{datasets}

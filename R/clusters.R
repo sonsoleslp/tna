@@ -1,7 +1,7 @@
 #' Build a grouped Transition Network Analysis Model
 #'
 #' This function constructs a transition network analysis (TNA) model for
-#' each cluster from a given sequence, wide-formatted dataframe,
+#' each cluster from a given sequence, wide-format dataframe,
 #' or a mixture Markov model.
 #'
 #' @export
@@ -40,7 +40,6 @@ group_model <- function(x, ...) {
 }
 
 #' @export
-#' @family clusters
 #' @rdname group_model
 group_model.default <- function(x, group, type = "relative",
                                 scaling = character(0L), cols, params = list(),
@@ -143,7 +142,6 @@ group_model.default <- function(x, group, type = "relative",
 }
 
 #' @export
-#' @family clusters
 #' @rdname group_model
 group_model.mhmm <- function(x, ...) {
   stopifnot_(
@@ -157,8 +155,6 @@ group_model.mhmm <- function(x, ...) {
 
 #' @export
 #' @rdname group_model
-#' @return An object of class `group_tna` which is a `list` containing one
-#'   element per cluster. Each element is a `tna` object.
 #' @examples
 #' model <- group_tna(group_regulation, group = gl(2, 1000))
 #'
@@ -169,8 +165,6 @@ group_tna <- function(x, ...) {
 
 #' @export
 #' @rdname group_model
-#' @return An object of class `group_tna` which is a `list` containing one
-#'   element per cluster. Each element is a `tna` object.
 #' @examples
 #' model <- group_ftna(group_regulation, group = gl(2, 1000))
 #'
@@ -180,8 +174,6 @@ group_ftna <- function(x, ...) {
 
 #' @export
 #' @rdname group_model
-#' @return An object of class `group_tna` which is a `list` containing one
-#'   element per cluster. Each element is a `tna` object.
 #' @examples
 #' model <- group_ctna(group_regulation, group = gl(2, 1000))
 #'
@@ -289,7 +281,7 @@ mmm_stats <- function(x, use_t_dist = TRUE, level = 0.05) {
   results
 }
 
-#' Rename clusters
+#' Rename Clusters
 #'
 #' @export
 #' @family clusters

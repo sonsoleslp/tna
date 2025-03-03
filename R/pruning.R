@@ -6,7 +6,7 @@
 #' It ensures the network remains weakly connected.
 #'
 #' @export
-#' @family evaluation
+#' @family validation
 #' @param x An object of class `tna` or `group_tna`.
 #' @param ... Potential additional arguments passed to the pruning method.
 prune <- function(x, ...) {
@@ -22,7 +22,7 @@ prune <- function(x, ...) {
 #' It ensures the network remains weakly connected.
 #'
 #' @export
-#' @family evaluation
+#' @family validation
 #' @rdname prune
 #' @param x An object of class `tna` or `group_tna`
 #' @param method A `character` string describing the pruning method.
@@ -175,7 +175,7 @@ prune_disparity <- function(x, level, labels) {
 #' Print Detailed Information on the Pruning Results
 #'
 #' @export
-#' @family evaluation
+#' @family validation
 #' @rdname pruning_details
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
@@ -216,6 +216,7 @@ pruning_details.tna <- function(x, ...) {
 #' Restore a Pruned Transition Network Analysis Model
 #'
 #' @export
+#' @family validation
 #' @rdname deprune
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
@@ -252,8 +253,9 @@ deprune.tna <- function(x, ...) {
 
 #' Restore Previous Pruning of a Transition Network Analysis Model
 #'
-#' @rdname reprune
 #' @export
+#' @family validation
+#' @rdname reprune
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
 #' @return A `tna` or `group_tna` object that has not been pruned. The previous

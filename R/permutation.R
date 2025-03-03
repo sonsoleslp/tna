@@ -7,7 +7,7 @@
 #' probabilities, effect sizes, p-values, and confidence intervals.
 #'
 #' @export
-#' @family evaluation
+#' @family validation
 #' @param x A `tna` object containing sequence data for the first `tna` model.
 #' @param y A `tna` object containing sequence data for the second `tna` model.
 #' @param iter An `integer` giving the number of permutations to perform.

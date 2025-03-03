@@ -60,9 +60,24 @@ permutation_test(model_x, model_y, iter = 20)
 
 }
 \seealso{
-Evaluation and validation functions
+Other validation: 
 \code{\link{bootstrap}()},
+\code{\link{deprune}()},
+\code{\link{estimate_cs}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{plot.tna_permutation}()},
+\code{\link{plot.tna_stability}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_stability}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.tna_bootstrap}()},
+\code{\link{print.tna_permutation}()},
+\code{\link{print.tna_stability}()},
 \code{\link{prune}()},
-\code{\link{pruning_details}()}
+\code{\link{pruning_details}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna_bootstrap}()},
+\code{\link{summary.tna_bootstrap}()}
 }
-\concept{evaluation}
+\concept{validation}

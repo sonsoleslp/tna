@@ -21,9 +21,9 @@ achievement varies by time, students’ profiles, and achievement state:
 A full program study"
 }
 \seealso{
-Other examples: 
+Other datasets: 
 \code{\link{engagement_mmm}},
 \code{\link{group_regulation}}
 }
-\concept{examples}
+\concept{datasets}
 \keyword{datasets}

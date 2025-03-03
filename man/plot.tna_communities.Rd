@@ -34,8 +34,10 @@ plot(comm, method = "leading_eigen")
 
 }
 \seealso{
-Pattern-finding functions
+Other communities: 
 \code{\link{communities}()},
-\code{\link{plot.tna_comparison}()}
+\code{\link{plot.group_tna_communities}()},
+\code{\link{print.group_tna_communities}()},
+\code{\link{print.tna_communities}()}
 }
-\concept{patterns}
+\concept{communities}

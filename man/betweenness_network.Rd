@@ -26,3 +26,12 @@ model <- tna(group_regulation)
 betweenness_network(model)
 
 }
+\seealso{
+Other centralities: 
+\code{\link{centralities}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.tna_centralities}()},
+\code{\link{print.group_tna_centralities}()},
+\code{\link{print.tna_centralities}()}
+}
+\concept{centralities}

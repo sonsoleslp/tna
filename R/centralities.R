@@ -34,7 +34,7 @@
 #'     cluster together.
 #'
 #' @export
-#' @family core
+#' @family centralities
 #' @rdname centralities
 #' @param x A `tna` object, a `group_tna` object, or
 #' a square `matrix` representing edge weights.
@@ -181,6 +181,7 @@ estimate_centrality_stability <- estimate_cs
 #' subtitle.
 #'
 #' @export
+#' @family validation
 #' @rdname estimate_centrality_stability
 #' @param x A `tna` or a `group_tna` object representing the temporal network
 #' analysis data. The object should be created from a sequence data object.

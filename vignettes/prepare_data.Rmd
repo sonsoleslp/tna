@@ -97,8 +97,10 @@ plot(tna_by_session)
 
 If we want to customize the time gap that marks the start of a new sequence, we can do so by customizing the `time_threshold` argument (in minutes). 
 ```{r}
-by_session_custom <- prepare_data(df, actor = "user", time = "timestamp", action = "event", 
-                                  time_threshold = 10*60) # 10 minutes
+by_session_custom <- prepare_data(
+  df, actor = "user", time = "timestamp", 
+  action = "event", time_threshold = 10 * 60 # 10 minutes
+)
 tna_by_session_custom <- tna(by_session_custom)
 plot(tna_by_session_custom)
 ```

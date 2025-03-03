@@ -18,9 +18,9 @@ engagement_mmm
 Example mixed Markov model fitted to the \code{engagement} data
 }
 \seealso{
-Other examples: 
+Other datasets: 
 \code{\link{engagement}},
 \code{\link{group_regulation}}
 }
-\concept{examples}
+\concept{datasets}
 \keyword{datasets}

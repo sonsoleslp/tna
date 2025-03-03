@@ -6,6 +6,7 @@
 #' widening the data.
 #'
 #' @export
+#' @family basic
 #' @param data A `data.frame` or containing the action/event data.
 #' @param actor A `character` string giving the name of the column that
 #' represents a user/actor identifier. If not provided and neither `time` nor

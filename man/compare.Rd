@@ -79,3 +79,12 @@ comp2 <- compare(mat_x, mat_y)
 comp3 <- compare(mat_x, model_y)
 
 }
+\seealso{
+Other comparison: 
+\code{\link{compare.group_tna}()},
+\code{\link{plot.tna_comparison}()},
+\code{\link{plot_compare}()},
+\code{\link{plot_compare.group_tna}()},
+\code{\link{print.tna_comparison}()}
+}
+\concept{comparison}

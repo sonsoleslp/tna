@@ -7,6 +7,7 @@
 #' the differences.
 #'
 #' @export
+#' @family comparison
 #' @param x A `tna` object or a `matrix` of weights.
 #' @param y A `tna` object or a `matrix` of weights.
 #' @param scaling A  `character` string naming a scaling method to
@@ -78,6 +79,7 @@ compare.matrix <- function(x, y, scaling = "none", ...) {
 #' Compare TNA Clusters with Comprehensive Metrics
 #'
 #' @export
+#' @family comparison
 #' @param x A `group_tna` object.
 #' @param i An `integer` index or the name of the principal cluster as a
 #' `character` string.

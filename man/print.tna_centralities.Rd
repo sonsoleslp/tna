@@ -23,3 +23,12 @@ cm <- centralities(model)
 print(cm)
 
 }
+\seealso{
+Other centralities: 
+\code{\link{betweenness_network}()},
+\code{\link{centralities}()},
+\code{\link{plot.group_tna_centralities}()},
+\code{\link{plot.tna_centralities}()},
+\code{\link{print.group_tna_centralities}()}
+}
+\concept{centralities}

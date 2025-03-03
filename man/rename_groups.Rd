@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusters.R
 \name{rename_groups}
 \alias{rename_groups}
-\title{Rename clusters}
+\title{Rename Clusters}
 \usage{
 rename_groups(x, new_names)
 }
@@ -15,7 +15,7 @@ rename_groups(x, new_names)
 A renamed \code{group_tna} object.
 }
 \description{
-Rename clusters
+Rename Clusters
 }
 \examples{
 model <- group_model(engagement_mmm)
@@ -24,35 +24,14 @@ model_renamed <- rename_groups(model, c("A", "B", "C"))
 }
 \seealso{
 Cluster-related functions
-\code{\link{bootstrap}()},
 \code{\link{centralities}()},
-\code{\link{cliques}()},
 \code{\link{communities}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
 \code{\link{group_model}()},
-\code{\link{hist.group_tna}()},
 \code{\link{mmm_stats}()},
-\code{\link{plot.group_tna}()},
-\code{\link{plot.group_tna_centralities}()},
-\code{\link{plot.group_tna_cliques}()},
-\code{\link{plot.group_tna_communities}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot_compare.group_tna}()},
-\code{\link{plot_mosaic.group_tna}()},
-\code{\link{plot_mosaic.tna_data}()},
-\code{\link{print.group_tna}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_centralities}()},
-\code{\link{print.group_tna_cliques}()},
-\code{\link{print.group_tna_communities}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{prune}()},
 \code{\link{pruning_details}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna}()},
-\code{\link{summary.group_tna_bootstrap}()}
+\code{\link{reprune}()}
 }
 \concept{clusters}

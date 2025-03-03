@@ -38,10 +38,11 @@ plot_compare(model_x, model_y)
 
 }
 \seealso{
-Core functions
-\code{\link{build_model}()},
-\code{\link{centralities}()},
-\code{\link{plot.tna}()},
-\code{\link{plot.tna_centralities}()}
+Other comparison: 
+\code{\link{compare}()},
+\code{\link{compare.group_tna}()},
+\code{\link{plot.tna_comparison}()},
+\code{\link{plot_compare.group_tna}()},
+\code{\link{print.tna_comparison}()}
 }
-\concept{core}
+\concept{comparison}
