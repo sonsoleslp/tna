@@ -59,7 +59,15 @@ that <code>x</code>is greater than <code>y</code>and red indicates otherwise.</p
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
-<span><span class="fu">plot_compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, theme <span class="op">=</span> <span class="cn">NULL</span>, palette <span class="op">=</span> <span class="st">"colorblind"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">plot_compare</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  theme <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  palette <span class="op">=</span> <span class="st">"colorblind"</span>,</span>
+<span>  posCol <span class="op">=</span> <span class="st">"#009900"</span>,</span>
+<span>  negCol <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
