@@ -71,7 +71,6 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  detailed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -87,7 +86,6 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  detailed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -103,7 +101,6 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  detailed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -119,7 +116,6 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  detailed <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -181,12 +177,6 @@ calculating the CS-coefficient. The default is 0.7.</p></dd>
 for the CS-coefficient. Default is 0.95.</p></dd>
 
 
-<dt id="arg-detailed">detailed<a class="anchor" aria-label="anchor" href="#arg-detailed"></a></dt>
-<dd><p>A <code>logical</code> value specifying whether to return detailed
-sampling results. If <code>TRUE</code>, detailed results are included in the output.
-The default is <code>FALSE</code>.</p></dd>
-
-
 <dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
 <dd><p>A <code>logical</code> value. If <code>TRUE</code>, a progress bar is displayed
 Defaults to <code>FALSE</code></p></dd>
@@ -199,8 +189,6 @@ Defaults to <code>FALSE</code></p></dd>
 of the measure.</p></li>
 <li><p><code>correlations</code>: A <code>matrix</code> of correlations between the original
 centrality and the resampled centralities for each drop proportion.</p></li>
-<li><p><code>detailed_results</code>: A detailed data frame of the sampled correlations,
-returned only if <code>return_detailed = TRUE</code></p></li>
 </ul><p>If <code>x</code> is a <code>group_tna</code> object, a <code>group_tna_stability</code> object is returned
 instead, which is a <code>list</code> of <code>tna_stability</code> objects.</p>
     </div>
@@ -220,7 +208,7 @@ subtitle.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>Other validation:
+    <div class="dont-index"><p>Validation functions
 <code><a href="bootstrap.html">bootstrap</a>()</code>,
 <code><a href="deprune.html">deprune</a>()</code>,
 <code><a href="permutation_test.html">permutation_test</a>()</code>,
@@ -238,27 +226,7 @@ subtitle.</p>
 <code><a href="pruning_details.html">pruning_details</a>()</code>,
 <code><a href="reprune.html">reprune</a>()</code>,
 <code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap</a>()</code>,
-<code><a href="summary.tna_bootstrap.html">summary.tna_bootstrap</a>()</code></p>
-<p>Cluster-related functions
-<code><a href="centralities.html">centralities</a>()</code>,
-<code><a href="communities.html">communities</a>()</code>,
-<code><a href="deprune.html">deprune</a>()</code>,
-<code><a href="group_model.html">group_model</a>()</code>,
-<code><a href="mmm_stats.html">mmm_stats</a>()</code>,
-<code><a href="prune.html">prune</a>()</code>,
-<code><a href="pruning_details.html">pruning_details</a>()</code>,
-<code><a href="rename_groups.html">rename_groups</a>()</code>,
-<code><a href="reprune.html">reprune</a>()</code></p>
-<p>Cluster-related functions
-<code><a href="centralities.html">centralities</a>()</code>,
-<code><a href="communities.html">communities</a>()</code>,
-<code><a href="deprune.html">deprune</a>()</code>,
-<code><a href="group_model.html">group_model</a>()</code>,
-<code><a href="mmm_stats.html">mmm_stats</a>()</code>,
-<code><a href="prune.html">prune</a>()</code>,
-<code><a href="pruning_details.html">pruning_details</a>()</code>,
-<code><a href="rename_groups.html">rename_groups</a>()</code>,
-<code><a href="reprune.html">reprune</a>()</code></p></div>
+<code><a href="summary.tna_bootstrap.html">summary.tna_bootstrap</a>()</code></p></div>
     </div>
 
     <div class="section level2">
