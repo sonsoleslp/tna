@@ -7,7 +7,15 @@
 \usage{
 plot_compare(x, ...)
 
-\method{plot_compare}{tna}(x, y, theme = NULL, palette = "colorblind", ...)
+\method{plot_compare}{tna}(
+  x,
+  y,
+  theme = NULL,
+  palette = "colorblind",
+  posCol = "#009900",
+  negCol = "red",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{tna} object. It will be the principal model.}

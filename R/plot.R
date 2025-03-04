@@ -798,7 +798,7 @@ plot_compare <- function(x, ...) {
 
 #' @export
 #' @rdname plot_compare
-plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", ...) {
+plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", posCol = "#009900", negCol = "red",...) {
   check_class(x, "tna")
   check_class(y, "tna")
   # TODO check that x and y are comparable
@@ -807,7 +807,7 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", ...) {
     "{.arg x} and {.arg y} must have the same labels."
   )
   pie <- abs(x$inits - y$inits)
-  piesign <- ifelse(x$inits > y$inits, "#009900", "red")
+  piesign <- ifelse(x$inits > y$inits, posCol, negCol)
   # pos_col <- c("#009900", "darkgreen")
   # neg_col <- c("#BF0000", "red")
   diff <- build_model_(
@@ -824,6 +824,8 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", ...) {
     pieColor = piesign,
     palette = palette,
     theme = theme,
+    posCol = posCol,
+    negCol = negCol,
     ...
   )
 }
@@ -975,6 +977,7 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
     ggplot2::scale_x_continuous(
       breaks = unique(d$xcent),
       labels = dimnames(tab)[[1]],
+      position = "top",
       expand = c(0.01, 0)
     ) +
     ggplot2::scale_y_continuous(
@@ -989,7 +992,9 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
       plot.subtitle = ggplot2::element_text(hjust = 0.5),
       axis.ticks = ggplot2::element_blank(),
       axis.line = ggplot2::element_blank(),
-      axis.text.x = ggplot2::element_text(angle = 90, hjust = 1, vjust = 0.5),
+      axis.text.x =  ggplot2::element_text(angle =  ifelse(n > 3,90,0),
+                                           hjust =  0,
+                                           vjust =  ifelse(n > 3,0.5,0)),
       axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
     ) +
     ggplot2::labs(x = xlab, y = ylab)
