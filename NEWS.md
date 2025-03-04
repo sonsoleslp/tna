@@ -1,3 +1,8 @@
+# tna 0.4.2
+
+* The `plot_compare()` function now supports `negCol` and `posCol` for specifying the color of the positive and negative different transition and initial probabilities.
+* The `plot_mosaic()` function now plots the x-axis on the top and rotates the labels 90 degrees only when there are more than three groups.
+
 # tna 0.4.1
 
 * The `detailed` argument of `estimate_centrality_stability()` has been removed. Previously this argument had no effect on the output of the function.

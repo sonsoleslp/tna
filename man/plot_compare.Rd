@@ -28,6 +28,10 @@ principal model.}
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{palette}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{posCol}{Color for plotting edges and pie when the first group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{negCol}{Color for plotting edges and pie when the second group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
 A \code{qgraph} object displaying the difference network between the

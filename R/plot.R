@@ -782,6 +782,8 @@ plot_centralities_multiple <- function(x, reorder, ncol,
 #' @param x A `tna` object. It will be the principal model.
 #' @param y A `tna` object. It will be the model subtracted from the
 #'   principal model.
+#' @param posCol Color for plotting edges and pie when the first group has a higher value. See [qgraph::qgraph()].
+#' @param negCol Color for plotting edges and pie when the second group has a higher value. See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param palette See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
@@ -993,7 +995,7 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
       axis.ticks = ggplot2::element_blank(),
       axis.line = ggplot2::element_blank(),
       axis.text.x =  ggplot2::element_text(angle =  ifelse(n > 3,90,0),
-                                           hjust =  0,
+                                           hjust =  ifelse(n > 3,0,0.5),
                                            vjust =  ifelse(n > 3,0.5,0)),
       axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
     ) +
