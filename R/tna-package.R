@@ -1,4 +1,4 @@
-#' The `tna` package.
+#' The `tna` Package.
 #'
 #' @name tna-package
 #' @family basic
@@ -32,7 +32,7 @@
 #'
 "_PACKAGE"
 
-#' Example data on student engagement
+#' Example Data on Student Engagement
 #'
 #' Students' engagement states (Active / Average / Disengaged)
 #' throughout a whole study program. The data was generated synthetically
@@ -45,7 +45,7 @@
 #' @format A `stslist` object (sequence data).
 "engagement"
 
-#' Example mixed Markov model fitted to the `engagement` data
+#' Example Mixed Markov Model Fitted to the `engagement` Data
 #'
 #' @family datasets
 #' @source The data was generated via `mixed_markov_model.R` in
@@ -53,7 +53,7 @@
 #' @format A `mhmm` object.
 "engagement_mmm"
 
-#' Example data on group regulation
+#' Example Data on Group Regulation
 #'
 #' Students' regulation during collaborative learning. Students' interactions
 #' were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",

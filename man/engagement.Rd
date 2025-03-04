@@ -3,7 +3,7 @@
 \docType{data}
 \name{engagement}
 \alias{engagement}
-\title{Example data on student engagement}
+\title{Example Data on Student Engagement}
 \format{
 A \code{stslist} object (sequence data).
 }
@@ -21,7 +21,7 @@ achievement varies by time, students’ profiles, and achievement state:
 A full program study"
 }
 \seealso{
-Other datasets: 
+Datasets
 \code{\link{engagement_mmm}},
 \code{\link{group_regulation}}
 }

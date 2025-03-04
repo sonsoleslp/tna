@@ -7,7 +7,7 @@
 \alias{group_tna}
 \alias{group_ftna}
 \alias{group_ctna}
-\title{Build a grouped Transition Network Analysis Model}
+\title{Build a Grouped Transition Network Analysis Model}
 \usage{
 group_model(x, ...)
 
@@ -130,14 +130,8 @@ model <- group_ctna(group_regulation, group = gl(2, 1000))
 }
 \seealso{
 Cluster-related functions
-\code{\link{centralities}()},
 \code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
 \code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
+\code{\link{rename_groups}()}
 }
 \concept{clusters}

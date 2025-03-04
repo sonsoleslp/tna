@@ -27,7 +27,7 @@ betweenness_network(model)
 
 }
 \seealso{
-Other centralities: 
+Centrality measure functions
 \code{\link{centralities}()},
 \code{\link{plot.group_tna_centralities}()},
 \code{\link{plot.tna_centralities}()},

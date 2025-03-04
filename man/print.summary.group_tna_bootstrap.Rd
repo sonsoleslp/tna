@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.summary.group_tna_bootstrap}
 \alias{print.summary.group_tna_bootstrap}
-\title{Print Bootstrap Summary for a Grouped Transition Network}
+\title{Print a Bootstrap Summary for a Grouped Transition Network Model}
 \usage{
 \method{print}{summary.group_tna_bootstrap}(x, ...)
 }
@@ -15,7 +15,7 @@
 \code{x} (invisibly).
 }
 \description{
-Print Bootstrap Summary for a Grouped Transition Network
+Print a Bootstrap Summary for a Grouped Transition Network Model
 }
 \examples{
 model <- group_model(engagement_mmm)
@@ -25,7 +25,7 @@ print(summary(boot))
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},

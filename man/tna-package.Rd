@@ -3,7 +3,7 @@
 \docType{package}
 \name{tna-package}
 \alias{tna-package}
-\title{The \code{tna} package.}
+\title{The \code{tna} Package.}
 \description{
 Provides tools for performing transition network analysis (TNA),
 including functions for building TNA models, plotting transition networks,
@@ -41,7 +41,7 @@ Useful links:
 }
 
 
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},

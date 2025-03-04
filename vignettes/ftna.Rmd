@@ -297,6 +297,6 @@ plot(Permutation, minimum = 0.01)
 ## Centrality stability
 
 ```{r, fig.width=5, fig.height=3}
-Centrality_stability <- estimate_centrality_stability(model_scaled, detailed = FALSE, iter = 100)
+Centrality_stability <- estimate_centrality_stability(model_scaled, iter = 100)
 plot(Centrality_stability)
 ```

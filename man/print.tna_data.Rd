@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.tna_data}
 \alias{print.tna_data}
-\title{Print a TNA data object}
+\title{Print a TNA Data Object}
 \usage{
 \method{print}{tna_data}(x, data = "sequence", ...)
 }
@@ -20,7 +20,7 @@ data.}
 \code{x} (invisibly).
 }
 \description{
-Print a TNA data object
+Print a TNA Data Object
 }
 \examples{
 data_single_session <- tibble::tibble(
@@ -35,7 +35,7 @@ print(results_single, which = "long")
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},

@@ -3,7 +3,7 @@
 \name{plot_compare}
 \alias{plot_compare}
 \alias{plot_compare.tna}
-\title{Plot the difference network between two models}
+\title{Plot the Difference Network Between Two Models}
 \usage{
 plot_compare(x, ...)
 
@@ -38,7 +38,7 @@ plot_compare(model_x, model_y)
 
 }
 \seealso{
-Other comparison: 
+Model comparison functions
 \code{\link{compare}()},
 \code{\link{compare.group_tna}()},
 \code{\link{plot.tna_comparison}()},

@@ -80,7 +80,7 @@ plot(cliq, n = 1, ask = FALSE)
 
 }
 \seealso{
-Other cliques: 
+Clique-related functions
 \code{\link{cliques}()},
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{print.group_tna_cliques}()},

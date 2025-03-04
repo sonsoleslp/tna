@@ -1,4 +1,4 @@
-#' Prune a `tna` network based on transition probabilities
+#' Prune a Transition Network based on Transition Probabilities
 #'
 #' Prunes a network represented by a `tna` object by removing
 #' edges based on a specified threshold, lowest percent of non-zero edge
@@ -14,7 +14,7 @@ prune <- function(x, ...) {
 }
 
 
-#' Prune a `tna` network based on transition probabilities
+#' Prune a Transition Network based on Transition Probabilities
 #'
 #' Prunes a network represented by a `tna` object by removing
 #' edges based on a specified threshold, lowest percent of non-zero edge
@@ -309,12 +309,11 @@ disparity_filter <- function(mat, level) {
   sig
 }
 
+
 # Clusters ----------------------------------------------------------------
 
 
-
 #' @export
-#' @family clusters
 #' @rdname prune
 prune.group_tna <- function(x, ...) {
   check_missing(x)
@@ -329,7 +328,6 @@ prune.group_tna <- function(x, ...) {
 }
 
 #' @export
-#' @family clusters
 #' @rdname pruning_details
 pruning_details.group_tna <- function(x, ...) {
   check_missing(x)
@@ -345,7 +343,6 @@ pruning_details.group_tna <- function(x, ...) {
 }
 
 #' @export
-#' @family clusters
 #' @rdname deprune
 deprune.group_tna <- function(x, ...) {
   check_missing(x)
@@ -360,7 +357,6 @@ deprune.group_tna <- function(x, ...) {
 }
 
 #' @export
-#' @family clusters
 #' @rdname reprune
 reprune.group_tna <- function(x, ...) {
   check_missing(x)

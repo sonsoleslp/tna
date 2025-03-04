@@ -55,7 +55,7 @@ cliques(model)
 
 }
 \seealso{
-Other cliques: 
+Clique-related functions
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{plot.tna_cliques}()},
 \code{\link{print.group_tna_cliques}()},

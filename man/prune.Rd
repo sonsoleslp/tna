@@ -4,7 +4,7 @@
 \alias{prune}
 \alias{prune.tna}
 \alias{prune.group_tna}
-\title{Prune a \code{tna} network based on transition probabilities}
+\title{Prune a Transition Network based on Transition Probabilities}
 \usage{
 prune(x, ...)
 
@@ -69,7 +69,7 @@ pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
@@ -89,7 +89,7 @@ Other validation:
 \code{\link{summary.group_tna_bootstrap}()},
 \code{\link{summary.tna_bootstrap}()}
 
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
@@ -108,17 +108,5 @@ Other validation:
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
 \code{\link{summary.tna_bootstrap}()}
-
-Cluster-related functions
-\code{\link{centralities}()},
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_model}()},
-\code{\link{mmm_stats}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
 }
-\concept{clusters}
 \concept{validation}

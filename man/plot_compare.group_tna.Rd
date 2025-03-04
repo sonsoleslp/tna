@@ -30,7 +30,7 @@ plot_compare(model)
 
 }
 \seealso{
-Other comparison: 
+Model comparison functions
 \code{\link{compare}()},
 \code{\link{compare.group_tna}()},
 \code{\link{plot.tna_comparison}()},

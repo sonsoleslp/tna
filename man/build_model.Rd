@@ -158,7 +158,7 @@ model <- ctna(group_regulation)
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
 \code{\link{plot.group_tna}()},

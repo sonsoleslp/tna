@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.tna_comparison}
 \alias{plot.tna_comparison}
-\title{Plot the results of comparing two \code{tna} models or matrices}
+\title{Plot the Comparison of Two TNA Models or Matrices}
 \usage{
 \method{plot}{tna_comparison}(
   x,
@@ -44,7 +44,7 @@ second population in the plots. The default is \code{"y"}.}
 A \code{ggplot} object.
 }
 \description{
-Plot the results of comparing two \code{tna} models or matrices
+Plot the Comparison of Two TNA Models or Matrices
 }
 \examples{
 model_x <- tna(group_regulation[1:200, ])
@@ -60,7 +60,7 @@ Measuring and Testing Dependence by Correlation of Distances,
 doi:10.1214/009053607000000505
 }
 \seealso{
-Other comparison: 
+Model comparison functions
 \code{\link{compare}()},
 \code{\link{compare.group_tna}()},
 \code{\link{plot_compare}()},

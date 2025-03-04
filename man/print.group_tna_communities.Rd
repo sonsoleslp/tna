@@ -24,7 +24,7 @@ print(comm)
 
 }
 \seealso{
-Other communities: 
+Community detection functions
 \code{\link{communities}()},
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.tna_communities}()},

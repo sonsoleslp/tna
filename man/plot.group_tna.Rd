@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.group_tna}
 \alias{plot.group_tna}
-\title{Plot a grouped Transition Network Analysis Model}
+\title{Plot a Grouped Transition Network Analysis Model}
 \usage{
 \method{plot}{group_tna}(x, title, ...)
 }
@@ -26,7 +26,7 @@ plot(model)
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},

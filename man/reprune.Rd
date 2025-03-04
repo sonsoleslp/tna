@@ -29,7 +29,7 @@ repruned_model <- reprune(depruned_model) # reapply the previous pruning
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
@@ -48,17 +48,5 @@ Other validation:
 \code{\link{pruning_details}()},
 \code{\link{summary.group_tna_bootstrap}()},
 \code{\link{summary.tna_bootstrap}()}
-
-Cluster-related functions
-\code{\link{centralities}()},
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_model}()},
-\code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()}
 }
-\concept{clusters}
 \concept{validation}

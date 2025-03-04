@@ -305,7 +305,7 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
   plot(y, colors = map_to_color(x$assignment[[method]], colors), ...)
 }
 
-#' Plot the results of comparing two `tna` models or matrices
+#' Plot the Comparison of Two TNA Models or Matrices
 #'
 #' @export
 #' @family comparison
@@ -770,7 +770,7 @@ plot_centralities_multiple <- function(x, reorder, ncol,
     )
 }
 
-#' Plot the difference network between two models
+#' Plot the Difference Network Between Two Models
 #'
 #' Plots the difference network between model `x` and model `y`. The edges are
 #' computed from subtracting the two models. The pie chart is the difference in
@@ -1047,7 +1047,7 @@ hist.group_tna <- function(x, ...) {
   invisible(lapply(x, hist.tna, ...))
 }
 
-#' Plot a grouped Transition Network Analysis Model
+#' Plot a Grouped Transition Network Analysis Model
 #'
 #' Plots a transition network of each cluster using `qgraph`.
 #'
@@ -1125,7 +1125,7 @@ plot.group_tna_cliques <- function(x, title, ...) {
   )
 }
 
-#' Plot Found Communities
+#' Plot Detected Communities
 #'
 #' @export
 #' @family communities
@@ -1216,7 +1216,7 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
   plot_compare(x = x[[i]], y = x[[j]], ...)
 }
 
-#' Plot state frequencies as a mosaic between two groups
+#' Plot State Frequencies as a Mosaic Between Two Groups
 #'
 #' @export
 #' @family basic

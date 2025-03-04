@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.tna}
 \alias{print.tna}
-\title{Print a \code{tna} object}
+\title{Print a \code{tna} Object}
 \usage{
 \method{print}{tna}(x, digits = getOption("digits"), generic = FALSE, ...)
 }
@@ -21,7 +21,7 @@ instead. Defaults to \code{FALSE}.}
 The \code{tna} object passed as argument \code{x} (invisibly).
 }
 \description{
-Print a \code{tna} object
+Print a \code{tna} Object
 }
 \examples{
 model <- tna(group_regulation)
@@ -29,7 +29,7 @@ print(model)
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},

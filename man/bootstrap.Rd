@@ -111,7 +111,7 @@ bootstrap(model, iter = 10)
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
 \code{\link{permutation_test}()},

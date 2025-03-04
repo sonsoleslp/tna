@@ -29,7 +29,7 @@ plot_mosaic(ftna_model)
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},

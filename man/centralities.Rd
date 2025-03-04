@@ -86,23 +86,11 @@ centralities(model, normalize = TRUE)
 
 }
 \seealso{
-Other centralities: 
+Centrality measure functions
 \code{\link{betweenness_network}()},
 \code{\link{plot.group_tna_centralities}()},
 \code{\link{plot.tna_centralities}()},
 \code{\link{print.group_tna_centralities}()},
 \code{\link{print.tna_centralities}()}
-
-Cluster-related functions
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_model}()},
-\code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
 }
 \concept{centralities}
-\concept{clusters}

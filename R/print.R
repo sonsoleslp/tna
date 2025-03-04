@@ -32,7 +32,7 @@ print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }
 
-#' Print a `tna` object
+#' Print a `tna` Object
 #'
 #' @export
 #' @family basic
@@ -238,7 +238,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   invisible(x)
 }
 
-#' Print a TNA data object
+#' Print a TNA Data Object
 #'
 #' @export
 #' @family basic
@@ -376,7 +376,7 @@ print.group_tna_bootstrap <- function(x, ...) {
   invisible(x)
 }
 
-#' Print the summary of a grouped Transition Network Analysis Model
+#' Print a Summary of a Grouped Transition Network Analysis Model
 #'
 #' @export
 #' @family basic
@@ -401,7 +401,7 @@ print.summary.group_tna <- function(x, ...) {
   invisible(x)
 }
 
-#' Print Bootstrap Summary for a Grouped Transition Network
+#' Print a Bootstrap Summary for a Grouped Transition Network Model
 #'
 #' @export
 #' @family validation

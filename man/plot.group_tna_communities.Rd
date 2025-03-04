@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot.group_tna_communities}
 \alias{plot.group_tna_communities}
-\title{Plot Found Communities}
+\title{Plot Detected Communities}
 \usage{
 \method{plot}{group_tna_communities}(x, title = names(x), colors, ...)
 }
@@ -20,7 +20,7 @@ A \code{list} (invisibly) of \code{qgraph} objects in which the nodes are
 colored by community for each cluster.
 }
 \description{
-Plot Found Communities
+Plot Detected Communities
 }
 \examples{
 model <- group_model(engagement_mmm)
@@ -29,7 +29,7 @@ plot(comm)
 
 }
 \seealso{
-Other communities: 
+Community detection functions
 \code{\link{communities}()},
 \code{\link{plot.tna_communities}()},
 \code{\link{print.group_tna_communities}()},

@@ -33,7 +33,7 @@ print(cliq)
 
 }
 \seealso{
-Other cliques: 
+Clique-related functions
 \code{\link{cliques}()},
 \code{\link{plot.group_tna_cliques}()},
 \code{\link{plot.tna_cliques}()},

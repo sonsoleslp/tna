@@ -3,7 +3,7 @@
 \docType{data}
 \name{engagement_mmm}
 \alias{engagement_mmm}
-\title{Example mixed Markov model fitted to the \code{engagement} data}
+\title{Example Mixed Markov Model Fitted to the \code{engagement} Data}
 \format{
 A \code{mhmm} object.
 }
@@ -15,10 +15,10 @@ The data was generated via \code{mixed_markov_model.R} in
 engagement_mmm
 }
 \description{
-Example mixed Markov model fitted to the \code{engagement} data
+Example Mixed Markov Model Fitted to the \code{engagement} Data
 }
 \seealso{
-Other datasets: 
+Datasets
 \code{\link{engagement}},
 \code{\link{group_regulation}}
 }

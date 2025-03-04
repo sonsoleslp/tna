@@ -2,7 +2,7 @@
 % Please edit documentation in R/permutation.R
 \name{permutation_test}
 \alias{permutation_test}
-\title{Compare Two Networks from Sequence Data Using Permutation Tests}
+\title{Compare Two Networks from Sequence Data using a Permutation Test}
 \usage{
 permutation_test(
   x,
@@ -60,7 +60,7 @@ permutation_test(model_x, model_y, iter = 20)
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},

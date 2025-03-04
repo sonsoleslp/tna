@@ -1,9 +1,13 @@
 list(
   rd_family_title = list(
-    core = "Core functions",
-    plotting = "Plotting functions",
-    patterns = "Pattern-finding functions",
-    evaluation = "Evaluation and validation functions",
-    clusters = "Cluster-related functions"
-    )
+    basic = "Basic functions",
+    centralities = "Centrality measure functions",
+    communities = "Community detection functions",
+    cliques = "Clique-related functions",
+    comparison = "Model comparison functions",
+    validation = "Validation functions",
+    clusters = "Cluster-related functions",
+    helpers = "Helper functions",
+    datasets = "Datasets"
+  )
 )

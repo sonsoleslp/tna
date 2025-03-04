@@ -24,7 +24,7 @@ print(cm)
 
 }
 \seealso{
-Other centralities: 
+Centrality measure functions
 \code{\link{betweenness_network}()},
 \code{\link{centralities}()},
 \code{\link{plot.group_tna_centralities}()},

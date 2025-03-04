@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{as.igraph.matrix}
 \alias{as.igraph.matrix}
-\title{Coerce a weight matrix into an \code{igraph} object.}
+\title{Coerce a Weight Matrix into an \code{igraph} Object.}
 \usage{
 \method{as.igraph}{matrix}(x, directed = TRUE, ...)
 }
@@ -18,10 +18,10 @@ directed and undirected otherwise.}
 An \code{igraph} object.
 }
 \description{
-Coerce a weight matrix into an \code{igraph} object.
+Coerce a Weight Matrix into an \code{igraph} Object.
 }
 \seealso{
-Other helpers: 
+Helper functions
 \code{\link{as.igraph.group_tna}()},
 \code{\link{as.igraph.tna}()}
 }

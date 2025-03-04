@@ -204,9 +204,6 @@ estimate_centrality_stability <- estimate_cs
 #' calculating the CS-coefficient. The default is 0.7.
 #' @param certainty A `numeric` value specifying the desired level of certainty
 #' for the CS-coefficient. Default is 0.95.
-#' @param detailed A `logical` value specifying whether to return detailed
-#' sampling results. If `TRUE`, detailed results are included in the output.
-#' The default is `FALSE`.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
 #' Defaults to `FALSE`
 #' @param ... Ignored.
@@ -218,8 +215,6 @@ estimate_centrality_stability <- estimate_cs
 #'   of the measure.
 #' * `correlations`: A `matrix` of correlations between the original
 #'   centrality and the resampled centralities for each drop proportion.
-#' * `detailed_results`: A detailed data frame of the sampled correlations,
-#'   returned only if `return_detailed = TRUE`
 #'
 #' If `x` is a `group_tna` object, a `group_tna_stability` object is returned
 #' instead, which is a `list` of `tna_stability` objects.
@@ -239,14 +234,12 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
                               "InStrength", "OutStrength", "Betweenness"
                             ), iter = 1000, method = "pearson",
                             drop_prop = seq(0.1, 0.9, by = 0.1),
-                            threshold = 0.7,
-                            certainty = 0.95, detailed = FALSE,
+                            threshold = 0.7, certainty = 0.95,
                             progressbar = FALSE, ...) {
   check_tna_seq(x)
   check_flag(loops)
   check_flag(normalize)
   check_flag(progressbar)
-  check_flag(detailed)
   check_values(iter, strict = TRUE)
   check_range(threshold)
   check_range(certainty)
@@ -429,7 +422,6 @@ wcc <- function(mat) {
 # Clusters ----------------------------------------------------------------
 
 #' @export
-#' @family clusters
 #' @rdname centralities
 centralities.group_tna <- function(x, loops = FALSE,
                                    normalize = FALSE, measures, ...) {
@@ -465,7 +457,6 @@ centralities.group_tna <- function(x, loops = FALSE,
 }
 
 #' @export
-#' @family clusters
 #' @rdname estimate_centrality_stability
 estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
                                   measures = c(
@@ -473,7 +464,7 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
                                   ), iter = 1000, method = "pearson",
                                   drop_prop = seq(0.1, 0.9, by = 0.1),
                                   threshold = 0.7, certainty = 0.95,
-                                  detailed = FALSE, progressbar = FALSE, ...) {
+                                  progressbar = FALSE, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
@@ -490,7 +481,6 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
           drop_prop = drop_prop,
           threshold = threshold,
           certainty = certainty,
-          detailed = detailed,
           progressbar = progressbar,
           ...
         )
@@ -501,7 +491,6 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
 }
 
 #' @export
-#' @family clusters
 #' @rdname estimate_centrality_stability
 estimate_centrality_stability.group_tna <- estimate_cs.group_tna
 

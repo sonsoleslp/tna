@@ -1,4 +1,4 @@
-#' Compare Two Networks from Sequence Data Using Permutation Tests
+#' Compare Two Networks from Sequence Data using a Permutation Test
 #'
 #' This function compares two networks built from sequence data using
 #' permutation tests. The function builds Markov models for two sequence

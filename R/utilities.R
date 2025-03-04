@@ -70,7 +70,7 @@ is_tna_centralities <- function(x) {
 #' @export
 igraph::as.igraph
 
-#' Coerce a `tna` object into an `igraph` object.
+#' Coerce a `tna` Object into an `igraph` Object.
 #'
 #' @export
 #' @family helpers
@@ -86,7 +86,7 @@ as.igraph.tna <- function(x, ...) {
   )
 }
 
-#' Coerce a weight matrix into an `igraph` object.
+#' Coerce a Weight Matrix into an `igraph` Object.
 #'
 #' @export
 #' @family helpers
@@ -105,7 +105,7 @@ as.igraph.matrix <- function(x, directed = TRUE, ...) {
   )
 }
 
-#' Coerce  a specific group from a `group_tna` object into an `igraph` object.
+#' Coerce a Specific Group from a `group_tna` Object into an `igraph` Object.
 #'
 #' @export
 #' @family helpers

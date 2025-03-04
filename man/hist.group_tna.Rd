@@ -24,7 +24,7 @@ hist(model)
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.tna}()},
 \code{\link{plot.group_tna}()},

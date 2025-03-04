@@ -31,7 +31,7 @@ compare(model, i = 1, j = 2)
 
 }
 \seealso{
-Other comparison: 
+Model comparison functions
 \code{\link{compare}()},
 \code{\link{plot.tna_comparison}()},
 \code{\link{plot_compare}()},

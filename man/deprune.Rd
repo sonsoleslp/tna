@@ -33,7 +33,7 @@ depruned_model <- deprune(pruned_model) # restore original model
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{estimate_cs}()},
 \code{\link{permutation_test}()},
@@ -52,17 +52,5 @@ Other validation:
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
 \code{\link{summary.tna_bootstrap}()}
-
-Cluster-related functions
-\code{\link{centralities}()},
-\code{\link{communities}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_model}()},
-\code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
 }
-\concept{clusters}
 \concept{validation}

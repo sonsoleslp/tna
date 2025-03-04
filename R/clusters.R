@@ -1,4 +1,4 @@
-#' Build a grouped Transition Network Analysis Model
+#' Build a Grouped Transition Network Analysis Model
 #'
 #' This function constructs a transition network analysis (TNA) model for
 #' each cluster from a given sequence, wide-format dataframe,
@@ -181,7 +181,7 @@ group_ctna <- function(x, ...) {
   group_model(x = x, type = "co-occurrence", ...)
 }
 
-#' Retrieve statistics from a mixture Markov model (MMM)
+#' Retrieve Statistics from a Mixture Markov Model (MMM)
 #'
 #' @export
 #' @family clusters

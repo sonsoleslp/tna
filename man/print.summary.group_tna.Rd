@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.summary.group_tna}
 \alias{print.summary.group_tna}
-\title{Print the summary of a grouped Transition Network Analysis Model}
+\title{Print a Summary of a Grouped Transition Network Analysis Model}
 \usage{
 \method{print}{summary.group_tna}(x, ...)
 }
@@ -15,7 +15,7 @@
 \code{x} (invisibly).
 }
 \description{
-Print the summary of a grouped Transition Network Analysis Model
+Print a Summary of a Grouped Transition Network Analysis Model
 }
 \examples{
 model <- group_model(engagement_mmm)
@@ -23,7 +23,7 @@ print(summary(model))
 
 }
 \seealso{
-Other basic: 
+Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},

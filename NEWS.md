@@ -1,6 +1,6 @@
 # tna 0.4.1
 
-* The `detailed` argument of `estimate_centrality_stability()` has been implemented. Previously this argument had no effect on the output of the function.
+* The `detailed` argument of `estimate_centrality_stability()` has been removed. Previously this argument had no effect on the output of the function.
 * Removed several duplicated entries in the documentation.
 
 # tna 0.4.0

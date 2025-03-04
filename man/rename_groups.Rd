@@ -24,14 +24,8 @@ model_renamed <- rename_groups(model, c("A", "B", "C"))
 }
 \seealso{
 Cluster-related functions
-\code{\link{centralities}()},
 \code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
 \code{\link{group_model}()},
-\code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{reprune}()}
+\code{\link{mmm_stats}()}
 }
 \concept{clusters}

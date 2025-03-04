@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{as.igraph.tna}
 \alias{as.igraph.tna}
-\title{Coerce a \code{tna} object into an \code{igraph} object.}
+\title{Coerce a \code{tna} Object into an \code{igraph} Object.}
 \usage{
 \method{as.igraph}{tna}(x, ...)
 }
@@ -15,10 +15,10 @@
 An \code{igraph} object.
 }
 \description{
-Coerce a \code{tna} object into an \code{igraph} object.
+Coerce a \code{tna} Object into an \code{igraph} Object.
 }
 \seealso{
-Other helpers: 
+Helper functions
 \code{\link{as.igraph.group_tna}()},
 \code{\link{as.igraph.matrix}()}
 }

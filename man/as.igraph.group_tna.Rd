@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{as.igraph.group_tna}
 \alias{as.igraph.group_tna}
-\title{Coerce  a specific group from a \code{group_tna} object into an \code{igraph} object.}
+\title{Coerce a Specific Group from a \code{group_tna} Object into an \code{igraph} Object.}
 \usage{
 \method{as.igraph}{group_tna}(x, which, ...)
 }
@@ -17,10 +17,10 @@
 An \code{igraph} object.
 }
 \description{
-Coerce  a specific group from a \code{group_tna} object into an \code{igraph} object.
+Coerce a Specific Group from a \code{group_tna} Object into an \code{igraph} Object.
 }
 \seealso{
-Other helpers: 
+Helper functions
 \code{\link{as.igraph.matrix}()},
 \code{\link{as.igraph.tna}()}
 }

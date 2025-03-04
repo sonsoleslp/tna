@@ -68,22 +68,16 @@ comm <- communities(model)
 
 }
 \seealso{
-Other communities: 
+Community detection functions
 \code{\link{plot.group_tna_communities}()},
 \code{\link{plot.tna_communities}()},
 \code{\link{print.group_tna_communities}()},
 \code{\link{print.tna_communities}()}
 
 Cluster-related functions
-\code{\link{centralities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
 \code{\link{group_model}()},
 \code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
+\code{\link{rename_groups}()}
 }
 \concept{clusters}
 \concept{communities}

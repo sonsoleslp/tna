@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusters.R
 \name{mmm_stats}
 \alias{mmm_stats}
-\title{Retrieve statistics from a mixture Markov model (MMM)}
+\title{Retrieve Statistics from a Mixture Markov Model (MMM)}
 \usage{
 mmm_stats(x, use_t_dist = TRUE, level = 0.05)
 }
@@ -19,7 +19,7 @@ hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
 A \code{data.frame} object.
 }
 \description{
-Retrieve statistics from a mixture Markov model (MMM)
+Retrieve Statistics from a Mixture Markov Model (MMM)
 }
 \examples{
 mmm_stats(engagement_mmm)
@@ -27,14 +27,8 @@ mmm_stats(engagement_mmm)
 }
 \seealso{
 Cluster-related functions
-\code{\link{centralities}()},
 \code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
 \code{\link{group_model}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
+\code{\link{rename_groups}()}
 }
 \concept{clusters}

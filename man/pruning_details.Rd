@@ -31,7 +31,7 @@ pruning_details(pruned_threshold)
 
 }
 \seealso{
-Other validation: 
+Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
@@ -50,17 +50,5 @@ Other validation:
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
 \code{\link{summary.tna_bootstrap}()}
-
-Cluster-related functions
-\code{\link{centralities}()},
-\code{\link{communities}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{group_model}()},
-\code{\link{mmm_stats}()},
-\code{\link{prune}()},
-\code{\link{rename_groups}()},
-\code{\link{reprune}()}
 }
-\concept{clusters}
 \concept{validation}
