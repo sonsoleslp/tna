@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Frequency-based tna</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/0.4.2/vignettes/ftna.Rmd" class="external-link"><code>vignettes/ftna.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/vignettes/ftna.Rmd" class="external-link"><code>vignettes/ftna.Rmd</code></a></small>
       <div class="d-none name"><code>ftna.Rmd</code></div>
     </div>
 
@@ -536,10 +536,10 @@
 <span><span class="co"># Print the combined results data frame containing</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    from         to weight p_value   sig ci_lower ci_upper</span></span>
-<span><span class="co">#&gt; 2 adapt   cohesion  0.002    0.51 FALSE   0.0004   0.0036</span></span>
-<span><span class="co">#&gt; 3 adapt  consensus  0.012    0.16 FALSE   0.0078   0.0163</span></span>
-<span><span class="co">#&gt; 4 adapt coregulate  0.013    0.16 FALSE   0.0085   0.0177</span></span>
-<span><span class="co">#&gt; 5 adapt    discuss  0.113    0.00  TRUE   0.0998   0.1269</span></span>
+<span><span class="co">#&gt; 2 adapt   cohesion  0.002   0.506 FALSE   0.0004   0.0036</span></span>
+<span><span class="co">#&gt; 3 adapt  consensus  0.012   0.162 FALSE   0.0078   0.0163</span></span>
+<span><span class="co">#&gt; 4 adapt coregulate  0.013   0.160 FALSE   0.0085   0.0177</span></span>
+<span><span class="co">#&gt; 5 adapt    discuss  0.113   0.001  TRUE   0.0998   0.1269</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 74 rows ]</span></span>
 <span></span>
 <span><span class="co"># View non-significant edges  which are less likely to be stable across bootstrap samples</span></span>

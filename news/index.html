@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,12 +37,17 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/sonsoleslp/tna/blob/0.4.2/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/sonsoleslp/tna/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.3" id="tna-043">tna 0.4.3<a class="anchor" aria-label="anchor" href="#tna-043"></a></h2>
+<ul><li>The <code><a href="../reference/permutation_test.html">permutation_test()</a></code> function now properly checks that its arguments <code>x</code> and <code>y</code> can be compared.</li>
+<li>The p-value calculations of <code><a href="../reference/permutation_test.html">permutation_test()</a></code> and <code><a href="../reference/bootstrap.html">bootstrap()</a></code> have been adjusted by adding 1 to both the number of permutations/bootstrap samples and the number of extreme events so that these estimates are never zero. The documentation has also been clarified regarding p-values emphasizing that these are estimates only.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.2" id="tna-042">tna 0.4.2<a class="anchor" aria-label="anchor" href="#tna-042"></a></h2>
-<ul><li>The <code><a href="../reference/plot_compare.html">plot_compare()</a></code> function now supports <code>negCol</code> and <code>posCol</code> for specifying the color of the positive and negative different transition and initial probabilities.</li>
+<ul><li>The <code><a href="../reference/plot_compare.html">plot_compare()</a></code> function now supports <code>negCol</code> and <code>posCol</code> for specifying the color of the positive and negative differences in transition and initial probabilities.</li>
 <li>The <code><a href="../reference/plot_mosaic.html">plot_mosaic()</a></code> function now plots the x-axis on the top and rotates the labels 90 degrees only when there are more than three groups.</li>
 </ul></div>
     <div class="section level2">

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Print a Bootstrap Summary for a Grouped Transition Network Model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/0.4.2/R/print.R" class="external-link"><code>R/print.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/R/print.R" class="external-link"><code>R/print.R</code></a></small>
       <div class="d-none name"><code>print.summary.group_tna_bootstrap.Rd</code></div>
     </div>
 
@@ -96,33 +96,33 @@
 <span class="r-in"><span><span class="co"># Low number of iteration for CRAN</span></span></span>
 <span class="r-in"><span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        group       from         to     weight p_value   sig   ci_lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Cluster 1     Active     Active 0.70615034     0.0  TRUE 0.67835249</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Cluster 1     Active    Average 0.51339286     0.0  TRUE 0.45532035</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Cluster 1     Active Disengaged 0.33333333     0.5 FALSE 0.13111111</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Cluster 1    Average     Active 0.29384966     0.0  TRUE 0.25710922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  Cluster 1    Average    Average 0.45982143     0.1 FALSE 0.33254321</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Cluster 1    Average Disengaged 0.38095238     0.4 FALSE 0.29953209</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Cluster 1 Disengaged    Average 0.02678571     0.8 FALSE 0.01046748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Cluster 1 Disengaged Disengaged 0.28571429     0.5 FALSE 0.16887255</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Cluster 2     Active     Active 0.49242424     0.0  TRUE 0.42855905</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 Cluster 2     Active    Average 0.32495164     0.0  TRUE 0.29526917</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Cluster 2     Active Disengaged 0.33333333     0.2 FALSE 0.26943849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Cluster 2    Average     Active 0.44191919     0.0  TRUE 0.39460196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Cluster 2    Average    Average 0.58607350     0.0  TRUE 0.53311155</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Cluster 2    Average Disengaged 0.57333333     0.0  TRUE 0.48849910</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 Cluster 2 Disengaged     Active 0.06565657     0.0  TRUE 0.05871438</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 Cluster 2 Disengaged    Average 0.08897485     0.0  TRUE 0.08288658</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 Cluster 2 Disengaged Disengaged 0.09333333     0.4 FALSE 0.06035714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 Cluster 3     Active     Active 0.30067568     0.0  TRUE 0.27305656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 Cluster 3     Active    Average 0.15940767     0.0  TRUE 0.14080935</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 Cluster 3     Active Disengaged 0.06578947     0.0  TRUE 0.05660476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 Cluster 3    Average     Active 0.60810811     0.0  TRUE 0.54676374</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 Cluster 3    Average    Average 0.57317073     0.0  TRUE 0.54309424</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 Cluster 3    Average Disengaged 0.47076023     0.0  TRUE 0.44891403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Cluster 3 Disengaged     Active 0.09121622     0.4 FALSE 0.06223765</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 Cluster 3 Disengaged    Average 0.26742160     0.0  TRUE 0.24328282</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 Cluster 3 Disengaged Disengaged 0.46345029     0.0  TRUE 0.43856781</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        group       from         to     weight    p_value   sig   ci_lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Cluster 1     Active     Active 0.70615034 0.09090909 FALSE 0.67835249</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Cluster 1     Active    Average 0.51339286 0.09090909 FALSE 0.45532035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Cluster 1     Active Disengaged 0.33333333 0.54545455 FALSE 0.13111111</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Cluster 1    Average     Active 0.29384966 0.09090909 FALSE 0.25710922</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  Cluster 1    Average    Average 0.45982143 0.18181818 FALSE 0.33254321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Cluster 1    Average Disengaged 0.38095238 0.45454545 FALSE 0.29953209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Cluster 1 Disengaged    Average 0.02678571 0.81818182 FALSE 0.01046748</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Cluster 1 Disengaged Disengaged 0.28571429 0.54545455 FALSE 0.16887255</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Cluster 2     Active     Active 0.49242424 0.09090909 FALSE 0.42855905</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 Cluster 2     Active    Average 0.32495164 0.09090909 FALSE 0.29526917</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Cluster 2     Active Disengaged 0.33333333 0.27272727 FALSE 0.26943849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Cluster 2    Average     Active 0.44191919 0.09090909 FALSE 0.39460196</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Cluster 2    Average    Average 0.58607350 0.09090909 FALSE 0.53311155</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Cluster 2    Average Disengaged 0.57333333 0.09090909 FALSE 0.48849910</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 Cluster 2 Disengaged     Active 0.06565657 0.09090909 FALSE 0.05871438</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 Cluster 2 Disengaged    Average 0.08897485 0.09090909 FALSE 0.08288658</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 Cluster 2 Disengaged Disengaged 0.09333333 0.45454545 FALSE 0.06035714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 Cluster 3     Active     Active 0.30067568 0.09090909 FALSE 0.27305656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 Cluster 3     Active    Average 0.15940767 0.09090909 FALSE 0.14080935</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 Cluster 3     Active Disengaged 0.06578947 0.09090909 FALSE 0.05660476</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 Cluster 3    Average     Active 0.60810811 0.09090909 FALSE 0.54676374</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 Cluster 3    Average    Average 0.57317073 0.09090909 FALSE 0.54309424</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 Cluster 3    Average Disengaged 0.47076023 0.09090909 FALSE 0.44891403</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Cluster 3 Disengaged     Active 0.09121622 0.45454545 FALSE 0.06223765</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 Cluster 3 Disengaged    Average 0.26742160 0.09090909 FALSE 0.24328282</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 Cluster 3 Disengaged Disengaged 0.46345029 0.09090909 FALSE 0.43856781</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      ci_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.74289078</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.62028856</span>
