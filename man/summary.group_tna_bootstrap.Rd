@@ -13,7 +13,7 @@
 }
 \value{
 A \code{summary.group_tna_bootstrap} object containing the weight,
-p-value and confidence interval of each edge for each cluster.
+estimated p-value and confidence interval of each edge for each cluster.
 }
 \description{
 Summarize Bootstrap Results for a Grouped Transition Network

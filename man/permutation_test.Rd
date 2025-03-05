@@ -35,11 +35,11 @@ See \code{\link[=centralities]{centralities()}} for a list of available centrali
 }
 \value{
 A \code{tna_permutation} object which is a \code{list} with two elements:
-\code{edges} and \code{centralities}, both containing the following elements
+\code{edges} and \code{centralities}, both containing the following elements:
 \itemize{
 \item \code{stats}: A \code{data.frame} of original differences, effect sizes, and
-p-values for each edge or centrality measure. The effect size is
-computed as the observed difference divided by the standard deviation
+estimated p-values for each edge or centrality measure. The effect size
+is computed as the observed difference divided by the standard deviation
 of the differences of the permuted samples.
 \item \code{diffs_true}: A \code{matrix} of differences in the data.
 \item \code{diffs_sig}: A \code{matrix} showing the significant differences.
@@ -50,7 +50,7 @@ This function compares two networks built from sequence data using
 permutation tests. The function builds Markov models for two sequence
 objects, computes the transition probabilities, and compares them by
 performing permutation tests. It returns the differences in transition
-probabilities, effect sizes, p-values, and confidence intervals.
+probabilities, effect sizes, estimated p-values, and confidence intervals.
 }
 \examples{
 model_x <- tna(group_regulation[1:200, ])

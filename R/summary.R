@@ -102,7 +102,7 @@ summary.tna <- function(object, ...) {
 #' @param object A `tna_bootstrap` object.
 #' @param ... Ignored.
 #' @return A `summary.tna_bootstrap` object containing the weight,
-#' p-value and confidence interval of each edge.
+#' estimated p-value and confidence interval of each edge.
 #' @examples
 #' model <- tna(group_regulation)
 #' # Small number of iterations for CRAN
@@ -198,7 +198,7 @@ summary.group_tna <- function(object, combined = TRUE, ...) {
 #' @param object A `group_tna_bootstrap` object.
 #' @param ... Ignored.
 #' @return A `summary.group_tna_bootstrap` object containing the weight,
-#' p-value and confidence interval of each edge for each cluster.
+#' estimated p-value and confidence interval of each edge for each cluster.
 #' @examples
 #' model <- group_tna(engagement_mmm)
 #' # Small number of iterations for CRAN

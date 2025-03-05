@@ -1,6 +1,11 @@
+# tna 0.4.3
+
+* The `permutation_test()` function now properly checks that its arguments `x` and `y` can be compared.
+* The p-value calculations of `permutation_test()` and `bootstrap()` have been adjusted by adding 1 to both the number of permutations/bootstrap samples and the number of extreme events so that these estimates are never zero. The documentation has also been clarified regarding p-values emphasizing that these are estimates only.
+
 # tna 0.4.2
 
-* The `plot_compare()` function now supports `negCol` and `posCol` for specifying the color of the positive and negative different transition and initial probabilities.
+* The `plot_compare()` function now supports `negCol` and `posCol` for specifying the color of the positive and negative differences in transition and initial probabilities.
 * The `plot_mosaic()` function now plots the x-axis on the top and rotates the labels 90 degrees only when there are more than three groups.
 
 # tna 0.4.1

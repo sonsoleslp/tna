@@ -13,7 +13,7 @@
 }
 \value{
 A \code{summary.tna_bootstrap} object (invisibly) containing the weight,
-p-value and confidence interval of each edge.
+estimated p-value and confidence interval of each edge.
 }
 \description{
 Print a Bootstrap Summary

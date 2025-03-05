@@ -21,7 +21,7 @@ print.summary.tna <- function(x, ...) {
 #' @param x A `summary.tna_bootstrap` object.
 #' @param ... Arguments passed to the generic `print` method.
 #' @return A `summary.tna_bootstrap` object (invisibly) containing the weight,
-#' p-value and confidence interval of each edge.
+#' estimated p-value and confidence interval of each edge.
 #' @examples
 #' model <- tna(group_regulation)
 #' # Small number of iterations for CRAN

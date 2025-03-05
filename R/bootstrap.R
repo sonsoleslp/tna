@@ -9,10 +9,10 @@
 #' cluster from the `tna` object. It then performs bootstrapping by resampling
 #' the sequence data and recalculating the edge weights for each
 #' bootstrap sample. The mean and standard deviation of the transitions are
-#' computed, and confidence intervals are derived. The function also calculates
+#' computed, and confidence intervals are derived. The function also estimates
 #' p-values for each edge and identifies significant edges based on
 #' the specified significance level. A matrix of significant edges
-#' (those with p-values below the significance level) is generated.
+#' (those with estimated p-values below the significance level) is generated.
 #' Additional statistics on removed edges (those not considered
 #' significant) are provided.
 #'
@@ -48,14 +48,14 @@
 #
 #'   * `weights_orig`: The original edge weight `matrix`.
 #'   * `weights_sig`: The `matrix` of significant transitions
-#'     (those with p-values below the significance level).
+#'     (those with estimated p-values below the significance level).
 #'   * `weights_mean`: The mean weight `matrix` from the bootstrap samples.
 #'   * `weights_sd`: The standard deviation `matrix` from the bootstrap samples.
 #'   * `ci_lower`: The lower bound `matrix` of the confidence intervals for
 #'     the edge weights.
 #'   * `ci_upper`: The upper bound `matrix` of the confidence intervals for
 #'     the edge weights.
-#'   * `p_values`: The `matrix` of p-values for the edge weights.
+#'   * `p_values`: The `matrix` of estimated p-values for the edge weights.
 #'   * `summary`: A `data.frame` summarizing the edges, their weights,
 #'     p-values, statistical significance and confidence intervals.
 #'
@@ -125,7 +125,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
       p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
     }
   }
-  p_values <- p_values / iter
+  p_values <- (p_values + 1) / (iter + 1)
   weights_mean <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
   weights_sd <- apply(weights_boot, c(2, 3), stats::sd, na.rm = TRUE)
   ci_lower <- apply(

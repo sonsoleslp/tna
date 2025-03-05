@@ -63,14 +63,14 @@ following elements:
 \itemize{
 \item \code{weights_orig}: The original edge weight \code{matrix}.
 \item \code{weights_sig}: The \code{matrix} of significant transitions
-(those with p-values below the significance level).
+(those with estimated p-values below the significance level).
 \item \code{weights_mean}: The mean weight \code{matrix} from the bootstrap samples.
 \item \code{weights_sd}: The standard deviation \code{matrix} from the bootstrap samples.
 \item \code{ci_lower}: The lower bound \code{matrix} of the confidence intervals for
 the edge weights.
 \item \code{ci_upper}: The upper bound \code{matrix} of the confidence intervals for
 the edge weights.
-\item \code{p_values}: The \code{matrix} of p-values for the edge weights.
+\item \code{p_values}: The \code{matrix} of estimated p-values for the edge weights.
 \item \code{summary}: A \code{data.frame} summarizing the edges, their weights,
 p-values, statistical significance and confidence intervals.
 }
@@ -89,10 +89,10 @@ The function first computes the original edge weights for the specified
 cluster from the \code{tna} object. It then performs bootstrapping by resampling
 the sequence data and recalculating the edge weights for each
 bootstrap sample. The mean and standard deviation of the transitions are
-computed, and confidence intervals are derived. The function also calculates
+computed, and confidence intervals are derived. The function also estimates
 p-values for each edge and identifies significant edges based on
 the specified significance level. A matrix of significant edges
-(those with p-values below the significance level) is generated.
+(those with estimated p-values below the significance level) is generated.
 Additional statistics on removed edges (those not considered
 significant) are provided.
 

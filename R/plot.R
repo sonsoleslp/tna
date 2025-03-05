@@ -779,13 +779,15 @@ plot_centralities_multiple <- function(x, reorder, ncol,
 #'
 #' @export
 #' @family comparison
-#' @param x A `tna` object. It will be the principal model.
-#' @param y A `tna` object. It will be the model subtracted from the
+#' @param x A `tna` object. This is the the principal model.
+#' @param y A `tna` object. This is the model subtracted from the
 #'   principal model.
-#' @param posCol Color for plotting edges and pie when the first group has a higher value. See [qgraph::qgraph()].
-#' @param negCol Color for plotting edges and pie when the second group has a higher value. See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param palette See [qgraph::qgraph()].
+#' @param posCol Color for plotting edges and pie when
+#'   the first group has a higher value. See [qgraph::qgraph()].
+#' @param negCol Color for plotting edges and pie when
+#'   the second group has a higher value. See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object displaying the difference network between the
 #'   two models.
@@ -800,7 +802,8 @@ plot_compare <- function(x, ...) {
 
 #' @export
 #' @rdname plot_compare
-plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", posCol = "#009900", negCol = "red",...) {
+plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
+                             posCol = "#009900", negCol = "red", ...) {
   check_class(x, "tna")
   check_class(y, "tna")
   # TODO check that x and y are comparable
@@ -810,8 +813,6 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind", posCol 
   )
   pie <- abs(x$inits - y$inits)
   piesign <- ifelse(x$inits > y$inits, posCol, negCol)
-  # pos_col <- c("#009900", "darkgreen")
-  # neg_col <- c("#BF0000", "red")
   diff <- build_model_(
     x$weights - y$weights,
     type = attr(x, "type"),
@@ -994,15 +995,16 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
       plot.subtitle = ggplot2::element_text(hjust = 0.5),
       axis.ticks = ggplot2::element_blank(),
       axis.line = ggplot2::element_blank(),
-      axis.text.x =  ggplot2::element_text(angle =  ifelse(n > 3,90,0),
-                                           hjust =  ifelse(n > 3,0,0.5),
-                                           vjust =  ifelse(n > 3,0.5,0)),
+      axis.text.x =  ggplot2::element_text(
+        angle =  ifelse(n > 3, 90, 0),
+        hjust =  ifelse(n > 3, 0, 0.5),
+        vjust =  ifelse(n > 3, 0.5, 0)
+      ),
       axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
     ) +
     ggplot2::labs(x = xlab, y = ylab)
   out
 }
-
 
 #' Create a heatmap from edgelist data
 #'
