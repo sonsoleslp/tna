@@ -657,6 +657,7 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
 #' @inheritParams plot.tna_centralities
 #' @noRd
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
+  levs <- names(x)
   x <- stats::reshape(
     as.data.frame(x),
     idvar = "state",
@@ -678,7 +679,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     )
   )
   x$rank <- dplyr::row_number(x)
-
+  x$name <- factor(x$name, levels = levs)
   ggplot2::ggplot(x) +
     ggplot2::scale_fill_manual(values = colors) +
     ggplot2::geom_col(
@@ -730,7 +731,7 @@ plot_centralities_multiple <- function(x, reorder, ncol,
   measures <- names(x)[3:ncol(x)]
   n_clusters <- length(unique(x$group))
   x$state <- factor(x$state)
-  x |>
+  x <- x |>
     data.frame() |>
     stats::reshape(
       varying = measures,
@@ -738,8 +739,9 @@ plot_centralities_multiple <- function(x, reorder, ncol,
       timevar = "name",
       times = measures,
       direction = "long"
-    ) |>
-    ggplot2::ggplot(
+    )
+  x$name <- factor(x$name, levels = measures)
+  ggplot2::ggplot(x,
       ggplot2::aes(
         x = !!rlang::sym("value"),
         y = !!rlang::sym("state"),
@@ -764,8 +766,11 @@ plot_centralities_multiple <- function(x, reorder, ncol,
     ggplot2::theme_minimal() +
     ggplot2::xlab("Centrality") +
     ggplot2::ylab("") +
+    ggplot2::labs(color = "", fill = "") +
     ggplot2::theme(
+      strip.text = ggplot2::element_text(face = "bold", size = 12),
       panel.spacing = ggplot2::unit(1, "lines"),
+      axis.text.y = ggplot2::element_text(size = 8, vjust = 0.2),
       legend.position = "bottom"
     )
 }
