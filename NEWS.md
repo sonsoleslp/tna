@@ -1,3 +1,7 @@
+# tna 0.4.4
+
+* The `plot.tna_centralities` and `plot.group_tna_centralities` functions now plot the centralities in the same order as provided in the `measures` argument.
+
 # tna 0.4.3
 
 * The `permutation_test()` function now properly checks that its arguments `x` and `y` can be compared.
