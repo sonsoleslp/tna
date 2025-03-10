@@ -18,20 +18,22 @@ plot_compare(x, ...)
 )
 }
 \arguments{
-\item{x}{A \code{tna} object. It will be the principal model.}
+\item{x}{A \code{tna} object. This is the the principal model.}
 
 \item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{y}{A \code{tna} object. It will be the model subtracted from the
+\item{y}{A \code{tna} object. This is the model subtracted from the
 principal model.}
 
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{palette}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{posCol}{Color for plotting edges and pie when the first group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{posCol}{Color for plotting edges and pie when
+the first group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
-\item{negCol}{Color for plotting edges and pie when the second group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{negCol}{Color for plotting edges and pie when
+the second group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 }
 \value{
 A \code{qgraph} object displaying the difference network between the

@@ -4,7 +4,7 @@
 #' permutation tests. The function builds Markov models for two sequence
 #' objects, computes the transition probabilities, and compares them by
 #' performing permutation tests. It returns the differences in transition
-#' probabilities, effect sizes, p-values, and confidence intervals.
+#' probabilities, effect sizes, estimated p-values, and confidence intervals.
 #'
 #' @export
 #' @family validation
@@ -20,11 +20,11 @@
 #' See [centralities()] for a list of available centrality measures.
 #' @param ... Additional arguments passed to [centralities()].
 #' @return A `tna_permutation` object which is a `list` with two elements:
-#' `edges` and `centralities`, both containing the following elements
+#' `edges` and `centralities`, both containing the following elements:
 #'
 #'   * `stats`: A `data.frame` of original differences, effect sizes, and
-#'     p-values for each edge or centrality measure. The effect size is
-#'     computed as the observed difference divided by the standard deviation
+#'     estimated p-values for each edge or centrality measure. The effect size
+#'     is computed as the observed difference divided by the standard deviation
 #'     of the differences of the permuted samples.
 #'   * `diffs_true`: A `matrix` of differences in the data.
 #'   * `diffs_sig`: A `matrix` showing the significant differences.
@@ -42,7 +42,6 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   check_values(iter, strict = TRUE)
   check_flag(paired)
   check_range(level)
-  # TODO check that networks can be compared
   data_x <- x$data
   data_y <- y$data
   n_x <- nrow(data_x)
@@ -52,11 +51,22 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     "The number of observations must be the same in {.arg x} and {.arg y}
      for a paired test."
   )
+  alph_x <- attr(data_x, "alphabet")
+  alph_y <- attr(data_y, "alphabet")
+  a <- length(alph_x)
+  stopifnot_(
+    a == length(alph_y),
+    "The number of states of {.arg x} and {.arg y} must be the same."
+  )
+  stopifnot_(
+    all(alph_x == alph_y),
+    "The state labels of {.arg x} and {.arg y} must be the same
+     and in the same order."
+  )
   combined_data <- dplyr::bind_rows(data_x, data_y)
   n_xy <- n_x + n_y
   weights_x <- x$weights
   weights_y <- y$weights
-  a <- length(attr(data_x, "alphabet"))
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
   params <- attr(x, "params")
@@ -116,7 +126,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     edge_p_values <- edge_p_values +
       1L * (abs(edge_diffs_perm[i, , ]) >= edge_diffs_true_abs)
   }
-  edge_p_values <- edge_p_values / iter
+  edge_p_values <- (edge_p_values + 1) / (iter + 1)
   edge_diffs_sd <- apply(edge_diffs_perm, c(2, 3), stats::sd)
   edge_diffs_sig <- edge_diffs_true * (edge_p_values < level)
   edge_stats <- data.frame(
@@ -133,7 +143,7 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
     )
   )
   if (include_centralities) {
-    cent_p_values <- cent_p_values / iter
+    cent_p_values <- (cent_p_values + 1) / (iter + 1)
     cent_diffs_sd <- apply(cent_diffs_perm, c(2, 3), stats::sd)
     cent_diffs_sig <- cent_diffs_true * (cent_p_values < level)
     cent_stats <- expand.grid(state = cent_x$state, centrality = measures)

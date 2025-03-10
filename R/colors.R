@@ -68,4 +68,14 @@ color_palette <- function(n_states) {
 
 # Default Community Colors ------------------------------------------------
 
-default_colors <- c("#d1ea2c", "#fd5306", "#68b033", "#8601b0", "#fe2712", "#a7184d", "#3c02a6", "#fd9a01", "#0392ce")
+default_colors <- c(
+  "#d1ea2c",
+  "#fd5306",
+  "#68b033",
+  "#8601b0",
+  "#fe2712",
+  "#a7184d",
+  "#3c02a6",
+  "#fd9a01",
+  "#0392ce"
+)
