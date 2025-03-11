@@ -7,6 +7,7 @@
 \alias{group_tna}
 \alias{group_ftna}
 \alias{group_ctna}
+\alias{group_atna}
 \title{Build a Grouped Transition Network Analysis Model}
 \usage{
 group_model(x, ...)
@@ -29,6 +30,8 @@ group_tna(x, ...)
 group_ftna(x, ...)
 
 group_ctna(x, ...)
+
+group_atna(x, ...)
 }
 \arguments{
 \item{x}{An \code{stslist} object describing a sequence of events or states to
@@ -62,6 +65,9 @@ sliding window, capturing local relationships
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the \code{"frequency"}
 option.
+\item \code{"attention"} aggregates all downstream pairs of states with an
+exponential decay for the gap between states. The parameter \code{lambda}
+can be used to control the decay rate (the default is 1)-
 }}
 
 \item{scaling}{A \code{character} vector describing how to scale the weights
@@ -99,6 +105,7 @@ specifying the window size. The default is 2.
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
 \code{FALSE}.
+\item \code{lambda}: A \code{numeric} value for the decay rate. The default is 1.
 }}
 
 \item{na.rm}{A \code{logical} value that determines if observations with \code{NA}
@@ -126,6 +133,8 @@ model <- group_tna(group_regulation, group = gl(2, 1000))
 model <- group_ftna(group_regulation, group = gl(2, 1000))
 
 model <- group_ctna(group_regulation, group = gl(2, 1000))
+
+model <- group_atna(group_regulation, group = gl(2, 1000))
 
 }
 \seealso{

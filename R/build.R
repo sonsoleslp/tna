@@ -36,6 +36,9 @@
 #'       (resulting in what is called a reply network in some contexts).
 #'       The resulting weight matrix is the transpose of the `"frequency"`
 #'       option.
+#'   * `"attention"` aggregates all downstream pairs of states with an
+#'       exponential decay for the gap between states. The parameter `lambda`
+#'       can be used to control the decay rate (the default is 1)-
 #'
 #' @param scaling A `character` vector describing how to scale the weights
 #'   defined by `type`. When a vector is provided, the scaling options are
@@ -69,6 +72,7 @@
 #'      are weighted by the inverse of the sequence length. Can be used for
 #'      frequency, co-occurrence and reverse model types. The default is
 #'      `FALSE`.
+#'   * `lambda`: A `numeric` value for the decay rate. The default is 1.
 #'
 #' @param ... Ignored.
 #' @return An object of class `tna` which is a `list` containing the
@@ -270,6 +274,15 @@ ctna <- function(x, ...) {
   build_model(x = x, type = "co-occurrence", ...)
 }
 
+#' @export
+#' @rdname build_model
+#' @examples
+#' model <- atna(group_regulation)
+#'
+atna <- function(x, ...) {
+  build_model(x = x, type = "attention", ...)
+}
+
 
 # Internal ----------------------------------------------------------------
 
@@ -416,8 +429,7 @@ compute_transitions <- function(m, a, type, params) {
       new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
       trans[new_trans] <- trans[new_trans] + weight[!any_na]
     }
-  }
-  else if (type == "co-occurrence") {
+  } else if (type == "co-occurrence") {
     for (i in seq_len(p - 1L)) {
       for (j in seq(i + 1L, p)) {
         from <- m[, i]
@@ -464,6 +476,17 @@ compute_transitions <- function(m, a, type, params) {
           new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
           trans[new_trans] <- trans[new_trans] + 1L
         }
+      }
+    }
+  } else if (type == "attention") {
+    lambda <- params$lambda %||% 1.0
+    for (i in seq_len(p - 1L)) {
+      for (j in seq(i + 1L, p)) {
+        from <- m[, i]
+        to <- m[, j]
+        any_na <- is.na(from) | is.na(to)
+        new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+        trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
       }
     }
   }

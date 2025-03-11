@@ -36,7 +36,8 @@ check_model_type <- function(type) {
       "n-gram",
       "gap",
       "window",
-      "reverse"
+      "reverse",
+      "attention"
     )
   )
 }

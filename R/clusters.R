@@ -181,6 +181,15 @@ group_ctna <- function(x, ...) {
   group_model(x = x, type = "co-occurrence", ...)
 }
 
+#' @export
+#' @rdname group_model
+#' @examples
+#' model <- group_atna(group_regulation, group = gl(2, 1000))
+#'
+group_atna <- function(x, ...) {
+  group_model(x = x, type = "attention", ...)
+}
+
 #' Retrieve Statistics from a Mixture Markov Model (MMM)
 #'
 #' @export

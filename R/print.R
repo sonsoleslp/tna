@@ -58,13 +58,14 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
   check_values(digits)
   type <- attr(x, "type")
   mat_type <- switch(type,
-                     `relative` = "Transition Probability",
-                     `frequency` = "Transition Frequency",
-                     `co-occurrence` = "Co-occurrence",
-                     `n-gram` = "N-gram Transition",
-                     `gap` = "Gap-allowed Transition",
-                     `window` = "Sliding Window Transition",
-                     `betweenness` = "Edge Betweenness"
+    `relative` = "Transition Probability",
+    `frequency` = "Transition Frequency",
+    `co-occurrence` = "Co-occurrence",
+    `n-gram` = "N-gram Transition",
+    `gap` = "Gap-allowed Transition",
+    `window` = "Sliding Window Transition",
+    `betweenness` = "Edge Betweenness",
+    "Edge Weight"
   )
   cat("State Labels\n\n")
   cat(paste(x$labels, collapse = ", "), "\n")
