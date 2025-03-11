@@ -101,7 +101,9 @@ matrices and initial state probabilities directly.</p>
 <span></span>
 <span><span class="fu">ftna</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ctna</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">ctna</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">atna</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -137,6 +139,9 @@ sliding window, capturing local relationships
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the <code>"frequency"</code>
 option.</p></li>
+<li><p><code>"attention"</code> aggregates all downstream pairs of states with an
+exponential decay for the gap between states. The parameter <code>lambda</code>
+can be used to control the decay rate (the default is 1)-</p></li>
 </ul></dd>
 
 
@@ -179,6 +184,7 @@ specifying the window size. The default is 2.</p></li>
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
 <code>FALSE</code>.</p></li>
+<li><p><code>lambda</code>: A <code>numeric</code> value for the decay rate. The default is 1.</p></li>
 </ul></dd>
 
 
@@ -265,6 +271,8 @@ internal format used by the package when <code>x</code> is a <code>stslist</code
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">ftna</span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">ctna</span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">atna</span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
