@@ -8,6 +8,7 @@ plot_model(
   x,
   labels,
   colors,
+  cut,
   edge.labels = TRUE,
   edge.label.position = 0.65,
   layout = "circle",
@@ -23,6 +24,9 @@ plot_model(
 \item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{cut}{Edge color and width emphasis cutoff value. The default is
+the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
 
 \item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 

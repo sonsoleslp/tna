@@ -9,6 +9,7 @@
   labels,
   colors,
   pie,
+  cut,
   show_pruned = TRUE,
   pruned_edge_color = "red",
   edge.color = NA,
@@ -29,6 +30,9 @@
 \item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{cut}{Edge color and width emphasis cutoff value. The default is
+the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
 
 \item{show_pruned}{A \code{logical} value indicating if pruned edges removed by
 \code{\link[=prune]{prune()}} should be shown in the plot.  The default is \code{TRUE}, and the
