@@ -64,7 +64,11 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @export
 #' @family basic
 #' @param x A `tna` object from [tna()].
+#' @param labels See [qgraph::qgraph()].
 #' @param colors See [qgraph::qgraph()].
+#' @param pie See [qgraph::qgraph()].
+#' @param cut Edge color and width emphasis cutoff value. The default is
+#' the median of the edge weights. See [qgraph::qgraph()] for details.
 #' @param show_pruned A `logical` value indicating if pruned edges removed by
 #' [prune()] should be shown in the plot.  The default is `TRUE`, and the
 #' edges are drawn as dashed with a different color to distinguish them.
@@ -73,7 +77,6 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param edge.color See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param edge.label.position See [qgraph::qgraph()].
-#' @param labels See [qgraph::qgraph()].
 #' @param layout One of the following:
 #'   * A `character` string describing a `qgraph` layout.
 #'   * A `matrix` of node positions to use, with a row for each node and
@@ -82,7 +85,6 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param layout_args A `list` of arguments to pass to the `igraph` layout
 #'   function when `layout` is a function.
 #' @param mar See [qgraph::qgraph()].
-#' @param pie See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` plot of the transition network.
@@ -90,7 +92,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' model <- tna(group_regulation)
 #' plot(model)
 #'
-plot.tna <- function(x, labels, colors, pie,
+plot.tna <- function(x, labels, colors, pie, cut,
                      show_pruned = TRUE, pruned_edge_color = "red",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
@@ -114,6 +116,9 @@ plot.tna <- function(x, labels, colors, pie,
       color_palette(length(x$labels)),
       attr(x$data, "colors")
     )
+  }
+  if (missing(cut)) {
+    cut <- stats::median(x$weights, na.rm = TRUE)
   }
   lty <- 1
   if (!is.null(attr(x, "pruning")) && show_pruned) {
@@ -142,6 +147,7 @@ plot.tna <- function(x, labels, colors, pie,
     pie = pie,
     mar = mar,
     lty = lty,
+    cut = cut,
     ...
   )
 }
@@ -849,7 +855,7 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
 #' m <- matrix(rexp(25), 5, 5)
 #' plot_model(m)
 #'
-plot_model <- function(x, labels, colors,
+plot_model <- function(x, labels, colors, cut,
                        edge.labels = TRUE, edge.label.position = 0.65,
                        layout = "circle", layout_args = list(),
                        mar = rep(5, 4), theme = "colorblind", ...) {
@@ -864,6 +870,9 @@ plot_model <- function(x, labels, colors,
   if (missing(colors)) {
     colors <- color_palette(nc)
   }
+  if (missing(cut)) {
+    cut <- stats::median(x, na.rm = TRUE)
+  }
   layout <- check_layout(x, layout, layout_args)
   qgraph::qgraph(
     input = x,
@@ -874,6 +883,7 @@ plot_model <- function(x, labels, colors,
     layout = layout,
     theme = theme,
     mar = mar,
+    cut = cut,
     ...
   )
 }
