@@ -48,7 +48,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'tna'</span></span>
-<span><span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">x</span>, mode <span class="op">=</span> <span class="st">"directed"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,11 +56,19 @@
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>The object to convert.</p></dd>
+<dd><p>A <code>tna</code> object.</p></dd>
+
+
+<dt id="arg-mode">mode<a class="anchor" aria-label="anchor" href="#arg-mode"></a></dt>
+<dd><p>Character scalar, specifies how igraph should interpret the
+supplied matrix. See also the <code>weighted</code> argument, the interpretation
+depends on that too. Possible values are: <code>directed</code>,
+<code>undirected</code>, <code>upper</code>, <code>lower</code>, <code>max</code>, <code>min</code>,
+<code>plus</code>. See details below.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments. None currently.</p></dd>
+<dd><p>Ignored.</p></dd>
 
 </dl></div>
     <div class="section level2">
