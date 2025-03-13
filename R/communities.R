@@ -70,11 +70,7 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
     "Argument {.arg gamma} must be a single {.cls numeric} value."
   )
   g <- as.igraph(x)
-  g_un <- igraph::as_undirected(
-    graph = g,
-    mode = "collapse",
-    edge.attr.comb = list(weight = "sum")
-  )
+  g_un <- as.igraph(x, mode = "plus")
   communities <- list()
   mapping <- list()
   w <- igraph::E(g)$weight

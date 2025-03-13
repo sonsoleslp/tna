@@ -110,11 +110,7 @@ centralities_ <- function(x, loops, normalize, measures) {
   )
   measures <- check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
-  g <- igraph::graph_from_adjacency_matrix(
-    adjmatrix = x,
-    mode = "directed",
-    weighted = TRUE
-  )
+  g <- as.igraph(x)
   measures_out <- lapply(
     measures,
     function(y) {
