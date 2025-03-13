@@ -74,7 +74,9 @@ igraph::as.igraph
 #'
 #' @export
 #' @family helpers
-#' @inheritParams igraph::as.igraph
+#' @inheritParams igraph::graph_from_adjacency_matrix
+#' @param x A `tna` object.
+#' @param ... Ignored.
 #' @return An `igraph` object.
 as.igraph.tna <- function(x, mode = "directed", ...) {
   check_missing(x)
@@ -90,9 +92,9 @@ as.igraph.tna <- function(x, mode = "directed", ...) {
 #'
 #' @export
 #' @family helpers
-#' @inheritParams igraph::as.igraph
-#' @param directed A `logical` value. If `TRUE`, assumes that the graph is
-#' directed and undirected otherwise.
+#' @inheritParams igraph::graph_from_adjacency_matrix
+#' @param x A `matrix` of edge weights.
+#' @param ... Ignored.
 #' @return An `igraph` object.
 as.igraph.matrix <- function(x, mode = "directed", ...) {
   check_missing(x)
@@ -100,7 +102,7 @@ as.igraph.matrix <- function(x, mode = "directed", ...) {
   igraph::graph_from_adjacency_matrix(
     adjmatrix = x,
     mode = mode,
-    weighted = TRUE
+    weighted = TRUE,
   )
 }
 

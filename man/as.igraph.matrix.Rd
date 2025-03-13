@@ -4,15 +4,18 @@
 \alias{as.igraph.matrix}
 \title{Coerce a Weight Matrix into an \code{igraph} Object.}
 \usage{
-\method{as.igraph}{matrix}(x, directed = TRUE, ...)
+\method{as.igraph}{matrix}(x, mode = "directed", ...)
 }
 \arguments{
-\item{x}{The object to convert.}
+\item{x}{A \code{matrix} of edge weights.}
 
-\item{directed}{A \code{logical} value. If \code{TRUE}, assumes that the graph is
-directed and undirected otherwise.}
+\item{mode}{Character scalar, specifies how igraph should interpret the
+supplied matrix. See also the \code{weighted} argument, the interpretation
+depends on that too. Possible values are: \code{directed},
+\code{undirected}, \code{upper}, \code{lower}, \code{max}, \code{min},
+\code{plus}. See details below.}
 
-\item{...}{Additional arguments. None currently.}
+\item{...}{Ignored.}
 }
 \value{
 An \code{igraph} object.
