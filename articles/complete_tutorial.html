@@ -281,10 +281,10 @@
 <span><span class="co"># Print a summary of the bootstrap results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    from         to weight p_value   sig ci_lower ci_upper</span></span>
-<span><span class="co">#&gt; 2 adapt   cohesion 0.0029   0.506 FALSE  0.00059   0.0054</span></span>
-<span><span class="co">#&gt; 3 adapt  consensus 0.0047   0.163 FALSE  0.00313   0.0065</span></span>
-<span><span class="co">#&gt; 4 adapt coregulate 0.0162   0.149 FALSE  0.01078   0.0222</span></span>
-<span><span class="co">#&gt; 5 adapt    discuss 0.0714   0.001  TRUE  0.06370   0.0795</span></span>
+<span><span class="co">#&gt; 2 adapt   cohesion 0.0029   0.506 FALSE  0.00047   0.0053</span></span>
+<span><span class="co">#&gt; 3 adapt  consensus 0.0047   0.163 FALSE  0.00301   0.0064</span></span>
+<span><span class="co">#&gt; 4 adapt coregulate 0.0162   0.149 FALSE  0.01026   0.0217</span></span>
+<span><span class="co">#&gt; 5 adapt    discuss 0.0714   0.001  TRUE  0.06328   0.0790</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 74 rows ]</span></span>
 <span></span>
 <span><span class="co"># Show the non-significant edges (p-value &gt;= 0.05 in this case)</span></span>
@@ -293,11 +293,11 @@
 <span><span class="co">#&gt; Non-significant Edges</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    from         to weight p_value ci_lower ci_upper</span></span>
-<span><span class="co">#&gt; 2 adapt   cohesion 0.0029    0.51  0.00059   0.0054</span></span>
-<span><span class="co">#&gt; 3 adapt  consensus 0.0047    0.16  0.00313   0.0065</span></span>
-<span><span class="co">#&gt; 4 adapt coregulate 0.0162    0.15  0.01078   0.0222</span></span>
-<span><span class="co">#&gt; 6 adapt    emotion 0.0025    0.56  0.00071   0.0044</span></span>
-<span><span class="co">#&gt; 7 adapt    monitor 0.0112    0.31  0.00621   0.0172</span></span>
+<span><span class="co">#&gt; 2 adapt   cohesion 0.0029    0.51  0.00047   0.0053</span></span>
+<span><span class="co">#&gt; 3 adapt  consensus 0.0047    0.16  0.00301   0.0064</span></span>
+<span><span class="co">#&gt; 4 adapt coregulate 0.0162    0.15  0.01026   0.0217</span></span>
+<span><span class="co">#&gt; 6 adapt    emotion 0.0025    0.56  0.00058   0.0042</span></span>
+<span><span class="co">#&gt; 7 adapt    monitor 0.0112    0.31  0.00516   0.0161</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 22 rows ]</span></span></code></pre></div>
 </div>
 <div class="section level4">
