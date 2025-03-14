@@ -128,18 +128,18 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   p_values <- (p_values + 1) / (iter + 1)
   weights_mean <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
   weights_sd <- apply(weights_boot, c(2, 3), stats::sd, na.rm = TRUE)
-  ci_lower <- apply(
-    weights_boot,
-    c(2, 3),
-    stats::quantile,
-    probs = level / 2,
-    na.rm = TRUE
-  )
-  ci_upper <- apply(
+  ci_lower <- 2.0 * weights - apply(
     weights_boot,
     c(2, 3),
     stats::quantile,
     probs = 1 - level / 2,
+    na.rm = TRUE
+  )
+  ci_upper <-  2.0 * weights - apply(
+    weights_boot,
+    c(2, 3),
+    stats::quantile,
+    probs = level / 2,
     na.rm = TRUE
   )
   weights_sig <- (p_values < level) * weights
