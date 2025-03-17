@@ -280,25 +280,22 @@
 <span></span>
 <span><span class="co"># Print a summary of the bootstrap results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    from         to weight p_value   sig ci_lower ci_upper</span></span>
-<span><span class="co">#&gt; 2 adapt   cohesion 0.0029   0.506 FALSE  0.00047   0.0053</span></span>
-<span><span class="co">#&gt; 3 adapt  consensus 0.0047   0.163 FALSE  0.00301   0.0064</span></span>
-<span><span class="co">#&gt; 4 adapt coregulate 0.0162   0.149 FALSE  0.01026   0.0217</span></span>
-<span><span class="co">#&gt; 5 adapt    discuss 0.0714   0.001  TRUE  0.06328   0.0790</span></span>
-<span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 74 rows ]</span></span>
+<span><span class="co">#&gt;         from    to weight p_value   sig cr_lower cr_upper ci_lower ci_upper</span></span>
+<span><span class="co">#&gt; 2   cohesion adapt 0.0029    0.51 FALSE   0.0022   0.0037  0.00059   0.0054</span></span>
+<span><span class="co">#&gt; 3  consensus adapt 0.0047    0.16 FALSE   0.0036   0.0059  0.00313   0.0065</span></span>
+<span><span class="co">#&gt; 4 coregulate adapt 0.0162    0.15 FALSE   0.0122   0.0203  0.01078   0.0222</span></span>
+<span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 75 rows ]</span></span>
 <span></span>
 <span><span class="co"># Show the non-significant edges (p-value &gt;= 0.05 in this case)</span></span>
 <span><span class="co"># These are edges that are less likely to be stable across bootstrap samples</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot</span>, type <span class="op">=</span> <span class="st">"nonsig"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Non-significant Edges</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    from         to weight p_value ci_lower ci_upper</span></span>
-<span><span class="co">#&gt; 2 adapt   cohesion 0.0029    0.51  0.00047   0.0053</span></span>
-<span><span class="co">#&gt; 3 adapt  consensus 0.0047    0.16  0.00301   0.0064</span></span>
-<span><span class="co">#&gt; 4 adapt coregulate 0.0162    0.15  0.01026   0.0217</span></span>
-<span><span class="co">#&gt; 6 adapt    emotion 0.0025    0.56  0.00058   0.0042</span></span>
-<span><span class="co">#&gt; 7 adapt    monitor 0.0112    0.31  0.00516   0.0161</span></span>
-<span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 22 rows ]</span></span></code></pre></div>
+<span><span class="co">#&gt;         from    to weight p_value cr_lower cr_upper ci_lower ci_upper</span></span>
+<span><span class="co">#&gt; 2   cohesion adapt 0.0029    0.51   0.0022   0.0037  0.00059   0.0054</span></span>
+<span><span class="co">#&gt; 3  consensus adapt 0.0047    0.16   0.0036   0.0059  0.00313   0.0065</span></span>
+<span><span class="co">#&gt; 4 coregulate adapt 0.0162    0.15   0.0122   0.0203  0.01078   0.0222</span></span>
+<span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 24 rows ]</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="permutation">Permutation<a class="anchor" aria-label="anchor" href="#permutation"></a>
