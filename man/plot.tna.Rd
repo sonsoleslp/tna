@@ -11,7 +11,7 @@
   pie,
   cut,
   show_pruned = TRUE,
-  pruned_edge_color = "red",
+  pruned_edge_color = "pink",
   edge.color = NA,
   edge.labels = TRUE,
   edge.label.position = 0.65,

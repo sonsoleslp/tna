@@ -93,7 +93,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' plot(model)
 #'
 plot.tna <- function(x, labels, colors, pie, cut,
-                     show_pruned = TRUE, pruned_edge_color = "red",
+                     show_pruned = TRUE, pruned_edge_color = "pink",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
                      layout_args = list(), mar = rep(5, 4),

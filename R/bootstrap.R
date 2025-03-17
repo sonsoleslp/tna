@@ -51,13 +51,18 @@
 #'     (those with estimated p-values below the significance level).
 #'   * `weights_mean`: The mean weight `matrix` from the bootstrap samples.
 #'   * `weights_sd`: The standard deviation `matrix` from the bootstrap samples.
-#'   * `ci_lower`: The lower bound `matrix` of the confidence intervals for
-#'     the edge weights.
-#'   * `ci_upper`: The upper bound `matrix` of the confidence intervals for
-#'     the edge weights.
+#'   * `cr_lower`: The lower bound `matrix` of the consistency range for the
+#'     edge weights.
+#'   * `cr_upper`: The upper bound `matrix` of the consistency range for the
+#'     edge weights.
+#'   * `ci_lower`: The lower bound `matrix` of the bootstrap confidence
+#'     intervals for the edge weights.
+#'   * `ci_upper`: The upper bound `matrix` of the bootstrap confidence
+#'     intervals for the edge weights.
 #'   * `p_values`: The `matrix` of estimated p-values for the edge weights.
 #'   * `summary`: A `data.frame` summarizing the edges, their weights,
-#'     p-values, statistical significance and confidence intervals.
+#'     p-values, statistical significance, consistency ranges, and
+#'     confidence intervals.
 #'
 #' If `x` is a `group_tna` object, the output is a `group_tna_bootstrap`
 #' object, which is a `list` of `tna_bootstrap` objects.
@@ -128,18 +133,18 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   p_values <- (p_values + 1) / (iter + 1)
   weights_mean <- apply(weights_boot, c(2, 3), mean, na.rm = TRUE)
   weights_sd <- apply(weights_boot, c(2, 3), stats::sd, na.rm = TRUE)
-  ci_lower <- 2.0 * weights - apply(
-    weights_boot,
-    c(2, 3),
-    stats::quantile,
-    probs = 1 - level / 2,
-    na.rm = TRUE
-  )
-  ci_upper <-  2.0 * weights - apply(
+  ci_lower <- apply(
     weights_boot,
     c(2, 3),
     stats::quantile,
     probs = level / 2,
+    na.rm = TRUE
+  )
+  ci_upper <-  apply(
+    weights_boot,
+    c(2, 3),
+    stats::quantile,
+    probs = 1 - level / 2,
     na.rm = TRUE
   )
   weights_sig <- (p_values < level) * weights
@@ -151,11 +156,13 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   dimnames(ci_upper) <- dim_names
   weights_vec <- as.vector(weights)
   combined <- data.frame(
-    from = rep(alphabet, each = a),
-    to = rep(alphabet, times = a),
+    from = rep(alphabet, times = a),
+    to = rep(alphabet, each = a),
     weight = weights_vec,
     p_value = as.vector(p_values),
     sig = as.vector(p_values < level),
+    cr_lower = as.vector(weights * consistency_range[1]),
+    cr_upper = as.vector(weights * consistency_range[2]),
     ci_lower = as.vector(ci_lower),
     ci_upper = as.vector(ci_upper)
   )[weights_vec > 0, ]
@@ -166,6 +173,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
       weights_mean = weights_mean,
       weights_sd = weights_sd,
       p_values = p_values,
+      cr_lower = weights * consistency_range[1],
+      cr_upper = weights * consistency_range[2],
       ci_lower = ci_lower,
       ci_upper = ci_upper,
       summary = combined

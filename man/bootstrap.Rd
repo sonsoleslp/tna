@@ -66,13 +66,18 @@ following elements:
 (those with estimated p-values below the significance level).
 \item \code{weights_mean}: The mean weight \code{matrix} from the bootstrap samples.
 \item \code{weights_sd}: The standard deviation \code{matrix} from the bootstrap samples.
-\item \code{ci_lower}: The lower bound \code{matrix} of the confidence intervals for
-the edge weights.
-\item \code{ci_upper}: The upper bound \code{matrix} of the confidence intervals for
-the edge weights.
+\item \code{cr_lower}: The lower bound \code{matrix} of the consistency range for the
+edge weights.
+\item \code{cr_upper}: The upper bound \code{matrix} of the consistency range for the
+edge weights.
+\item \code{ci_lower}: The lower bound \code{matrix} of the bootstrap confidence
+intervals for the edge weights.
+\item \code{ci_upper}: The upper bound \code{matrix} of the bootstrap confidence
+intervals for the edge weights.
 \item \code{p_values}: The \code{matrix} of estimated p-values for the edge weights.
 \item \code{summary}: A \code{data.frame} summarizing the edges, their weights,
-p-values, statistical significance and confidence intervals.
+p-values, statistical significance, consistency ranges, and
+confidence intervals.
 }
 
 If \code{x} is a \code{group_tna} object, the output is a \code{group_tna_bootstrap}
