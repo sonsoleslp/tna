@@ -100,6 +100,8 @@ reference:
     - reprune
     - pruning_details
     - bootstrap
+    - plot.tna_bootstrap
+    - plot.group_tna_bootstrap
     - summary.tna_bootstrap
     - summary.group_tna_bootstrap
 
