@@ -166,6 +166,18 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
     ci_lower = as.vector(ci_lower),
     ci_upper = as.vector(ci_upper)
   )[weights_vec > 0, ]
+  model <- x
+  tmp <- list(
+    weights = weights_sig,
+    method = "bootstrap",
+    removed = combined[which(!combined$sig), c("from", "to", "weight")],
+    num_removed = sum(!combined$sig),
+    num_retained = sum(combined$sig)
+  )
+  tmp$original <- model$weights
+  tmp$active <- TRUE
+  model$weights <- tmp$weights
+  attr(model, "pruning") <- tmp
   structure(
     list(
       weights_orig = weights,
@@ -177,7 +189,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
       cr_upper = weights * consistency_range[2],
       ci_lower = ci_lower,
       ci_upper = ci_upper,
-      summary = combined
+      summary = combined,
+      model = model
     ),
     class = "tna_bootstrap"
   )

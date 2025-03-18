@@ -152,6 +152,24 @@ plot.tna <- function(x, labels, colors, pie, cut,
   )
 }
 
+#' Plot a Bootstrapped Transition Network Analysis Model
+#'
+#' @export
+#' @family validation
+#' @param x A `tna_bootstrap` object.
+#' @param ... Additional arguments passed to [plot.tna()].
+#' @examples
+#' model <- tna(group_regulation)
+#' # Small number of iterations for CRAN
+#' boot <- bootstrap(model, iter = 50)
+#' plot(boot)
+#'
+plot.tna_bootstrap <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "tna_bootstrap")
+  plot(x$model, ...)
+}
+
 #' Plot Centrality Measures
 #'
 #' Plots the centrality measures of a `tna_centralities` object as a
@@ -1098,6 +1116,24 @@ plot.group_tna <- function(x, title, ...) {
     plot(x[[i]], title = title[i], ...)
   }
   invisible(NULL)
+}
+
+#' Plot a Bootstrapped Grouped Transition Network Analysis Model
+#'
+#' @export
+#' @family validation
+#' @param x A `group_tna_bootstrap` object.
+#' @param ... Additional arguments passed to [plot.tna()].
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Small number of iterations for CRAN
+#' boot <- bootstrap(model, iter = 50)
+#' plot(boot)
+#'
+plot.group_tna_bootstrap <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "group_tna_bootstrap")
+  invisible(lapply(x, plot.tna_bootstrap, ...))
 }
 
 #' Plot Centrality Measures

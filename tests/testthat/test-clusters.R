@@ -31,6 +31,18 @@ test_that("group_ctna returns correct type", {
   )
 })
 
+test_that("group_atna returns correct type", {
+  expect_error(
+    atna_model <- group_atna(mock_sequence, group = c(1, 1, 2, 2)),
+    NA
+  )
+  expect_equal(
+    attr(atna_model[[1]], "type"),
+    "attention"
+  )
+})
+
+
 test_that("group_model returns correct type", {
   expect_true(
     inherits(

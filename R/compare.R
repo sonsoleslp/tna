@@ -228,7 +228,6 @@ compare_ <- function(x, y, scaling = "none", ...) {
     metric = c(
       "Euclidean",
       "Manhattan",
-      "Chebyshev",
       "Canberra",
       "Bray-Curtis",
       "Frobenius"
@@ -236,7 +235,6 @@ compare_ <- function(x, y, scaling = "none", ...) {
     value = c(
       sqrt(sum(abs_diff^2)),
       sum(abs_diff),
-      max(abs_diff),
       sum(abs_diff[pos] / (abs_x[pos] + abs_y[pos])),
       sum(abs_diff) / sum(abs_x + abs_y),
       sqrt(sum(abs_diff^2)) / sqrt(n / 2)
@@ -244,13 +242,12 @@ compare_ <- function(x, y, scaling = "none", ...) {
   )
   similarities <- data.frame(
     category = "Similarities",
-    metric = c("Cosine", "Jaccard", "Dice", "Overlap", "Frobenius", "RV"),
+    metric = c("Cosine", "Jaccard", "Dice", "Overlap", "RV"),
     value = c(
       sum(x * y) / (sqrt(sum(x^2)) * sqrt(sum(y^2))),
       sum(pmin(abs_x, abs_y)) / sum(pmax(abs_x, abs_y)),
       2 * sum(pmin(abs_x, abs_y)) / (sum(abs_x) + sum(abs_y)),
       sum(pmin(abs_x, abs_y)) / min(sum(abs_x), sum(abs_y)),
-      1.0 / (1.0 + sqrt(sum(abs_diff^2)) / sqrt(n / 2)),
       rv_coefficient(x, y)
     )
   )

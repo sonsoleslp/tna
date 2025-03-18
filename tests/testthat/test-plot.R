@@ -14,6 +14,16 @@ test_that("histogram of edge weights can be plotted", {
   )
 })
 
+test_that("bootstrapped model can be plotted", {
+  set.seed(0)
+  model <- tna(group_regulation)
+  boot <- bootstrap(model, iter = 50)
+  expect_error(
+    plot.tna_bootstrap(boot),
+    NA
+  )
+})
+
 test_that("centralities can be plotted", {
   cm <- centralities(mock_tna)
   pdf(NULL)
@@ -151,6 +161,15 @@ test_that("group model can be plotted", {
   )
   expect_error(
     plot(mmm_model, title = "Clusters"),
+    NA
+  )
+})
+
+test_that("bootstrapped model can be plotted for clusters", {
+  set.seed(0)
+  boot <- bootstrap(mmm_model, iter = 50)
+  expect_error(
+    plot(boot),
     NA
   )
 })

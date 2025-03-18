@@ -133,15 +133,7 @@ prune_bootstrap <- function(x, boot, ...) {
   if (is.null(boot)) {
     boot <- bootstrap(x, ...)
   }
-  sig <- boot$summary$sig
-  removed <- boot$summary[which(!sig), c("from", "to", "weight")]
-  list(
-    weights = boot$weights_sig,
-    method = "bootstrap",
-    removed = removed,
-    num_removed = sum(!sig),
-    num_retained = sum(sig)
-  )
+  attr(boot$model, "pruning")
 }
 
 prune_disparity <- function(x, level, labels) {

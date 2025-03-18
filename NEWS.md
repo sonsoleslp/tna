@@ -2,7 +2,8 @@
 
 * The `plot.tna_centralities()` and `plot.group_tna_centralities()` functions now plot the centralities in the same order as provided in the `measures` argument.
 * The `plot.tna()` and `plot_model()` functions now use the median edge weight as the default value for the `cut` argument.
-* Fixed the `from` and `to` columns in `bootstrap` output, which were inverted from the true edge direction.
+* Fixed the `from` and `to` columns in `bootstrap()` output, which were inverted from the true edge direction.
+* A plot method has been added for the `bootstrap()` output, which plots the corresponding network where non-significant edges have been pruned.
 
 # tna 0.4.3
 

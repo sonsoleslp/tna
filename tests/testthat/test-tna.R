@@ -165,6 +165,10 @@ test_that("different model types work", {
     build_model(mock_sequence, type = "gap"),
     NA
   )
+  expect_error(
+    build_model(mock_sequence, type = "attention"),
+    NA
+  )
 })
 
 test_that("models can be constructed from tna_data objects", {

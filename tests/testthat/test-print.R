@@ -18,8 +18,9 @@ test_that("model summary can be printed", {
 })
 
 test_that("bootstrap results can be printed", {
-  model <- tna(mock_sequence)
-  boot <- bootstrap(model, iter = 20)
+  set.seed(0)
+  model <- tna(group_regulation)
+  boot <- bootstrap(model, iter = 50)
   expect_error(
     capture.output(print.tna_bootstrap(boot)),
     NA
