@@ -39,7 +39,7 @@ the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}
 edges are drawn as dashed with a different color to distinguish them.}
 
 \item{pruned_edge_color}{A \code{character} string for the color to use for
-pruned edges when \code{show_pruned = TRUE}. The default is \code{"red"}.}
+pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
 
 \item{edge.color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 

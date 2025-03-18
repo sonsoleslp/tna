@@ -73,7 +73,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' [prune()] should be shown in the plot.  The default is `TRUE`, and the
 #' edges are drawn as dashed with a different color to distinguish them.
 #' @param pruned_edge_color A `character` string for the color to use for
-#' pruned edges when `show_pruned = TRUE`. The default is `"red"`.
+#' pruned edges when `show_pruned = TRUE`. The default is `"pink"`.
 #' @param edge.color See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param edge.label.position See [qgraph::qgraph()].
