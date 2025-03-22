@@ -123,9 +123,11 @@ each cluster from a given sequence, wide-format dataframe,
 or a mixture Markov model.
 }
 \examples{
+# Manually specified groups
 group <- c(rep("High", 1000), rep("Low", 1000))
 model <- group_model(group_regulation, group = group)
 
+# Groups defined by a mixed Markov model
 model <- group_model(engagement_mmm)
 
 model <- group_tna(group_regulation, group = gl(2, 1000))

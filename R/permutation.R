@@ -35,13 +35,104 @@
 #' # Small number of iterations for CRAN
 #' permutation_test(model_x, model_y, iter = 20)
 #'
-permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
-                             measures = character(0), ...) {
+permutation_test <- function(x, ...) {
+  UseMethod("permutation_test")
+}
+
+#' @export
+#' @rdname permutation_test
+permutation_test.tna <- function(x, y, iter = 1000, paired = FALSE,
+                                 level = 0.05, measures = character(0), ...) {
   check_tna_seq(x)
   check_tna_seq(y)
   check_values(iter, strict = TRUE)
   check_flag(paired)
   check_range(level)
+  permutation_test_(
+    x = x,
+    y = y,
+    iter = iter,
+    paired = paired,
+    level = level,
+    measures = measures,
+    adjust = "none",
+    total = nodes(x)^2,
+    ...
+  )
+}
+
+#' Compare Networks using a Permutation Test
+#'
+#' Test edge weight differences between all pairs or a subset of pairs of
+#' a `group_tna` object. See [permutation_test.tna()] for more details.
+#'
+#' @export
+#' @family validation
+#' @param x A `group_tna` object
+#' @param groups An `integer` vector or a `character` vector of group indices
+#' or names, respectively, defining which groups to compare. When not provided,
+#' all pairs are compared (the default).
+#' @param adjust Method to adjust p-values for multiple comparisons.
+#' The default correction is `"holm"`. See [stats::p.adjust()] for details and
+#' available adjustment methods.
+#' @inheritParams permutation_test.tna
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Small number of iterations for CRAN
+#' permutation_test(model, iter = 20)
+#'
+permutation_test.group_tna <- function(x, groups, adjust = "holm", iter = 1000,
+                                       paired = FALSE, level = 0.05,
+                                       measures = character(0), ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  check_values(iter, strict = TRUE)
+  check_flag(paired)
+  check_range(level)
+  x_names <- names(x)
+  groups <- ifelse_(missing(groups), seq_along(x), groups)
+  check_cluster(x, groups)
+  groups <- ifelse_(
+    is.character(groups),
+    which(x_names %in% groups),
+    groups
+  )
+  n_groups <- length(groups)
+  stopifnot_(
+    n_groups >= 2L,
+    "Argument {.arg groups} must contain at least two groups to compare."
+  )
+  n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
+  out <- vector(mode = "list", length = n_pairs)
+  total <- n_pairs * nodes(x)^2
+  idx <- 0L
+  for (i in seq_len(n_groups - 1L)) {
+    for (j in seq(i + 1L, n_groups)) {
+      idx <- idx + 1L
+      group_i <- groups[i]
+      group_j <- groups[j]
+      out[[idx]] <- permutation_test_(
+        x = x[[group_i]],
+        y = x[[group_j]],
+        iter = iter,
+        paired = paired,
+        level = level,
+        measures = measures,
+        adjust = adjust,
+        total = total,
+        ...
+      )
+      names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+    }
+  }
+  structure(
+    out,
+    class = "group_tna_permutation"
+  )
+}
+
+permutation_test_ <- function(x, y, iter, paired, level,
+                              measures, adjust, total, ...) {
   data_x <- x$data
   data_y <- y$data
   n_x <- nrow(data_x)
@@ -127,6 +218,11 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
       1L * (abs(edge_diffs_perm[i, , ]) >= edge_diffs_true_abs)
   }
   edge_p_values <- (edge_p_values + 1) / (iter + 1)
+  edge_p_values[,] <- stats::p.adjust(
+    p = edge_p_values,
+    method = adjust,
+    n = total
+  )
   edge_diffs_sd <- apply(edge_diffs_perm, c(2, 3), stats::sd)
   edge_diffs_sig <- edge_diffs_true * (edge_p_values < level)
   edge_stats <- data.frame(
@@ -144,6 +240,11 @@ permutation_test <- function(x, y, iter = 1000, paired = FALSE, level = 0.05,
   )
   if (include_centralities) {
     cent_p_values <- (cent_p_values + 1) / (iter + 1)
+    cent_p_values[,] <- stats::p.adjust(
+      p = cent_p_values,
+      method = adjust,
+      n = total
+    )
     cent_diffs_sd <- apply(cent_diffs_perm, c(2, 3), stats::sd)
     cent_diffs_sig <- cent_diffs_true * (cent_p_values < level)
     cent_stats <- expand.grid(state = cent_x$state, centrality = measures)

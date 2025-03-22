@@ -151,9 +151,9 @@ print.tna_centralities <- function(x, ...) {
 print.tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_communities")
-  cat("Number of communities found by each algorithm:\n\n")
+  cat("Number of communities found by each algorithm\n\n")
   print(x$counts)
-  cat("\nCommunity assignments:\n\n")
+  cat("\nCommunity assignments\n\n")
   print(x$assignments)
   invisible(x)
 }
@@ -222,7 +222,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   threshold <- attr(x, "threshold")
   cluster <- attr(x, "cluster")
   cat(
-    "Number of ", size, "-cliques: ", n_cliques, " ",
+    "Number of ", size, "-cliques = ", n_cliques, " ",
     "(weight threshold = ", threshold, ")\n",
     sep = ""
   )
@@ -233,7 +233,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   )
   cat("\n")
   for (i in seq(first, max_cliques)) {
-    cat("\nClique ", i, ":\n", sep = "")
+    cat("\nClique ", i, "\n", sep = "")
     print(x$weights[[i]], digits)
   }
   invisible(x)
@@ -314,10 +314,12 @@ print.tna_stability <- function(x, ...) {
 print.tna_permutation <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_permutation")
-  cat("Edges\n\n")
+  if (!is.null(x$centralities)) {
+    cat("Edges\n\n")
+  }
   print(tibble::as_tibble(x$edges$stats), ...)
   if (!is.null(x$centralities)) {
-    cat("Centralities\n\n")
+    cat("\nCentralities\n\n")
     print(x$centralities$stats, ...)
   }
   invisible(x)
@@ -343,7 +345,7 @@ print.group_tna <- function(x, ...) {
   nm <- names(x)
   for (i in seq_along(x)) {
     cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
+    cat(nm[i], "\n\n", sep = "")
     print(x[[i]])
     prefix <- "\n"
   }
@@ -370,7 +372,7 @@ print.group_tna_bootstrap <- function(x, ...) {
   nm <- names(x)
   for (i in seq_along(x)) {
     cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
+    cat(nm[i], "\n\n", sep = "")
     print(x[[i]])
     prefix <- "\n"
   }
@@ -395,7 +397,7 @@ print.summary.group_tna <- function(x, ...) {
   nm <- names(x)
   for (i in seq_along(x)) {
     cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
+    cat(nm[i], "\n\n", sep = "")
     print(x[[i]])
     prefix <- "\n"
   }
@@ -456,7 +458,7 @@ print.group_tna_communities <- function(x, ...) {
   nm <- names(x)
   for (i in seq_along(x)) {
     cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
+    cat(nm[i], "\n\n", sep = "")
     print(x[[i]])
     prefix <- "\n"
   }
@@ -482,7 +484,7 @@ print.group_tna_cliques <- function(x, ...) {
   nm <- names(x)
   for (i in seq_along(x)) {
     cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
+    cat(nm[i], "\n\n", sep = "")
     print(x[[i]])
     prefix <- "\n"
   }
@@ -513,7 +515,35 @@ print.group_tna_stability <- function(x, ...) {
   nm <- names(x)
   for (i in seq_along(x)) {
     cat(prefix)
-    cat(nm[i], ":\n\n", sep = "")
+    cat(nm[i], "\n\n", sep = "")
+    print(x[[i]])
+    prefix <- "\n"
+  }
+  invisible(x)
+}
+
+
+#' Print Permutation Test Results
+#'
+#' @export
+#' @family validation
+#' @param x A `group_tna_permutation` object.
+#' @param ... Arguments passed to [print.tna_permutation()].
+#' @return `x` (invisibly).
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' # Small number of iterations for CRAN
+#' perm <- permutation_test(model, iter = 20)
+#' print(perm)
+#'
+print.group_tna_permutation <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "group_tna_permutation")
+  prefix <- ""
+  nm <- names(x)
+  for (i in seq_along(x)) {
+    cat(prefix)
+    cat(nm[i], "\n\n", sep = "")
     print(x[[i]])
     prefix <- "\n"
   }

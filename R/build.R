@@ -535,11 +535,13 @@ scale_weights <- function(weights, type, scaling, a) {
 
 #' Get Network Node Count
 #'
-#' @param x A `tna` object or a weight `matrix`.
+#' @param x A `tna` or a `group_tna` object, or a weight `matrix`.
 #' @noRd
 nodes <- function(x) {
   if (is_tna(x)) {
     dim(x$weights)[2L]
+  } else if (inherits(x, "group_tna")) {
+    dim(x[[1L]]$weights)[2L]
   } else {
     ncol(x)
   }

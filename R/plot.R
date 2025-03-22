@@ -670,7 +670,7 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
     colors <- rep(colors, length.out = length(unique(x$state)))
   }
   ifelse_(
-    is_tna_centralities(x),
+    inherits(x, "tna_centralities"),
     plot_centralities_single(x, reorder, ncol, scales, colors, labels),
     plot_centralities_multiple(x, reorder, ncol, scales, colors, labels)
   )
@@ -1251,6 +1251,26 @@ plot.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
   invisible(lapply(x, plot.tna_stability, ...))
+}
+
+#' Plot Permutation Test Results
+#'
+#' @export
+#' @family validation
+#' @param x A `group_tna_permutation` object.
+#' @param ... Arguments passed to [plot.tna_permutation()].
+#' @return A `list` (invisibly) of `qgraph` objects depicting the significant
+#' difference between each pair.
+#' @examples
+#' model <- group_tna(engagement_mmm)
+#' # Small number of iterations for CRAN
+#' perm <- permutation_test(model, iter = 20)
+#' plot(perm)
+#'
+plot.group_tna_permutation <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "group_tna_permutation")
+  invisible(lapply(x, plot.tna_permutation))
 }
 
 #' Plot the difference network between two clusters

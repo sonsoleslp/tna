@@ -58,14 +58,6 @@ is_tna <- function(x) {
   inherits(x, "tna")
 }
 
-#' Check that argument is an object of class `tna_centralities`
-#'
-#' @param x An \R object.
-#' @noRd
-is_tna_centralities <- function(x) {
-  inherits(x, "tna_centralities")
-}
-
 #' @importFrom igraph as.igraph
 #' @export
 igraph::as.igraph

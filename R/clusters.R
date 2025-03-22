@@ -30,9 +30,11 @@
 #'   element per cluster. Each element is a `tna` object.
 #'
 #' @examples
+#' # Manually specified groups
 #' group <- c(rep("High", 1000), rep("Low", 1000))
 #' model <- group_model(group_regulation, group = group)
 #'
+#' # Groups defined by a mixed Markov model
 #' model <- group_model(engagement_mmm)
 #'
 group_model <- function(x, ...) {

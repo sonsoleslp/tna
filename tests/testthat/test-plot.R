@@ -80,6 +80,16 @@ test_that("permutation test significant edges can be plotted", {
   )
 })
 
+test_that("permutation test significant edges can be plotted with groups", {
+  model <- group_tna(engagement_mmm)
+  perm <- permutation_test(model, iter = 20)
+  pdf(NULL)
+  expect_error(
+    plot.group_tna_permutation(perm),
+    NA
+  )
+})
+
 test_that("model comparison can be plotted", {
   model_x <- tna(engagement[engagement[, 1] == "Active", ])
   model_y <- tna(engagement[engagement[, 1] != "Active", ])

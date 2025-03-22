@@ -300,6 +300,27 @@ check_string <- function(x) {
   )
 }
 
+#' Check that argument is a valid cluster
+#'
+#' @param x A `group_tna` object.
+#' @param i Index vector of clusters.
+#' @noRd
+check_cluster <- function(x, i) {
+  i <- ifelse_(is.numeric(i), as.integer(i), i)
+  arg <- deparse(substitute(i))
+  n <- length(x)
+  stopifnot_(
+    is.integer(i) || all(i %in% names(x)),
+    "Argument {.arg {arg}} must only contain names of {.arg x} when of type
+     {.cls character}."
+  )
+  stopifnot_(
+    is.character(i) || all(i >= 1 & i <= n),
+    "Argument {.arg {arg}} must contain integers between 1 and {n} when of type
+     {.cls numeric}."
+  )
+}
+
 #' Check that indices/names are valid clusters
 #'
 #' @param x A `group_tna` object.
