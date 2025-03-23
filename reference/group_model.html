@@ -11,7 +11,7 @@ or a mixture Markov model."><meta property="og:image" content="http://sonsoles.m
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +61,7 @@ or a mixture Markov model.</p>
 <span>  <span class="va">group</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
+<span>  groupwise <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">cols</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -68,7 +69,16 @@ or a mixture Markov model.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'mhmm'</span></span>
-<span><span class="fu">group_model</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">group_model</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
+<span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
+<span>  groupwise <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">cols</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">group_tna</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -140,6 +150,11 @@ positive ranks, unlike <code>"minmax"</code> when all weights are positive.</p><
 <li><p><code>"rank"</code> Computes the ranks of the weights using <code><a href="https://rdrr.io/r/base/rank.html" class="external-link">base::rank()</a></code> with
 <code>ties.method = "average"</code>.</p></li>
 </ul></dd>
+
+
+<dt id="arg-groupwise">groupwise<a class="anchor" aria-label="anchor" href="#arg-groupwise"></a></dt>
+<dd><p>A <code>logical</code> value that indicates whether scaling methods
+should be applied by group (<code>TRUE</code>) or globally (<code>FALSE</code>, the default).</p></dd>
 
 
 <dt id="arg-cols">cols<a class="anchor" aria-label="anchor" href="#arg-cols"></a></dt>
