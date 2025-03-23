@@ -105,7 +105,8 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \code{ties.method = "average"}.
 }}
 
-\item{...}{Ignored.}
+\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
+argument matches the actual arguments to \code{build_model} beside \code{x}.}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will

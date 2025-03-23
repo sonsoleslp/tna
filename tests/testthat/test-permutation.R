@@ -24,6 +24,18 @@ test_that("permutation test can be applied with groups", {
   )
 })
 
+test_that("permutation test p-values can be adjusted", {
+  model <- group_tna(engagement_mmm)
+  expect_error(
+    permutation_test(model, iter = 20, adjust = "holm"),
+    NA
+  )
+  expect_error(
+    permutation_test(model, iter = 20, adjust = "holm", adjust_pairwise = FALSE),
+    NA
+  )
+})
+
 test_that("paired permutation fails when data are incomparable", {
   model_x <- tna(group_regulation[1:200, ])
   model_y <- tna(group_regulation[1001:1300, ])

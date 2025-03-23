@@ -188,3 +188,12 @@ test_that("comparison results can be printed", {
     NA
   )
 })
+
+test_that("permutation test results can be printed for clusters", {
+  model <- group_tna(engagement_mmm)
+  perm <- permutation_test(model, iter = 50)
+  expect_error(
+    capture.output(print(perm)),
+    NA
+  )
+})

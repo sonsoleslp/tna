@@ -24,6 +24,8 @@
 #' value in `group` be removed. If `FALSE`, an additional category for `NA`
 #' values will be added. The default is `FALSE` and a warning is issued
 #' if `NA` values are detected.
+#' @param groupwise A `logical` value that indicates whether scaling methods
+#' should be applied by group (`TRUE`) or globally (`FALSE`, the default).
 #' @inheritParams build_model
 #' @param ... Ignored.
 #' @return An object of class `group_tna` which is a `list` containing one
@@ -44,10 +46,12 @@ group_model <- function(x, ...) {
 #' @export
 #' @rdname group_model
 group_model.default <- function(x, group, type = "relative",
-                                scaling = character(0L), cols, params = list(),
-                                na.rm = TRUE, ...) {
+                                scaling = character(0L), groupwise = FALSE,
+                                cols, params = list(), na.rm = TRUE, ...) {
   check_missing(x)
   check_missing(group)
+  check_flag(groupwise)
+  check_flag(na.rm)
   stopifnot_(
     inherits(x, "stslist") ||
       inherits(x, "data.frame") || inherits(x, "tna_data"),
@@ -116,21 +120,38 @@ group_model.default <- function(x, group, type = "relative",
   for (i in seq_along(levs)) {
     groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))
     rows <- which(group == i)
+    group_scaling <- ifelse_(groupwise, scaling, character(0L))
     d <- create_seqdata(
       x[rows, ],
       cols = cols,
       alphabet = alphabet
     )
-    model <- initialize_model(d, type, scaling, params)
-    clusters[[levs[i]]] <- build_model_(
+    model <- initialize_model(
+      d,
+      type = type,
+      scaling = group_scaling,
+      params = params
+    )
+    clusters[[i]] <- build_model_(
       weights = model$weights,
       inits = model$inits,
       labels = model$labels,
       type = type,
-      scaling = scaling,
+      scaling = group_scaling,
       data = d,
       params = params
     )
+  }
+  if (!groupwise && length(scaling > 0)) {
+    weights <- scale_weights_global(
+      weights = lapply(clusters, "[[", "weights"),
+      type = type,
+      scaling = scaling,
+      a = length(alphabet)
+    )
+    for (i in seq_along(clusters)) {
+      clusters[[i]]$weights <- weights[[i]]
+    }
   }
   structure(
     clusters,
@@ -139,20 +160,35 @@ group_model.default <- function(x, group, type = "relative",
     levels = levs,
     na.rm = na.rm,
     cols = cols,
+    groupwise = groupwise,
+    type = type,
+    scaling = scaling,
     class = "group_tna"
   )
 }
 
 #' @export
 #' @rdname group_model
-group_model.mhmm <- function(x, ...) {
+group_model.mhmm <- function(x, type = "relative",
+                             scaling = character(0L), groupwise = FALSE,
+                             cols, params = list(), na.rm = TRUE, ...) {
   stopifnot_(
     requireNamespace("seqHMM", quietly = TRUE),
     "Please install the {.pkg seqHMM} package."
   )
   check_missing(x)
   group <- summary(x)$most_probable_cluster
-  group_model.default(x$observations, group = group, ...)
+  group_model.default(
+    x = x$observations,
+    group = group,
+    type = type,
+    scaling = scaling,
+    groupwise = groupwise,
+    cols = cols,
+    params = params,
+    na.rm = na.rm,
+    ...
+  )
 }
 
 #' @export
@@ -317,4 +353,41 @@ rename_groups <- function(x, new_names) {
   )
   names(x) <- new_names
   x
+}
+
+#' Scale Transition Network Weights
+#'
+#' @param weights A `lsit` of edge weights matrices
+#' @param type Type of the transition network as a `character` string.
+#' @param scaling Scaling methods to apply as a `character` vector.
+#' @param a An `integer`, the number of states.
+#' @noRd
+scale_weights_global <- function(weights, type, scaling, a) {
+  g <- length(weights)
+  if (type == "relative") {
+    for (i in seq_len(g)) {
+      w <- weights[[i]]
+      rs <- .rowSums(w, m = a, n = a)
+      pos <- which(rs > 0)
+      w[pos, ] <- w[pos, ] / rs[pos]
+      w[!pos, ] <- NA
+      weights[[i]] <- w
+    }
+  }
+  weights_vec <- unlist(weights)
+  for (i in seq_along(scaling)) {
+    if (scaling[i] == "minmax") {
+      weights_vec[] <- ranger(weights_vec)
+    } else if (scaling[i] == "max") {
+      weights_vec[] <- weights_vec / max(weights_vec, na.rm = TRUE)
+    } else if (scaling[i] == "rank") {
+      weights_vec[] <- rank(weights_vec, ties.method = "average")
+    }
+  }
+  idx <- seq_len(a^2)
+  for (i in seq_len(g)) {
+    weights[[i]] <- matrix(weights_vec[idx], nrow = a, ncol = a)
+    idx <- idx + a^2
+  }
+  weights
 }

@@ -92,6 +92,7 @@ test_that("unnamed matrix gains dimnames", {
 test_that("tna aliases work", {
   expect_error(ftna(mock_freq_matrix), NA)
   expect_error(ctna(mock_sequence), NA)
+  expect_error(atna(mock_sequence), NA)
 })
 
 test_that("scaling options work", {

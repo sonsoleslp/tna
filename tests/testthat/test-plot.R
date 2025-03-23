@@ -283,3 +283,12 @@ test_that("mosaic can be plotted", {
     NA
   )
 })
+
+test_that("permutation test results can be printed for clusters", {
+  model <- group_tna(engagement_mmm)
+  perm <- permutation_test(model, iter = 50)
+  expect_error(
+    plot(perm),
+    NA
+  )
+})

@@ -1,3 +1,9 @@
+# tna 0.4.5
+
+* The function `permutation_test()` is now a method for both ungrouped (`build_model()`) and grouped (`group_model()`) models. For grouped models, the function performs the test between every unique pair of groups. 
+* A new argument `adjust` has been added for `permutation_test()` to optionally adjust p-values using `p.adjust`. By default, the p-values are not adjusted (`adjust = "none"`).
+* A new argument `groupwise` has been added for `group_model()`. When `FALSE` (the default), scaling methods listed in `scaling` are performed globally over the groups. When `TRUE`, the scaling is performed within each group instead (this was the default behavior in previous versions of the package).
+
 # tna 0.4.4
 
 * The `plot.tna_centralities()` and `plot.group_tna_centralities()` functions now plot the centralities in the same order as provided in the `measures` argument.

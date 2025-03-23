@@ -67,7 +67,10 @@ install.packages("tna")
 ## Example
 
 Load the package
-```{r}
+```{r, echo=FALSE}
+suppressPackageStartupMessages(library("tna"))
+```
+```{r, eval=FALSE}
 library("tna")
 ```
 
@@ -81,7 +84,7 @@ Build a Markov model
 tna_model <- tna(group_regulation)
 ```
 
-```{r, eval = F}
+```{r, eval=FALSE}
 summary(tna_model)
 ```
 ```{r, echo=FALSE}

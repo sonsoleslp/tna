@@ -1,5 +1,3 @@
-
-
 test_that("group_model returns correct type", {
   expect_true(
     inherits(
@@ -41,7 +39,6 @@ test_that("group_atna returns correct type", {
     "attention"
   )
 })
-
 
 test_that("group_model returns correct type", {
   expect_true(
@@ -125,4 +122,9 @@ test_that("missing values in group variable warns", {
   )
 })
 
-
+test_that("groupwise models can be constructed with scaling", {
+  expect_error(
+    group_model(engagement_mmm, scaling = c("minmax", "rank", "max")),
+    NA
+  )
+})

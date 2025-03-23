@@ -77,3 +77,9 @@ test_that("no cases dropped warns", {
     "No cases dropped for proportion 0\\.001\\. Skipping\\.\\.\\."
   )
 })
+
+test_that("RSP is NA with no transitions", {
+  mat <- mock_matrix
+  mat[1,] <- 0
+  expect_equal(rsp_bet(mat), NA)
+})

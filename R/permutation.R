@@ -73,6 +73,11 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' @export
 #' @family validation
 #' @param x A `group_tna` object
+#' @param adjust_pairwise A `logical` value that defines how to adjust p-values
+#' If `TRUE` (the default), adjustment is done for each pair separately so that
+#' the number of comparisons is assumed to be the same as the number of edges.
+#' If `FALSE`, the number of comparisons is defined as the number pairs times
+#' the number of edges.
 #' @param groups An `integer` vector or a `character` vector of group indices
 #' or names, respectively, defining which groups to compare. When not provided,
 #' all pairs are compared (the default).
@@ -82,11 +87,17 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' # Small number of iterations for CRAN
 #' permutation_test(model, iter = 20)
 #'
-permutation_test.group_tna <- function(x, groups, adjust = "none", iter = 1000,
+permutation_test.group_tna <- function(x, groups, adjust = "none",
+                                       adjust_pairwise = TRUE, iter = 1000,
                                        paired = FALSE, level = 0.05,
                                        measures = character(0), ...) {
   check_missing(x)
   check_class(x, "group_tna")
+  stopifnot_(
+    length(attr(x, "scaling")) == 0L || attr(x, "groupwise"),
+    "Permutation test is not supported for
+     grouped models with globally scaled edge weights."
+  )
   check_values(iter, strict = TRUE)
   check_flag(paired)
   check_range(level)
@@ -105,7 +116,11 @@ permutation_test.group_tna <- function(x, groups, adjust = "none", iter = 1000,
   )
   n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
   out <- vector(mode = "list", length = n_pairs)
-  total <- n_pairs * nodes(x)^2
+  total <- ifelse_(
+    adjust_pairwise,
+    nodes(x)^2,
+    n_pairs * nodes(x)^2
+  )
   idx <- 0L
   for (i in seq_len(n_groups - 1L)) {
     for (j in seq(i + 1L, n_groups)) {

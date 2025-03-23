@@ -74,7 +74,8 @@
 #'      `FALSE`.
 #'   * `lambda`: A `numeric` value for the decay rate. The default is 1.
 #'
-#' @param ... Ignored.
+#' @param ... Ignored. For the `build_model` aliases (e.g., `tna`), this
+#' argument matches the actual arguments to `build_model` beside `x`.
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'

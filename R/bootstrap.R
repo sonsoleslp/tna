@@ -198,16 +198,16 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
 
 #' @export
 #' @rdname bootstrap
-#' @examples
-#' model <- group_tna(engagement_mmm)
-#' # Small number of iterations for CRAN
-#' bootstrap(model, iter = 10)
-#'
 bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
                                 method = "stability", threshold,
                                 consistency_range = c(0.75, 1.25), ...) {
   check_missing(x)
   check_class(x, "group_tna")
+  stopifnot_(
+    length(attr(x, "scaling")) == 0L || attr(x, "groupwise"),
+    "Bootstrapping is not supported for
+     grouped models with globally scaled edge weights."
+  )
   structure(
     stats::setNames(
       lapply(

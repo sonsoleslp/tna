@@ -110,10 +110,6 @@ model <- tna(group_regulation)
 # Small number of iterations for CRAN
 bootstrap(model, iter = 10)
 
-model <- group_tna(engagement_mmm)
-# Small number of iterations for CRAN
-bootstrap(model, iter = 10)
-
 }
 \seealso{
 Validation functions

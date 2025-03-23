@@ -17,13 +17,23 @@ group_model(x, ...)
   group,
   type = "relative",
   scaling = character(0L),
+  groupwise = FALSE,
   cols,
   params = list(),
   na.rm = TRUE,
   ...
 )
 
-\method{group_model}{mhmm}(x, ...)
+\method{group_model}{mhmm}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  groupwise = FALSE,
+  cols,
+  params = list(),
+  na.rm = TRUE,
+  ...
+)
 
 group_tna(x, ...)
 
@@ -86,6 +96,9 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \item \code{"rank"} Computes the ranks of the weights using \code{\link[base:rank]{base::rank()}} with
 \code{ties.method = "average"}.
 }}
+
+\item{groupwise}{A \code{logical} value that indicates whether scaling methods
+should be applied by group (\code{TRUE}) or globally (\code{FALSE}, the default).}
 
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
 columns that should be considered as sequence data.
