@@ -74,12 +74,15 @@
 <code><a href="deprune.html">deprune</a>()</code>,
 <code><a href="estimate_centrality_stability.html">estimate_cs</a>()</code>,
 <code><a href="permutation_test.html">permutation_test</a>()</code>,
+<code><a href="permutation_test.group_tna.html">permutation_test.group_tna</a>()</code>,
 <code><a href="plot.group_tna_bootstrap.html">plot.group_tna_bootstrap</a>()</code>,
+<code><a href="plot.group_tna_permutation.html">plot.group_tna_permutation</a>()</code>,
 <code><a href="plot.group_tna_stability.html">plot.group_tna_stability</a>()</code>,
 <code><a href="plot.tna_bootstrap.html">plot.tna_bootstrap</a>()</code>,
 <code><a href="plot.tna_permutation.html">plot.tna_permutation</a>()</code>,
 <code><a href="plot.tna_stability.html">plot.tna_stability</a>()</code>,
 <code><a href="print.group_tna_bootstrap.html">print.group_tna_bootstrap</a>()</code>,
+<code><a href="print.group_tna_permutation.html">print.group_tna_permutation</a>()</code>,
 <code><a href="print.group_tna_stability.html">print.group_tna_stability</a>()</code>,
 <code><a href="print.summary.group_tna_bootstrap.html">print.summary.group_tna_bootstrap</a>()</code>,
 <code><a href="print.summary.tna_bootstrap.html">print.summary.tna_bootstrap</a>()</code>,
@@ -99,21 +102,19 @@
 <span class="r-in"><span><span class="co"># Small number of iterations for CRAN</span></span></span>
 <span class="r-in"><span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="permutation_test.html">permutation_test</a></span><span class="op">(</span><span class="va">model_x</span>, <span class="va">model_y</span>, iter <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">perm</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Edges</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 81 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    edge_name           diff_true effect_size p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> adapt -&gt; adapt       0            <span style="color: #BB0000;">NaN</span>      1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> cohesion -&gt; adapt    0.005<span style="text-decoration: underline;">41</span>        0.938  0.714 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> consensus -&gt; adapt  -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">679</span>      -<span style="color: #BB0000;">0.136</span>  0.762 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> coregulate -&gt; adapt  0.007<span style="text-decoration: underline;">69</span>        0.451  0.619 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> discuss -&gt; adapt    -<span style="color: #BB0000;">0.130</span>         -<span style="color: #BB0000;">6.62</span>   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> emotion -&gt; adapt     0.010<span style="text-decoration: underline;">1</span>         1.68   0.238 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> monitor -&gt; adapt    -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">80</span>       -<span style="color: #BB0000;">0.424</span>  0.905 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> plan -&gt; adapt        0.003<span style="text-decoration: underline;">39</span>        1.33   0.143 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> synthesis -&gt; adapt  -<span style="color: #BB0000;">0.159</span>         -<span style="color: #BB0000;">1.61</span>   0.095<span style="text-decoration: underline;">2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> adapt -&gt; cohesion   -<span style="color: #BB0000;">0.090</span><span style="color: #BB0000; text-decoration: underline;">7</span>        -<span style="color: #BB0000;">0.995</span>  0.286 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> cohesion -&gt; adapt    0.005<span style="text-decoration: underline;">41</span>        0.976  0.810 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> consensus -&gt; adapt  -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">679</span>      -<span style="color: #BB0000;">0.190</span>  0.619 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> coregulate -&gt; adapt  0.007<span style="text-decoration: underline;">69</span>        0.461  0.571 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> discuss -&gt; adapt    -<span style="color: #BB0000;">0.130</span>         -<span style="color: #BB0000;">5.80</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> emotion -&gt; adapt     0.010<span style="text-decoration: underline;">1</span>         1.65   0.286 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> monitor -&gt; adapt    -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">80</span>       -<span style="color: #BB0000;">0.328</span>  1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> plan -&gt; adapt        0.003<span style="text-decoration: underline;">39</span>        1.39   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> synthesis -&gt; adapt  -<span style="color: #BB0000;">0.159</span>         -<span style="color: #BB0000;">1.96</span>   0.095<span style="text-decoration: underline;">2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> adapt -&gt; cohesion   -<span style="color: #BB0000;">0.090</span><span style="color: #BB0000; text-decoration: underline;">7</span>        -<span style="color: #BB0000;">1.42</span>   0.286 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 71 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

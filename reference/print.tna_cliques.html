@@ -96,35 +96,35 @@ The default index is <code>1</code>.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cliq</span> <span class="op">&lt;-</span> <span class="fu"><a href="cliques.html">cliques</a></span><span class="op">(</span><span class="va">model</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cliq</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of 2-cliques: 35 (weight threshold = 0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of 2-cliques = 35 (weight threshold = 0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Showing 6 cliques starting from clique number 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 1:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            monitor      plan</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> monitor 0.01814375 0.2156315</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> plan    0.07552379 0.3742082</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 2:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            emotion    monitor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> emotion 0.07684173 0.03630596</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> monitor 0.09071877 0.01814375</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            emotion       plan</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> emotion 0.07684173 0.09975326</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> plan    0.14682475 0.37420822</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 4:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           discuss    emotion</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> discuss 0.1948874 0.10579600</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> emotion 0.1018682 0.07684173</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 5:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           discuss    monitor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> discuss 0.1948874 0.02227284</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> monitor 0.3754361 0.01814375</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 6:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Clique 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            discuss       plan</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> discuss 0.19488737 0.01164262</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> plan    0.06789021 0.37420822</span>
