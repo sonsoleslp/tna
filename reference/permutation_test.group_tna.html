@@ -55,7 +55,6 @@ a <code>group_tna</code> object. See <code><a href="permutation_test.html">permu
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">groups</span>,</span>
 <span>  adjust <span class="op">=</span> <span class="st">"none"</span>,</span>
-<span>  adjust_pairwise <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  iter <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  level <span class="op">=</span> <span class="fl">0.05</span>,</span>
@@ -82,14 +81,6 @@ all pairs are compared (the default).</p></dd>
 <dd><p>A <code>character</code> string for the method to adjust p-values with
 for multiple comparisons. The default is <code>"none"</code> for no adjustment.
 See <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for details and available adjustment methods.</p></dd>
-
-
-<dt id="arg-adjust-pairwise">adjust_pairwise<a class="anchor" aria-label="anchor" href="#arg-adjust-pairwise"></a></dt>
-<dd><p>A <code>logical</code> value that defines how to adjust p-values
-If <code>TRUE</code> (the default), adjustment is done for each pair separately so that
-the number of comparisons is assumed to be the same as the number of edges.
-If <code>FALSE</code>, the number of comparisons is defined as the number pairs times
-the number of edges.</p></dd>
 
 
 <dt id="arg-iter">iter<a class="anchor" aria-label="anchor" href="#arg-iter"></a></dt>
