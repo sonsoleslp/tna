@@ -8,7 +8,6 @@
   x,
   groups,
   adjust = "none",
-  adjust_pairwise = TRUE,
   iter = 1000,
   paired = FALSE,
   level = 0.05,
@@ -26,12 +25,6 @@ all pairs are compared (the default).}
 \item{adjust}{A \code{character} string for the method to adjust p-values with
 for multiple comparisons. The default is \code{"none"} for no adjustment.
 See \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available adjustment methods.}
-
-\item{adjust_pairwise}{A \code{logical} value that defines how to adjust p-values
-If \code{TRUE} (the default), adjustment is done for each pair separately so that
-the number of comparisons is assumed to be the same as the number of edges.
-If \code{FALSE}, the number of comparisons is defined as the number pairs times
-the number of edges.}
 
 \item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}

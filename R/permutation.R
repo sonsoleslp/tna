@@ -60,7 +60,6 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
     paired = paired,
     level = level,
     measures = measures,
-    total = nodes(x)^2,
     ...
   )
 }
@@ -73,11 +72,6 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' @export
 #' @family validation
 #' @param x A `group_tna` object
-#' @param adjust_pairwise A `logical` value that defines how to adjust p-values
-#' If `TRUE` (the default), adjustment is done for each pair separately so that
-#' the number of comparisons is assumed to be the same as the number of edges.
-#' If `FALSE`, the number of comparisons is defined as the number pairs times
-#' the number of edges.
 #' @param groups An `integer` vector or a `character` vector of group indices
 #' or names, respectively, defining which groups to compare. When not provided,
 #' all pairs are compared (the default).
@@ -88,9 +82,9 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' permutation_test(model, iter = 20)
 #'
 permutation_test.group_tna <- function(x, groups, adjust = "none",
-                                       adjust_pairwise = TRUE, iter = 1000,
-                                       paired = FALSE, level = 0.05,
-                                       measures = character(0), ...) {
+                                       iter = 1000, paired = FALSE,
+                                       level = 0.05, measures = character(0),
+                                       ...) {
   check_missing(x)
   check_class(x, "group_tna")
   stopifnot_(
@@ -116,11 +110,6 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
   )
   n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
   out <- vector(mode = "list", length = n_pairs)
-  total <- ifelse_(
-    adjust_pairwise,
-    nodes(x)^2,
-    n_pairs * nodes(x)^2
-  )
   idx <- 0L
   for (i in seq_len(n_groups - 1L)) {
     for (j in seq(i + 1L, n_groups)) {
@@ -135,7 +124,6 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
         paired = paired,
         level = level,
         measures = measures,
-        total = total,
         ...
       )
       names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
@@ -148,7 +136,7 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
 }
 
 permutation_test_ <- function(x, y, adjust, iter, paired, level,
-                              measures, total, ...) {
+                              measures, ...) {
   data_x <- x$data
   data_y <- y$data
   n_x <- nrow(data_x)
@@ -236,8 +224,7 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
   edge_p_values <- (edge_p_values + 1) / (iter + 1)
   edge_p_values[,] <- stats::p.adjust(
     p = edge_p_values,
-    method = adjust,
-    n = total
+    method = adjust
   )
   edge_diffs_sd <- apply(edge_diffs_perm, c(2, 3), stats::sd)
   edge_diffs_sig <- edge_diffs_true * (edge_p_values < level)
@@ -258,8 +245,7 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     cent_p_values <- (cent_p_values + 1) / (iter + 1)
     cent_p_values[,] <- stats::p.adjust(
       p = cent_p_values,
-      method = adjust,
-      n = total
+      method = adjust
     )
     cent_diffs_sd <- apply(cent_diffs_perm, c(2, 3), stats::sd)
     cent_diffs_sig <- cent_diffs_true * (cent_p_values < level)
