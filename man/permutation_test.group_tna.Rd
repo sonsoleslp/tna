@@ -7,7 +7,7 @@
 \method{permutation_test}{group_tna}(
   x,
   groups,
-  adjust = "holm",
+  adjust = "none",
   iter = 1000,
   paired = FALSE,
   level = 0.05,
@@ -22,9 +22,9 @@
 or names, respectively, defining which groups to compare. When not provided,
 all pairs are compared (the default).}
 
-\item{adjust}{Method to adjust p-values for multiple comparisons.
-The default correction is \code{"holm"}. See \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and
-available adjustment methods.}
+\item{adjust}{A \code{character} string for the method to adjust p-values with
+for multiple comparisons. The default is \code{"none"} for no adjustment.
+See \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available adjustment methods.}
 
 \item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}

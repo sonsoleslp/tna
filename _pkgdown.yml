@@ -84,8 +84,11 @@ reference:
   - title: Validation
     contents:
     - permutation_test
+    - permutation_test.group_tna
     - print.tna_permutation
+    - print.group_tna_permutation
     - plot.tna_permutation
+    - plot.group_tna_permutation
     - print.tna_bootstrap
     - print.summary.tna_bootstrap
     - print.summary.group_tna_bootstrap

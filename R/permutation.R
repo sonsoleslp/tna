@@ -10,6 +10,9 @@
 #' @family validation
 #' @param x A `tna` object containing sequence data for the first `tna` model.
 #' @param y A `tna` object containing sequence data for the second `tna` model.
+#' @param adjust A `character` string for the method to adjust p-values with
+#' for multiple comparisons. The default is `"none"` for no adjustment.
+#' See [stats::p.adjust()] for details and available adjustment methods.
 #' @param iter An `integer` giving the number of permutations to perform.
 #' The default is 1000.
 #' @param paired A `logical` value. If `TRUE`, perform paired permutation tests;
@@ -41,8 +44,9 @@ permutation_test <- function(x, ...) {
 
 #' @export
 #' @rdname permutation_test
-permutation_test.tna <- function(x, y, iter = 1000, paired = FALSE,
-                                 level = 0.05, measures = character(0), ...) {
+permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
+                                 paired = FALSE, level = 0.05,
+                                 measures = character(0), ...) {
   check_tna_seq(x)
   check_tna_seq(y)
   check_values(iter, strict = TRUE)
@@ -51,11 +55,11 @@ permutation_test.tna <- function(x, y, iter = 1000, paired = FALSE,
   permutation_test_(
     x = x,
     y = y,
+    adjust = adjust,
     iter = iter,
     paired = paired,
     level = level,
     measures = measures,
-    adjust = "none",
     total = nodes(x)^2,
     ...
   )
@@ -72,16 +76,13 @@ permutation_test.tna <- function(x, y, iter = 1000, paired = FALSE,
 #' @param groups An `integer` vector or a `character` vector of group indices
 #' or names, respectively, defining which groups to compare. When not provided,
 #' all pairs are compared (the default).
-#' @param adjust Method to adjust p-values for multiple comparisons.
-#' The default correction is `"holm"`. See [stats::p.adjust()] for details and
-#' available adjustment methods.
 #' @inheritParams permutation_test.tna
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Small number of iterations for CRAN
 #' permutation_test(model, iter = 20)
 #'
-permutation_test.group_tna <- function(x, groups, adjust = "holm", iter = 1000,
+permutation_test.group_tna <- function(x, groups, adjust = "none", iter = 1000,
                                        paired = FALSE, level = 0.05,
                                        measures = character(0), ...) {
   check_missing(x)
@@ -114,11 +115,11 @@ permutation_test.group_tna <- function(x, groups, adjust = "holm", iter = 1000,
       out[[idx]] <- permutation_test_(
         x = x[[group_i]],
         y = x[[group_j]],
+        adjust = adjust,
         iter = iter,
         paired = paired,
         level = level,
         measures = measures,
-        adjust = adjust,
         total = total,
         ...
       )
@@ -131,8 +132,8 @@ permutation_test.group_tna <- function(x, groups, adjust = "holm", iter = 1000,
   )
 }
 
-permutation_test_ <- function(x, y, iter, paired, level,
-                              measures, adjust, total, ...) {
+permutation_test_ <- function(x, y, adjust, iter, paired, level,
+                              measures, total, ...) {
   data_x <- x$data
   data_y <- y$data
   n_x <- nrow(data_x)

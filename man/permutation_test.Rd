@@ -10,6 +10,7 @@ permutation_test(x, ...)
 \method{permutation_test}{tna}(
   x,
   y,
+  adjust = "none",
   iter = 1000,
   paired = FALSE,
   level = 0.05,
@@ -23,6 +24,10 @@ permutation_test(x, ...)
 \item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 
 \item{y}{A \code{tna} object containing sequence data for the second \code{tna} model.}
+
+\item{adjust}{A \code{character} string for the method to adjust p-values with
+for multiple comparisons. The default is \code{"none"} for no adjustment.
+See \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available adjustment methods.}
 
 \item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}
