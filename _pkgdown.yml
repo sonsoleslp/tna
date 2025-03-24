@@ -37,6 +37,7 @@ reference:
     - print.tna_data
     - summary.tna
     - hist.tna
+    - simulate.tna
     - print.summary.tna
     - plot_mosaic
     - plot_mosaic.tna_data
