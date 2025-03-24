@@ -45,6 +45,7 @@
 <ul><li>The function <code><a href="../reference/permutation_test.html">permutation_test()</a></code> is now a method for both ungrouped (<code><a href="../reference/build_model.html">build_model()</a></code>) and grouped (<code><a href="../reference/group_model.html">group_model()</a></code>) models. For grouped models, the function performs the test between every unique pair of groups.</li>
 <li>A new argument <code>adjust</code> has been added for <code><a href="../reference/permutation_test.html">permutation_test()</a></code> to optionally adjust p-values using <code>p.adjust</code>. By default, the p-values are not adjusted (<code>adjust = "none"</code>).</li>
 <li>A new argument <code>groupwise</code> has been added for <code><a href="../reference/group_model.html">group_model()</a></code>. When <code>FALSE</code> (the default), scaling methods listed in <code>scaling</code> are performed globally over the groups. When <code>TRUE</code>, the scaling is performed within each group instead (this was the default behavior in previous versions of the package).</li>
+<li>Added a <code><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate()</a></code> method for <code>tna</code> objects. For models with <code>type = "relative"</code>, this function simulates sequence data based on the initial probabilities and transition probability matrix.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.4" id="tna-044">tna 0.4.4<a class="anchor" aria-label="anchor" href="#tna-044"></a></h2>
