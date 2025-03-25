@@ -4,12 +4,18 @@
 \alias{plot.tna_permutation}
 \title{Plot the Significant Differences from a Permutation Test}
 \usage{
-\method{plot}{tna_permutation}(x, colors, ...)
+\method{plot}{tna_permutation}(x, colors, posCol = "#009900", negCol = "red", ...)
 }
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
 
 \item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{posCol}{Color for plotting edges
+the difference in edge weights is positive. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+
+\item{negCol}{Color for plotting edges when
+the the difference in edge weights is negative. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }

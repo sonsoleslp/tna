@@ -495,6 +495,10 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' @param x A `tna_permutation` object.
 #' @param colors See [qgraph::qgraph()].
 #' @param ... Arguments passed to [plot_model()].
+#' @param posCol Color for plotting edges
+#'   the difference in edge weights is positive. See [qgraph::qgraph()].
+#' @param negCol Color for plotting edges when
+#'   the the difference in edge weights is negative. See [qgraph::qgraph()].
 #' @return A `qgraph` object containing only the significant edges according
 #' to the permutation test.
 #' @examples
