@@ -1274,7 +1274,7 @@ plot.group_tna_stability <- function(x, ...) {
 plot.group_tna_permutation <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_permutation")
-  invisible(lapply(x, plot.tna_permutation))
+  invisible(lapply(x, plot.tna_permutation, ...))
 }
 
 #' Plot the difference network between two clusters
