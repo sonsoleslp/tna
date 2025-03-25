@@ -47,6 +47,8 @@ permutation_test <- function(x, ...) {
 permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
                                  paired = FALSE, level = 0.05,
                                  measures = character(0), ...) {
+  check_missing(x)
+  check_missing(y)
   check_tna_seq(x)
   check_tna_seq(y)
   check_values(iter, strict = TRUE)

@@ -504,7 +504,9 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' perm <- permutation_test(model_x, model_y, iter = 20)
 #' plot(perm)
 #'
-plot.tna_permutation <- function(x, colors, ...) {
+plot.tna_permutation <- function(x, colors,
+                                 posCol = "#009900", negCol = "red", ...) {
+  check_missing(x)
   check_class(x, "tna_permutation")
   colors <- ifelse_(
     missing(colors),
@@ -515,6 +517,8 @@ plot.tna_permutation <- function(x, colors, ...) {
     x$edges$diffs_sig,
     labels = attr(x, "labels"),
     colors = colors,
+    posCol = posCol,
+    negCol = negCol,
     ...
   )
 }
