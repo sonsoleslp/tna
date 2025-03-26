@@ -39,6 +39,8 @@ reference:
     - hist.tna
     - simulate.tna
     - print.summary.tna
+    - plot_frequencies
+    - plot_frequencies.group_tna
     - plot_mosaic
     - plot_mosaic.tna_data
     - print.group_tna

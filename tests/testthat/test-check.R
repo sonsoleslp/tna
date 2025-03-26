@@ -163,21 +163,20 @@ test_that("invalid plotting layout fails", {
 })
 
 test_that("cluster check fails on invalid clusters", {
-  model <- group_tna(engagement_mmm)
   expect_error(
-    check_clusters(model, i = 1, j = 1),
+    check_clusters(mmm_model, i = 1, j = 1),
     "Arguments `i` and `j` must be different\\."
   )
   expect_error(
-    check_clusters(model, i = 1, j = 4),
+    check_clusters(mmm_model, i = 1, j = 4),
     "Argument `j` must be between 1 and 3 when of type <numeric>\\."
   )
   expect_error(
-    check_clusters(model, i = c(2, 3), j = 1),
+    check_clusters(mmm_model, i = c(2, 3), j = 1),
     "Argument `i` must be a <numeric> or a <character> vector of length 1\\."
   )
   expect_error(
-    check_clusters(model, i = 1, j = "Cluster 4"),
+    check_clusters(mmm_model, i = 1, j = "Cluster 4"),
     "Argument `j` must be a name of `x` when of type <character>\\."
   )
 })

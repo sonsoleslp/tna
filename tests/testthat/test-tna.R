@@ -130,9 +130,8 @@ test_that("igraph conversion works", {
 })
 
 test_that("igraph conversion works for clusters", {
-  model <- group_tna(engagement_mmm)
   expect_error(
-    as.igraph(model, which = 1),
+    as.igraph(mmm_model, which = 1),
     NA
   )
 })
@@ -185,4 +184,10 @@ test_that("log-sum-exp is correct", {
     log_sum_exp(x),
     log(sum(exp(x)))
   )
+})
+
+test_that("number of nodes is correct", {
+  expect_equal(nodes(mock_tna), 4)
+  expect_equal(nodes(mmm_model), 3)
+  expect_equal(nodes(mock_matrix), 4)
 })

@@ -870,6 +870,50 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
   )
 }
 
+#' Plot the Frequency Distribution of States
+#'
+#' @export
+#' @family basic
+#' @param x A `tna` object created from sequence data.
+#' @param ... Ignored.
+#' @return A `ggplot` object.
+#' @examples
+#' model <- tna(group_regulation)
+#' plot_frequencies(model)
+#'
+plot_frequencies <- function(x, ...) {
+  UseMethod("plot_frequencies")
+}
+
+#' @export
+#' @rdname plot_frequencies
+plot_frequencies.tna <- function(x, ...) {
+  check_missing(x)
+  check_tna_seq(x)
+  cols <- attr(x$data, "cols")
+  tab <- table(unlist(x$data[, cols]))
+  d <- as.data.frame(tab)
+  names(d) <- c("state", "freq")
+  d[[1L]] <- factor(x$labels[d[[1L]]])
+  ggplot2::ggplot(
+    d,
+    ggplot2::aes(x = !!rlang::sym("state"), y = !!rlang::sym("freq"))
+  ) +
+    ggplot2::geom_bar(
+      stat = "identity",
+      colour = "black",
+      width = 0.7
+    ) +
+    ggplot2::geom_text(
+      ggplot2::aes(label = !!rlang::sym("freq")),
+      position = ggplot2::position_dodge(width = 0.7),
+      vjust = -0.5
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
+    ggplot2::labs(x = "State", y = "Frequency")
+}
+
 #' Plot a Transition Network Model from a Matrix of Edge Weights
 #'
 #' @export
@@ -934,8 +978,6 @@ plot_mosaic <- function(x, ...) {
 #' @export
 #' @rdname plot_mosaic
 plot_mosaic.tna <- function(x, digits = 1, ...) {
-  # from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
-  # Based on the code by Jake Fisher and cpsyctc.
   check_missing(x)
   check_class(x, "tna")
   stopifnot_(
@@ -951,6 +993,8 @@ plot_mosaic.tna <- function(x, digits = 1, ...) {
   )
 }
 
+# from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
+# Based on the code by Jake Fisher and cpsyctc.
 plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
   n <- nrow(tab)
   m <- ncol(tab)
@@ -1281,7 +1325,7 @@ plot.group_tna_permutation <- function(x, ...) {
   invisible(lapply(x, plot.tna_permutation, ...))
 }
 
-#' Plot the difference network between two clusters
+#' Plot the Difference Network Between Two Clusters
 #'
 #' @export
 #' @family comparison
@@ -1302,6 +1346,55 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
   check_class(x, "group_tna")
   check_clusters(x, i, j)
   plot_compare(x = x[[i]], y = x[[j]], ...)
+}
+
+#' Plot the Frequency Distribution of States
+#'
+#' @export
+#' @family basic
+#' @param x A `group_tna` object.
+#' @param label An optional `character` string that can be provided to specify
+#' the grouping factor name if `x` was not constructed using a column name of
+#' the original data.
+#' @param ... Ignored.
+#' @return A `ggplot` object.
+#' @examples
+#' model <- group_model(engagement_mmm)
+#' plot_frequencies(model)
+#'
+plot_frequencies.group_tna <- function(x, label, ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  combined <- combine_data(x, label)
+  long <- combined$data
+  label <- combined$label
+  long$value <- factor(x[[1L]]$labels[long$value])
+  long[[label]] <- factor(long[[label]])
+  d <- long |>
+    dplyr::group_by(!!rlang::sym(label), !!rlang::sym("value")) |>
+    dplyr::summarize(freq = dplyr::n())
+  ggplot2::ggplot(
+    d,
+    ggplot2::aes(
+      x = !!rlang::sym("value"),
+      y = !!rlang::sym("freq"),
+      fill = !!rlang::sym(label))
+  ) +
+    ggplot2::geom_bar(
+      stat = "identity",
+      colour = "black",
+      position = ggplot2::position_dodge(),
+      width = 0.7
+    ) +
+    ggplot2::geom_text(
+      ggplot2::aes(label = !!rlang::sym("freq")),
+      position = ggplot2::position_dodge(width = 0.7),
+      vjust = -0.5
+    ) +
+    ggplot2::scale_fill_brewer(palette = "Set2") +
+    ggplot2::theme_minimal() +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
+    ggplot2::labs(x = "State", y = "Frequency")
 }
 
 #' Plot State Frequencies as a Mosaic Between Two Groups
@@ -1372,7 +1465,7 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
   )
 }
 
-#' Plot state frequencies as a mosaic between two groups
+#' Plot State Frequencies as a Mosaic Between Two Groups
 #'
 #' @export
 #' @family basic
@@ -1388,33 +1481,16 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
 #' plot_mosaic(model)
 #'
 plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
+  check_missing(x)
   check_class(x, "group_tna")
-  cols <- attr(x, "cols")
+  check_values(digits, strict = TRUE)
+  combined <- combine_data(x, label)
+  long <- combined$data
+  label <- combined$label
   labels <- x[[1L]]$labels
-  levs <- attr(x, "levels")
-  groups <- attr(x, "groups")
-  group_var <- attr(x, "group_var")
-  data <- dplyr::bind_rows(
-    lapply(x, function(y) y$data[, cols])
-  )
-  data[[group_var]] <- unlist(groups)
-  label <- ifelse_(
-    !missing(label),
-    label,
-    ifelse_(
-      group_var == ".group",
-      "Cluster",
-      group_var
-    )
-  )
-  check_string(label)
-  names(data) <- c(names(data)[-ncol(data)], label)
-  long <- data |>
-    tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
-    dplyr::filter(!is.na(!!rlang::sym("value")))
   use_na <- ifelse_(attr(x, "na.rm"), "no", "ifany")
   tab <- table(long[[label]], long$value, useNA = use_na)
-  dimnames(tab) <- list(levs, labels)
+  dimnames(tab) <- list(attr(x, "levels"), labels)
   plot_mosaic_(
     tab,
     digits,

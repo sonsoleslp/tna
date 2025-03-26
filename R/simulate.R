@@ -56,12 +56,12 @@ simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
   out[, 1L] <- sample(seq_len(n), size = nsim, replace = TRUE, prob = init)
   for (i in seq(2L, max_len)) {
     # Gumbell softmax "trick"
-    log_prob <- log(prob[out[, i - 1L], ])
+    log_prob <- log(prob[out[, i - 1L], , drop = FALSE])
     out[, i] <- max.col(log_prob - log(-log(stats::runif(nu))))
   }
-  out <- apply(out, 2L, function(y) labels[y])
-  out <- as.data.frame(out)
-  names(out) <- paste0("T", seq_len(max_len))
+  # simplify = FALSE in case of nsim = 1
+  out <- apply(out, 2L, function(y) labels[y], simplify = FALSE)
+  out <- as.data.frame(out, col.names = paste0("T", seq_len(max_len)))
   if (na_range[2L] > 0L) {
     max_seq <- seq(na_range[1L], na_range[2L])
     nas <- sample(max_seq, size = nsim, replace = TRUE)

@@ -391,3 +391,36 @@ scale_weights_global <- function(weights, type, scaling, a) {
   }
   weights
 }
+
+#' Combine data from clusters into a single dataset in long format
+#'
+#' @param x A `group_tna` object.
+#' @param label optional group variable name as a `character` string
+#' @noRd
+combine_data <- function(x, label) {
+  cols <- attr(x, "cols")
+  groups <- attr(x, "groups")
+  group_var <- attr(x, "group_var")
+  data <- dplyr::bind_rows(
+    lapply(x, function(y) y$data[, cols])
+  )
+  data[[group_var]] <- unlist(groups)
+  label <- ifelse_(
+    !missing(label),
+    label,
+    ifelse_(
+      group_var == ".group",
+      "Cluster",
+      group_var
+    )
+  )
+  check_string(label)
+  names(data) <- c(names(data)[-ncol(data)], label)
+  out <- data |>
+    tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
+    dplyr::filter(!is.na(!!rlang::sym("value")))
+  list(
+    data = out,
+    label = label
+  )
+}

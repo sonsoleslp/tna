@@ -71,13 +71,12 @@ test_that("groups can be renamed", {
 })
 
 test_that("group model can be summarized", {
-  model <- group_model(engagement_mmm)
   expect_error(
-    summary(model),
+    summary(mmm_model),
     NA
   )
   expect_error(
-    summary(model, combined = FALSE),
+    summary(mmm_model, combined = FALSE),
     NA
   )
 })

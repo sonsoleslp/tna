@@ -1,3 +1,7 @@
+# tna 0.4.6
+
+* Added the function `plot_frequencies()` that can be used to plot the state frequency distribution for both `tna` and `group_tna` objects.
+
 # tna 0.4.5
 
 * The function `permutation_test()` is now a method for both ungrouped (`build_model()`) and grouped (`group_model()`) models. For grouped models, the function performs the test between every unique pair of groups. 

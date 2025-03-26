@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot_mosaic.group_tna}
 \alias{plot_mosaic.group_tna}
-\title{Plot state frequencies as a mosaic between two groups}
+\title{Plot State Frequencies as a Mosaic Between Two Groups}
 \usage{
 \method{plot_mosaic}{group_tna}(x, label, digits = 1, ...)
 }
@@ -22,7 +22,7 @@ for the chi-square test statistic and the p-value in the plot.}
 A \code{ggplot} object.
 }
 \description{
-Plot state frequencies as a mosaic between two groups
+Plot State Frequencies as a Mosaic Between Two Groups
 }
 \examples{
 model <- group_model(engagement_mmm)
@@ -36,6 +36,8 @@ Basic functions
 \code{\link{hist.tna}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
+\code{\link{plot_frequencies}()},
+\code{\link{plot_frequencies.group_tna}()},
 \code{\link{plot_mosaic}()},
 \code{\link{plot_mosaic.tna_data}()},
 \code{\link{prepare_data}()},

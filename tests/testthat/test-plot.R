@@ -81,8 +81,7 @@ test_that("permutation test significant edges can be plotted", {
 })
 
 test_that("permutation test significant edges can be plotted with groups", {
-  model <- group_tna(engagement_mmm)
-  perm <- permutation_test(model, iter = 20)
+  perm <- permutation_test(mmm_model, iter = 20)
   pdf(NULL)
   expect_error(
     plot.group_tna_permutation(perm),
@@ -93,14 +92,13 @@ test_that("permutation test significant edges can be plotted with groups", {
 test_that("model comparison can be plotted", {
   model_x <- tna(engagement[engagement[, 1] == "Active", ])
   model_y <- tna(engagement[engagement[, 1] != "Active", ])
-  model_grouped <- group_tna(engagement_mmm)
   pdf(NULL)
   expect_error(
     plot_compare(model_x, model_y),
     NA
   )
   expect_error(
-    plot_compare(model_grouped),
+    plot_compare(mmm_model),
     NA
   )
 })
@@ -109,6 +107,13 @@ test_that("edge weight matrix can be plotted", {
   pdf(NULL)
   expect_error(
     plot_model(mock_matrix),
+    NA
+  )
+})
+
+test_that("frequencies can be plotted", {
+  expect_error(
+    plot_frequencies(mock_tna_seq),
     NA
   )
 })
@@ -284,11 +289,17 @@ test_that("mosaic can be plotted", {
   )
 })
 
-test_that("permutation test results can be printed for clusters", {
-  model <- group_tna(engagement_mmm)
-  perm <- permutation_test(model, iter = 50)
+test_that("permutation test results can be plotted for clusters", {
+  perm <- permutation_test(mmm_model, iter = 50)
   expect_error(
     plot(perm),
+    NA
+  )
+})
+
+test_that("frequencies can be plotted for clusters", {
+  expect_error(
+    plot_frequencies(mmm_model),
     NA
   )
 })

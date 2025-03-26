@@ -28,6 +28,8 @@ mock_tna <- tna(
   inits = c(0.3, 0.2, 0.3, 0.2)
 )
 
+mock_tna_seq <- tna(mock_sequence)
+
 mmm_model <- group_tna(engagement_mmm)
 
 mock_long <- data.frame(
