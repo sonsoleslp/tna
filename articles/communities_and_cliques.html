@@ -69,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Finding cliques and communities with tna</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/vignettes/communities_and_cliques.Rmd" class="external-link"><code>vignettes/communities_and_cliques.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/vignettes/articles/communities_and_cliques.Rmd" class="external-link"><code>vignettes/articles/communities_and_cliques.Rmd</code></a></small>
       <div class="d-none name"><code>communities_and_cliques.Rmd</code></div>
     </div>
 
@@ -122,14 +122,14 @@ begin by loading the package and the example data set
 <span><span class="co">#&gt;       plan  synthesis </span></span>
 <span><span class="co">#&gt;     0.2045     0.0195</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="communities_and_cliques_files/figure-html/unnamed-chunk-3-1.svg" width="100%"></p>
+<p><img src="communities_and_cliques_files/figure-html/unnamed-chunk-3-1.png" width="100%"></p>
 <p>Next, we apply several community finding algorithms to the model (see
 <code><a href="../reference/communities.html">?communities</a></code> for more details), and plot the results for
 the <code>leading_eigen</code> algorithm.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/communities.html">communities</a></span><span class="op">(</span><span class="va">tna_model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cd</span>, method <span class="op">=</span> <span class="st">"leading_eigen"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="communities_and_cliques_files/figure-html/unnamed-chunk-4-1.svg" width="100%"></p>
+<p><img src="communities_and_cliques_files/figure-html/unnamed-chunk-4-1.png" width="100%"></p>
 <p>Cliques can be obtained with the <code>cliques</code> function. Here
 we look for dyads and triads by setting <code>size = 2</code> and
 <code>size = 3</code>, respectively. Finally, we plot the results.</p>
@@ -139,7 +139,7 @@ we look for dyads and triads by setting <code>size = 2</code> and
 <span><span class="va">triads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">tna_model</span>, size <span class="op">=</span> <span class="fl">3</span>, threshold <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dyads</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">triads</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="communities_and_cliques_files/figure-html/figures-side-1.svg" width="100%"></p>
+<p><img src="communities_and_cliques_files/figure-html/figures-side-1.png" width="100%"></p>
   </main>
 </div>
 
