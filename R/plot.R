@@ -1222,7 +1222,7 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
-#' plot(cliq, ask = F)
+#' plot(cliq, ask = FALSE)
 #'
 plot.group_tna_cliques <- function(x, title, ...) {
   check_missing(x)

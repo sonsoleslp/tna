@@ -12,11 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   fig.width = 6,
   fig.height = 4,
-  cache = TRUE,
-  dev = "svg",
-  fig.ext="svg",
   out.width = "100%",
-  dpi = 100,
   comment = "#>"
 )
 suppressPackageStartupMessages({
@@ -168,7 +164,7 @@ cliques_of_three <- cliques(
 # Print and visualize the identified 3-cliques (triads)
 # Uncomment the code below to view the results
 print(cliques_of_three) # Display details of 3-cliques
-plot(cliques_of_three, ask = F)  # Visualize 3-cliques in the network
+plot(cliques_of_three, ask = FALSE)  # Visualize 3-cliques in the network
 ```
 ```{r, fig.align='center', fig.width=6, fig.height=4}
 layout(matrix(1:6, ncol = 3))
@@ -185,7 +181,7 @@ cliques_of_four <- cliques(
 # Print and visualize the identified 4-cliques (quadruples) 
 # Uncomment the code below to view the results
 print(cliques_of_four)  # Display details of 4-cliques
-plot(cliques_of_four, ask = F)   # Visualize 4-cliques in the network
+plot(cliques_of_four, ask = FALSE)   # Visualize 4-cliques in the network
 ```
 ```{r, fig.align='center'}
 # Identify 5-cliques (quintuples) from the FTNA model, summing edge weights.
@@ -201,7 +197,7 @@ cliques_of_five <- cliques(
 
 # Print and visualize the identified 5-cliques (quintuples)
 print(cliques_of_five)  # Display details of 5-cliques
-plot(cliques_of_five, ask = F)   # Visualize 5-cliques in the network
+plot(cliques_of_five, ask = FALSE)   # Visualize 5-cliques in the network
 ```
 
 ## Graph level measures

@@ -274,7 +274,10 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   )
   names(stability) <- measures
   if (progressbar) {
-    pb <- utils::txtProgressBar(min = 0, max = n_prop * iter, style = 3)
+    cli::cli_progress_bar(
+      name = "Computing centrality stability",
+      total = n_prop * iter
+    )
   }
   for (i in seq_len(n_prop)) {
     prop <- drop_prop[i]
@@ -323,16 +326,13 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
         numeric(1L)
       )
       if (progressbar) {
-        utils::setTxtProgressBar(pb, (i - 1) * iter + j)
+        cli::cli_progress_update()
       }
     }
     for (k in seq_len(n_measures)) {
       measure <- measures[k]
       stability[[measure]][, i] <- corr_prop[, k]
     }
-  }
-  if (progressbar) {
-    close(pb)
   }
   out <- list()
   # TODO handle all NA case?
@@ -347,6 +347,9 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
       cs_coefficient = cs_coef,
       correlations = stability[[measure]]
     )
+  }
+  if (progressbar) {
+    cli::cli_process_done()
   }
   structure(
     out,

@@ -24,7 +24,7 @@ Plot Found Cliques
 \examples{
 model <- group_model(engagement_mmm)
 cliq <- cliques(model, size = 2)
-plot(cliq, ask = F)
+plot(cliq, ask = FALSE)
 
 }
 \seealso{

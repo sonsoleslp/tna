@@ -190,13 +190,7 @@ check_flag <- function(x) {
 check_layout <- function(x, layout, args = list(), ...) {
   if (is.character(layout)) {
     layout <- tolower(layout)
-    layout <- try(
-      match.arg(
-        layout,
-        c("circle", "groups", "spring")
-      ),
-      silent = TRUE
-    )
+    layout <- try_(match.arg(layout, c("circle", "groups", "spring")))
     stopifnot_(
       !inherits(layout, "try-error"),
       "A {.cls character} layout must be either {.val circle}, {.val groups},
@@ -263,14 +257,7 @@ check_weights <- function(x, type) {
 check_match <- function(x, choices, several.ok = FALSE) {
   arg <- deparse(substitute(x))
   x <- onlyif(is.character(x), tolower(x))
-  x <- try(
-    match.arg(
-      arg = x,
-      choices = choices,
-      several.ok = several.ok
-    ),
-    silent = TRUE
-  )
+  x <- try_(match.arg(arg = x, choices = choices, several.ok = several.ok))
   n_choices <- length(choices)
   prefix <- ifelse_(
     several.ok,

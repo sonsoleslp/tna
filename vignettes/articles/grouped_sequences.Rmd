@@ -12,10 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   fig.width = 6,
   fig.height = 4,
-  dev = "svg",
-  fig.ext="svg",
   out.width = "100%",
-  dpi = 50,
   comment = "#>"
 )
 suppressPackageStartupMessages({

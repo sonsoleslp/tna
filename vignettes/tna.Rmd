@@ -7,16 +7,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   fig.width = 6,
   fig.height = 4,
-  dev = "svg",
-  fig.ext = "svg",
-  dpi = 50,
+  dpi = 180,
   out.width = "100%",
-  dpi = 100,
   comment = "#>"
 )
 suppressPackageStartupMessages({
@@ -27,7 +25,9 @@ suppressPackageStartupMessages({
 })
 ```
 
-This vignette showcases some basic usage of the `tna` package. First we load the package that we will use for this example.
+This vignette showcases some basic usage of the `tna` package. For more tutorials, please visit [the package website](https://sonsoles.me/tna/).
+
+First we load the package that we will use for this example.
 
 ```{r, eval = FALSE}
 library("tna")

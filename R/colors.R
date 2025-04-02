@@ -22,8 +22,7 @@
 #'   these values are scaled linearly to cover the entire range of
 #'   the provided palette, ensuring that higher values in
 #'   the input correspond to later colors in the palette.
-#' - The scaling formula used for normalization is:
-#'   \deqn{scaled\_values = \left\lfloor \frac{(x - \text{min}(x))}{(\text{max}(x) - \text{min}(x))} \times (\text{length}(palette) - 1) \right\rfloor + 1}
+#' - The normalization is performed using min-max scaling.
 #'
 #' @examples
 #' # Example usage with numeric input

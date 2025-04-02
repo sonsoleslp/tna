@@ -187,7 +187,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
     abs(rank(x_vec, na.last = "keep") - rank(y_vec, na.last = "keep"))
   edges_combined$percentile_difference <-
     abs(stats::ecdf(x_vec)(x_vec) - stats::ecdf(y_vec)(y_vec))
-  edges_combined$logarithmic_ratio = log1p(x_vec) - log1p(y_vec)
+  edges_combined$logarithmic_ratio <- log1p(x_vec) - log1p(y_vec)
   edges_combined$standardized_weight_x <- (x_vec - mean(x)) / stats::sd(x)
   edges_combined$standardized_weight_y <- (y_vec - mean(y)) / stats::sd(y)
   edges_combined$standardized_score_inflation <-

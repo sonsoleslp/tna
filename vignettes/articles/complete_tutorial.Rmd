@@ -13,9 +13,6 @@ knitr::opts_chunk$set(
   fig.width = 6,
   fig.height = 4,
   out.width = "100%",
-  dev = "svg",
-  dpi = 110,
-  fig.ext = "svg",
   comment = "#>"
 )
 suppressPackageStartupMessages({
@@ -61,7 +58,7 @@ plot(model, minimum = 0.05, cut = 0.1)
 
 
 ```{r, fig.show='hold', fig.width=5, fig.height=5 }
-layout(matrix(1:4, ncol = 2, byrow = T))
+layout(matrix(1:4, ncol = 2, byrow = TRUE))
 # Pruning with different methods (using comparable parameters)
 pruned_threshold <- prune(model, method = "threshold", threshold = 0.15)
 pruned_lowest <- prune(model, method = "lowest", lowest = 0.15)

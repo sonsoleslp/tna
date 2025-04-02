@@ -93,7 +93,6 @@ prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
                          is_unix_time = FALSE, unix_time_unit = "seconds",
                          unused_fn = dplyr::first) {
-  check_missing(data)
   check_missing(action)
   check_string(actor)
   check_string(time)
@@ -107,10 +106,16 @@ prepare_data <- function(data, actor, time, action, order,
   .session_id <- .session_nr <- .new_session <- .time_gap <-
     .standardized_time <- .sequence <- n_sessions <- n_actions <- NULL
 
-  message_("\fInitializing session computation...")
+  rlang_verbose <- getOption("rlib_message_verbosity")
+  onlyif(
+    is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
+    cli::cli_rule(left = "Preparing Data")
+  )
   message_(
-    "\fInput data dimensions:
-    {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
+    c(
+      `i` = "Input data dimensions:
+      {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
+    )
   )
   data <- tibble::as_tibble(data)
 
@@ -126,7 +131,7 @@ prepare_data <- function(data, actor, time, action, order,
   stopifnot_(
     all(cols_obs),
     c(
-      "\fThe columns {.val {cols_req}} must exist in the data.",
+      "The columns {.val {cols_req}} must exist in the data.",
       `x` = "The following columns were not found in the data: {cols_mis}."
     )
   )
@@ -146,13 +151,15 @@ prepare_data <- function(data, actor, time, action, order,
     default_order <- TRUE
   }
   if (!missing(time)) {
-    message_("\fParsing time values...")
     message_(
-      "\fFirst few time values: {.val {utils::head(data[[time]], 3)}}"
+      c(`i` = "First few time values: {.val {utils::head(data[[time]], 3)}}")
     )
     if (is.numeric(data[[time]])) {
       message_(
-        "\fDetected {.cls numeric} time values - treating as Unix timestamp."
+        c(
+          `i` = "Detected {.cls numeric} time values:
+          treating as Unix timestamp."
+        )
       )
       is_unix_time <- TRUE
     }
@@ -162,10 +169,11 @@ prepare_data <- function(data, actor, time, action, order,
       is_unix_time = is_unix_time,
       unix_time_unit = unix_time_unit
     )
-    message_("\fSample of parsed times: {.val {utils::head(parsed_times, 3)}}")
-    message_("\fCreating sessions based on time threshold...")
     message_(
-      "\fTime threshold for new session: {.val {time_threshold}} seconds"
+      c(`i` = "Sample of parsed times: {.val {utils::head(parsed_times, 3)}}")
+    )
+    message_(
+      c(`i` = "Time threshold for new session: {.val {time_threshold}} seconds")
     )
     # Create processed data (long format)
     long_data <- long_data |>
@@ -202,7 +210,7 @@ prepare_data <- function(data, actor, time, action, order,
     msg <- ifelse_(
       default_order,
       paste0(
-        "\fNo {.arg time} or {.arg order} column provided. ",
+        "No {.arg time} or {.arg order} column provided. ",
         ifelse_(
           default_actor,
           "Treating the entire dataset as one session.",
@@ -211,7 +219,7 @@ prepare_data <- function(data, actor, time, action, order,
       ),
       "Using provided {.arg order} column to create sequences."
     )
-    message_(msg)
+    message_(c(`i` = msg))
     long_data <- long_data |>
       dplyr::arrange(
         !!rlang::sym(actor),
@@ -232,7 +240,6 @@ prepare_data <- function(data, actor, time, action, order,
   }
 
   # Create wide format
-  message_("\fCreating wide format view of sessions...")
   wide_data <- long_data |>
     tidyr::pivot_wider(
       id_cols = .session_id,
@@ -268,37 +275,46 @@ prepare_data <- function(data, actor, time, action, order,
   if (!missing(time)) {
     stats$time_range <- range(long_data$.standardized_time)
   }
-
-  # Print summary statistics
-  rlang_verbose <- getOption("rlib_message_verbosity")
-  message_("\fSession Analysis Summary")
-  message_("\f------------------------")
-  message_("\fTotal number of sessions: {.val {stats$total_sessions}}")
+  message_(c(`i` = "Total number of sessions: {.val {stats$total_sessions}}"))
   if (!default_actor) {
-    message_("\fNumber of unique users: {.val {stats$unique_users}}")
+    message_(c(`i` = "Number of unique users: {.val {stats$unique_users}}"))
   }
-  message_("\fTotal number of actions: {.val {stats$total_actions}}")
+  message_(c(`i` = "Total number of actions: {.val {stats$total_actions}}"))
   message_(
-    "\fMaximum sequence length: {.val {stats$max_sequence_length}} actions"
+    c(
+      `i` = "Maximum sequence length:
+      {.val {stats$max_sequence_length}} actions"
+    )
   )
   if (!missing(time) && default_order) {
     message_(
-      "\fTime range: {.val {stats$time_range[1]}} to
-      {.val {stats$time_range[2]}}"
+      c(
+        `i` = "Time range: {.val {stats$time_range[1]}} to
+        {.val {stats$time_range[2]}}"
+      )
     )
   }
   if (!default_actor) {
-    message_("\fSessions per user:")
-    onlyif(
-      is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
-      print(stats$sessions_per_user)
-    )
+    message_(c(`i` = "Sessions per user:"))
+    for (i in seq_len(nrow(stats$sessions_per_user))) {
+      msg <- paste0(
+        stats$sessions_per_user[[actor]][i],
+        ": ",
+        "{.val {", stats$sessions_per_user$n_sessions[i], "}}"
+      )
+      message_(c(` ` = msg))
+    }
   }
-  message_("\fTop 5 longest sessions:")
-  onlyif(
-    is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
-    print(utils::head(stats$actions_per_session, 5))
-  )
+  message_(c(`i` = "Top 5 longest sessions:"))
+  max_rows <- min(nrow(stats$actions_per_session), 5L)
+  for (i in seq_len(max_rows)) {
+    msg <- paste0(
+      stats$actions_per_session$.session_id[i],
+      ": ",
+      "{.val {", stats$actions_per_session$n_actions[i], "}}"
+    )
+    message_(c(` ` = msg))
+  }
   structure(
     list(
       long_data = long_data,
@@ -321,9 +337,8 @@ prepare_data <- function(data, actor, time, action, order,
 #' @inheritParams prepare_data
 #' @noRd
 parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
-  message_("\fStarting time parsing process...")
-  message_("\fNumber of values to parse: {.val {length(time)}}")
-  message_("\fSample values: {.val {utils::head(time, 3)}}")
+  message_(c(`i` = "Number of values to parse: {.val {length(time)}}"))
+  message_(c(`i` = "Sample values: {.val {utils::head(time, 3)}}"))
   # Handle Unix timestamps
   time_original <- time
   if (is.numeric(time) && is_unix_time) {
@@ -342,7 +357,9 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
   time_empty <- is.na(time) | !nzchar(time)
   if (any(time_empty)) {
     message_(
-      "Found missing or empty time values; these will be treated as NA."
+      c(
+        `i` = "Found missing or empty time values; these will be treated as NA."
+      )
     )
     time[time_empty] <- NA
   }
@@ -355,7 +372,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
   if (!is.null(custom_format)) {
     parsed_time <- as.POSIXct(strptime(time, format = custom_format))
     if (!all(is.na(parsed_time))) {
-      message_("Successfully parsed using custom format.")
+      message_(c(`v` = "Successfully parsed using custom format."))
       return(parsed_time)
     }
   }
@@ -431,19 +448,20 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
   for (fmt in formats) {
     parsed_time <- as.POSIXct(strptime(time, format = fmt))
     if (!all(is.na(parsed_time))) {
-      message_("\fSuccessfully parsed using format: {.val {fmt}}")
-      message_("\fSample parsed time: {.val {format(parsed_time[1])}}")
+      message_(c(`v` = "Successfully parsed using format: {.val {fmt}}"))
       return(parsed_time)
     }
   }
 
   # Finally, try Unix time
   message_(
-    "Unable to parse using supported formats.
-    Trying to convert to {.cls numeric} and assuming Unix time."
+    c(
+      `x` = "Unable to parse using supported formats.
+      Trying to convert to {.cls numeric} and assuming Unix time."
+    )
   )
   # TODO suppress for now
-  time <- suppressWarnings(try(as.numeric(time), silent = TRUE))
+  time <- suppressWarnings(try_(as.numeric(time)))
   if (!inherits(time, "try-error") && all(!is.na(time))) {
     parsed_time <- switch(
       unix_time_unit,
