@@ -1,3 +1,7 @@
+# tna 0.4.7
+
+* Added the function `import_data` to read wide format sequence data into long format.
+
 # tna 0.4.6
 
 * Added the function `plot_frequencies()` that can be used to plot the state frequency distribution for both `tna` and `group_tna` objects.

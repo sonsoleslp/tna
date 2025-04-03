@@ -34,6 +34,7 @@ reference:
     - print.tna
     - plot.tna
     - prepare_data
+    - import_data
     - print.tna_data
     - summary.tna
     - hist.tna

@@ -493,3 +493,124 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
     )
   )
 }
+
+#' Convert Wide Format Sequence Data to Long Format
+#'
+#' This function transforms wide format data where features are in separate
+#' columns into a long format suitable for sequence analysis. It creates
+#' windows of data based on row order and generates sequence order within
+#' these windows.
+#'
+#' @export
+#' @family basic
+#' @param data A `data.frame` in wide format.
+#' @param cols An `expression` giving a tidy selection of column names to be
+#' transformed into long format (actions). This can be a vector of column names
+#' (e.g., `c(feature1, feature2)`) or a range  specified as `feature1:feature6`
+#' (without quotes) to include all columns from 'feature1' to 'feature6'
+#' in the order they appear in the data frame. For more information on
+#' tidy selections, see [dplyr::select()].
+#' @param id_cols A `character` vector of column names that uniquely identify
+#' each observation (IDs).
+#' @param window_size An `integer` specifying the size of the window for
+#' sequence grouping. Default is 1 (each row is a separate window).
+#' @param replace_zeros A `logical` value indicating whether to replace 0s
+#' in `cols` with `NA`. The default is `TRUE`.
+#' @return A `data.frame` in long format with added columns for window and
+#' sequence order.
+#' @examples
+#' data <- data.frame(
+#'   ID = c("A", "A", "B", "B"),
+#'   Time = c(1, 2, 1, 2),
+#'   feature1 = c(10, 0, 15, 20),
+#'   feature2 = c(5, 8, 0, 12),
+#'   feature3 = c(2, 4, 6, 8),
+#'   other_col = c("X", "Y", "Z", "W")
+#' )
+#'
+#' # Using a vector
+#' long_data1 <- import_data(
+#'   data = data,
+#'   cols = c(feature1, feature2),
+#'   id_cols = c("ID", "Time"),
+#'   window_size = 2,
+#'   replace_zeros = TRUE
+#' )
+#'
+#' # Using a column range
+#' long_data2 <- import_data(
+#'   data = data,
+#'   cols = feature1:feature3,
+#'   id_cols = c("ID", "Time"),
+#'   window_size = 2,
+#'   replace_zeros = TRUE
+#' )
+#'
+import_data <- function(data, cols, id_cols,
+                        window_size = 1, replace_zeros = TRUE) {
+  check_missing(data)
+  check_class(data, "data.frame")
+  check_flag(replace_zeros)
+  data_names <- colnames(data)
+  missing_ids <- id_cols[!id_cols %in% colnames(data)]
+  stopifnot_(
+    length(missing_ids) == 0L,
+    c(
+      "All ID columns specified by {.arg id_cols} must be present in the data.",
+      `x` = "The following column{?s} {?was/were} not found: {missing_ids}."
+    )
+  )
+  expr_cols <- rlang::enquo(cols)
+  pos <- tidyselect::eval_select(expr_cols, data = data)
+  cols <- names(pos)
+  out <- data
+  n <- nrow(out)
+  rownames(out) <- ifelse_(
+    is.null(rownames(data)),
+    seq_len(n),
+    rownames(data)
+  )
+  # Create some NULLs for R CMD Check
+  .original_row <- window_group <- action <- value <- order <- NULL
+  out$.original_row <- as.numeric(rownames(out))
+  if (replace_zeros) {
+    out <- out |>
+      dplyr::mutate(
+        dplyr::across(
+          dplyr::all_of(cols), ~ifelse(. == 0, NA, .)
+        )
+      )
+  }
+  out <- out |>
+    dplyr::arrange(.original_row) |>
+    dplyr::mutate(window_group = ceiling(seq_len(n) / window_size))
+  out_names <- colnames(data)
+  extra_cols <- out_names[!(out_names %in% c(cols, id_cols))]
+  out |>
+    tidyr::pivot_longer(
+      cols = dplyr::all_of(cols),
+      names_to = "action",
+      values_to = "value"
+    ) |>
+    dplyr::filter(!is.na(value)) |>
+    dplyr::arrange(.original_row, action) |>
+    dplyr::group_by(
+      dplyr::across(
+        dplyr::all_of(c("window_group", id_cols))
+      )
+    ) |>
+    dplyr::mutate(order = dplyr::row_number()) |>
+    dplyr::ungroup() |>
+    dplyr::arrange(
+      dplyr::across(
+        dplyr::all_of(c(id_cols, "window_group", "order"))
+      )
+    ) |>
+    dplyr::select(
+      dplyr::all_of(extra_cols),
+      dplyr::all_of(id_cols),
+      action,
+      value,
+      order
+    )
+}

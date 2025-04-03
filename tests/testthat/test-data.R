@@ -183,3 +183,20 @@ test_that("parsing with custom time format works", {
     )
   )
 })
+
+test_that("wide format sequence data can be imported", {
+  expect_error(
+    long_data <- import_data(
+      data = mock_sequence_wide,
+      cols = c(feature1, feature2),
+      id_cols = c("ID", "Time"),
+      window_size = 2,
+      replace_zeros = TRUE
+    ),
+    NA
+  )
+  expect_equal(
+    names(long_data),
+    c("feature3", "other_col", "ID", "Time", "action", "value", "order")
+  )
+})
