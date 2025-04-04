@@ -81,7 +81,8 @@
 #'
 #' data_single_session <- tibble::tibble(
 #'   action = c(
-#'     "view", "click", "add_cart", "view", "checkout", "view", "click", "share"
+#'     "view", "click", "add_cart", "view",
+#'     "checkout", "view", "click", "share"
 #'    )
 #' )
 #' results_single <- prepare_data(data_single_session, action = "action")
@@ -93,6 +94,8 @@ prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
                          is_unix_time = FALSE, unix_time_unit = "seconds",
                          unused_fn = dplyr::first) {
+  check_missing(data)
+  check_class(data, "data.frame")
   check_missing(action)
   check_string(actor)
   check_string(time)

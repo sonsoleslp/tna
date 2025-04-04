@@ -689,35 +689,38 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
 #' @inheritParams plot.tna_centralities
 #' @noRd
 plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
-  levs <- names(x)
+  # Create some NULLs for R CMD Check
+  name <- value <- NULL
+  levs <- names(x)[-1L]
   x <- stats::reshape(
     as.data.frame(x),
     idvar = "state",
     ids = x[["state"]],
-    times = names(x)[-1L],
+    times = levs,
     timevar = "name",
     drop = "state",
-    varying = list(names(x)[-1L]),
+    varying = list(levs),
     direction = "long",
     v.names = "value"
-  )
-  x <- ifelse_(
-    reorder,
-    dplyr::arrange(
-      x, !!rlang::sym("name"), !!rlang::sym("value")
-    ),
-    dplyr::arrange(
-      x, !!rlang::sym("name"), dplyr::desc(!!rlang::sym("state"))
+  ) |>
+    dplyr::group_by(name) |>
+    dplyr::mutate(
+      prop = value / sum(value, na.rm = TRUE),
+      name = factor(name, levels = levs)
     )
+  n_measures <- length(levs)
+  state_within_name <- paste(x$state, x$name, sep = "___")
+  x$state_within <- ifelse_(
+    reorder,
+    stats::reorder(state_within_name, x$value, FUN = identity),
+    x$state
   )
-  x$rank <- dplyr::row_number(x)
-  x$name <- factor(x$name, levels = levs)
   ggplot2::ggplot(x) +
     ggplot2::scale_fill_manual(values = colors) +
     ggplot2::geom_col(
       ggplot2::aes(
         fill = !!rlang::sym("state"),
-        x = !!rlang::sym("rank"),
+        x = !!rlang::sym("state_within"),
         y = !!rlang::sym("value")
       ),
       linewidth = 4
@@ -727,21 +730,18 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
       labels,
       ggplot2::geom_text(
         ggplot2::aes(
-          label = round(!!rlang::sym("value"), 2),
-          x = !!rlang::sym("rank"),
-          y = 0.98 * !!rlang::sym("value")
+          label = paste0(" ", round(!!rlang::sym("value"), 2), " "),
+          x = !!rlang::sym("state_within"),
+          y = !!rlang::sym("value"),
+          hjust = !!rlang::sym("prop") > 0.05
         ),
-        vjust = 0.3,
-        hjust = 1,
+        vjust = 0.35,
         size = 3
       )
     ) +
     ggplot2::facet_wrap(~name, ncol = ncol, scales = scales) +
-    ggplot2::scale_x_continuous(
-      name = NULL,
-      expand = c(0, 0.5),
-      breaks = x$rank,
-      labels = x$state
+    ggplot2::scale_x_discrete(
+      labels = function(y) gsub("___.+$", "", y)
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(

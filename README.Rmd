@@ -10,7 +10,6 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "60%",
-  dpi = 200,
   fig.width = 5,
   fig.height = 5,
   fig.align = "center",
@@ -113,6 +112,7 @@ cent <- centralities(tna_model)
 cent |>
   gt::gt() |>
   gt::tab_options(table.font.size = 8) |>
+  gt::fmt_number(decimals = 3) |>
   gt::as_raw_html()
 ```
 
@@ -169,7 +169,7 @@ print(comparison$centralities$stats)
 ```
 
 ```{r, echo = FALSE}
-comparison$centralities$stats |> 
-  gt::gt() |> 
+comparison$centralities$stats |>
+  gt::gt() |>
   gt::as_raw_html()
 ```

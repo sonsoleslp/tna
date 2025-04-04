@@ -110,7 +110,8 @@ print(results_ordered$statistics)
 
 data_single_session <- tibble::tibble(
   action = c(
-    "view", "click", "add_cart", "view", "checkout", "view", "click", "share"
+    "view", "click", "add_cart", "view",
+    "checkout", "view", "click", "share"
    )
 )
 results_single <- prepare_data(data_single_session, action = "action")
