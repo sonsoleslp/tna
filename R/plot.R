@@ -1310,6 +1310,9 @@ plot.group_tna_stability <- function(x, ...) {
 #' @export
 #' @family validation
 #' @param x A `group_tna_permutation` object.
+#' @param title An optional `character` vector of titles for each plot.
+#' When not provided, the title shows the names of the clusters being
+#' contrasted.
 #' @param ... Arguments passed to [plot.tna_permutation()].
 #' @return A `list` (invisibly) of `qgraph` objects depicting the significant
 #' difference between each pair.
@@ -1319,10 +1322,20 @@ plot.group_tna_stability <- function(x, ...) {
 #' perm <- permutation_test(model, iter = 20)
 #' plot(perm)
 #'
-plot.group_tna_permutation <- function(x, ...) {
+plot.group_tna_permutation <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna_permutation")
-  invisible(lapply(x, plot.tna_permutation, ...))
+  title <- ifelse_(
+    missing(title),
+    names(x),
+    title
+  )
+  invisible(
+    lapply(
+      seq_along(x),
+      function(i) plot.tna_permutation(x[[i]], title = title[i])
+    )
+  )
 }
 
 #' Plot the Difference Network Between Two Clusters

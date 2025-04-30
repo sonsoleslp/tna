@@ -1,3 +1,7 @@
+# tna 0.4.8
+
+* Fixed an issue with `prepare_data()` that resulted in excessive console output.
+
 # tna 0.4.7
 
 * Added the function `import_data()` to read wide format sequence data into long format.

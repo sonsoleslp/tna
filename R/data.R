@@ -297,27 +297,27 @@ prepare_data <- function(data, actor, time, action, order,
       )
     )
   }
-  if (!default_actor) {
-    message_(c(`i` = "Sessions per user:"))
-    for (i in seq_len(nrow(stats$sessions_per_user))) {
-      msg <- paste0(
-        stats$sessions_per_user[[actor]][i],
-        ": ",
-        "{.val {", stats$sessions_per_user$n_sessions[i], "}}"
-      )
-      message_(c(` ` = msg))
-    }
-  }
-  message_(c(`i` = "Top 5 longest sessions:"))
-  max_rows <- min(nrow(stats$actions_per_session), 5L)
-  for (i in seq_len(max_rows)) {
-    msg <- paste0(
-      stats$actions_per_session$.session_id[i],
-      ": ",
-      "{.val {", stats$actions_per_session$n_actions[i], "}}"
-    )
-    message_(c(` ` = msg))
-  }
+  # if (!default_actor) {
+  #   message_(c(`i` = "Sessions per user:"))
+  #   for (i in seq_len(nrow(stats$sessions_per_user))) {
+  #     msg <- paste0(
+  #       stats$sessions_per_user[[actor]][i],
+  #       ": ",
+  #       "{.val {", stats$sessions_per_user$n_sessions[i], "}}"
+  #     )
+  #     message_(c(` ` = msg))
+  #   }
+  # }
+  # message_(c(`i` = "Top 5 longest sessions:"))
+  # max_rows <- min(nrow(stats$actions_per_session), 5L)
+  # for (i in seq_len(max_rows)) {
+  #   msg <- paste0(
+  #     stats$actions_per_session$.session_id[i],
+  #     ": ",
+  #     "{.val {", stats$actions_per_session$n_actions[i], "}}"
+  #   )
+  #   message_(c(` ` = msg))
+  # }
   structure(
     list(
       long_data = long_data,

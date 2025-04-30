@@ -4,10 +4,14 @@
 \alias{plot.group_tna_permutation}
 \title{Plot Permutation Test Results}
 \usage{
-\method{plot}{group_tna_permutation}(x, ...)
+\method{plot}{group_tna_permutation}(x, title, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna_permutation} object.}
+
+\item{title}{An optional \code{character} vector of titles for each plot.
+When not provided, the title shows the names of the clusters being
+contrasted.}
 
 \item{...}{Arguments passed to \code{\link[=plot.tna_permutation]{plot.tna_permutation()}}.}
 }
