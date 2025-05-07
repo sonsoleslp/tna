@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'group_tna'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">title</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">title</span>, <span class="va">which</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,6 +62,11 @@
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
 <dd><p>A title for each plot. It can be a single string (the same one
 will be used for all plots) or a list (one per group)</p></dd>
+
+
+<dt id="arg-which">which<a class="anchor" aria-label="anchor" href="#arg-which"></a></dt>
+<dd><p>An optional <code>integer</code> vector of groups to plot. By default, all
+groups are plotted.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -79,6 +84,7 @@ will be used for all plots) or a list (one per group)</p></dd>
 <code><a href="hist.group_tna.html">hist.group_tna</a>()</code>,
 <code><a href="hist.tna.html">hist.tna</a>()</code>,
 <code><a href="import_data.html">import_data</a>()</code>,
+<code><a href="import_ts.html">import_ts</a>()</code>,
 <code><a href="plot.tna.html">plot.tna</a>()</code>,
 <code><a href="plot_frequencies.html">plot_frequencies</a>()</code>,
 <code><a href="plot_frequencies.group_tna.html">plot_frequencies.group_tna</a>()</code>,
