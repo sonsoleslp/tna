@@ -890,8 +890,9 @@ plot_frequencies <- function(x, ...) {
 plot_frequencies.tna <- function(x, ...) {
   check_missing(x)
   check_tna_seq(x)
-  cols <- attr(x$data, "cols")
-  tab <- table(unlist(x$data[, cols]))
+  #cols <- attr(x$data, "cols")
+  #tab <- table(unlist(x$data[, cols]))
+  tab <- table(unlist(x$data))
   d <- as.data.frame(tab)
   names(d) <- c("state", "freq")
   d[[1L]] <- factor(x$labels[d[[1L]]])
@@ -1150,13 +1151,15 @@ hist.group_tna <- function(x, ...) {
 #' @param x A `group_model` object.
 #' @param title A title for each plot. It can be a single string (the same one
 #'  will be used for all plots) or a list (one per group)
+#' @param which An optional `integer` vector of groups to plot. By default, all
+#' groups are plotted.
 #' @param ... Same as [plot.tna()].
 #' @return `NULL` (invisibly).
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot(model)
 #'
-plot.group_tna <- function(x, title, ...) {
+plot.group_tna <- function(x, title, which, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   if (missing(title)) {
@@ -1164,7 +1167,12 @@ plot.group_tna <- function(x, title, ...) {
   } else if (length(title) == 1) {
     title <- rep(title, length(x))
   }
-  for (i in seq_along(x)) {
+  which <- ifelse_(missing(which), seq_along(x), which)
+  stopifnot_(
+    all(which %in% seq_along(x)),
+    "Argument {.arg which} must only contain valid cluster indices."
+  )
+  for (i in which) {
     plot(x[[i]], title = title[i], ...)
   }
   invisible(NULL)

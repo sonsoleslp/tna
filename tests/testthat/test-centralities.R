@@ -1,7 +1,7 @@
 test_that("centralities computes correctly for a tna object", {
   result <- centralities(mock_tna)
   expect_s3_class(result, "tna_centralities")
-  expect_true(all(available_centrality_measures %in% colnames(result)))
+  expect_true(all(names(centrality_funs) %in% colnames(result)))
 })
 
 test_that("centralities handles loops correctly in a tna object", {

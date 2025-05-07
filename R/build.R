@@ -360,12 +360,12 @@ create_seqdata <- function(x, cols, alphabet) {
     )
   )
   structure(
-    x,
-    class = "data.frame",
+    as.matrix(x[, cols]),
+    class = c("matrix", "array"),
     alphabet = alphabet,
     labels = labels,
-    colors = colors,
-    cols = cols
+    colors = colors#,
+    #cols = cols
   )
 }
 
@@ -381,12 +381,12 @@ create_seqdata <- function(x, cols, alphabet) {
 initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
-  cols <- attr(x, "cols")
-  m <- as.matrix(x[, cols])
+  #cols <- attr(x, "cols")
+  #m <- as.matrix(x[, cols])
   a <- length(alphabet)
-  inits <- factor(m[, 1L], levels = seq_len(a), labels = alphabet)
+  inits <- factor(x[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
-  trans <- compute_transitions(m, a, type, params)
+  trans <- compute_transitions(x, a, type, params)
   weights <- compute_weights(trans, type, scaling, a)
   inits <- inits / sum(inits)
   names(inits) <- alphabet

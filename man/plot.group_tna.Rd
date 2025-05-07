@@ -4,13 +4,16 @@
 \alias{plot.group_tna}
 \title{Plot a Grouped Transition Network Analysis Model}
 \usage{
-\method{plot}{group_tna}(x, title, ...)
+\method{plot}{group_tna}(x, title, which, ...)
 }
 \arguments{
 \item{x}{A \code{group_model} object.}
 
 \item{title}{A title for each plot. It can be a single string (the same one
 will be used for all plots) or a list (one per group)}
+
+\item{which}{An optional \code{integer} vector of groups to plot. By default, all
+groups are plotted.}
 
 \item{...}{Same as \code{\link[=plot.tna]{plot.tna()}}.}
 }
@@ -31,6 +34,7 @@ Basic functions
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
 \code{\link{import_data}()},
+\code{\link{import_ts}()},
 \code{\link{plot.tna}()},
 \code{\link{plot_frequencies}()},
 \code{\link{plot_frequencies.group_tna}()},

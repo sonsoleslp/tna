@@ -96,8 +96,9 @@ check_measures <- function(x) {
     ),
     "Argument {.arg measures} must be a {.cls character} vector."
   )
+  available_measures <- names(centrality_funs)
   lower_measures <- tolower(x)
-  lower_defaults <- tolower(available_centrality_measures)
+  lower_defaults <- tolower(available_measures)
   measures_match <- pmatch(lower_measures, lower_defaults)
   no_match <- is.na(measures_match)
   invalid_measures <- x[no_match]
@@ -109,7 +110,7 @@ check_measures <- function(x) {
       `x` = "Measure{?s} {.val {invalid_measures}} {?is/are} not recognized."
     )
   )
-  available_centrality_measures[measures_match]
+  available_measures[measures_match]
 }
 
 #' Check that `x` is a non-negative

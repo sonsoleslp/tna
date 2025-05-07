@@ -121,8 +121,6 @@ prepare_data <- function(data, actor, time, action, order,
     )
   )
   data <- tibble::as_tibble(data)
-
-  # Column validation
   cols_req <- c(
     action,
     onlyif(!missing(actor), actor),
@@ -178,7 +176,6 @@ prepare_data <- function(data, actor, time, action, order,
     message_(
       c(`i` = "Time threshold for new session: {.val {time_threshold}} seconds")
     )
-    # Create processed data (long format)
     long_data <- long_data |>
       dplyr::mutate(.standardized_time = parsed_times) |>
       dplyr::arrange(
@@ -241,8 +238,6 @@ prepare_data <- function(data, actor, time, action, order,
   if (default_order) {
     long_data$.order <- NULL
   }
-
-  # Create wide format
   wide_data <- long_data |>
     tidyr::pivot_wider(
       id_cols = .session_id,
@@ -497,7 +492,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
   )
 }
 
-#' Convert Wide Format Sequence Data to Long Format
+#' Import Wide Format Sequence Data as Long Format Sequence Data
 #'
 #' This function transforms wide format data where features are in separate
 #' columns into a long format suitable for sequence analysis. It creates
@@ -616,4 +611,152 @@ import_data <- function(data, cols, id_cols,
       value,
       order
     )
+}
+
+#' Import and Convert Time-Series Data into Wide Format Sequence Data
+#'
+#' Imports time-series data as sequence data by discretizing the input data.
+#' Various methods for discretization are available including gaussian mixtures,
+#' K-means clustering and kernel density based binning.
+#'
+#' @export
+#' @family basic
+#' @param data A `data.frame` containing time-series data in long format.
+#' @param id_col An optional `character` string naming the column that contains
+#' the unique IDs.
+#' @param value_col A `character` string naming the column that contains the
+#' data values.
+#' @param n_states An `integer` specifying the number of states.
+#' @param method A `character` string defining the discretization method to use.
+#' The available options are:
+#'
+#'   * `width`: for equal width binning.
+#'   * `quantile`: for quantile-based binning.
+#'   * `kde`: for binning based on kernel density estimation.
+#'   * `gaussian`: for a Gaussian mixture model.
+#'   * `kmeans`: for K-means clustering (the default).
+#'
+#' @param unused_fn How to handle extra columns when pivoting to wide format.
+#' See [tidyr::pivot_wider()]. The default is to keep all columns and to
+#' use the first value.
+#' @param ... Additional arguments passed to the discretization method
+#'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
+#'   [pracma::findpeaks()] for `kde`, and [mclust::Mclust()] for `gaussian`).
+#' @return A `data.frame` in wide format containing the sequence data.
+#'
+import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
+                      unused_fn = dplyr::first, ...) {
+  check_missing(data)
+  check_missing(value_col)
+  check_class(data, "data.frame")
+  check_string(id_col)
+  check_string(value_col)
+  check_values(n_states, "integer", strict = TRUE, scalar = TRUE)
+  check_match(method, names(discretization_funs))
+  cols_req <- c(value_col, onlyif(!missing(id_col), id_col))
+  cols_obs <- cols_req %in% names(data)
+  cols_mis <- cols_req[!cols_obs]
+  stopifnot_(
+    all(cols_obs),
+    c(
+      "The columns {.val {cols_req}} must exist in the data.",
+      `x` = "The following columns were not found in the data: {cols_mis}."
+    )
+  )
+  id_col <- ifelse_(
+    missing(id_col),
+    ".id",
+    id_col
+  )
+  data$.id <- 1L
+  complete <- stats::complete.cases(data[, c(id_col, value_col)])
+  values <- data[[value_col]][complete]
+  disc <- discretization_funs[[method]](values, n_states, ...)
+  disc_col <- paste0(value_col, "_discretized")
+  data[[disc_col]] <- NA
+  data[[disc_col]][complete] <- disc
+  data[[value_col]] <- NULL
+  wide_data <- data |>
+    dplyr::group_by(!!rlang::sym(id_col)) |>
+    dplyr::mutate(.time = dplyr::row_number()) |>
+    dplyr::ungroup() |>
+    tidyr::pivot_wider(
+      id_cols = id_col,
+      names_from = !!rlang::sym(".time"),
+      names_prefix = "T",
+      values_from = disc_col,
+      unused_fn = unused_fn
+    )
+  data$.id <- NULL
+  wide_data$.id <- NULL
+  time_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
+  sequence_data <- wide_data[, time_cols]
+  meta_data <- wide_data[, !time_cols]
+  structure(
+    list(
+      long_data = data,
+      sequence_data = sequence_data,
+      meta_data = meta_data
+    ),
+    class = "tna_data"
+  )
+}
+
+# Discretization function wrappers --------------------------------------------
+
+discretization_funs <- list()
+
+discretization_funs$width <- function(x, n_states, ...) {
+  r <- range(series, na.rm = TRUE)
+  width <- diff(r) / n_states
+  breaks <- seq(r[1], r[2], length.out = n_states + 1L)
+  cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
+}
+
+discretization_funs$quantile <- function(x, n_states, ...) {
+  probs <- seq(0, 1, length.out = n_states + 1L)
+  breaks <- stats::quantile(x, probs = probs, na.rm = TRUE)
+  cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
+}
+
+discretization_funs$kde <- function(x, n_states, ...) {
+  stopifnot_(
+    requireNamespace("pracma", quietly = TRUE),
+    "Please install the {.pkg pracma} package
+     to use discretization based on kernel density estimation."
+  )
+  dots <- list(...)
+  is_arg <- names(dots) %in% methods::formalArgs(pracma::findpeaks)
+  density_args <- dots[!is_arg]
+  density_args$x <- x
+  dens <- do.call(stats::density, args = density_args)
+  findpeaks_args <- dots[is_arg]
+  findpeaks_args$npeaks <- n_states - 1L
+  findpeaks_args$x <- -dens$y
+  valleys <- do.call(pracma::findpeaks, args = findpeaks_args)
+  breaks <- sort(unique(dens$x[valleys[, 2L]]))
+  breaks <- c(min(x), breaks, max(x))
+  cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
+}
+
+discretization_funs$gaussian <- function(x, n_states, modelNames = "V",
+                                         verbose = FALSE, ...) {
+  stopifnot_(
+    requireNamespace("mclust", quietly = TRUE),
+    "Please install the {.pkg mclust} package
+     to use gaussian mixture-based discretization."
+  )
+  model <- mclust::Mclust(
+    data = x,
+    G = n_states,
+    modelNames = modelNames,
+    verbose = verbose,
+    ...
+  )
+  model$classification
+}
+
+discretization_funs$kmeans <- function(x, n_states, ...) {
+  km <- stats::kmeans(x, centers = n_states, ...)
+  km$cluster
 }

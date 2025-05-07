@@ -55,7 +55,8 @@ Alternatively, the function accepts a mixture Markov model from \code{seqHMM}.}
 row of the data / sequence. Must have the same length as the number of
 rows/sequences of \code{x}. Alternatively, a single \code{character} string giving
 the column name of the data that defines the group when \code{x} is a wide
-format \code{data.frame} or a \code{tna_data} object.}
+format \code{data.frame} or a \code{tna_data} object. If not provided, each row of
+the data forms a cluster.}
 
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:

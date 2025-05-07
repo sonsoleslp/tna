@@ -160,7 +160,10 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     "The state labels of {.arg x} and {.arg y} must be the same
      and in the same order."
   )
-  combined_data <- dplyr::bind_rows(data_x, data_y)
+  #combined_data <- dplyr::bind_rows(data_x, data_y)
+  combined_data <- rbind(data_x, data_y)
+  attr(combined_data, "alphabet") <- attr(data_x, "alphabet")
+  attr(combined_data, "labels") <- attr(data_x, "labels")
   n_xy <- n_x + n_y
   weights_x <- x$weights
   weights_y <- y$weights

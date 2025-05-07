@@ -105,7 +105,7 @@ centralities_ <- function(x, loops, normalize, measures) {
   check_flag(normalize)
   measures <- ifelse_(
     missing(measures),
-    available_centrality_measures,
+    names(centrality_funs),
     measures
   )
   measures <- check_measures(measures)
@@ -429,7 +429,7 @@ centralities.group_tna <- function(x, loops = FALSE,
   # missing() does not work with lapply, need to evaluate measures here.
   measures <- ifelse_(
     missing(measures),
-    available_centrality_measures,
+    names(centrality_funs),
     measures
   )
   out <- dplyr::bind_rows(
@@ -492,19 +492,6 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
 #' @export
 #' @rdname estimate_centrality_stability
 estimate_centrality_stability.group_tna <- estimate_cs.group_tna
-
-# Available centrality measures -----------------------------------------------
-available_centrality_measures <- c(
-  "OutStrength",
-  "InStrength",
-  "ClosenessIn",
-  "ClosenessOut",
-  "Closeness",
-  "Betweenness",
-  "BetweennessRSP",
-  "Diffusion",
-  "Clustering"
-)
 
 # Centrality measure function wrappers ----------------------------------------
 

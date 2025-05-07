@@ -15,7 +15,8 @@
 #'   row of the data / sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
-#'   format `data.frame` or a `tna_data` object.
+#'   format `data.frame` or a `tna_data` object. If not provided, each row of
+#'   the data forms a cluster.
 #' @param cols An `integer`/`character` vector giving the indices/names of the
 #'   columns that should be considered as sequence data.
 #'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
@@ -49,7 +50,6 @@ group_model.default <- function(x, group, type = "relative",
                                 scaling = character(0L), groupwise = FALSE,
                                 cols, params = list(), na.rm = TRUE, ...) {
   check_missing(x)
-  check_missing(group)
   check_flag(groupwise)
   check_flag(na.rm)
   stopifnot_(
@@ -66,6 +66,11 @@ group_model.default <- function(x, group, type = "relative",
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
     check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   }
+  group <- ifelse_(
+    missing(group),
+    seq_len(nrow(x)),
+    group
+  )
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   group_len <- length(group)
@@ -113,29 +118,34 @@ group_model.default <- function(x, group, type = "relative",
     vector(mode = "list", length = n_group),
     levs
   )
+  group_scaling <- ifelse_(groupwise, scaling, character(0L))
   groups <- vector(mode = "list", length = n_group)
   group <- as.integer(group)
   vals <- sort(unique(unlist(x[, cols])))
   alphabet <- vals[!is.na(vals)]
+  a <- length(alphabet)
+  seq_data <- create_seqdata(x, cols = cols, alphabet = alphabet)
+  trans <- compute_transitions(seq_data, a, type, params)
   for (i in seq_along(levs)) {
     groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))
     rows <- which(group == i)
-    group_scaling <- ifelse_(groupwise, scaling, character(0L))
-    d <- create_seqdata(
-      x[rows, ],
-      cols = cols,
-      alphabet = alphabet
-    )
-    model <- initialize_model(
-      d,
+    d <- seq_data[rows, , drop = FALSE]
+    attr(d, "alphabet") <- alphabet
+    attr(d, "labels") <- alphabet
+    attr(d, "colors") <- attr(seq_data, "colors")
+    inits <- factor(d[, 1L], levels = seq_len(a), labels = alphabet)
+    inits <- as.vector(table(inits))
+    weights <- compute_weights(
+      trans[rows, , , drop = FALSE],
       type = type,
       scaling = group_scaling,
-      params = params
+      a = a
     )
+    dimnames(weights) <- list(alphabet, alphabet)
     clusters[[i]] <- build_model_(
-      weights = model$weights,
-      inits = model$inits,
-      labels = model$labels,
+      weights = weights,
+      inits = inits / sum(inits),
+      labels = alphabet,
       type = type,
       scaling = group_scaling,
       data = d,
@@ -147,7 +157,7 @@ group_model.default <- function(x, group, type = "relative",
       weights = lapply(clusters, "[[", "weights"),
       type = type,
       scaling = scaling,
-      a = length(alphabet)
+      a = a
     )
     for (i in seq_along(clusters)) {
       clusters[[i]]$weights <- weights[[i]]
@@ -402,7 +412,8 @@ combine_data <- function(x, label) {
   groups <- attr(x, "groups")
   group_var <- attr(x, "group_var")
   data <- dplyr::bind_rows(
-    lapply(x, function(y) y$data[, cols])
+    #lapply(x, function(y) y$data[, cols])
+    lapply(x, function(y) as.data.frame(y$data))
   )
   data[[group_var]] <- unlist(groups)
   label <- ifelse_(

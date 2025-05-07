@@ -2,7 +2,7 @@
 % Please edit documentation in R/data.R
 \name{import_data}
 \alias{import_data}
-\title{Convert Wide Format Sequence Data to Long Format}
+\title{Import Wide Format Sequence Data as Long Format Sequence Data}
 \usage{
 import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)
 }
@@ -69,6 +69,7 @@ Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
+\code{\link{import_ts}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
 \code{\link{plot_frequencies}()},
