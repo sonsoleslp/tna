@@ -38,6 +38,7 @@ Suggests:
     gt,
     knitr,
     mixtools,
+    pracma,
     rmarkdown,
     seqHMM,
     testthat (>= 3.0.0)
