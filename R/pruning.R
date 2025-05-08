@@ -65,7 +65,6 @@ prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
     is.null(attr(x, "pruning")),
     "The model has already been pruned."
   )
-  # TODO No lables? when?
   labels <- ifelse_(
     is.null(x$labels),
     seq_len(nodes(x)),

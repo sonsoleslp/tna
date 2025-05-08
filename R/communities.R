@@ -90,7 +90,7 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
       args$weights <- NULL
     }
     if (method == "edge_betweenness") {
-      # TODO warning? supressing for now...
+      # TODO suppress for now
       communities[[method]] <- suppressWarnings(
         communities[[method]] <- do.call(
           supported_communities[[method]]$fun,

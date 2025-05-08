@@ -335,7 +335,6 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
     }
   }
   out <- list()
-  # TODO handle all NA case?
   for (measure in measures) {
     cs_coef <- calculate_cs(
       stability[[measure]],

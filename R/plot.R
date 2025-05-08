@@ -280,10 +280,6 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     )
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(qgraph::qgraph, args = plot_args)
-    # TODO should already work with 1 clique?
-    # if ((max_cliques - first) == 0) {
-    #  return (do.call(qgraph::qgraph, args = plot_args))
-    # }
   }
   invisible(NULL)
 }
@@ -578,13 +574,6 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
   for (i in seq_along(x)) {
     measure <- x_names[i]
     corr <- x[[measure]]$correlations
-    # TODO Check if measure_results has valid dimensions?
-    # if (is.null(dim(corr)) || nrow(corr) == 0 || ncol(corr) == 0) {
-    #   warning_(
-    #     paste0("Warning: No valid data for measure ", measure, ". Skipping.")
-    #   )
-    #   next
-    # }
     means <- apply(corr, 2L, mean, na.rm = TRUE)
     ci_lower <- apply(
       corr,
@@ -843,7 +832,6 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
                              posCol = "#009900", negCol = "red", ...) {
   check_class(x, "tna")
   check_class(y, "tna")
-  # TODO check that x and y are comparable
   stopifnot_(
     all(x$labels == y$labels),
     "{.arg x} and {.arg y} must have the same labels."

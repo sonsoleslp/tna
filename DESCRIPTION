@@ -34,10 +34,10 @@ Imports:
     tibble,
     tidyr,
     tidyselect
-Suggests: 
+Suggests:
     gt,
     knitr,
-    mclust,
+    mixtools,
     rmarkdown,
     seqHMM,
     testthat (>= 3.0.0)

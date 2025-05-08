@@ -305,7 +305,6 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
   structure(
     list(
       weights = weights,
-      # TODO can inits be missing?
       inits = onlyif(!missing(inits), inits),
       labels = labels,
       data = data

@@ -133,7 +133,8 @@ prepare_data <- function(data, actor, time, action, order,
     all(cols_obs),
     c(
       "The columns {.val {cols_req}} must exist in the data.",
-      `x` = "The following columns were not found in the data: {cols_mis}."
+      `x` = "The following columns were
+             not found in the data: {.val {cols_mis}}."
     )
   )
   long_data <- data
@@ -615,7 +616,7 @@ import_data <- function(data, cols, id_cols,
 
 #' Import and Convert Time-Series Data into Wide Format Sequence Data
 #'
-#' Imports time-series data as sequence data by discretizing the input data.
+#' Imports time-series data as sequence data via discretization.
 #' Various methods for discretization are available including gaussian mixtures,
 #' K-means clustering and kernel density based binning.
 #'
@@ -630,19 +631,37 @@ import_data <- function(data, cols, id_cols,
 #' @param method A `character` string defining the discretization method to use.
 #' The available options are:
 #'
+#'   * `kmeans`: for K-means clustering (the default).
 #'   * `width`: for equal width binning.
 #'   * `quantile`: for quantile-based binning.
 #'   * `kde`: for binning based on kernel density estimation.
 #'   * `gaussian`: for a Gaussian mixture model.
-#'   * `kmeans`: for K-means clustering (the default).
 #'
 #' @param unused_fn How to handle extra columns when pivoting to wide format.
 #' See [tidyr::pivot_wider()]. The default is to keep all columns and to
 #' use the first value.
 #' @param ... Additional arguments passed to the discretization method
 #'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
-#'   [pracma::findpeaks()] for `kde`, and [mclust::Mclust()] for `gaussian`).
-#' @return A `data.frame` in wide format containing the sequence data.
+#'   [pracma::findpeaks()] for `kde`, and
+#'   [mixtools::normalmixEM()] for `gaussian`).
+#' @return A `tna_data` object, which is a `list` with the following elements:
+#'
+#' * `long_data`: The processed data in long format.
+#' * `sequence_data`: The processed data on the sequences in wide format,
+#' with time points as different variables structured with sequences.
+#' * `meta_data`: Other variables from the original data in wide format.
+#'
+#' @examples
+#' ts_data <- data.frame(
+#'   id = gl(10, 100),
+#'   series = c(
+#'     replicate(
+#'       10,
+#'       stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
+#'     )
+#'   )
+#' )
+#' data <- import_ts(ts_data, "id", "series", n_states = 3)
 #'
 import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
                       unused_fn = dplyr::first, ...) {
@@ -651,7 +670,10 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
   check_class(data, "data.frame")
   check_string(id_col)
   check_string(value_col)
-  check_values(n_states, "integer", strict = TRUE, scalar = TRUE)
+  stopifnot_(
+    checkmate::test_int(x = n_states, lower = 2L),
+    "Argument {.arg n_states} must be an integer greater than 1."
+  )
   check_match(method, names(discretization_funs))
   cols_req <- c(value_col, onlyif(!missing(id_col), id_col))
   cols_obs <- cols_req %in% names(data)
@@ -660,14 +682,11 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
     all(cols_obs),
     c(
       "The columns {.val {cols_req}} must exist in the data.",
-      `x` = "The following columns were not found in the data: {cols_mis}."
+      `x` = "The following columns were
+             not found in the data: {.val {cols_mis}}."
     )
   )
-  id_col <- ifelse_(
-    missing(id_col),
-    ".id",
-    id_col
-  )
+  id_col <- ifelse_(missing(id_col), ".id", id_col)
   data$.id <- 1L
   complete <- stats::complete.cases(data[, c(id_col, value_col)])
   values <- data[[value_col]][complete]
@@ -681,10 +700,10 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
     dplyr::mutate(.time = dplyr::row_number()) |>
     dplyr::ungroup() |>
     tidyr::pivot_wider(
-      id_cols = id_col,
+      id_cols = !!rlang::sym(id_col),
       names_from = !!rlang::sym(".time"),
       names_prefix = "T",
-      values_from = disc_col,
+      values_from = !!rlang::sym(disc_col),
       unused_fn = unused_fn
     )
   data$.id <- NULL
@@ -707,7 +726,7 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
 discretization_funs <- list()
 
 discretization_funs$width <- function(x, n_states, ...) {
-  r <- range(series, na.rm = TRUE)
+  r <- range(x)
   width <- diff(r) / n_states
   breaks <- seq(r[1], r[2], length.out = n_states + 1L)
   cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
@@ -715,7 +734,7 @@ discretization_funs$width <- function(x, n_states, ...) {
 
 discretization_funs$quantile <- function(x, n_states, ...) {
   probs <- seq(0, 1, length.out = n_states + 1L)
-  breaks <- stats::quantile(x, probs = probs, na.rm = TRUE)
+  breaks <- stats::quantile(x, probs = probs)
   cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
 }
 
@@ -739,21 +758,16 @@ discretization_funs$kde <- function(x, n_states, ...) {
   cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
 }
 
-discretization_funs$gaussian <- function(x, n_states, modelNames = "V",
-                                         verbose = FALSE, ...) {
+discretization_funs$gaussian <- function(x, n_states, ...) {
   stopifnot_(
-    requireNamespace("mclust", quietly = TRUE),
-    "Please install the {.pkg mclust} package
+    requireNamespace("mixtools", quietly = TRUE),
+    "Please install the {.pkg mixtools} package
      to use gaussian mixture-based discretization."
   )
-  model <- mclust::Mclust(
-    data = x,
-    G = n_states,
-    modelNames = modelNames,
-    verbose = verbose,
-    ...
+  utils::capture.output(
+    model <- mixtools::normalmixEM(x = x, k = n_states, ...)
   )
-  model$classification
+  max.col(model$posterior)
 }
 
 discretization_funs$kmeans <- function(x, n_states, ...) {

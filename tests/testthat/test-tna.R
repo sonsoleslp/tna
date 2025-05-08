@@ -1,22 +1,3 @@
-# TODO internal sequence data
-# test_that("tna works with sequence data", {
-#  seq_data <- TraMineR::seqdef(seqHMM::biofam3c$married)
-#  tna_model <- tna(seq_data)
-#
-#  expect_s3_class(tna_model, "tna")
-#  expect_true(is.list(tna_model$transits))
-#  expect_true(is.list(tna_model$inits))
-#  expect_true(is.character(tna_model$labels))
-#  expect_true(is.character(tna_model$colors))
-# })
-
-# test_that("tna works with matrix data without inits", {
-#   trans_matrix <- create_mock_matrix()
-#   expect_error(
-#     tna(trans_matrix),
-#     "argument \"inits\" is missing, with no default")
-# })
-
 test_that("tna works with matrix data with inits", {
   inits <- c(0.25, 0.25, 0.25, 0.25)
   tna_model <- tna(mock_matrix, inits = inits)

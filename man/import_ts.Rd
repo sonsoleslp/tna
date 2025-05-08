@@ -28,11 +28,11 @@ data values.}
 \item{method}{A \code{character} string defining the discretization method to use.
 The available options are:
 \itemize{
+\item \code{kmeans}: for K-means clustering (the default).
 \item \code{width}: for equal width binning.
 \item \code{quantile}: for quantile-based binning.
 \item \code{kde}: for binning based on kernel density estimation.
 \item \code{gaussian}: for a Gaussian mixture model.
-\item \code{kmeans}: for K-means clustering (the default).
 }}
 
 \item{unused_fn}{How to handle extra columns when pivoting to wide format.
@@ -41,15 +41,35 @@ use the first value.}
 
 \item{...}{Additional arguments passed to the discretization method
 (\code{\link[stats:kmeans]{stats::kmeans()}} for \code{kmeans}, \code{\link[stats:density]{stats::density()}} and
-\code{\link[pracma:findpeaks]{pracma::findpeaks()}} for \code{kde}, and \code{\link[mclust:Mclust]{mclust::Mclust()}} for \code{gaussian}).}
+\code{\link[pracma:findpeaks]{pracma::findpeaks()}} for \code{kde}, and
+\code{\link[mixtools:normalmixEM]{mixtools::normalmixEM()}} for \code{gaussian}).}
 }
 \value{
-A \code{data.frame} in wide format containing the sequence data.
+A \code{tna_data} object, which is a \code{list} with the following elements:
+\itemize{
+\item \code{long_data}: The processed data in long format.
+\item \code{sequence_data}: The processed data on the sequences in wide format,
+with time points as different variables structured with sequences.
+\item \code{meta_data}: Other variables from the original data in wide format.
+}
 }
 \description{
-Imports time-series data as sequence data by discretizing the input data.
+Imports time-series data as sequence data via discretization.
 Various methods for discretization are available including gaussian mixtures,
 K-means clustering and kernel density based binning.
+}
+\examples{
+ts_data <- data.frame(
+  id = gl(10, 100),
+  series = c(
+    replicate(
+      10,
+      stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
+    )
+  )
+)
+data <- import_ts(ts_data, "id", "series", n_states = 3)
+
 }
 \seealso{
 Basic functions
