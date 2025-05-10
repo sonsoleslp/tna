@@ -38,6 +38,7 @@ Basic functions
 \code{\link{import_ts}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
+\code{\link{plot.tna_data}()},
 \code{\link{plot_frequencies}()},
 \code{\link{plot_frequencies.group_tna}()},
 \code{\link{plot_mosaic}()},

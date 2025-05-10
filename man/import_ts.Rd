@@ -8,7 +8,9 @@ import_ts(
   data,
   id_col,
   value_col,
+  order_col,
   n_states,
+  state_names = 1:n_states,
   method = "kmeans",
   unused_fn = dplyr::first,
   ...
@@ -23,7 +25,13 @@ the unique IDs.}
 \item{value_col}{A \code{character} string naming the column that contains the
 data values.}
 
+\item{order_col}{A \code{character} string naming the column that contains the
+time variable (not required if the data is already in order),}
+
 \item{n_states}{An \code{integer} specifying the number of states.}
+
+\item{state_names}{An \code{characer} vector specifying the names of the states. The
+length must be the same as \code{n_states.}}
 
 \item{method}{A \code{character} string defining the discretization method to use.
 The available options are:
@@ -51,6 +59,7 @@ A \code{tna_data} object, which is a \code{list} with the following elements:
 \item \code{sequence_data}: The processed data on the sequences in wide format,
 with time points as different variables structured with sequences.
 \item \code{meta_data}: Other variables from the original data in wide format.
+\item \code{names}: Mapping of the \code{long_data} column names needed for further plotting.
 }
 }
 \description{
@@ -79,6 +88,7 @@ Basic functions
 \code{\link{import_data}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
+\code{\link{plot.tna_data}()},
 \code{\link{plot_frequencies}()},
 \code{\link{plot_frequencies.group_tna}()},
 \code{\link{plot_mosaic}()},

@@ -1,0 +1,64 @@
+---
+title: "How to convert time series data into sequence data for `tna`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{How to prepare data for tna}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+TNA is intended for analysis of ordered sequential data (i.e., sequences). However, it supports the converstion from time series data (i.e., ordered continous data) to the format necessary for TNA.
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.width = 6,
+  fig.height = 4,
+  out.width = "100%",
+  message = FALSE,
+  fig.show = TRUE,
+  results = "hide",  
+  comment = "#>"
+)
+suppressPackageStartupMessages({
+  library("tna")
+  library("tibble")
+  library("dplyr")
+  library("tidyr")
+})
+```
+
+To showcase this feature, we will use the `EuStockMarkets`, which is included by default in R as a multivariate time series object representing the daily closing prices of major European stock indices (DAX, SMI, CAC, and FTSE) from 1991 to 1998.
+
+We begin by converting the EuStockMarkets object into a long data frame, retaining the timepoints as the first column, the stock as the second column, and the time series value as the third column.
+```{r}
+eustock <- data.frame(EuStockMarkets)
+eustock$time <- time(EuStockMarkets)
+df <- eustock |> pivot_longer(1:4, names_to = "Stock")
+head(df)
+```
+Now we use the `import_ts` function included in `tna` to import the data. We indicate the column that identifies each individual time series (`Stock` in our case), the column that contains the numerical value (`value` in our case), and the column that contains the time or order of the time series (`time` for use). Then we need to specify how many discrete states we want to consider.
+```{r}
+data_ts <- import_ts(df, "Stock", "value", "time", n_states = 4)
+```
+
+Now we can plot our time series together with the assigned states at each time point by using the `plot` function and passing the result of `import_ts` as an argument.
+```{r}
+plot(data_ts)
+```
+The plot is created with `ggplot2` and uses `facet_wrap`, so you can specify the number of columns you want in your plot. For example, if you want one plot per line, you can pass `ncol = 1`.
+
+```{r}
+plot(data_ts, ncol = 1)
+```
+You can also specify a specific time series by indicating its name as a second argument of the `plot` function.
+```{r}
+plot(data_ts, "CAC")
+```
+From `data_ts` we can also create a `tna` model and visualize it, as well as use all of the rest of the features of `tna`.
+```{r}
+tna_model <- tna(data_ts)
+plot(tna_model, cut = 0.01, minimum = 0.005)
+```
+

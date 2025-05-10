@@ -627,6 +627,8 @@ import_data <- function(data, cols, id_cols,
 #' the unique IDs.
 #' @param value_col A `character` string naming the column that contains the
 #' data values.
+#' @param order_col A `character` string naming the column that contains the
+#' time variable (not required if the data is already in order),
 #' @param n_states An `integer` specifying the number of states.
 #' @param method A `character` string defining the discretization method to use.
 #' The available options are:
@@ -636,7 +638,8 @@ import_data <- function(data, cols, id_cols,
 #'   * `quantile`: for quantile-based binning.
 #'   * `kde`: for binning based on kernel density estimation.
 #'   * `gaussian`: for a Gaussian mixture model.
-#'
+#' @param state_names An `characer` vector specifying the names of the states. The
+#' length must be the same as `n_states.`
 #' @param unused_fn How to handle extra columns when pivoting to wide format.
 #' See [tidyr::pivot_wider()]. The default is to keep all columns and to
 #' use the first value.
@@ -650,6 +653,7 @@ import_data <- function(data, cols, id_cols,
 #' * `sequence_data`: The processed data on the sequences in wide format,
 #' with time points as different variables structured with sequences.
 #' * `meta_data`: Other variables from the original data in wide format.
+#' * `names`: Mapping of the `long_data` column names needed for further plotting.
 #'
 #' @examples
 #' ts_data <- data.frame(
@@ -663,7 +667,8 @@ import_data <- function(data, cols, id_cols,
 #' )
 #' data <- import_ts(ts_data, "id", "series", n_states = 3)
 #'
-import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
+import_ts <- function(data, id_col, value_col, order_col, n_states,
+                      state_names = 1:n_states, method = "kmeans",
                       unused_fn = dplyr::first, ...) {
   check_missing(data)
   check_missing(value_col)
@@ -674,8 +679,13 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
     checkmate::test_int(x = n_states, lower = 2L),
     "Argument {.arg n_states} must be an integer greater than 1."
   )
+  stopifnot_(
+    (length(state_names) == n_states),
+    "Argument {.arg state_names} must have length {n_states} (same as {.arg n_states})."
+  )
+
   check_match(method, names(discretization_funs))
-  cols_req <- c(value_col, onlyif(!missing(id_col), id_col))
+  cols_req <- c(value_col, onlyif(!missing(id_col), id_col), onlyif(!missing(order_col), order_col))
   cols_obs <- cols_req %in% names(data)
   cols_mis <- cols_req[!cols_obs]
   stopifnot_(
@@ -694,12 +704,27 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
   disc_col <- paste0(value_col, "_discretized")
   data[[disc_col]] <- NA
   data[[disc_col]][complete] <- disc
-  data[[value_col]] <- NULL
-  wide_data <- data |>
-    dplyr::group_by(!!rlang::sym(id_col)) |>
-    dplyr::mutate(.time = dplyr::row_number()) |>
-    dplyr::ungroup() |>
-    tidyr::pivot_wider(
+
+  if(!missing(state_names)) {
+    data[[disc_col]][complete] <- (state_names[data[[disc_col]][complete]])
+  }
+  # data[[value_col]] <- NULL
+  timed_data <- NULL
+  if(missing(order_col)) {
+     timed_data <- data |>
+      dplyr::group_by(!!rlang::sym(id_col)) |>
+      dplyr::mutate(.time = dplyr::row_number()) |>
+      dplyr::ungroup() |>
+      dplyr::arrange(!!rlang::sym(id_col),.time)
+  } else {
+    timed_data <- data |>
+      dplyr::group_by(!!rlang::sym(id_col)) |>
+      dplyr::arrange(!!rlang::sym(id_col),!!rlang::sym(order_col)) |>
+      dplyr::mutate(.time = dplyr::row_number()) |>
+      dplyr::ungroup()
+  }
+
+  wide_data <- tidyr::pivot_wider(timed_data,
       id_cols = !!rlang::sym(id_col),
       names_from = !!rlang::sym(".time"),
       names_prefix = "T",
@@ -713,9 +738,11 @@ import_ts <- function(data, id_col, value_col, n_states, method = "kmeans",
   meta_data <- wide_data[, !time_cols]
   structure(
     list(
-      long_data = data,
+      long_data = timed_data,
       sequence_data = sequence_data,
-      meta_data = meta_data
+      meta_data = meta_data,
+      names = c(id_col =  id_col, value_col = value_col,
+                disc_col = disc_col, t = ".time")
     ),
     class = "tna_data"
   )
