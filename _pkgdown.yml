@@ -33,11 +33,6 @@ reference:
     - build_model
     - print.tna
     - plot.tna
-    - prepare_data
-    - import_data
-    - import_ts
-    - print.tna_data
-    - plot.tna_data
     - summary.tna
     - hist.tna
     - simulate.tna
@@ -52,6 +47,14 @@ reference:
     - hist.group_tna
     - plot_mosaic.group_tna
     - print.summary.group_tna
+
+  - title: Importing/generating data
+    contents:
+    - prepare_data
+    - import_data
+    - import_ts
+    - print.tna_data
+    - plot.tna_data
 
   - title: Centralities
     contents:

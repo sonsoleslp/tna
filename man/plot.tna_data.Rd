@@ -7,6 +7,8 @@
 \method{plot}{tna_data}(
   x,
   selected = NULL,
+  overlay = TRUE,
+  point = FALSE,
   ncol = NULL,
   scales = c("free", "free_x", "free_y", "fixed")
 )
@@ -15,6 +17,12 @@
 \item{x}{A \code{tna_data} object.}
 
 \item{selected}{A specific individual time series. If empty, all are plotted}
+
+\item{overlay}{A \code{boolean} indicating whether to plot an overlay to indicate
+the state assigned to each time point. Defaults to \code{TRUE}.}
+
+\item{point}{A \code{boolean} indicating whether to plot a point for each time point
+colored according to the assigned state. Defaults to \code{FALSE}.}
 
 \item{ncol}{Number of columns to use for the facets.}
 
@@ -45,8 +53,6 @@ Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
-\code{\link{import_data}()},
-\code{\link{import_ts}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
 \code{\link{plot_frequencies}()},
@@ -54,13 +60,10 @@ Basic functions
 \code{\link{plot_mosaic}()},
 \code{\link{plot_mosaic.group_tna}()},
 \code{\link{plot_mosaic.tna_data}()},
-\code{\link{prepare_data}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.tna}()},
 \code{\link{print.tna}()},
-\code{\link{print.tna_data}()},
-\code{\link{simulate.tna}()},
 \code{\link{summary.group_tna}()},
 \code{\link{summary.tna}()},
 \code{\link{tna-package}}

@@ -6,7 +6,7 @@
 #' widening the data.
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param data A `data.frame` or containing the action/event data.
 #' @param actor A `character` string giving the name of the column that
 #' represents a user/actor identifier. If not provided and neither `time` nor
@@ -501,7 +501,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
 #' these windows.
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param data A `data.frame` in wide format.
 #' @param cols An `expression` giving a tidy selection of column names to be
 #' transformed into long format (actions). This can be a vector of column names
@@ -621,7 +621,7 @@ import_data <- function(data, cols, id_cols,
 #' K-means clustering and kernel density based binning.
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param data A `data.frame` containing time-series data in long format.
 #' @param id_col An optional `character` string naming the column that contains
 #' the unique IDs.
@@ -741,8 +741,10 @@ import_ts <- function(data, id_col, value_col, order_col, n_states,
       long_data = timed_data,
       sequence_data = sequence_data,
       meta_data = meta_data,
-      names = c(id_col =  id_col, value_col = value_col,
-                disc_col = disc_col, t = ".time")
+      names = c(id_col =  id_col,
+                value_col = value_col,
+                disc_col = disc_col,
+                t = ifelse(missing(order_col), ".time", order_col))
     ),
     class = "tna_data"
   )

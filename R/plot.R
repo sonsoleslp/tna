@@ -1143,6 +1143,7 @@ hist.group_tna <- function(x, ...) {
 #' groups are plotted.
 #' @param ... Same as [plot.tna()].
 #' @return `NULL` (invisibly).
+#' @inheritDotParams plot.tna
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot(model)
@@ -1514,6 +1515,10 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
 #' @family basic
 #' @param x A `tna_data` object.
 #' @param selected A specific individual time series. If empty, all are plotted
+#' @param overlay A `boolean` indicating whether to plot an overlay to indicate
+#' the state assigned to each time point. Defaults to `TRUE`.
+#' @param point A `boolean` indicating whether to plot a point for each time point
+#' colored according to the assigned state. Defaults to `FALSE`.
 #' @param ncol Number of columns to use for the facets.
 #' @param scales Any of `"fixed"`, `"free_x"`, `"free_y"`, `"free"` (the default).
 #' @export
@@ -1531,7 +1536,8 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
 #' )
 #'
 #' data_ts <- import_ts(ts_data, "id", "series", "time", n_states = 5)
-plot.tna_data <- function(x, selected = NULL, ncol = NULL,
+plot.tna_data <- function(x, selected = NULL, overlay = TRUE, point = FALSE,
+                          ncol = NULL,
                           scales = c("free", "free_x", "free_y", "fixed")) {
 
   # Create segments where the state remains constant
@@ -1563,12 +1569,21 @@ plot.tna_data <- function(x, selected = NULL, ncol = NULL,
   }
 
   p <- ggplot2::ggplot(df_plot, ggplot2::aes(x = !!rlang::sym(t),
-                                             y = !!rlang::sym(value_col))) +
-    ggplot2::geom_rect(data = df_rects_plot,
-                       ggplot2::aes(xmin = .xmin, xmax = .xmax, ymin = -Inf, ymax = Inf,
-                                    fill = factor(!!rlang::sym(disc_col))),
-                       alpha = 0.5, inherit.aes = FALSE) +
-    ggplot2::geom_line(linewidth = .5)
+                                             y = !!rlang::sym(value_col)))
+  if(overlay == TRUE) {
+    p <- p + ggplot2::geom_rect(data = df_rects_plot,
+                                ggplot2::aes(xmin = .xmin, xmax = .xmax, ymin = -Inf, ymax = Inf,
+                                             fill = factor(!!rlang::sym(disc_col))),
+                                alpha = 0.5, inherit.aes = FALSE)
+  }
+
+  p <- p + ggplot2::geom_line(linewidth = .5)
+
+  if (point == TRUE) {
+    p <- p + ggplot2::geom_point(aes(fill = factor(!!rlang::sym(disc_col))),
+                                 show.legend = FALSE, pch = 21)
+
+  }
 
   if(is.null(selected)){
     p <- p + ggplot2::facet_wrap(id_col, ncol = ncol, scales = scales)
