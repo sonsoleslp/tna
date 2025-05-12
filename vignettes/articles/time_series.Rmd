@@ -27,20 +27,17 @@ suppressPackageStartupMessages({
   library("dplyr")
   library("tidyr")
 })
+set.seed(1)
 ```
 
 To showcase this feature, we will use the `EuStockMarkets`, which is included by default in R as a multivariate time series object representing the daily closing prices of major European stock indices (DAX, SMI, CAC, and FTSE) from 1991 to 1998.
 
-We begin by converting the EuStockMarkets object into a long data frame, retaining the timepoints as the first column, the stock as the second column, and the time series value as the third column.
 ```{r}
-eustock <- data.frame(EuStockMarkets)
-eustock$time <- time(EuStockMarkets)
-df <- eustock |> pivot_longer(1:4, names_to = "Stock")
-head(df)
+head(EuStockMarkets)
 ```
-Now we use the `import_ts` function included in `tna` to import the data. We indicate the column that identifies each individual time series (`Stock` in our case), the column that contains the numerical value (`value` in our case), and the column that contains the time or order of the time series (`time` for use). Then we need to specify how many discrete states we want to consider.
+Now we use the `import_ts` function included in `tna` to import the data. We just need to specify how many discrete states we want to consider.
 ```{r}
-data_ts <- import_ts(df, "Stock", "value", "time", n_states = 4)
+data_ts <- import_ts(EuStockMarkets, n_states = 4)
 ```
 
 Now we can plot our time series together with the assigned states at each time point by using the `plot` function and passing the result of `import_ts` as an argument.
@@ -60,5 +57,33 @@ From `data_ts` we can also create a `tna` model and visualize it, as well as use
 ```{r}
 tna_model <- tna(data_ts)
 plot(tna_model, cut = 0.01, minimum = 0.005)
+```
+The `import_ts` function also takes time series data in a `data.frame` (in long format). Let us create an example with 10 time series with 100 points each.
+```{r}
+time_series_long <- data.frame(
+  id = gl(10, 100),
+  time = rep(1:100,10),
+  series = c(
+    replicate(
+      10,
+      stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
+    )
+  )
+)
+head(time_series_long)
+```
+We then use the `import_ts` function to import the `data.frame`. We indicate the column that identifies each individual time series (`id` in our case), the column that contains the numerical value (`series` in our case), and the column that contains the time or order of the time series (`time` for use). Actually, since our data is already ordered, we could skip the time column, but we add it here for the sake of completeness. We also need to specify how many discrete states we want to consider (`n_states`).
+```{r}
+ts_data_long <- import_ts(time_series_long, "id", "series", "time", n_states = 4)
+```
+
+Again, we can plot the data.
+```{r}
+plot(ts_data_long)
+```
+
+We can choose other visualization styles if we want to.
+```{r}
+plot(ts_data_long, selected = 2, point = T, overlay = F)
 ```
 

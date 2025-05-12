@@ -614,6 +614,7 @@ import_data <- function(data, cols, id_cols,
     )
 }
 
+
 #' Import and Convert Time-Series Data into Wide Format Sequence Data
 #'
 #' Imports time-series data as sequence data via discretization.
@@ -624,11 +625,12 @@ import_data <- function(data, cols, id_cols,
 #' @family data
 #' @param data A `data.frame` containing time-series data in long format.
 #' @param id_col An optional `character` string naming the column that contains
-#' the unique IDs.
+#' the unique IDs. Ignored if `data` is a `ts` object.
 #' @param value_col A `character` string naming the column that contains the
-#' data values.
+#' data values. Ignored if `data` is a `ts` object.
 #' @param order_col A `character` string naming the column that contains the
-#' time variable (not required if the data is already in order),
+#' time variable (not required if the data is already in order).
+#' Ignored if `data` is a `ts` object.
 #' @param n_states An `integer` specifying the number of states.
 #' @param method A `character` string defining the discretization method to use.
 #' The available options are:
@@ -638,7 +640,7 @@ import_data <- function(data, cols, id_cols,
 #'   * `quantile`: for quantile-based binning.
 #'   * `kde`: for binning based on kernel density estimation.
 #'   * `gaussian`: for a Gaussian mixture model.
-#' @param state_names An `characer` vector specifying the names of the states. The
+#' @param state_names An `character` vector specifying the names of the states. The
 #' length must be the same as `n_states.`
 #' @param unused_fn How to handle extra columns when pivoting to wide format.
 #' See [tidyr::pivot_wider()]. The default is to keep all columns and to
@@ -668,6 +670,117 @@ import_data <- function(data, cols, id_cols,
 #' data <- import_ts(ts_data, "id", "series", n_states = 3)
 #'
 import_ts <- function(data, id_col, value_col, order_col, n_states,
+                      state_names = 1:n_states, method = "kmeans",
+                      unused_fn = dplyr::first, ...) {
+  UseMethod("import_ts")
+}
+
+
+#' Import and Convert Time-Series Data into Wide Format Sequence Data
+#'
+#' Imports time-series data as sequence data via discretization.
+#' Various methods for discretization are available including gaussian mixtures,
+#' K-means clustering and kernel density based binning.
+#'
+#' @export
+#' @family data
+#' @param data A `ts` object containing time series data.
+#' @param n_states An `integer` specifying the number of states.
+#' @param method A `character` string defining the discretization method to use.
+#' The available options are:
+#'   * `kmeans`: for K-means clustering (the default).
+#'   * `width`: for equal width binning.
+#'   * `quantile`: for quantile-based binning.
+#'   * `kde`: for binning based on kernel density estimation.
+#'   * `gaussian`: for a Gaussian mixture model.
+#' @param state_names An `character` vector specifying the names of the states. The
+#' length must be the same as `n_states.`
+#' @param unused_fn How to handle extra columns when pivoting to wide format.
+#' See [tidyr::pivot_wider()]. The default is to keep all columns and to
+#' use the first value.
+#' @param ... Additional arguments passed to the discretization method
+#'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
+#'   [pracma::findpeaks()] for `kde`, and
+#'   [mixtools::normalmixEM()] for `gaussian`).
+#' @return A `tna_data` object, which is a `list` with the following elements:
+#'
+#' * `long_data`: The processed data in long format.
+#' * `sequence_data`: The processed data on the sequences in wide format,
+#' with time points as different variables structured with sequences.
+#' * `meta_data`: Other variables from the original data in wide format.
+#' * `names`: Mapping of the `long_data` column names needed for further plotting.
+#'
+#' @examples
+#' data <- import_ts(EuStockMarkets, n_states = 3)
+#'
+import_ts.ts <- function(data, n_states,
+                         state_names = 1:n_states, method = "kmeans",
+                         unused_fn = dplyr::first, ...) {
+
+  df <- data.frame(data)
+  df$time <- stats::time(data)
+  df_long <- df |> tidyr::pivot_longer(colnames(data), names_to = "series")
+  import_ts(df_long, id_col = "series", value_col = "value",
+            order_col = "time", n_states = n_states, state_names = state_names,
+            method = method, unused_fn = dplyr::first, ...)
+
+}
+
+
+#' Import and Convert Time-Series Data into Wide Format Sequence Data
+#'
+#' Imports time-series data as sequence data via discretization.
+#' Various methods for discretization are available including gaussian mixtures,
+#' K-means clustering and kernel density based binning.
+#'
+#' @export
+#' @family data
+#' @param data A `data.frame` containing time-series data in long format.
+#' @param id_col An optional `character` string naming the column that contains
+#' the unique IDs.
+#' @param value_col A `character` string naming the column that contains the
+#' data values.
+#' @param order_col A `character` string naming the column that contains the
+#' time variable (not required if the data is already in order),
+#' @param n_states An `integer` specifying the number of states.
+#' @param method A `character` string defining the discretization method to use.
+#' The available options are:
+#'
+#'   * `kmeans`: for K-means clustering (the default).
+#'   * `width`: for equal width binning.
+#'   * `quantile`: for quantile-based binning.
+#'   * `kde`: for binning based on kernel density estimation.
+#'   * `gaussian`: for a Gaussian mixture model.
+#' @param state_names An `character` vector specifying the names of the states. The
+#' length must be the same as `n_states.`
+#' @param unused_fn How to handle extra columns when pivoting to wide format.
+#' See [tidyr::pivot_wider()]. The default is to keep all columns and to
+#' use the first value.
+#' @param ... Additional arguments passed to the discretization method
+#'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
+#'   [pracma::findpeaks()] for `kde`, and
+#'   [mixtools::normalmixEM()] for `gaussian`).
+#' @return A `tna_data` object, which is a `list` with the following elements:
+#'
+#' * `long_data`: The processed data in long format.
+#' * `sequence_data`: The processed data on the sequences in wide format,
+#' with time points as different variables structured with sequences.
+#' * `meta_data`: Other variables from the original data in wide format.
+#' * `names`: Mapping of the `long_data` column names needed for further plotting.
+#'
+#' @examples
+#' ts_data <- data.frame(
+#'   id = gl(10, 100),
+#'   series = c(
+#'     replicate(
+#'       10,
+#'       stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
+#'     )
+#'   )
+#' )
+#' data <- import_ts(ts_data, "id", "series", n_states = 3)
+#'
+import_ts.default <- function(data, id_col, value_col, order_col, n_states,
                       state_names = 1:n_states, method = "kmeans",
                       unused_fn = dplyr::first, ...) {
   check_missing(data)
