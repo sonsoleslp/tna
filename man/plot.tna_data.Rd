@@ -6,27 +6,34 @@
 \usage{
 \method{plot}{tna_data}(
   x,
-  selected = NULL,
+  selected,
   overlay = TRUE,
-  point = FALSE,
+  points = FALSE,
   ncol = NULL,
+  max_series = 10,
   scales = c("free", "free_x", "free_y", "fixed")
 )
 }
 \arguments{
 \item{x}{A \code{tna_data} object.}
 
-\item{selected}{A specific individual time series. If empty, all are plotted}
+\item{selected}{A \code{character} vector of specific individual time series to
+plot. If not provided (the default), all are plotted up to \code{max_series}}
 
-\item{overlay}{A \code{boolean} indicating whether to plot an overlay to indicate
-the state assigned to each time point. Defaults to \code{TRUE}.}
+\item{overlay}{A \code{logical} value indicating whether to plot an overlay to
+indicate the state assigned to each time point. Defaults to \code{TRUE}.}
 
-\item{point}{A \code{boolean} indicating whether to plot a point for each time point
-colored according to the assigned state. Defaults to \code{FALSE}.}
+\item{points}{A \code{logical} value indicating whether to plot a point for
+each observation colored according to the assigned state.
+Defaults to \code{FALSE}.}
 
-\item{ncol}{Number of columns to use for the facets.}
+\item{ncol}{An \code{integer} giving the number of columns to use for the facets.}
 
-\item{scales}{Any of \code{"fixed"}, \code{"free_x"}, \code{"free_y"}, \code{"free"} (the default).}
+\item{max_series}{An \code{integer} that defines the maximum number
+of time-series to plot. The default is 10.}
+
+\item{scales}{Any of \code{"fixed"}, \code{"free_x"}, \code{"free_y"}, or
+\code{"free"} (the default).}
 }
 \value{
 A \code{ggplot} object.
@@ -46,7 +53,9 @@ ts_data <- data.frame(
   )
 )
 
-data_ts <- import_ts(ts_data, "id", "series", "time", n_states = 5)
+data_ts <- prepare_ts(ts_data, "id", "series", "time", n_states = 5)
+plot(data_ts)
+
 }
 \seealso{
 Basic functions

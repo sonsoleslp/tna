@@ -66,10 +66,8 @@ long_data2 <- import_data(
 }
 \seealso{
 Other data: 
-\code{\link{import_ts}()},
-\code{\link{import_ts.default}()},
-\code{\link{import_ts.ts}()},
 \code{\link{prepare_data}()},
+\code{\link{prepare_ts}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()}
 }

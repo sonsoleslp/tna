@@ -649,6 +649,130 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     ggplot2::ylim(-1, 1)
 }
 
+#' Plot State Frequencies and Time Series data
+#'
+#' @export
+#' @family basic
+#' @param x A `tna_data` object.
+#' @param selected A `character` vector of specific individual time series to
+#' plot. If not provided (the default), all are plotted up to `max_series`
+#  number of plots.
+#' @param overlay A `logical` value indicating whether to plot an overlay to
+#' indicate the state assigned to each time point. Defaults to `TRUE`.
+#' @param points A `logical` value indicating whether to plot a point for
+#' each observation colored according to the assigned state.
+#' Defaults to `FALSE`.
+#' @param ncol An `integer` giving the number of columns to use for the facets.
+#' @param max_series An `integer` that defines the maximum number
+#' of time-series to plot. The default is 10.
+#' @param scales Any of `"fixed"`, `"free_x"`, `"free_y"`, or
+#' `"free"` (the default).
+#' @return A `ggplot` object.
+#' @examples
+#' ts_data <- data.frame(
+#'   id = gl(10, 100),
+#'   time = rep(1:100,10),
+#'   series = c(
+#'     replicate(
+#'       10,
+#'       stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
+#'     )
+#'   )
+#' )
+#'
+#' data_ts <- prepare_ts(ts_data, "id", "series", "time", n_states = 5)
+#' plot(data_ts)
+#'
+plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
+                          ncol = NULL, max_series = 10,
+                          scales = c("free", "free_x", "free_y", "fixed")) {
+
+  # TODO Plot when not from timeseries data
+  if (attr(x, "type") != "timeseries") {
+    return(NULL)
+  }
+  id_col <- attr(x, "id_col")
+  value_col <- attr(x, "value_col")
+  state_col <- attr(x, "state_col")
+  time_col <- attr(x, "time_col")
+  df <- x$long_data
+  ids <- unique(df[[id_col]])
+  selected <- ifelse_(
+    missing(selected),
+    ids[seq_len(min(length(ids), max_series))],
+    selected[seq_len(min(length(selected), max_series))]
+  )
+  df <- df[df[[id_col]] %in% selected, ]
+  # Create segments where the state remains constant
+  df_rects <- df |>
+    dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(time_col)) |>
+    dplyr::group_by(!!rlang::sym(id_col)) |>
+    dplyr::mutate(
+      .grouping_var = cumsum(
+        !!rlang::sym(state_col) != dplyr::lag(
+          !!rlang::sym(state_col),
+          default = dplyr::first(!!rlang::sym(state_col))
+        )
+      )
+    ) |>
+    dplyr::group_by(
+      !!rlang::sym(id_col),
+      .grouping_var,
+      !!rlang::sym(state_col)
+    ) |>
+    dplyr::summarise(
+      .xmin = min(!!rlang::sym(time_col)),
+      .xmax = max(!!rlang::sym(time_col)),
+      .groups = "drop"
+    )
+  p <- ggplot2::ggplot(
+    df,
+    ggplot2::aes(x = !!rlang::sym(time_col), y = !!rlang::sym(value_col))
+  )
+  if (overlay) {
+    p <- p + ggplot2::geom_rect(
+      data = df_rects,
+      ggplot2::aes(
+        xmin = .xmin,
+        xmax = .xmax,
+        ymin = -Inf,
+        ymax = Inf,
+        fill = !!rlang::sym(state_col) # factor
+      ),
+      alpha = 0.5,
+      inherit.aes = FALSE
+    )
+  }
+  p <- p + ggplot2::geom_line(linewidth = .5)
+  if (points) {
+    p <- p + ggplot2::geom_point(
+      ggplot2::aes(fill = !!rlang::sym(state_col)),
+      show.legend = FALSE,
+      pch = 21
+    )
+  }
+  if (length(selected) > 1) {
+    p <- p + ggplot2::facet_wrap(
+      id_col,
+      ncol = ncol,
+      scales = scales
+    )
+  }
+  p +
+    ggplot2::scale_fill_brewer(
+      palette = ifelse(
+        length(unique((df[[state_col]]))) <= 8,
+        "Accent",
+        "Set3"
+      ),
+      limits = levels(factor(base::sort(dplyr::pull(df[, state_col], 1L)))),
+      name = "State"
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(x = "Time", y = "") +
+    ggplot2::theme(legend.position = "bottom")
+}
+
 #' Plot Centrality Measures
 #'
 #' @inheritParams plot.tna_centralities
@@ -1511,90 +1635,3 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
 }
 
 
-#' Plot State Frequencies and Time Series data
-#' @family basic
-#' @param x A `tna_data` object.
-#' @param selected A specific individual time series. If empty, all are plotted
-#' @param overlay A `boolean` indicating whether to plot an overlay to indicate
-#' the state assigned to each time point. Defaults to `TRUE`.
-#' @param point A `boolean` indicating whether to plot a point for each time point
-#' colored according to the assigned state. Defaults to `FALSE`.
-#' @param ncol Number of columns to use for the facets.
-#' @param scales Any of `"fixed"`, `"free_x"`, `"free_y"`, `"free"` (the default).
-#' @export
-#' @return A `ggplot` object.
-#' @examples
-#' ts_data <- data.frame(
-#'   id = gl(10, 100),
-#'   time = rep(1:100,10),
-#'   series = c(
-#'     replicate(
-#'       10,
-#'       stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
-#'     )
-#'   )
-#' )
-#'
-#' data_ts <- import_ts(ts_data, "id", "series", "time", n_states = 5)
-plot.tna_data <- function(x, selected = NULL, overlay = TRUE, point = FALSE,
-                          ncol = NULL,
-                          scales = c("free", "free_x", "free_y", "fixed")) {
-
-  # Create segments where the state remains constant
-  id_col <- x$names[["id_col"]]
-  value_col <- x$names[["value_col"]]
-  disc_col <- x$names[["disc_col"]]
-  t  <- x$names[["t"]]
-
-  df <- x$long_data
-  df_rects <- df |>
-    dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(t)) |>
-    dplyr::group_by(!!rlang::sym(id_col)) |>
-    dplyr::mutate(.grouping_var =
-                    cumsum(!!rlang::sym(disc_col) != dplyr::lag(!!rlang::sym(disc_col),
-                          default = dplyr::first(!!rlang::sym(disc_col))))) |>
-    dplyr::group_by(!!rlang::sym(id_col), .grouping_var, !!rlang::sym(disc_col)) |>
-    dplyr::summarise(
-      .xmin = min(!!rlang::sym(t)),
-      .xmax = max(!!rlang::sym(t)),
-      .groups = "drop"
-    )
-
-  df_plot <- df
-  df_rects_plot <- df_rects
-
-  if(!is.null(selected)){
-    df_plot <- df |> dplyr::filter(!!rlang::sym(id_col) == selected)
-    df_rects_plot <- df_rects |> dplyr::filter(!!rlang::sym(id_col) == selected)
-  }
-
-  p <- ggplot2::ggplot(df_plot, ggplot2::aes(x = !!rlang::sym(t),
-                                             y = !!rlang::sym(value_col)))
-  if(overlay == TRUE) {
-    p <- p + ggplot2::geom_rect(data = df_rects_plot,
-                                ggplot2::aes(xmin = .xmin, xmax = .xmax, ymin = -Inf, ymax = Inf,
-                                             fill = factor(!!rlang::sym(disc_col))),
-                                alpha = 0.5, inherit.aes = FALSE)
-  }
-
-  p <- p + ggplot2::geom_line(linewidth = .5)
-
-  if (point == TRUE) {
-    p <- p + ggplot2::geom_point(aes(fill = factor(!!rlang::sym(disc_col))),
-                                 show.legend = FALSE, pch = 21)
-
-  }
-
-  if(is.null(selected)){
-    p <- p + ggplot2::facet_wrap(id_col, ncol = ncol, scales = scales)
-  }
-  p +
-    ggplot2::scale_fill_brewer(palette = ifelse(nrow(unique((df[,disc_col]))) <= 8,
-                                                "Accent", "Set3"),
-                               limits = levels(factor(base::sort(dplyr::pull(df[,disc_col],1)))),
-                               name = "State"
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::labs(x = "Time", y = "") +
-    ggplot2::theme(legend.position = "bottom")
-}

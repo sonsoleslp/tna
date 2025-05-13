@@ -123,9 +123,7 @@ print(results_single$statistics)
 \seealso{
 Other data: 
 \code{\link{import_data}()},
-\code{\link{import_ts}()},
-\code{\link{import_ts.default}()},
-\code{\link{import_ts.ts}()},
+\code{\link{prepare_ts}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()}
 }

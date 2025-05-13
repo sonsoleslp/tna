@@ -1,6 +1,6 @@
 # tna 0.4.9
 
-* Added the function `import_ts()` for importing time-series data as sequence data via discretization.
+* Added the function `prepare_ts()` for importing time-series data as sequence data via discretization.
 * Switched to `matrix` as the internal data format used by TNA models for performance improvements across all functions.
 
 # tna 0.4.8

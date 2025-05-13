@@ -7,8 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-TNA is intended for analysis of ordered sequential data (i.e., sequences). However, it supports the converstion from time series data (i.e., ordered continous data) to the format necessary for TNA.
-
+TNA is intended for analysis of ordered sequential data (i.e., sequences). However, it supports the conversion from time series data (i.e., ordered continous data) to the format necessary for TNA.
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -35,12 +34,12 @@ To showcase this feature, we will use the `EuStockMarkets`, which is included by
 ```{r}
 head(EuStockMarkets)
 ```
-Now we use the `import_ts` function included in `tna` to import the data. We just need to specify how many discrete states we want to consider.
+Now we use the `prepare_ts` function included in `tna` to import the data. We just need to specify how many discrete states we want to consider.
 ```{r}
-data_ts <- import_ts(EuStockMarkets, n_states = 4)
+data_ts <- prepare_ts(EuStockMarkets, n_states = 4)
 ```
 
-Now we can plot our time series together with the assigned states at each time point by using the `plot` function and passing the result of `import_ts` as an argument.
+Now we can plot our time series together with the assigned states at each time point by using the `plot` function and passing the result of `prepare_ts` as an argument.
 ```{r}
 plot(data_ts)
 ```
@@ -58,7 +57,7 @@ From `data_ts` we can also create a `tna` model and visualize it, as well as use
 tna_model <- tna(data_ts)
 plot(tna_model, cut = 0.01, minimum = 0.005)
 ```
-The `import_ts` function also takes time series data in a `data.frame` (in long format). Let us create an example with 10 time series with 100 points each.
+The `prepare_ts` function also takes time series data in a `data.frame` (in long format). Let us create an example with 10 time series with 100 points each.
 ```{r}
 time_series_long <- data.frame(
   id = gl(10, 100),
@@ -72,9 +71,9 @@ time_series_long <- data.frame(
 )
 head(time_series_long)
 ```
-We then use the `import_ts` function to import the `data.frame`. We indicate the column that identifies each individual time series (`id` in our case), the column that contains the numerical value (`series` in our case), and the column that contains the time or order of the time series (`time` for use). Actually, since our data is already ordered, we could skip the time column, but we add it here for the sake of completeness. We also need to specify how many discrete states we want to consider (`n_states`).
+We then use the `prepare_ts` function to import the `data.frame`. We indicate the column that identifies each individual time series (`id` in our case), the column that contains the numerical value (`series` in our case), and the column that contains the time or order of the time series (`time` for use). Actually, since our data is already ordered, we could skip the time column, but we add it here for the sake of completeness. We also need to specify how many discrete states we want to consider (`n_states`).
 ```{r}
-ts_data_long <- import_ts(time_series_long, "id", "series", "time", n_states = 4)
+ts_data_long <- prepare_ts(time_series_long, "id", "series", "time", n_states = 4)
 ```
 
 Again, we can plot the data.
@@ -84,6 +83,5 @@ plot(ts_data_long)
 
 We can choose other visualization styles if we want to.
 ```{r}
-plot(ts_data_long, selected = 2, point = T, overlay = F)
+plot(ts_data_long, selected = c(2, 3), points = TRUE, overlay = FALSE)
 ```
-

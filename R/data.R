@@ -321,6 +321,7 @@ prepare_data <- function(data, actor, time, action, order,
       meta_data = meta_data,
       statistics = stats
     ),
+    type = "eventdata",
     class = "tna_data"
   )
 }
@@ -614,7 +615,6 @@ import_data <- function(data, cols, id_cols,
     )
 }
 
-
 #' Import and Convert Time-Series Data into Wide Format Sequence Data
 #'
 #' Imports time-series data as sequence data via discretization.
@@ -623,119 +623,8 @@ import_data <- function(data, cols, id_cols,
 #'
 #' @export
 #' @family data
-#' @param data A `data.frame` containing time-series data in long format.
-#' @param id_col An optional `character` string naming the column that contains
-#' the unique IDs. Ignored if `data` is a `ts` object.
-#' @param value_col A `character` string naming the column that contains the
-#' data values. Ignored if `data` is a `ts` object.
-#' @param order_col A `character` string naming the column that contains the
-#' time variable (not required if the data is already in order).
-#' Ignored if `data` is a `ts` object.
-#' @param n_states An `integer` specifying the number of states.
-#' @param method A `character` string defining the discretization method to use.
-#' The available options are:
-#'
-#'   * `kmeans`: for K-means clustering (the default).
-#'   * `width`: for equal width binning.
-#'   * `quantile`: for quantile-based binning.
-#'   * `kde`: for binning based on kernel density estimation.
-#'   * `gaussian`: for a Gaussian mixture model.
-#' @param state_names An `character` vector specifying the names of the states. The
-#' length must be the same as `n_states.`
-#' @param unused_fn How to handle extra columns when pivoting to wide format.
-#' See [tidyr::pivot_wider()]. The default is to keep all columns and to
-#' use the first value.
-#' @param ... Additional arguments passed to the discretization method
-#'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
-#'   [pracma::findpeaks()] for `kde`, and
-#'   [mixtools::normalmixEM()] for `gaussian`).
-#' @return A `tna_data` object, which is a `list` with the following elements:
-#'
-#' * `long_data`: The processed data in long format.
-#' * `sequence_data`: The processed data on the sequences in wide format,
-#' with time points as different variables structured with sequences.
-#' * `meta_data`: Other variables from the original data in wide format.
-#' * `names`: Mapping of the `long_data` column names needed for further plotting.
-#'
-#' @examples
-#' ts_data <- data.frame(
-#'   id = gl(10, 100),
-#'   series = c(
-#'     replicate(
-#'       10,
-#'       stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
-#'     )
-#'   )
-#' )
-#' data <- import_ts(ts_data, "id", "series", n_states = 3)
-#'
-import_ts <- function(data, id_col, value_col, order_col, n_states,
-                      state_names = 1:n_states, method = "kmeans",
-                      unused_fn = dplyr::first, ...) {
-  UseMethod("import_ts")
-}
-
-
-#' Import and Convert Time-Series Data into Wide Format Sequence Data
-#'
-#' Imports time-series data as sequence data via discretization.
-#' Various methods for discretization are available including gaussian mixtures,
-#' K-means clustering and kernel density based binning.
-#'
-#' @export
-#' @family data
-#' @param data A `ts` object containing time series data.
-#' @param n_states An `integer` specifying the number of states.
-#' @param method A `character` string defining the discretization method to use.
-#' The available options are:
-#'   * `kmeans`: for K-means clustering (the default).
-#'   * `width`: for equal width binning.
-#'   * `quantile`: for quantile-based binning.
-#'   * `kde`: for binning based on kernel density estimation.
-#'   * `gaussian`: for a Gaussian mixture model.
-#' @param state_names An `character` vector specifying the names of the states. The
-#' length must be the same as `n_states.`
-#' @param unused_fn How to handle extra columns when pivoting to wide format.
-#' See [tidyr::pivot_wider()]. The default is to keep all columns and to
-#' use the first value.
-#' @param ... Additional arguments passed to the discretization method
-#'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
-#'   [pracma::findpeaks()] for `kde`, and
-#'   [mixtools::normalmixEM()] for `gaussian`).
-#' @return A `tna_data` object, which is a `list` with the following elements:
-#'
-#' * `long_data`: The processed data in long format.
-#' * `sequence_data`: The processed data on the sequences in wide format,
-#' with time points as different variables structured with sequences.
-#' * `meta_data`: Other variables from the original data in wide format.
-#' * `names`: Mapping of the `long_data` column names needed for further plotting.
-#'
-#' @examples
-#' data <- import_ts(EuStockMarkets, n_states = 3)
-#'
-import_ts.ts <- function(data, n_states,
-                         state_names = 1:n_states, method = "kmeans",
-                         unused_fn = dplyr::first, ...) {
-
-  df <- data.frame(data)
-  df$time <- stats::time(data)
-  df_long <- df |> tidyr::pivot_longer(colnames(data), names_to = "series")
-  import_ts(df_long, id_col = "series", value_col = "value",
-            order_col = "time", n_states = n_states, state_names = state_names,
-            method = method, unused_fn = dplyr::first, ...)
-
-}
-
-
-#' Import and Convert Time-Series Data into Wide Format Sequence Data
-#'
-#' Imports time-series data as sequence data via discretization.
-#' Various methods for discretization are available including gaussian mixtures,
-#' K-means clustering and kernel density based binning.
-#'
-#' @export
-#' @family data
-#' @param data A `data.frame` containing time-series data in long format.
+#' @param data A `data.frame` containing time-series data in long format, or
+#' a `ts` object.
 #' @param id_col An optional `character` string naming the column that contains
 #' the unique IDs.
 #' @param value_col A `character` string naming the column that contains the
@@ -751,8 +640,10 @@ import_ts.ts <- function(data, n_states,
 #'   * `quantile`: for quantile-based binning.
 #'   * `kde`: for binning based on kernel density estimation.
 #'   * `gaussian`: for a Gaussian mixture model.
-#' @param state_names An `character` vector specifying the names of the states. The
-#' length must be the same as `n_states.`
+#'
+#' @param labels An `character` vector specifying the names of the states. The
+#' length must be `n_states` The defaults is consecutive numbering,
+#' i.e. `1:n_states`.
 #' @param unused_fn How to handle extra columns when pivoting to wide format.
 #' See [tidyr::pivot_wider()]. The default is to keep all columns and to
 #' use the first value.
@@ -766,9 +657,12 @@ import_ts.ts <- function(data, n_states,
 #' * `sequence_data`: The processed data on the sequences in wide format,
 #' with time points as different variables structured with sequences.
 #' * `meta_data`: Other variables from the original data in wide format.
-#' * `names`: Mapping of the `long_data` column names needed for further plotting.
+#' * `statistics`: A `list` of two `tibble`s, `global` and `local`, that contain
+#' descriptive statistics of the `value_col` variable for each state, and
+#' for each state an ID of `id_col`, respectively.
 #'
 #' @examples
+#' # Long format data
 #' ts_data <- data.frame(
 #'   id = gl(10, 100),
 #'   series = c(
@@ -778,27 +672,77 @@ import_ts.ts <- function(data, n_states,
 #'     )
 #'   )
 #' )
-#' data <- import_ts(ts_data, "id", "series", n_states = 3)
+#' data <- prepare_ts(ts_data, "id", "series", n_states = 3)
 #'
-import_ts.default <- function(data, id_col, value_col, order_col, n_states,
-                      state_names = 1:n_states, method = "kmeans",
-                      unused_fn = dplyr::first, ...) {
+#' # Time-series data
+#' data <- prepare_ts(EuStockMarkets, n_states = 3)
+#'
+prepare_ts <- function(data, n_states, labels = 1:n_states,
+                       method = "kmeans", unused_fn = dplyr::first, ...) {
+  UseMethod("prepare_ts")
+}
+
+#' @export
+#' @rdname prepare_ts
+prepare_ts.ts <- function(data, n_states, labels = 1:n_states,
+                          method = "kmeans", unused_fn = dplyr::first, ...) {
+  df <- data.frame(data)
+  df$time <- stats::time(data)
+  df_long <- df |>
+    tidyr::pivot_longer(
+      colnames(data),
+      names_to = "series"
+    )
+  prepare_ts(
+    df_long,
+    id_col = "series",
+    value_col = "value",
+    order_col = "time",
+    n_states = n_states,
+    labels = labels,
+    method = method,
+    unused_fn = unused_fn,
+    ...
+  )
+
+}
+
+#' @export
+#' @rdname prepare_ts
+prepare_ts.default <- function(data, id_col, value_col, order_col, n_states,
+                               labels = 1:n_states, method = "kmeans",
+                               unused_fn = dplyr::first, ...) {
   check_missing(data)
   check_missing(value_col)
   check_class(data, "data.frame")
   check_string(id_col)
   check_string(value_col)
+  labels <- try_(as.character(labels))
+  stopifnot_(
+    checkmate::test_character(
+      x = labels,
+      any.missing = FALSE,
+      min.len = n_states,
+      max.len = n_states
+    ),
+    "Argument {.arg labels} must be coercible to {.cls character} and
+     provide a label for each state."
+  )
   stopifnot_(
     checkmate::test_int(x = n_states, lower = 2L),
     "Argument {.arg n_states} must be an integer greater than 1."
   )
   stopifnot_(
-    (length(state_names) == n_states),
-    "Argument {.arg state_names} must have length {n_states} (same as {.arg n_states})."
+    length(labels) == n_states,
+    "Argument {.arg labels} must have length {n_states}
+    (same as {.arg n_states})."
   )
-
   check_match(method, names(discretization_funs))
-  cols_req <- c(value_col, onlyif(!missing(id_col), id_col), onlyif(!missing(order_col), order_col))
+  cols_req <- c(
+    value_col,
+    onlyif(!missing(id_col), id_col),
+    onlyif(!missing(order_col), order_col)
+  )
   cols_obs <- cols_req %in% names(data)
   cols_mis <- cols_req[!cols_obs]
   stopifnot_(
@@ -813,37 +757,34 @@ import_ts.default <- function(data, id_col, value_col, order_col, n_states,
   data$.id <- 1L
   complete <- stats::complete.cases(data[, c(id_col, value_col)])
   values <- data[[value_col]][complete]
-  disc <- discretization_funs[[method]](values, n_states, ...)
-  disc_col <- paste0(value_col, "_discretized")
-  data[[disc_col]] <- NA
-  data[[disc_col]][complete] <- disc
-
-  if(!missing(state_names)) {
-    data[[disc_col]][complete] <- (state_names[data[[disc_col]][complete]])
-  }
-  # data[[value_col]] <- NULL
+  states <- discretization_funs[[method]](values, n_states, ...)
+  state_col <- paste0(value_col, "_state")
+  data[[state_col]] <- NA
+  data[[state_col]][complete] <- states
+  data[[state_col]] <- factor(data[[state_col]], labels = labels)
+  stats <- compute_state_statistics(data, id_col, value_col, state_col)
   timed_data <- NULL
-  if(missing(order_col)) {
+  if (missing(order_col)) {
      timed_data <- data |>
       dplyr::group_by(!!rlang::sym(id_col)) |>
       dplyr::mutate(.time = dplyr::row_number()) |>
       dplyr::ungroup() |>
-      dplyr::arrange(!!rlang::sym(id_col),.time)
+      dplyr::arrange(!!rlang::sym(id_col), .time)
   } else {
     timed_data <- data |>
       dplyr::group_by(!!rlang::sym(id_col)) |>
-      dplyr::arrange(!!rlang::sym(id_col),!!rlang::sym(order_col)) |>
+      dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(order_col)) |>
       dplyr::mutate(.time = dplyr::row_number()) |>
       dplyr::ungroup()
   }
-
-  wide_data <- tidyr::pivot_wider(timed_data,
-      id_cols = !!rlang::sym(id_col),
-      names_from = !!rlang::sym(".time"),
-      names_prefix = "T",
-      values_from = !!rlang::sym(disc_col),
-      unused_fn = unused_fn
-    )
+  wide_data <- tidyr::pivot_wider(
+    timed_data,
+    id_cols = !!rlang::sym(id_col),
+    names_from = !!rlang::sym(".time"),
+    names_prefix = "T",
+    values_from = !!rlang::sym(state_col),
+    unused_fn = unused_fn
+  )
   data$.id <- NULL
   wide_data$.id <- NULL
   time_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
@@ -854,13 +795,62 @@ import_ts.default <- function(data, id_col, value_col, order_col, n_states,
       long_data = timed_data,
       sequence_data = sequence_data,
       meta_data = meta_data,
-      names = c(id_col =  id_col,
-                value_col = value_col,
-                disc_col = disc_col,
-                t = ifelse(missing(order_col), ".time", order_col))
+      statistics = stats
     ),
+    type = "timeseries",
+    id_col = id_col,
+    value_col = value_col,
+    state_col = state_col,
+    time_col = ifelse_(missing(order_col), ".time", order_col),
     class = "tna_data"
   )
+}
+
+#' Calculate comprehensive statistics for states
+#'
+#' @inheritParams prepare_ts
+#' @param state_col A `character` string naming the column that contains the
+#' state information.
+#' @return A `list` of global and local statistics.
+#' @noRd
+compute_state_statistics <- function(data, id_col, value_col, state_col) {
+  # For R CMD Check
+  group_size_ <- NULL
+  global <- data |>
+    dplyr::group_by(!!rlang::sym(state_col)) |>
+    dplyr::summarize(
+      freq = dplyr::n(),
+      prop = dplyr::n() / nrow(data),
+      mean = mean(!!rlang::sym(value_col)),
+      median = stats::median(!!rlang::sym(value_col)),
+      sd = stats::sd(!!rlang::sym(value_col)),
+      min = min(!!rlang::sym(value_col)),
+      max = max(!!rlang::sym(value_col)),
+      q25 = unname(stats::quantile(!!rlang::sym(value_col), 0.25)),
+      q75 = unname(stats::quantile(!!rlang::sym(value_col), 0.75)),
+    )
+  if (id_col == ".id") {
+    local <- global
+  } else {
+    local <- data |>
+      dplyr::group_by(!!rlang::sym(id_col)) |>
+      dplyr::mutate(
+        group_size_ = dplyr::n()
+      ) |>
+      dplyr::group_by(!!rlang::sym(id_col), !!rlang::sym(state_col)) |>
+      dplyr::summarize(
+        freq = dplyr::n(),
+        prop = dplyr::n() / dplyr::first(group_size_),
+        mean = mean(!!rlang::sym(value_col)),
+        median = stats::median(!!rlang::sym(value_col)),
+        sd = stats::sd(!!rlang::sym(value_col)),
+        min = min(!!rlang::sym(value_col)),
+        max = max(!!rlang::sym(value_col)),
+        q25 = unname(stats::quantile(!!rlang::sym(value_col), 0.25)),
+        q75 = unname(stats::quantile(!!rlang::sym(value_col), 0.75)),
+      )
+  }
+  list(global = global, local = local)
 }
 
 # Discretization function wrappers --------------------------------------------
@@ -869,14 +859,19 @@ discretization_funs <- list()
 
 discretization_funs$width <- function(x, n_states, ...) {
   r <- range(x)
-  width <- diff(r) / n_states
-  breaks <- seq(r[1], r[2], length.out = n_states + 1L)
+  k <- n_states + 1L
+  breaks <- seq(r[1], r[2], length.out = k)
+  breaks[1L] <- breaks[1L] - 1.0
+  breaks[k] <- breaks[k] + 1.0
   cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
 }
 
 discretization_funs$quantile <- function(x, n_states, ...) {
-  probs <- seq(0, 1, length.out = n_states + 1L)
+  k <- n_states + 1L
+  probs <- seq(0, 1, length.out = k)
   breaks <- stats::quantile(x, probs = probs)
+  breaks[1L] <- breaks[1L] - 1.0
+  breaks[k] <- breaks[k] + 1.0
   cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
 }
 
@@ -896,7 +891,7 @@ discretization_funs$kde <- function(x, n_states, ...) {
   findpeaks_args$x <- -dens$y
   valleys <- do.call(pracma::findpeaks, args = findpeaks_args)
   breaks <- sort(unique(dens$x[valleys[, 2L]]))
-  breaks <- c(min(x), breaks, max(x))
+  breaks <- c(min(x) - 1.0, breaks, max(x) + 1.0)
   cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
 }
 
@@ -909,10 +904,12 @@ discretization_funs$gaussian <- function(x, n_states, ...) {
   utils::capture.output(
     model <- mixtools::normalmixEM(x = x, k = n_states, ...)
   )
-  max.col(model$posterior)
+  ord <- order(model$mu)
+  ord[max.col(model$posterior)]
 }
 
 discretization_funs$kmeans <- function(x, n_states, ...) {
   km <- stats::kmeans(x, centers = n_states, ...)
-  km$cluster
+  ord <- order(km$centers)
+  ord[km$cluster]
 }

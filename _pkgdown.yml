@@ -35,7 +35,6 @@ reference:
     - plot.tna
     - summary.tna
     - hist.tna
-    - simulate.tna
     - print.summary.tna
     - plot_frequencies
     - plot_frequencies.group_tna
@@ -50,11 +49,12 @@ reference:
 
   - title: Importing/generating data
     contents:
-    - prepare_data
     - import_data
-    - import_ts
+    - prepare_data
+    - prepare_ts
     - print.tna_data
     - plot.tna_data
+    - simulate.tna
 
   - title: Centralities
     contents:

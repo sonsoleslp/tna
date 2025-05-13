@@ -216,7 +216,7 @@ test_that("time series data can be imported", {
   k <- table(mock_ts$id)[1L]
   for (m in methods) {
     expect_error(
-      imported[[m]] <- import_ts(
+      imported[[m]] <- prepare_ts(
         data = mock_ts,
         id_col = "id",
         value_col = "series",
@@ -239,7 +239,7 @@ test_that("time series data can be imported", {
 
 test_that("missing data columns fail", {
   expect_error(
-    import_ts(
+    prepare_ts(
       data = mock_ts,
       id_col = "not_id",
       value_col = "series",
@@ -252,7 +252,7 @@ test_that("missing data columns fail", {
 
 test_that("invalid number of states fails", {
   expect_error(
-    import_ts(
+    prepare_ts(
       data = mock_ts,
       id_col = "id",
       value_col = "series",
