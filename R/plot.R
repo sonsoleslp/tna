@@ -713,6 +713,14 @@ plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
           !!rlang::sym(state_col),
           default = dplyr::first(!!rlang::sym(state_col))
         )
+      ),
+      .lag_time = dplyr::lag(
+        !!rlang::sym(time_col),
+        default = dplyr::first(!!rlang::sym(time_col))
+      ),
+      .lead_time = dplyr::lead(
+        !!rlang::sym(time_col),
+        default = dplyr::last(!!rlang::sym(time_col))
       )
     ) |>
     dplyr::group_by(
@@ -721,8 +729,8 @@ plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
       !!rlang::sym(state_col)
     ) |>
     dplyr::summarise(
-      .xmin = min(!!rlang::sym(time_col)),
-      .xmax = max(!!rlang::sym(time_col)),
+      .xmin = 0.5 * (min(!!rlang::sym(time_col)) + min(.lag_time)),
+      .xmax = 0.5 * (max(!!rlang::sym(time_col)) + max(.lead_time)),
       .groups = "drop"
     )
   p <- ggplot2::ggplot(

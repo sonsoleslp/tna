@@ -1,8 +1,8 @@
 #' Identify Cliques in a Transition Network
 #'
 #' This function identifies cliques of a specified size in a transition network.
-#' It searches for cliques—complete subgraphs where every pair of nodes is
-#' connected—of size `n` in the transition matrix for the specified cluster
+#' It searches for cliques, i.e., complete subgraphs where every pair of nodes
+#' is connected, of size `n` in the transition matrix for the specified cluster
 #' in the `tna` object.
 #'
 #' @export

@@ -757,11 +757,18 @@ prepare_ts.default <- function(data, id_col, value_col, order_col, n_states,
   data$.id <- 1L
   complete <- stats::complete.cases(data[, c(id_col, value_col)])
   values <- data[[value_col]][complete]
-  states <- discretization_funs[[method]](values, n_states, ...)
+  # TODO warn if number of states is less than n_states
+  discretized <- discretization_funs[[method]](values, n_states, ...)
+  states <- discretized$states
+  output <- discretized$output
   state_col <- paste0(value_col, "_state")
   data[[state_col]] <- NA
   data[[state_col]][complete] <- states
-  data[[state_col]] <- factor(data[[state_col]], labels = labels)
+  data[[state_col]] <- factor(
+    data[[state_col]],
+    levels = seq_len(n_states),
+    labels = labels
+  )
   stats <- compute_state_statistics(data, id_col, value_col, state_col)
   timed_data <- NULL
   if (missing(order_col)) {
@@ -802,6 +809,7 @@ prepare_ts.default <- function(data, id_col, value_col, order_col, n_states,
     value_col = value_col,
     state_col = state_col,
     time_col = ifelse_(missing(order_col), ".time", order_col),
+    output = output,
     class = "tna_data"
   )
 }
@@ -863,7 +871,10 @@ discretization_funs$width <- function(x, n_states, ...) {
   breaks <- seq(r[1], r[2], length.out = k)
   breaks[1L] <- breaks[1L] - 1.0
   breaks[k] <- breaks[k] + 1.0
-  cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
+  list(
+    states = cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE),
+    output = breaks
+  )
 }
 
 discretization_funs$quantile <- function(x, n_states, ...) {
@@ -872,7 +883,10 @@ discretization_funs$quantile <- function(x, n_states, ...) {
   breaks <- stats::quantile(x, probs = probs)
   breaks[1L] <- breaks[1L] - 1.0
   breaks[k] <- breaks[k] + 1.0
-  cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
+  list(
+    states = cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE),
+    output = breaks
+  )
 }
 
 discretization_funs$kde <- function(x, n_states, ...) {
@@ -892,7 +906,10 @@ discretization_funs$kde <- function(x, n_states, ...) {
   valleys <- do.call(pracma::findpeaks, args = findpeaks_args)
   breaks <- sort(unique(dens$x[valleys[, 2L]]))
   breaks <- c(min(x) - 1.0, breaks, max(x) + 1.0)
-  cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE)
+  list(
+    states = cut(x, breaks = breaks, labels = FALSE, include.lowest = TRUE),
+    output = breaks
+  )
 }
 
 discretization_funs$gaussian <- function(x, n_states, ...) {
@@ -905,11 +922,17 @@ discretization_funs$gaussian <- function(x, n_states, ...) {
     model <- mixtools::normalmixEM(x = x, k = n_states, ...)
   )
   ord <- order(model$mu)
-  ord[max.col(model$posterior)]
+  list(
+    states = ord[max.col(model$posterior)],
+    output = model
+  )
 }
 
 discretization_funs$kmeans <- function(x, n_states, ...) {
   km <- stats::kmeans(x, centers = n_states, ...)
   ord <- order(km$centers)
-  ord[km$cluster]
+  list(
+    states = ord[km$cluster],
+    output = km
+  )
 }
