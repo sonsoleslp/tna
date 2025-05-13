@@ -40,8 +40,8 @@ instead, which is a \code{list} or \code{tna_cliques} objects.
 }
 \description{
 This function identifies cliques of a specified size in a transition network.
-It searches for cliques—complete subgraphs where every pair of nodes is
-connected—of size \code{n} in the transition matrix for the specified cluster
+It searches for cliques, i.e., complete subgraphs where every pair of nodes
+is connected, of size \code{n} in the transition matrix for the specified cluster
 in the \code{tna} object.
 }
 \examples{

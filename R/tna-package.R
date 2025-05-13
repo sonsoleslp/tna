@@ -37,7 +37,7 @@
 #' Students' engagement states (Active / Average / Disengaged)
 #' throughout a whole study program. The data was generated synthetically
 #' based on the article "The longitudinal association between engagement and
-#' achievement varies by time, students’ profiles, and achievement state:
+#' achievement varies by time, students' profiles, and achievement state:
 #' A full program study"
 #'
 #' @family datasets
