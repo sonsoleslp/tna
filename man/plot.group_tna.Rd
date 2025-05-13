@@ -34,7 +34,6 @@ Basic functions
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
 \code{\link{import_data}()},
-\code{\link{import_ts}()},
 \code{\link{plot.tna}()},
 \code{\link{plot_frequencies}()},
 \code{\link{plot_frequencies.group_tna}()},

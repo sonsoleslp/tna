@@ -28,7 +28,6 @@ Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.tna}()},
 \code{\link{import_data}()},
-\code{\link{import_ts}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
 \code{\link{plot_frequencies}()},

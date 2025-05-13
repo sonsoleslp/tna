@@ -47,16 +47,6 @@ mock_long <- data.frame(
   event =  as.vector(t(as.matrix(mock_sequence)))
 )
 
-mock_ts <- data.frame(
-  id = gl(5, 50),
-  series = c(
-    replicate(
-      10,
-      stats::arima.sim(list(order = c(1, 1, 0), ar = 0.35), n = 49)
-    )
-  )
-)
-
 {
   rlang::local_options(rlib_message_verbosity = "quiet")
   mock_tna_data <- prepare_data(
