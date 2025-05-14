@@ -104,7 +104,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
   params <- attr(x, "params")
-  model <- initialize_model(d, type, scaling, params, transitions = TRUE)
+  model <- initialize_model(d, type, scaling, params)
   trans <- model$trans
   alphabet <- attr(d, "alphabet")
   dim_names <- list(alphabet, alphabet)

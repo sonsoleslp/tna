@@ -21,7 +21,8 @@
 #' @param type A `character` string describing the weight matrix type.
 #'   Currently supports the following types:
 #'
-#'   * `"relative"` for relative frequencies (probabilities, the default)
+#'   * `"relative"` for relative frequencies (probabilities, the default).
+#'       This option corresponds to a Markov model.
 #'   * `"frequency"` for frequencies.
 #'   * `"co-occurrence"` for co-occurrences.
 #'   * `"n-gram"` for n-gram transitions. Captures higher-order transitions by
@@ -38,7 +39,8 @@
 #'       option.
 #'   * `"attention"` aggregates all downstream pairs of states with an
 #'       exponential decay for the gap between states. The parameter `lambda`
-#'       can be used to control the decay rate (the default is 1)-
+#'       can be used to control the decay rate (the default is 1)
+#'   * `"semimarkov"` estimates a semi-Markov models for the transitions.
 #'
 #' @param scaling A `character` vector describing how to scale the weights
 #'   defined by `type`. When a vector is provided, the scaling options are
@@ -191,6 +193,7 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
   build_model_(
     weights = model$weights,
     inits = model$inits,
+    sojourns = model$sojourns,
     labels = attr(x, "labels"),
     type = type,
     scaling = scaling,
@@ -215,6 +218,7 @@ build_model.data.frame <- function(x, type = "relative",
   build_model_(
     weights = model$weights,
     inits = model$inits,
+    sojourns = model$sojourns,
     labels = model$labels,
     type = type,
     scaling = scaling,
@@ -237,6 +241,7 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
   build_model_(
     weights = model$weights,
     inits = model$inits,
+    sojourns = model$sojourns,
     labels = model$labels,
     type = type,
     scaling = scaling,
@@ -293,19 +298,22 @@ atna <- function(x, ...) {
 #' @param inits A `numeric` vector of initial state probabilities.
 #' @param labels A `character` vector of state labels.
 #' @param type A `character` string defining the network type.
+#' @param type_attr A `list` of additional attributes related to the type.
 #' @param scaling A `character` string defining the scaling of the weights
 #' @param data A `tna_seqdata` object when `weights` is
 #'   created from sequence data.
 #' @param params A `list` of parameters for computing the transitions
 #' @return A `tna` object.
 #' @noRd
-build_model_ <- function(weights, inits = NULL, labels = NULL,
-                         type = NULL, scaling = character(0L), data = NULL,
-                         params = NULL) {
+build_model_ <- function(weights, inits = NULL, sojourns = NULL,
+                         labels = NULL, type = NULL,
+                         scaling = character(0L),
+                         data = NULL, params = NULL) {
   structure(
     list(
       weights = weights,
       inits = onlyif(!missing(inits), inits),
+      sojourns = sojourns,
       labels = labels,
       data = data
     ),
@@ -363,8 +371,7 @@ create_seqdata <- function(x, cols, alphabet) {
     class = c("matrix", "array"),
     alphabet = alphabet,
     labels = labels,
-    colors = colors#,
-    #cols = cols
+    colors = colors
   )
 }
 
@@ -374,18 +381,15 @@ create_seqdata <- function(x, cols, alphabet) {
 #' @param type The type of transition network model to build.
 #' @param scaling The scaling methods to apply to the weights.
 #' @param params A list of parameters for the transition model.
-#' @param transitions Should the individual-level transitions also be returned?
-#' Defaults to `FALSE`.
 #' @noRd
-initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
+initialize_model <- function(x, type, scaling, params) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
-  #cols <- attr(x, "cols")
-  #m <- as.matrix(x[, cols])
   a <- length(alphabet)
   inits <- factor(x[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
   trans <- compute_transitions(x, a, type, params)
+  sojourns <- compute_sojourns(x, a, type)
   weights <- compute_weights(trans, type, scaling, a)
   inits <- inits / sum(inits)
   names(inits) <- alphabet
@@ -394,7 +398,8 @@ initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
     weights = weights,
     inits = inits,
     labels = labels,
-    trans = onlyif(transitions, trans)
+    trans = trans,
+    sojourns = sojourns
   )
 }
 
@@ -489,8 +494,49 @@ compute_transitions <- function(m, a, type, params) {
         trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
       }
     }
+  } else if (type == "semimarkov") {
+    for (i in seq_len(p - 1L)) {
+      from <- m[, i]
+      to <- m[, i + 1L]
+      is_trans <- !is.na(from) & !is.na(to) & (from != to)
+      new_trans <- cbind(idx, from, to)[is_trans, , drop = FALSE]
+      trans[new_trans] <- trans[new_trans] + 1L
+    }
   }
   trans
+}
+
+#' Compute Sojourns for a Semi-Markov TNA Model
+#'
+#' @inheritParams compute_transitions
+#' @return A `list` of integer vectors giving the sojourn lengths for each
+#' state.
+#' @noRd
+compute_sojourns <- function(m, a, type) {
+  if (type != "semimarkov") {
+    return(NULL)
+  }
+  n <- nrow(m)
+  p <- ncol(m)
+  idx <- seq_len(n)
+  out <- vector(mode = "list", length = a)
+  soj <- array(0L, dim = c(n, a, p))
+  soj[cbind(idx, m[, 1L], 1L)] <- 1L
+  idx_soj <- rep(1L, n)
+  for (i in seq_len(p - 1L)) {
+    from <- m[, i]
+    to <- m[, i + 1L]
+    is_trans <- !is.na(from) & !is.na(to) & (from != to)
+    is_soj <- !is.na(to)
+    idx_soj[is_trans] <- idx_soj[is_trans] + 1L
+    increment_soj <- cbind(idx, to, idx_soj)[is_soj, , drop = FALSE]
+    soj[increment_soj] <- soj[increment_soj] + 1L
+  }
+  for (i in seq_len(a)) {
+    tmp <- soj[, i, ]
+    out[[i]] <- tmp[tmp > 0]
+  }
+  out
 }
 
 #' Compute Network Weights Based On TNA Type
@@ -515,7 +561,7 @@ compute_weights <- function(transitions, type, scaling, a) {
 #' @param a An `integer`, the number of states.
 #' @noRd
 scale_weights <- function(weights, type, scaling, a) {
-  if (type == "relative") {
+  if (type %in% c("relative", "semimarkov")) {
     rs <- .rowSums(weights, m = a, n = a)
     pos <- which(rs > 0)
     weights[pos, ] <- weights[pos, ] / rs[pos]
@@ -545,4 +591,8 @@ nodes <- function(x) {
   } else {
     ncol(x)
   }
+}
+
+get_type_attributes <- function(transitions) {
+  attributes(transitions)["sojourns"]
 }

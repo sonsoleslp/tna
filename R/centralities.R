@@ -244,7 +244,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
   params <- attr(x, "params")
-  model <- initialize_model(d, type, scaling, params, transitions = TRUE)
+  model <- initialize_model(d, type, scaling, params)
   trans <- model$trans
   a <- dim(trans)[2]
   n <- nrow(d)

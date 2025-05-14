@@ -191,8 +191,7 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     combined_data,
     type,
     scaling,
-    params,
-    transitions = TRUE
+    params
   )
   combined_trans <- combined_model$trans
   edge_diffs_perm <- array(0L, dim = c(iter, a, a))

@@ -37,7 +37,8 @@ check_model_type <- function(type) {
       "gap",
       "window",
       "reverse",
-      "attention"
+      "attention",
+      "semimarkov"
     )
   )
 }
