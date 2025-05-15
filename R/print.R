@@ -32,6 +32,44 @@ print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }
 
+#' Print a TNA Data Summary
+#'
+#' @export
+#' @family basic
+#' @param x A `summary.tna_data` object.
+#' @param ... Arguments passed to the generic `print` method
+#' @return `x` (invisibly).
+#' @examples
+#' data <- tibble::tibble(
+#'   user = c("A", "A", "A", "B", "B", "C", "C", "C"),
+#'   time = c(
+#'     "2023-01-01 10:00:00", "2023-01-01 10:05:00",
+#'     "2023-01-01 10:20:00", "2023-01-01 12:00:00",
+#'     "2023-01-01 12:02:00", "2023-01-01 14:00:00",
+#'     "2023-01-01 14:05:00", "2023-01-01 14:10:00"
+#'   ),
+#'   action = c(
+#'     "view", "click", "add_cart", "view",
+#'     "checkout", "view", "click", "share"
+#'    )
+#' )
+#' results <- prepare_data(
+#'   data, actor = "user", time = "time", action = "action"
+#' )
+#' print(summary(results))
+#'
+print.summary.tna_data <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "summary.tna_data")
+  cat("Summary of the long-format data:\n\n")
+  print(x$long_summary, ...)
+  cat("\nSummary of the sequence data:\n\n")
+  print(x$sequence_summary, ...)
+  cat("\nSummary of the metadata:\n\n")
+  print(x$meta_summary, ...)
+  invisible(x)
+}
+
 #' Print a `tna` Object
 #'
 #' @export

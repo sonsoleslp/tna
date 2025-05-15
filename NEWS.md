@@ -1,3 +1,7 @@
+# tna 0.4.10
+
+* Added the function `tna2sts()` to convert sequence data used by the package to `stslist` objects used by `TraMineR` and `seqHMM`.
+
 # tna 0.4.9
 
 * Switched to `matrix` as the internal data format used by TNA models for performance improvements across all functions.

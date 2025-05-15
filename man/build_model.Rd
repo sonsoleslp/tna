@@ -68,7 +68,8 @@ time points).}
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:
 \itemize{
-\item \code{"relative"} for relative frequencies (probabilities, the default)
+\item \code{"relative"} for relative frequencies (probabilities, the default).
+This option corresponds to a Markov model.
 \item \code{"frequency"} for frequencies.
 \item \code{"co-occurrence"} for co-occurrences.
 \item \code{"n-gram"} for n-gram transitions. Captures higher-order transitions by
@@ -85,7 +86,8 @@ The resulting weight matrix is the transpose of the \code{"frequency"}
 option.
 \item \code{"attention"} aggregates all downstream pairs of states with an
 exponential decay for the gap between states. The parameter \code{lambda}
-can be used to control the decay rate (the default is 1)-
+can be used to control the decay rate (the default is 1)
+\item \code{"semimarkov"} estimates a semi-Markov models for the transitions.
 }}
 
 \item{scaling}{A \code{character} vector describing how to scale the weights
@@ -183,11 +185,14 @@ Basic functions
 \code{\link{print.group_tna}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.tna}()},
+\code{\link{print.summary.tna_data}()},
 \code{\link{print.tna}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()},
 \code{\link{summary.group_tna}()},
 \code{\link{summary.tna}()},
-\code{\link{tna-package}}
+\code{\link{summary.tna_data}()},
+\code{\link{tna-package}},
+\code{\link{tna2sts}()}
 }
 \concept{basic}

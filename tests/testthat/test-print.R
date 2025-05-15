@@ -178,6 +178,14 @@ test_that("tna_data objects can be printed", {
   )
 })
 
+test_that("tna_data summaries can be printed", {
+  sumr <- summary(mock_tna_data)
+  expect_error(
+    capture.output(print(sumr)),
+    NA
+  )
+})
+
 test_that("comparison results can be printed", {
   model_x <- tna(group_regulation[1:200, ])
   model_y <- tna(group_regulation[1001:1200, ])

@@ -216,3 +216,43 @@ summary.group_tna_bootstrap <- function(object, ...) {
     class = c("summary.group_tna_bootstrap", "data.frame")
   )
 }
+
+#' Summarize TNA Data
+#'
+#' @export
+#' @family basic
+#' @param object A `tna_data` object.
+#' @param ... Arguments passed to [summary.data.frame()].
+#' @return A `summary.tna_data` object, which a `list` of summaries for the
+#' long data, sequence data, and metadata.
+#' @examples
+#' data <- tibble::tibble(
+#'   user = c("A", "A", "A", "B", "B", "C", "C", "C"),
+#'   time = c(
+#'     "2023-01-01 10:00:00", "2023-01-01 10:05:00",
+#'     "2023-01-01 10:20:00", "2023-01-01 12:00:00",
+#'     "2023-01-01 12:02:00", "2023-01-01 14:00:00",
+#'     "2023-01-01 14:05:00", "2023-01-01 14:10:00"
+#'   ),
+#'   action = c(
+#'     "view", "click", "add_cart", "view",
+#'     "checkout", "view", "click", "share"
+#'    )
+#' )
+#' results <- prepare_data(
+#'   data, actor = "user", time = "time", action = "action"
+#' )
+#' summary(results)
+#'
+summary.tna_data <- function(object, ...) {
+  check_missing(object)
+  check_class(object, "tna_data")
+  structure(
+    list(
+      long_summary = summary(object$long_data, ...),
+      sequence_summary = summary(object$sequence_data, ...),
+      meta_summary = summary(object$meta_data, ...)
+    ),
+    class = "summary.tna_data"
+  )
+}

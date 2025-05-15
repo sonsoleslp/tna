@@ -613,3 +613,115 @@ import_data <- function(data, cols, id_cols,
       order
     )
 }
+
+#' Convert TNA Sequence Data into STS Format
+#'
+#' Converts data from the formats used by `tna` into `stslist` objects used
+#' by, e.g., `TraMineR` and `seqHMM`. Gaps and left-missing values are
+#' converted to missing values and right-missing values are removed.
+#'
+#' @export
+#' @family basic
+#' @rdname tna2sts
+#' @param x A `tna`, `group_tna`, or `tna_data` object.
+#' @param void The internal code used by `TraMineR` for representing void
+#' elements in the sequences. The default is `"%"`.
+#' @param nr The internal code used by `TraMineR` for representing real
+#' missing elements in the sequences. The default is `"*"`.
+#' @param ... Ignored.
+#' @return An `stslist` object of the sequence data.
+#' @examples
+#' model <- tna(group_regulation)
+#' tna2sts(model)
+#'
+tna2sts <- function(x, ...) {
+  UseMethod("tna2sts")
+}
+
+#' @export
+#' @rdname tna2sts
+tna2sts.tna <- function(x, void = "%", nr = "*", ...) {
+  check_tna_seq(x)
+  d <- x$data
+  tna2sts_(
+    d = d,
+    void = void,
+    nr = nr,
+    alphabet = attr(d, "alphabet"),
+    labels = attr(d, "labels"),
+    colors = attr(d, "colors")
+  )
+}
+
+#' @export
+#' @rdname tna2sts
+tna2sts.group_tna <- function(x, void = "%", nr = "*", ...) {
+  check_class(x, "group_tna")
+  d <- do.call("rbind", lapply(x, "[[", "data"))
+  tna2sts_(
+    d = d,
+    void = void,
+    nr = nr,
+    alphabet = attr(x[[1L]]$data, "alphabet"),
+    labels = attr(x[[1L]]$data, "labels"),
+    colors = attr(x[[1L]]$data, "colors")
+  )
+}
+
+#' @export
+#' @rdname tna2sts
+tna2sts.tna_data <- function(x, void = "%", nr = "*", ...) {
+  check_class(x, "tna_data")
+  d <- create_seqdata(x$sequence_data, cols = seq_len(ncol(x$sequence_data)))
+  tna2sts_(
+    d = d,
+    void = void,
+    nr = nr,
+    alphabet = attr(d, "alphabet"),
+    labels = attr(d, "labels"),
+    colors = attr(d, "colors")
+  )
+}
+
+tna2sts_ <- function(d, void, nr, alphabet, labels, colors) {
+  lab <- labels
+  n <- length(lab)
+  dc <- ncol(d)
+  dr <- nrow(d)
+  out <- matrix(n + 2L, dr, dc)
+  colnames(out) <- colnames(d)
+  for (i in seq_len(dr)) {
+    tail <- which(rev(!is.na(d[i, ])))[1L]
+    if (!is.na(tail)) {
+      last_obs <- ifelse_(is.na(d[i, dc]), dc - tail + 1L, dc)
+      seq_actual <- seq(1L, last_obs)
+      out[i, seq_actual] <- d[i, seq_actual]
+    }
+  }
+  out[is.na(out)] <- n + 1L
+  out <- as.data.frame(
+    lapply(
+      as.data.frame(out),
+      factor,
+      levels = seq(1, n + 2L),
+      labels = c(lab, nr, void)
+    )
+  )
+  mis <- TRUE
+  mis[1L] <- NA
+  structure(
+    out,
+    start = 1L,
+    missing = mis,
+    void = void,
+    nr = nr,
+    alphabet = alphabet,
+    labels = labels,
+    cpal = colors,
+    missing.color = "darkgrey",
+    xtstep = 1.0,
+    tick.last = FALSE,
+    version = "2.2-11",
+    class = c("stslist", "data.frame")
+  )
+}

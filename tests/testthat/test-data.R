@@ -200,3 +200,27 @@ test_that("wide format sequence data can be imported", {
     c("feature3", "other_col", "ID", "Time", "action", "value", "order")
   )
 })
+
+test_that("sequence data can be converted", {
+  expect_error(
+    tna2sts(mock_tna_seq),
+    NA
+  )
+  expect_error(
+    tna2sts(mock_tna_data),
+    NA
+  )
+  model <- group_tna(group_regulation)
+  expect_error(
+    tna2sts(model),
+    NA
+  )
+})
+
+
+test_that("tna data can be summarized", {
+  expect_error(
+    summary(mock_tna_data),
+    NA
+  )
+})

@@ -17,6 +17,8 @@
   edge.label.position = 0.65,
   layout = "circle",
   layout_args = list(),
+  scale_nodes,
+  scaling_factor = 0.5,
   mar = rep(5, 4),
   theme = "colorblind",
   ...
@@ -58,6 +60,16 @@ pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
 \item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
 function when \code{layout} is a function.}
 
+\item{scale_nodes}{A \code{character} string giving the name of a centrality
+measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
+If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling. Overrides
+\code{vsize} provided via \code{...}.}
+
+\item{scaling_factor}{A \code{numeric} value specifying how strongly to scale
+the nodes when \code{node_scaling} is provided. The default is \code{0.5}. Values
+closer to zero will result in more similar node sizes and values larger
+than 1 will result in greater differences.}
+
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
@@ -94,11 +106,14 @@ Basic functions
 \code{\link{print.group_tna}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.tna}()},
+\code{\link{print.summary.tna_data}()},
 \code{\link{print.tna}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()},
 \code{\link{summary.group_tna}()},
 \code{\link{summary.tna}()},
-\code{\link{tna-package}}
+\code{\link{summary.tna_data}()},
+\code{\link{tna-package}},
+\code{\link{tna2sts}()}
 }
 \concept{basic}

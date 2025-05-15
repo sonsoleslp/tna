@@ -57,11 +57,14 @@ Basic functions
 \code{\link{print.group_tna}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.tna}()},
+\code{\link{print.summary.tna_data}()},
 \code{\link{print.tna}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()},
 \code{\link{summary.group_tna}()},
-\code{\link{summary.tna}()}
+\code{\link{summary.tna}()},
+\code{\link{summary.tna_data}()},
+\code{\link{tna2sts}()}
 }
 \author{
 Sonsoles López-Pernas, Santtu Tikka, Mohammed Saqr
