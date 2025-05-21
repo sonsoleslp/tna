@@ -657,8 +657,10 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' @param selected A `character` vector of specific individual time series to
 #' plot. If not provided (the default), all are plotted up to `max_series`
 #  number of plots.
-#' @param overlay A `logical` value indicating whether to plot an overlay to
-#' indicate the state assigned to each time point. Defaults to `TRUE`.
+#' @param overlay A `character` string that describes how to plot the overlay
+#' indicating the state assigned to each time point. Can be either `"h"` for
+#' a horizontal overlay or `"v"` for a vertical overlay (the default). If
+#' `NULL`, no overlay is plotted.
 #' @param points A `logical` value indicating whether to plot a point for
 #' each observation colored according to the assigned state.
 #' Defaults to `FALSE`.
@@ -683,7 +685,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' data_ts <- prepare_ts(ts_data, "id", "series", "time", n_states = 5)
 #' plot(data_ts)
 #'
-plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
+plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
                           ncol = NULL, max_series = 10,
                           scales = c("free", "free_x", "free_y", "fixed")) {
 
@@ -691,6 +693,11 @@ plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
   if (attr(x, "type") != "timeseries") {
     return(NULL)
   }
+  check_string(overlay)
+  if (!is.null(overlay)) {
+    check_match(overlay, c("h", "v"))
+  }
+  check_flag(points)
   id_col <- attr(x, "id_col")
   value_col <- attr(x, "value_col")
   state_col <- attr(x, "state_col")
@@ -704,40 +711,72 @@ plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
   )
   df <- df[df[[id_col]] %in% selected, ]
   # Create segments where the state remains constant
-  df_rects <- df |>
-    dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(time_col)) |>
-    dplyr::group_by(!!rlang::sym(id_col)) |>
-    dplyr::mutate(
-      .grouping_var = cumsum(
-        !!rlang::sym(state_col) != dplyr::lag(
-          !!rlang::sym(state_col),
-          default = dplyr::first(!!rlang::sym(state_col))
+  if (overlay == "v") {
+    df_rects <- df |>
+      dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(time_col)) |>
+      dplyr::group_by(!!rlang::sym(id_col)) |>
+      dplyr::mutate(
+        .grouping_var = cumsum(
+          !!rlang::sym(state_col) != dplyr::lag(
+            !!rlang::sym(state_col),
+            default = dplyr::first(!!rlang::sym(state_col))
+          )
+        ),
+        .lag_time = dplyr::lag(
+          !!rlang::sym(time_col),
+          default = dplyr::first(!!rlang::sym(time_col))
+        ),
+        .lead_time = dplyr::lead(
+          !!rlang::sym(time_col),
+          default = dplyr::last(!!rlang::sym(time_col))
         )
-      ),
-      .lag_time = dplyr::lag(
-        !!rlang::sym(time_col),
-        default = dplyr::first(!!rlang::sym(time_col))
-      ),
-      .lead_time = dplyr::lead(
-        !!rlang::sym(time_col),
-        default = dplyr::last(!!rlang::sym(time_col))
+      ) |>
+      dplyr::group_by(
+        !!rlang::sym(id_col),
+        .grouping_var,
+        !!rlang::sym(state_col)
+      ) |>
+      dplyr::summarise(
+        .xmin = 0.5 * (min(!!rlang::sym(time_col)) + min(.lag_time)),
+        .xmax = 0.5 * (max(!!rlang::sym(time_col)) + max(.lead_time)),
+        .groups = "drop"
       )
-    ) |>
-    dplyr::group_by(
-      !!rlang::sym(id_col),
-      .grouping_var,
-      !!rlang::sym(state_col)
-    ) |>
-    dplyr::summarise(
-      .xmin = 0.5 * (min(!!rlang::sym(time_col)) + min(.lag_time)),
-      .xmax = 0.5 * (max(!!rlang::sym(time_col)) + max(.lead_time)),
-      .groups = "drop"
-    )
+  } else if (overlay == "h") {
+    df_rects <- df |>
+      dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(value_col)) |>
+      dplyr::group_by(!!rlang::sym(id_col)) |>
+      dplyr::mutate(
+        .grouping_var = cumsum(
+          !!rlang::sym(state_col) != dplyr::lag(
+            !!rlang::sym(state_col),
+            default = dplyr::first(!!rlang::sym(state_col))
+          )
+        ),
+        .lag_value = dplyr::lag(
+          !!rlang::sym(value_col),
+          default = dplyr::first(!!rlang::sym(value_col))
+        ),
+        .lead_value = dplyr::lead(
+          !!rlang::sym(value_col),
+          default = dplyr::last(!!rlang::sym(value_col))
+        )
+      ) |>
+      dplyr::group_by(
+        !!rlang::sym(id_col),
+        .grouping_var,
+        !!rlang::sym(state_col)
+      ) |>
+      dplyr::summarise(
+        .ymin = 0.5 * (min(!!rlang::sym(value_col)) + min(.lag_value)),
+        .ymax = 0.5 * (max(!!rlang::sym(value_col)) + max(.lead_value)),
+        .groups = "drop"
+      )
+  }
   p <- ggplot2::ggplot(
     df,
     ggplot2::aes(x = !!rlang::sym(time_col), y = !!rlang::sym(value_col))
   )
-  if (overlay) {
+  if (overlay == "v") {
     p <- p + ggplot2::geom_rect(
       data = df_rects,
       ggplot2::aes(
@@ -745,6 +784,19 @@ plot.tna_data <- function(x, selected, overlay = TRUE, points = FALSE,
         xmax = .xmax,
         ymin = -Inf,
         ymax = Inf,
+        fill = !!rlang::sym(state_col) # factor
+      ),
+      alpha = 0.5,
+      inherit.aes = FALSE
+    )
+  } else if (overlay == "h") {
+    p <- p + ggplot2::geom_rect(
+      data = df_rects,
+      ggplot2::aes(
+        xmin = -Inf,
+        xmax = Inf,
+        ymin = .ymin,
+        ymax = .ymax,
         fill = !!rlang::sym(state_col) # factor
       ),
       alpha = 0.5,
