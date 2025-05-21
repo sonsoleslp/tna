@@ -667,6 +667,8 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' @param ncol An `integer` giving the number of columns to use for the facets.
 #' @param max_series An `integer` that defines the maximum number
 #' of time-series to plot. The default is 10.
+#' @param trend A `logical` value for whether to add a trend line or not.
+#' The default is `FALSE` for no trend line.
 #' @param scales Any of `"fixed"`, `"free_x"`, `"free_y"`, or
 #' `"free"` (the default).
 #' @return A `ggplot` object.
@@ -686,7 +688,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' plot(data_ts)
 #'
 plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
-                          ncol = NULL, max_series = 10,
+                          ncol = NULL, max_series = 10, trend = FALSE,
                           scales = c("free", "free_x", "free_y", "fixed")) {
 
   # TODO Plot when not from timeseries data
@@ -711,9 +713,22 @@ plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
   )
   df <- df[df[[id_col]] %in% selected, ]
   # Create segments where the state remains constant
-  if (overlay == "v") {
+  if (!is.null(overlay)) {
+    if (overlay == "v") {
+      segment_col <- time_col
+      xmin <- rlang::sym(".min")
+      xmax <- rlang::sym(".max")
+      ymin <- rlang::sym(".neginf")
+      ymax <- rlang::sym(".posinf")
+    } else if (overlay == "h") {
+      segment_col <- value_col
+      xmin <- rlang::sym(".neginf")
+      xmax <- rlang::sym(".posinf")
+      ymin <- rlang::sym(".min")
+      ymax <- rlang::sym(".max")
+    }
     df_rects <- df |>
-      dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(time_col)) |>
+      dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(segment_col)) |>
       dplyr::group_by(!!rlang::sym(id_col)) |>
       dplyr::mutate(
         .grouping_var = cumsum(
@@ -722,13 +737,13 @@ plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
             default = dplyr::first(!!rlang::sym(state_col))
           )
         ),
-        .lag_time = dplyr::lag(
-          !!rlang::sym(time_col),
-          default = dplyr::first(!!rlang::sym(time_col))
+        .lag = dplyr::lag(
+          !!rlang::sym(segment_col),
+          default = dplyr::first(!!rlang::sym(segment_col))
         ),
-        .lead_time = dplyr::lead(
-          !!rlang::sym(time_col),
-          default = dplyr::last(!!rlang::sym(time_col))
+        .lead = dplyr::lead(
+          !!rlang::sym(segment_col),
+          default = dplyr::last(!!rlang::sym(segment_col))
         )
       ) |>
       dplyr::group_by(
@@ -737,38 +752,10 @@ plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
         !!rlang::sym(state_col)
       ) |>
       dplyr::summarise(
-        .xmin = 0.5 * (min(!!rlang::sym(time_col)) + min(.lag_time)),
-        .xmax = 0.5 * (max(!!rlang::sym(time_col)) + max(.lead_time)),
-        .groups = "drop"
-      )
-  } else if (overlay == "h") {
-    df_rects <- df |>
-      dplyr::arrange(!!rlang::sym(id_col), !!rlang::sym(value_col)) |>
-      dplyr::group_by(!!rlang::sym(id_col)) |>
-      dplyr::mutate(
-        .grouping_var = cumsum(
-          !!rlang::sym(state_col) != dplyr::lag(
-            !!rlang::sym(state_col),
-            default = dplyr::first(!!rlang::sym(state_col))
-          )
-        ),
-        .lag_value = dplyr::lag(
-          !!rlang::sym(value_col),
-          default = dplyr::first(!!rlang::sym(value_col))
-        ),
-        .lead_value = dplyr::lead(
-          !!rlang::sym(value_col),
-          default = dplyr::last(!!rlang::sym(value_col))
-        )
-      ) |>
-      dplyr::group_by(
-        !!rlang::sym(id_col),
-        .grouping_var,
-        !!rlang::sym(state_col)
-      ) |>
-      dplyr::summarise(
-        .ymin = 0.5 * (min(!!rlang::sym(value_col)) + min(.lag_value)),
-        .ymax = 0.5 * (max(!!rlang::sym(value_col)) + max(.lead_value)),
+        .neginf = -Inf,
+        .posinf = Inf,
+        .min = 0.5 * (min(!!rlang::sym(segment_col)) + min(.lag)),
+        .max = 0.5 * (max(!!rlang::sym(segment_col)) + max(.lead)),
         .groups = "drop"
       )
   }
@@ -776,28 +763,15 @@ plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
     df,
     ggplot2::aes(x = !!rlang::sym(time_col), y = !!rlang::sym(value_col))
   )
-  if (overlay == "v") {
+  if (!is.null(overlay)) {
     p <- p + ggplot2::geom_rect(
       data = df_rects,
       ggplot2::aes(
-        xmin = .xmin,
-        xmax = .xmax,
-        ymin = -Inf,
-        ymax = Inf,
-        fill = !!rlang::sym(state_col) # factor
-      ),
-      alpha = 0.5,
-      inherit.aes = FALSE
-    )
-  } else if (overlay == "h") {
-    p <- p + ggplot2::geom_rect(
-      data = df_rects,
-      ggplot2::aes(
-        xmin = -Inf,
-        xmax = Inf,
-        ymin = .ymin,
-        ymax = .ymax,
-        fill = !!rlang::sym(state_col) # factor
+        xmin = !!xmin,
+        xmax = !!xmax,
+        ymin = !!ymin,
+        ymax = !!ymax,
+        fill = !!rlang::sym(state_col)
       ),
       alpha = 0.5,
       inherit.aes = FALSE
@@ -809,6 +783,15 @@ plot.tna_data <- function(x, selected, overlay = "v", points = FALSE,
       ggplot2::aes(fill = !!rlang::sym(state_col)),
       show.legend = FALSE,
       pch = 21
+    )
+  }
+  if (trend) {
+    p <- p + ggplot2::geom_smooth(
+      method = "lm",
+      formula = y ~ x,
+      se = FALSE,
+      color = "darkgray",
+      lty = 2
     )
   }
   if (length(selected) > 1) {
