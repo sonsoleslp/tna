@@ -63,7 +63,7 @@ use the first value.}
 \item{...}{Additional arguments passed to the discretization method
 (\code{\link[stats:kmeans]{stats::kmeans()}} for \code{kmeans}, \code{\link[stats:density]{stats::density()}} and
 \code{\link[pracma:findpeaks]{pracma::findpeaks()}} for \code{kde}, and
-\code{\link[mixtools:normalmixEM]{mixtools::normalmixEM()}} for \code{gaussian}).}
+\code{\link[mclust:Mclust]{mclust::Mclust()}} for \code{gaussian}).}
 
 \item{id_col}{An optional \code{character} string naming the column that contains
 the unique IDs.}

@@ -650,7 +650,7 @@ import_data <- function(data, cols, id_cols,
 #' @param ... Additional arguments passed to the discretization method
 #'   ([stats::kmeans()] for `kmeans`, [stats::density()] and
 #'   [pracma::findpeaks()] for `kde`, and
-#'   [mixtools::normalmixEM()] for `gaussian`).
+#'   [mclust::Mclust()] for `gaussian`).
 #' @return A `tna_data` object, which is a `list` with the following elements:
 #'
 #' * `long_data`: The processed data in long format.
@@ -661,6 +661,8 @@ import_data <- function(data, cols, id_cols,
 #' descriptive statistics of the `value_col` variable for each state, and
 #' for each state an ID of `id_col`, respectively.
 #'
+#' @importFrom mclust Mclust
+#' @importFrom mclust mclustBIC
 #' @examples
 #' # Long format data
 #' ts_data <- data.frame(
@@ -918,12 +920,15 @@ discretization_funs$gaussian <- function(x, n_states, ...) {
     "Please install the {.pkg mixtools} package
      to use gaussian mixture-based discretization."
   )
-  utils::capture.output(
-    model <- mixtools::normalmixEM(x = x, k = n_states, ...)
+  model <- mclust::Mclust(
+    data = x,
+    G = n_states,
+    modelNames = "V",
+    verbose = FALSE
   )
-  ord <- order(model$mu)
+  ord <- order(model$parameters$mean)
   list(
-    states = ord[max.col(model$posterior)],
+    states = ord[model$classification],
     output = model
   )
 }
