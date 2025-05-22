@@ -212,7 +212,7 @@ test_that("time series data can be imported", {
   )
   imported <- vector(mode = "list", length = 5)
   names(imported) <- methods
-  n <- length(unique(mock_ts$id))
+  n <- n_unique(mock_ts$id)
   k <- table(mock_ts$id)[1L]
   for (m in methods) {
     expect_error(

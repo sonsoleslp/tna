@@ -412,7 +412,6 @@ combine_data <- function(x, label) {
   groups <- attr(x, "groups")
   group_var <- attr(x, "group_var")
   data <- dplyr::bind_rows(
-    #lapply(x, function(y) y$data[, cols])
     lapply(x, function(y) as.data.frame(y$data))
   )
   data[[group_var]] <- unlist(groups)

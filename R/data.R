@@ -103,7 +103,10 @@ prepare_data <- function(data, actor, time, action, order,
   check_string(order)
   check_values(time_threshold, type = "numeric")
   check_flag(is_unix_time)
-  check_match(unix_time_unit, c("seconds", "milliseconds", "microseconds"))
+  unix_time_unit <- check_match(
+    unix_time_unit,
+    c("seconds", "milliseconds", "microseconds")
+  )
 
   # Create some NULLs for R CMD Check
   .session_id <- .session_nr <- .new_session <- .time_gap <-
@@ -127,16 +130,7 @@ prepare_data <- function(data, actor, time, action, order,
     onlyif(!missing(time), time),
     onlyif(!missing(order), order)
   )
-  cols_obs <- cols_req %in% names(data)
-  cols_mis <- cols_req[!cols_obs]
-  stopifnot_(
-    all(cols_obs),
-    c(
-      "The columns {.val {cols_req}} must exist in the data.",
-      `x` = "The following columns were
-             not found in the data: {.val {cols_mis}}."
-    )
-  )
+  check_cols(cols_req, names(data))
   long_data <- data
   default_actor <- FALSE
   default_order <- FALSE
@@ -739,22 +733,13 @@ prepare_ts.default <- function(data, id_col, value_col, order_col, n_states,
     "Argument {.arg labels} must have length {n_states}
     (same as {.arg n_states})."
   )
-  check_match(method, names(discretization_funs))
+  method <- check_match(method, names(discretization_funs))
   cols_req <- c(
     value_col,
     onlyif(!missing(id_col), id_col),
     onlyif(!missing(order_col), order_col)
   )
-  cols_obs <- cols_req %in% names(data)
-  cols_mis <- cols_req[!cols_obs]
-  stopifnot_(
-    all(cols_obs),
-    c(
-      "The columns {.val {cols_req}} must exist in the data.",
-      `x` = "The following columns were
-             not found in the data: {.val {cols_mis}}."
-    )
-  )
+  check_cols(cols_req, names(data))
   id_col <- ifelse_(missing(id_col), ".id", id_col)
   data$.id <- 1L
   complete <- stats::complete.cases(data[, c(id_col, value_col)])

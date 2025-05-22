@@ -7,10 +7,11 @@
 \method{plot}{tna_data}(
   x,
   selected,
-  overlay = TRUE,
+  overlay = "v",
   points = FALSE,
   ncol = NULL,
   max_series = 10,
+  trend = FALSE,
   scales = c("free", "free_x", "free_y", "fixed")
 )
 }
@@ -20,8 +21,10 @@
 \item{selected}{A \code{character} vector of specific individual time series to
 plot. If not provided (the default), all are plotted up to \code{max_series}}
 
-\item{overlay}{A \code{logical} value indicating whether to plot an overlay to
-indicate the state assigned to each time point. Defaults to \code{TRUE}.}
+\item{overlay}{A \code{character} string that describes how to plot the overlay
+indicating the state assigned to each time point. Can be either \code{"h"} for
+a horizontal overlay or \code{"v"} for a vertical overlay (the default). If
+\code{NULL}, no overlay is plotted.}
 
 \item{points}{A \code{logical} value indicating whether to plot a point for
 each observation colored according to the assigned state.
@@ -31,6 +34,9 @@ Defaults to \code{FALSE}.}
 
 \item{max_series}{An \code{integer} that defines the maximum number
 of time-series to plot. The default is 10.}
+
+\item{trend}{A \code{logical} value for whether to add a trend line or not.
+The default is \code{FALSE} for no trend line.}
 
 \item{scales}{Any of \code{"fixed"}, \code{"free_x"}, \code{"free_y"}, or
 \code{"free"} (the default).}

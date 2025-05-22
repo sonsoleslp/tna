@@ -136,6 +136,14 @@ if (base::getRversion() < "4.4.0") {
   }
 }
 
+#' Number of unique elements in a vector
+#'
+#' @param x A `vector`.
+#' @noRd
+n_unique <- function(x) {
+  length(unique(x))
+}
+
 # Functions borrowed from the `dynamite` package --------------------------
 # https://github.com/ropensci/dynamite
 
