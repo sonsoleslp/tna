@@ -1343,7 +1343,7 @@ plot_sequences.default <- function(x, cols, group, type = "index",
                                    include_na = FALSE, colors,
                                    na_color = "white", sort_by,
                                    show_n = TRUE, border, title,
-                                   legend_title, xlab, ylab, tick = 5) {
+                                   legend_title, xlab, ylab, tick = 1) {
   check_missing(x)
   x <- try_(as.data.frame(x))
   stopifnot_(
