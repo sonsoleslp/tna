@@ -901,8 +901,8 @@ discretization_funs$kde <- function(x, n_states, ...) {
 
 discretization_funs$gaussian <- function(x, n_states, ...) {
   stopifnot_(
-    requireNamespace("mixtools", quietly = TRUE),
-    "Please install the {.pkg mixtools} package
+    requireNamespace("mclust", quietly = TRUE),
+    "Please install the {.pkg mclust} package
      to use gaussian mixture-based discretization."
   )
   model <- mclust::Mclust(
