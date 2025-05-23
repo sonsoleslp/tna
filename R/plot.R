@@ -1400,14 +1400,19 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
   }
   x <- x |> dplyr::group_by(!!rlang::sym(group))
   if (!missing(sort_by)) {
-    sort_cols <- ifelse_(
-      identical(sort_by, "everything"),
-      cols,
-      sort_by
-    )
-    check_cols(sort_cols, names(x))
+    if (is.numeric(sort_by)) {
+      x$.order <- sort_by
+      sort_cols <- ".order"
+    } else {
+      sort_cols <- ifelse_(
+        identical(sort_by, "everything"),
+        cols,
+        sort_by
+      )
+      check_cols(sort_cols, names(x))
+    }
     x <- x |>
-      dplyr::arrange(dplyr::across(dplyr::all_of(cols)), .by_group = TRUE)
+      dplyr::arrange(dplyr::across(dplyr::all_of(sort_cols)), .by_group = TRUE)
     # TODO more sorting options
   }
   x$.seq_id <- seq_len(nrow(x))
