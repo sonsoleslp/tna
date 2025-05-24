@@ -29,6 +29,7 @@
 <url><loc>http://sonsoles.me/tna/reference/estimate_centrality_stability.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/group_model.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/group_regulation.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/group_regulation_long.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/hist.group_tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/hist.tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/import_data.html</loc></url>
@@ -90,6 +91,7 @@
 <url><loc>http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/summary.tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/summary.tna_bootstrap.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/summary.tna_data.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/tna-package.html</loc></url>
 </urlset>
 
