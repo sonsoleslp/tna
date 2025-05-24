@@ -1,3 +1,7 @@
+# tna 0.5.0
+
+* New dataset `group_regulation_long`.
+
 # tna 0.4.9
 
 * Switched to `matrix` as the internal data format used by TNA models for performance improvements across all functions.

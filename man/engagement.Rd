@@ -23,7 +23,8 @@ A full program study"
 \seealso{
 Datasets
 \code{\link{engagement_mmm}},
-\code{\link{group_regulation}}
+\code{\link{group_regulation}},
+\code{\link{group_regulation_long}}
 }
 \concept{datasets}
 \keyword{datasets}

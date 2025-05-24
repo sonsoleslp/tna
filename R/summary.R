@@ -216,3 +216,20 @@ summary.group_tna_bootstrap <- function(object, ...) {
     class = c("summary.group_tna_bootstrap", "data.frame")
   )
 }
+
+#' Summarize TNA data converted from `prepare_data` or `prepare_ts`
+#'
+#' @family data
+#' @export
+#' @param object A `tna_data` object.
+#' @param ... Ignored.
+#' @return A `summary.tna_data` object containing the ....
+#' @examples
+#' data <- prepare_data(group_regulation_long, action = "Action",
+#' actor = "Actor", time = "Time")
+#' summary(data)
+#'
+summary.tna_data <- function(object, ...) {
+  check_missing(object)
+  check_class(object, "tna_data")
+}

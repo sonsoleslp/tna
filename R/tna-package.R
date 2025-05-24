@@ -53,7 +53,7 @@
 #' @format A `mhmm` object.
 "engagement_mmm"
 
-#' Example Data on Group Regulation
+#' Example Wide Data on Group Regulation
 #'
 #' Students' regulation during collaborative learning. Students' interactions
 #' were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
@@ -63,3 +63,17 @@
 #' @source The data was generated synthetically.
 #' @format A `data.frame` object.
 "group_regulation"
+
+#' Example Long Data on Group Regulation
+#'
+#' Students' regulation during collaborative learning. This is the same dataset
+#' as `group_regulation` but in long format. In addition to students'
+#' actions (`Action`), it contains the student identifier (`Actor`),
+#' timestamp (`Time`), `Course` name, and collaboration `Group`. It
+#' also includes a column (`Achiever`) indicating whether the student
+#' is a high or low achiever.
+#'
+#' @family datasets
+#' @source The data was generated synthetically from `group_regulation`
+#' @format A `data.frame` object.
+"group_regulation_long"

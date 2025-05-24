@@ -3,7 +3,7 @@
 \docType{data}
 \name{group_regulation}
 \alias{group_regulation}
-\title{Example Data on Group Regulation}
+\title{Example Wide Data on Group Regulation}
 \format{
 A \code{data.frame} object.
 }
@@ -21,7 +21,8 @@ were coded as:  "adapt", "cohesion", "consensus", "coregulate", "discuss",
 \seealso{
 Datasets
 \code{\link{engagement}},
-\code{\link{engagement_mmm}}
+\code{\link{engagement_mmm}},
+\code{\link{group_regulation_long}}
 }
 \concept{datasets}
 \keyword{datasets}

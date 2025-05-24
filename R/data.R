@@ -44,21 +44,8 @@
 #' top sessions and user by activities.
 #'
 #' @examples
-#' data <- tibble::tibble(
-#'   user = c("A", "A", "A", "B", "B", "C", "C", "C"),
-#'   time = c(
-#'     "2023-01-01 10:00:00", "2023-01-01 10:05:00",
-#'     "2023-01-01 10:20:00", "2023-01-01 12:00:00",
-#'     "2023-01-01 12:02:00", "2023-01-01 14:00:00",
-#'     "2023-01-01 14:05:00", "2023-01-01 14:10:00"
-#'   ),
-#'   action = c(
-#'     "view", "click", "add_cart", "view",
-#'     "checkout", "view", "click", "share"
-#'    )
-#' )
 #' results <- prepare_data(
-#'   data, actor = "user", time = "time", action = "action"
+#'   group_regulation_long, actor = "Actor", time = "Time", action = "Action"
 #' )
 #' print(results$sequence_data)
 #' print(results$meta_data)

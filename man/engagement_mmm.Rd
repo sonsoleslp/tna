@@ -20,7 +20,8 @@ Example Mixed Markov Model Fitted to the \code{engagement} Data
 \seealso{
 Datasets
 \code{\link{engagement}},
-\code{\link{group_regulation}}
+\code{\link{group_regulation}},
+\code{\link{group_regulation_long}}
 }
 \concept{datasets}
 \keyword{datasets}
