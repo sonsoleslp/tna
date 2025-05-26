@@ -1,3 +1,7 @@
+# tna 0.5.1
+
+* Fixed an issue with `group_model()` when using `stslist` objects.
+
 # tna 0.5.0
 
 * Added a new dataset `group_regulation_long`.
