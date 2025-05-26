@@ -29,9 +29,9 @@ representing the time series.}
 Default: \code{"robust"}.}
 
 \item{epsilon}{A \code{numeric} value, threshold for defining flat trends based
-on the metric value. For \code{method = "slope"}, values between
+on the metric value. For \code{method = "slope"} and \code{"ar1"}, values between
 \verb{(-epsilon, +epsilon)} are considered flat.
-For \code{"ar1"} or \code{"growth_factor"}, values between
+For \code{"growth_factor"}, values between
 (1-epsilon) and (1+epsilon) are considered flat. Default: 0.05.}
 
 \item{turbulence_threshold}{A \code{numeric} value, baseline threshold for
