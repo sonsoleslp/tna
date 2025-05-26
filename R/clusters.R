@@ -122,7 +122,11 @@ group_model.default <- function(x, group, type = "relative",
   groups <- vector(mode = "list", length = n_group)
   group <- as.integer(group)
   vals <- sort(unique(unlist(x[, cols])))
-  alphabet <- vals[!is.na(vals)]
+  alphabet <- ifelse_(
+    inherits(x, "stslist"),
+    attr(x, "alphabet"),
+    vals[!is.na(vals)]
+  )
   a <- length(alphabet)
   seq_data <- create_seqdata(x, cols = cols, alphabet = alphabet)
   trans <- compute_transitions(seq_data, a, type, params)
