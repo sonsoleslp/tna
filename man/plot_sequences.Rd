@@ -4,8 +4,8 @@
 \alias{plot_sequences}
 \alias{plot_sequences.tna}
 \alias{plot_sequences.tna_data}
-\alias{plot_sequences.default}
 \alias{plot_sequences.group_tna}
+\alias{plot_sequences.default}
 \title{Create a Sequence Index Plot or a Distribution Plot}
 \usage{
 plot_sequences(x, ...)
@@ -30,6 +30,23 @@ plot_sequences(x, ...)
 
 \method{plot_sequences}{tna_data}(x, ...)
 
+\method{plot_sequences}{group_tna}(
+  x,
+  type = "index",
+  scale = "proportion",
+  geom = "bar",
+  include_na = FALSE,
+  na_color = "white",
+  sort_by,
+  show_n = TRUE,
+  border,
+  title,
+  legend_title,
+  xlab,
+  ylab,
+  tick = 1
+)
+
 \method{plot_sequences}{default}(
   x,
   cols,
@@ -39,23 +56,6 @@ plot_sequences(x, ...)
   geom = "bar",
   include_na = FALSE,
   colors,
-  na_color = "white",
-  sort_by,
-  show_n = TRUE,
-  border,
-  title,
-  legend_title,
-  xlab,
-  ylab,
-  tick = 5
-)
-
-\method{plot_sequences}{group_tna}(
-  x,
-  type = "index",
-  scale = "proportion",
-  geom = "bar",
-  include_na = FALSE,
   na_color = "white",
   sort_by,
   show_n = TRUE,

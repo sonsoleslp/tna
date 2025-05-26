@@ -1148,104 +1148,6 @@ plot_mosaic.tna <- function(x, digits = 1, ...) {
   )
 }
 
-# from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
-# Based on the code by Jake Fisher and cpsyctc.
-plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
-  n <- nrow(tab)
-  m <- ncol(tab)
-  widths <- c(0, cumsum(apply(tab, 1L, sum))) / sum(tab)
-  heights <- apply(tab, 1L, function(y) c(0, cumsum(y / sum(y))))
-  d <- data.frame(xmin = rep(0, n * m), xmax = 0, ymin = 0, ymax = 0)
-  for (i in seq_len(n)) {
-    for (j in seq_len(m)) {
-      row <- (i - 1) * m + j
-      row_offset <- (i - 1) * n * 0.0025
-      col_offset <- (j - 1) * m * 0.0025
-      d[row, "xmin"] <- widths[i] + row_offset
-      d[row, "xmax"] <- widths[i + 1] + row_offset
-      d[row, "ymin"] <- heights[j, i] + col_offset
-      d[row, "ymax"] <- heights[j + 1, i] + col_offset
-      d[row, "freq"] <- tab[i, j]
-    }
-  }
-  d$row <- rep(dimnames(tab)[[1]], m)
-  d$col <- rep(dimnames(tab)[[2]], each = n)
-  # TODO suppress for now
-  chisq <- suppressWarnings(stats::chisq.test(tab))
-  df <- chisq$parameter
-  pval <- chisq$p.value
-  chisqval <- chisq$statistic
-  # stdResids <- chisq$stdres
-  d$xcent <- (d$xmin + d$xmax) / 2
-  d$ycent <- (d$ymin + d$ymax) / 2
-  d$stdres <- as.vector(t(chisq$stdres))
-  d$sig <- cut(
-    d$stdres,
-    breaks = c(-Inf, -4, -2, 0, 2, 4, Inf),
-    labels = c("<-4", "-4:-2", "-2:0", "0:2", "2:4", ">4"),
-    ordered_result = TRUE
-  )
-  title_chi <- bquote(
-    .(title) ~~
-      {chi^2}[.(df)] ~ " = " ~
-      .(round(chisqval, digits)) * ", p =" ~ .(format.pval(pval, digits))
-  )
-  out <-
-    ggplot2::ggplot(
-      d,
-      ggplot2::aes(
-        xmin = !!rlang::sym("xmin"),
-        xmax = !!rlang::sym("xmax"),
-        ymin = !!rlang::sym("ymin"),
-        ymax = !!rlang::sym("ymax"),
-        fill = !!rlang::sym("sig"),
-        linetype = !!rlang::sym("sig")
-      )
-    ) +
-    ggplot2::geom_rect(color = "black", show.legend = TRUE) +
-    ggplot2::scale_fill_manual(
-      name = "Standardized\nresidual",
-      values = c(
-        "#D33F6A", "#E495A5", "#E2E2E2", "#E2E2E2", "#9DA8E2", "#4A6FE3"
-      ),
-      guide = ggplot2::guide_legend(reverse = TRUE),
-      drop = FALSE
-    ) +
-    ggplot2::scale_linetype_manual(
-      name = "Standardized\nresidual",
-      values = c(2, 2, 2, 1, 1, 1),
-      guide = ggplot2::guide_legend(reverse = TRUE),
-      drop = FALSE
-    ) +
-    ggplot2::scale_x_continuous(
-      breaks = unique(d$xcent),
-      labels = dimnames(tab)[[1]],
-      position = "top",
-      expand = c(0.01, 0)
-    ) +
-    ggplot2::scale_y_continuous(
-      breaks = d$ycent[d$xmin == 0],
-      labels = dimnames(tab)[[2]],
-      expand = c(0.01, 0)
-    ) +
-    ggplot2::ggtitle(title_chi) +
-    ggplot2::theme_classic() +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(hjust = 0.5),
-      plot.subtitle = ggplot2::element_text(hjust = 0.5),
-      axis.ticks = ggplot2::element_blank(),
-      axis.line = ggplot2::element_blank(),
-      axis.text.x =  ggplot2::element_text(
-        angle =  ifelse(n > 3, 90, 0),
-        hjust =  ifelse(n > 3, 0, 0.5),
-        vjust =  ifelse(n > 3, 0.5, 0)
-      ),
-      axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
-    ) +
-    ggplot2::labs(x = xlab, y = ylab)
-  out
-}
-
 #' Create a Sequence Index Plot or a Distribution Plot
 #'
 #' @export
@@ -1335,6 +1237,32 @@ plot_sequences.tna <- function(x, group, type = "index",
 plot_sequences.tna_data <- function(x, ...) {
   NULL
 }
+
+#' @export
+#' @rdname plot_sequences
+plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
+                                     geom = "bar", include_na = FALSE,
+                                     na_color = "white", sort_by,
+                                     show_n = TRUE, border, title,
+                                     legend_title, xlab, ylab, tick = 1) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  d <- lapply(x, "[[", "data")
+  group_n <- vapply(d, nrow, integer(1L))
+  group <- rep(names(x), each = group_n)
+  cols <- names(d)
+  d$.group <- group
+  group <- ".group"
+  colors <- attr(d[[1L]], "colors")
+  lab <- x[[1]]$labels
+  lev <- seq_along(lab)
+  plot_sequences_(
+    d, lev, lab, cols, group, type, scale, geom, include_na, colors,
+    na_color, sort_by, show_n, border, title, legend_title,
+    xlab, ylab, tick
+  )
+}
+
 
 #' @export
 #' @rdname plot_sequences
@@ -1562,6 +1490,104 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
     )
   }
   p
+}
+
+# from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
+# Based on the code by Jake Fisher and cpsyctc.
+plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
+  n <- nrow(tab)
+  m <- ncol(tab)
+  widths <- c(0, cumsum(apply(tab, 1L, sum))) / sum(tab)
+  heights <- apply(tab, 1L, function(y) c(0, cumsum(y / sum(y))))
+  d <- data.frame(xmin = rep(0, n * m), xmax = 0, ymin = 0, ymax = 0)
+  for (i in seq_len(n)) {
+    for (j in seq_len(m)) {
+      row <- (i - 1) * m + j
+      row_offset <- (i - 1) * n * 0.0025
+      col_offset <- (j - 1) * m * 0.0025
+      d[row, "xmin"] <- widths[i] + row_offset
+      d[row, "xmax"] <- widths[i + 1] + row_offset
+      d[row, "ymin"] <- heights[j, i] + col_offset
+      d[row, "ymax"] <- heights[j + 1, i] + col_offset
+      d[row, "freq"] <- tab[i, j]
+    }
+  }
+  d$row <- rep(dimnames(tab)[[1]], m)
+  d$col <- rep(dimnames(tab)[[2]], each = n)
+  # TODO suppress for now
+  chisq <- suppressWarnings(stats::chisq.test(tab))
+  df <- chisq$parameter
+  pval <- chisq$p.value
+  chisqval <- chisq$statistic
+  # stdResids <- chisq$stdres
+  d$xcent <- (d$xmin + d$xmax) / 2
+  d$ycent <- (d$ymin + d$ymax) / 2
+  d$stdres <- as.vector(t(chisq$stdres))
+  d$sig <- cut(
+    d$stdres,
+    breaks = c(-Inf, -4, -2, 0, 2, 4, Inf),
+    labels = c("<-4", "-4:-2", "-2:0", "0:2", "2:4", ">4"),
+    ordered_result = TRUE
+  )
+  title_chi <- bquote(
+    .(title) ~~
+      {chi^2}[.(df)] ~ " = " ~
+      .(round(chisqval, digits)) * ", p =" ~ .(format.pval(pval, digits))
+  )
+  out <-
+    ggplot2::ggplot(
+      d,
+      ggplot2::aes(
+        xmin = !!rlang::sym("xmin"),
+        xmax = !!rlang::sym("xmax"),
+        ymin = !!rlang::sym("ymin"),
+        ymax = !!rlang::sym("ymax"),
+        fill = !!rlang::sym("sig"),
+        linetype = !!rlang::sym("sig")
+      )
+    ) +
+    ggplot2::geom_rect(color = "black", show.legend = TRUE) +
+    ggplot2::scale_fill_manual(
+      name = "Standardized\nresidual",
+      values = c(
+        "#D33F6A", "#E495A5", "#E2E2E2", "#E2E2E2", "#9DA8E2", "#4A6FE3"
+      ),
+      guide = ggplot2::guide_legend(reverse = TRUE),
+      drop = FALSE
+    ) +
+    ggplot2::scale_linetype_manual(
+      name = "Standardized\nresidual",
+      values = c(2, 2, 2, 1, 1, 1),
+      guide = ggplot2::guide_legend(reverse = TRUE),
+      drop = FALSE
+    ) +
+    ggplot2::scale_x_continuous(
+      breaks = unique(d$xcent),
+      labels = dimnames(tab)[[1]],
+      position = "top",
+      expand = c(0.01, 0)
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = d$ycent[d$xmin == 0],
+      labels = dimnames(tab)[[2]],
+      expand = c(0.01, 0)
+    ) +
+    ggplot2::ggtitle(title_chi) +
+    ggplot2::theme_classic() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      plot.subtitle = ggplot2::element_text(hjust = 0.5),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      axis.text.x =  ggplot2::element_text(
+        angle =  ifelse(n > 3, 90, 0),
+        hjust =  ifelse(n > 3, 0, 0.5),
+        vjust =  ifelse(n > 3, 0.5, 0)
+      ),
+      axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
+    ) +
+    ggplot2::labs(x = xlab, y = ylab)
+  out
 }
 
 #' Create a heatmap from edgelist data
@@ -1991,30 +2017,5 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
     title = paste0("State frequency by ", label),
     xlab = label,
     ylab = "State"
-  )
-}
-
-#' @export
-#' @rdname plot_sequences
-plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
-                                     geom = "bar", include_na = FALSE,
-                                     na_color = "white", sort_by,
-                                     show_n = TRUE, border, title,
-                                     legend_title, xlab, ylab, tick = 1) {
-  check_missing(x)
-  check_class(x, "group_tna")
-  d <- lapply(x, "[[", "data")
-  group_n <- vapply(d, nrow, integer(1L))
-  group <- rep(names(x), each = group_n)
-  cols <- names(d)
-  d$.group <- group
-  group <- ".group"
-  colors <- attr(d[[1L]], "colors")
-  lab <- x[[1]]$labels
-  lev <- seq_along(lab)
-  plot_sequences_(
-    d, lev, lab, cols, group, type, scale, geom, include_na, colors,
-    na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
   )
 }
