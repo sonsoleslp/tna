@@ -1,6 +1,6 @@
 # tna 0.5.0
 
-* New dataset `group_regulation_long`.
+* Added a new dataset `group_regulation_long`.
 
 # tna 0.4.9
 
