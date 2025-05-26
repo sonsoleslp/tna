@@ -50,7 +50,6 @@ reference:
     - hist.group_tna
     - plot_mosaic.group_tna
     - print.summary.group_tna
-    - tna2sts
 
   - title: Centralities
     contents:
