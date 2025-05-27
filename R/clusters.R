@@ -114,7 +114,11 @@ group_model.default <- function(x, group, type = "relative",
   groups <- vector(mode = "list", length = n_group)
   group <- as.integer(group)
   vals <- sort(unique(unlist(x[, cols])))
-  alphabet <- vals[!is.na(vals)]
+  alphabet <- ifelse_(
+    inherits(x, "stslist"),
+    attr(x, "alphabet"),
+    vals[!is.na(vals)]
+  )
   a <- length(alphabet)
   seq_data <- create_seqdata(x, cols = cols, alphabet = alphabet)
   trans <- compute_transitions(seq_data, a, type, params)
@@ -406,25 +410,5 @@ combine_data <- function(x) {
     lapply(x, function(y) as.data.frame(y$data))
   )
   data$.group <- unlist(groups)
-  # label <- ifelse_(
-  #   !missing(label),
-  #   label,
-  #   ifelse_(
-  #     group_var == ".group",
-  #     "Cluster",
-  #     group_var
-  #   )
-  # )
-  #check_string(label)
-  #names(data) <- c(names(data)[-ncol(data)], label)
-  # if (pivot) {
-  #   out <- data |>
-  #     tidyr::pivot_longer(cols = !(!!rlang::sym(label)))
-  #     #dplyr::filter(!is.na(!!rlang::sym("value")))
-  #
   data
-  # list(
-  #   data = out,
-  #   label = label
-  # )
 }

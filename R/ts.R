@@ -703,7 +703,7 @@ compute_trend <- function(data, window, method = "slope", slope = "robust",
       long_data = data.frame(
         id = 1L,
         time = time_idx,
-        value = metric_values,
+        value = data,
         state = factor(
           trend_codes,
           levels = c(
