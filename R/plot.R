@@ -1784,20 +1784,15 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
       "Argument {.arg group} must be a column name of the input data
        when of length one."
     )
-    label <- group
     group <- x$meta_data[[group]]
   }
-  group <- ifelse_(
-    is.factor(group),
-    group,
-    factor(group)
-  )
+  group <- ifelse_(is.factor(group), group, factor(group))
   wide <- cbind(x$sequence_data, group)
-  names(wide) <- c(names(x$sequence_data), label)
+  names(wide) <- c(names(x$sequence_data), ".group")
   long <- wide |>
-    tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
+    tidyr::pivot_longer(cols = !(!!rlang::sym(".group"))) |>
     tidyr::drop_na()
-  tab <- table(long[[label]], long$value)
+  tab <- table(long$.group, long$value)
   plot_mosaic_(
     tab,
     digits,

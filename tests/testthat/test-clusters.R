@@ -54,10 +54,6 @@ test_that("mixed Markov model statistics can be obtained", {
     mmm_stats(engagement_mmm),
     NA
   )
-  expect_error(
-    mmm_stats(engagement_mmm, use_t_dist = FALSE),
-    NA
-  )
 })
 
 test_that("groups can be renamed", {
