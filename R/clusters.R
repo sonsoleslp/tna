@@ -80,7 +80,7 @@ group_model.default <- function(x, group, type = "relative",
     "Argument {.arg group} must be of length one or the same length as the
      number of rows/sequences in {.arg x}."
   )
-  group_var <- ".group"
+  label <- "Cluster"
   prefix <- "Argument"
   if (group_len == 1L) {
     stopifnot_(
@@ -88,7 +88,7 @@ group_model.default <- function(x, group, type = "relative",
       "Argument {.arg group} must be a column name of {.arg x}
        when of length one."
     )
-    group_var <- group
+    label <- group
     group <- x[[group]]
     prefix <- "Column"
   }
@@ -102,16 +102,8 @@ group_model.default <- function(x, group, type = "relative",
       )
     )
   }
-  group <- ifelse_(
-    is.factor(group),
-    group,
-    factor(group)
-  )
-  group <- ifelse_(
-    group_na && !na.rm,
-    addNA(group),
-    group
-  )
+  group <- ifelse_(is.factor(group), group, factor(group))
+  group <- ifelse_(group_na && !na.rm, addNA(group), group)
   levs <- levels(group)
   n_group <- length(levs)
   clusters <- stats::setNames(
@@ -166,7 +158,7 @@ group_model.default <- function(x, group, type = "relative",
   structure(
     clusters,
     groups = groups,
-    group_var = group_var,
+    label = label,
     levels = levs,
     na.rm = na.rm,
     cols = cols,
@@ -402,35 +394,37 @@ scale_weights_global <- function(weights, type, scaling, a) {
   weights
 }
 
-#' Combine data from clusters into a single dataset in long format
+#' Combine data from clusters into a single dataset
 #'
 #' @param x A `group_tna` object.
-#' @param label optional group variable name as a `character` string
+#' @param pivot A `logical` value for whether to pivot data into long format.
 #' @noRd
-combine_data <- function(x, label) {
+combine_data <- function(x) {
   cols <- attr(x, "cols")
   groups <- attr(x, "groups")
-  group_var <- attr(x, "group_var")
   data <- dplyr::bind_rows(
     lapply(x, function(y) as.data.frame(y$data))
   )
-  data[[group_var]] <- unlist(groups)
-  label <- ifelse_(
-    !missing(label),
-    label,
-    ifelse_(
-      group_var == ".group",
-      "Cluster",
-      group_var
-    )
-  )
-  check_string(label)
-  names(data) <- c(names(data)[-ncol(data)], label)
-  out <- data |>
-    tidyr::pivot_longer(cols = !(!!rlang::sym(label))) |>
-    dplyr::filter(!is.na(!!rlang::sym("value")))
-  list(
-    data = out,
-    label = label
-  )
+  data$.group <- unlist(groups)
+  # label <- ifelse_(
+  #   !missing(label),
+  #   label,
+  #   ifelse_(
+  #     group_var == ".group",
+  #     "Cluster",
+  #     group_var
+  #   )
+  # )
+  #check_string(label)
+  #names(data) <- c(names(data)[-ncol(data)], label)
+  # if (pivot) {
+  #   out <- data |>
+  #     tidyr::pivot_longer(cols = !(!!rlang::sym(label)))
+  #     #dplyr::filter(!is.na(!!rlang::sym("value")))
+  #
+  data
+  # list(
+  #   data = out,
+  #   label = label
+  # )
 }
