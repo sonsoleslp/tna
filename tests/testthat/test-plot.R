@@ -303,3 +303,76 @@ test_that("frequencies can be plotted for clusters", {
     NA
   )
 })
+
+test_that("sequence index plots can be created", {
+  model1 <- tna(engagement)
+  model2 <- group_tna(engagement_mmm)
+  expect_error(
+    plot_sequences(model1, group = rep(1:4, each = 50)),
+    NA
+  )
+  expect_error(
+    plot_sequences(model2),
+    NA
+  )
+  expect_error(
+    plot_sequences(group_regulation, group = rep(1:2, each = 1000)),
+    NA
+  )
+  expect_error(
+    plot_sequences(mock_tna_data),
+    NA
+  )
+  expect_error(
+    plot_sequences(mock_tna_data, group = "group"),
+    NA
+  )
+})
+
+test_that("sequence distribution plots can be created", {
+  model1 <- tna(engagement)
+  model2 <- group_tna(engagement_mmm)
+  expect_error(
+    plot_sequences(model1, type = "distr", group = rep(1:4, each = 50)),
+    NA
+  )
+  expect_error(
+    plot_sequences(model2, type = "distr"),
+    NA
+  )
+  expect_error(
+    plot_sequences(
+      group_regulation,
+      type = "distr",
+      group = rep(1:2, each = 1000)
+    ),
+    NA
+  )
+  expect_error(
+    plot_sequences(mock_tna_data, type = "distr", geom = "area"),
+    NA
+  )
+})
+
+test_that("sequences can be sorted in index plot", {
+  expect_error(
+    plot_sequences(mock_tna_data, sort_by = "everything"),
+    NA
+  )
+  expect_error(
+    plot_sequences(mock_tna_data, sort_by = "T1"),
+    NA
+  )
+  expect_error(
+    plot_sequences(mock_tna_data, sort_by = c(4, 1, 3, 2)),
+    NA
+  )
+})
+
+test_that("border can be added for sequence index plot", {
+  expect_error(
+    plot_sequences(mock_tna_data, border = "black"),
+    NA
+  )
+})
+
