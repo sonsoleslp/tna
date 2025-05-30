@@ -1329,7 +1329,7 @@ plot.group_tna_permutation <- function(x, title, ...) {
   invisible(
     lapply(
       seq_along(x),
-      function(i) plot.tna_permutation(x[[i]], title = title[i])
+      function(i) plot.tna_permutation(x[[i]], title = title[i], ...)
     )
   )
 }

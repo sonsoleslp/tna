@@ -1,6 +1,7 @@
 # tna 0.5.1
 
-* Fixed an issue with `group_model()` when using `stslist` objects.
+* Fixed the handling of missing values in `group_model()` with `stslist` objects.
+* Fixed an issue with `plot.group_tna_permutation()` that resulted in plotting arguments not being passed to `qgraph`.
 
 # tna 0.5.0
 
