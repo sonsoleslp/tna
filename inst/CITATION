@@ -15,7 +15,7 @@ bibentry(
   bibtype = "Misc",
   title = "{tna}: Transition Network Analysis ({TNA})",
   author = c(person("Mohammed", "Saqr"), person("Santtu", "Tikka"), person("Sonsoles", "L\u00f3pez-Pernas")),
-  note = "{R} package version 0.4.0",
+  note = "{R} package version 0.5.0",
   year = "2025",
   DOI = "10.32614/cran.package.tna",
   journal = "CRAN: Contributed Packages",

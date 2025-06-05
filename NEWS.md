@@ -1,3 +1,7 @@
+# tna 0.6.0
+
+* Added a new method `plot_sequences()` for sequence index plots and state distribution plots.
+
 # tna 0.5.1
 
 * Fixed the handling of missing values in `group_model()` with `stslist` objects.

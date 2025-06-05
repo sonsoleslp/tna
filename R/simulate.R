@@ -5,7 +5,7 @@ stats::simulate
 #' Simulate Data from a Transition Network Analysis Model
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param object A `tna` object. The edge weights must be transition
 #' probabilities, i.e., the model must have `type = "relative"`.
 #' @param nsim An `integer` giving the number of sequences to simulate.

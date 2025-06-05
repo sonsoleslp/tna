@@ -242,7 +242,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 #' Print a TNA Data Object
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param x A `tna_data` object.
 #' @param data A `character` string that defines the data to be printed
 #' tibble. Accepts either `"sequence"` (default) for wide format sequence data,
@@ -260,7 +260,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 print.tna_data <- function(x, data = "sequence", ...) {
   check_missing(x)
   check_class(x, "tna_data")
-  data <- check_match(data, c("sequence", "meta", "long"))
+  data <- check_match(data, c("sequence", "meta", "long", "names"))
   idx <- paste0(data, "_data")
   print(x[[idx]])
 }

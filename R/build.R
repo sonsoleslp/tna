@@ -210,7 +210,7 @@ build_model.data.frame <- function(x, type = "relative",
   check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, cols = cols)
+  x <- create_seqdata(x, cols)
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,

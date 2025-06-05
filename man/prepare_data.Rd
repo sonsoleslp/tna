@@ -108,26 +108,9 @@ print(results_single$statistics)
 
 }
 \seealso{
-Basic functions
-\code{\link{build_model}()},
-\code{\link{hist.group_tna}()},
-\code{\link{hist.tna}()},
+Other data: 
 \code{\link{import_data}()},
-\code{\link{plot.group_tna}()},
-\code{\link{plot.tna}()},
-\code{\link{plot_frequencies}()},
-\code{\link{plot_frequencies.group_tna}()},
-\code{\link{plot_mosaic}()},
-\code{\link{plot_mosaic.group_tna}()},
-\code{\link{plot_mosaic.tna_data}()},
-\code{\link{print.group_tna}()},
-\code{\link{print.summary.group_tna}()},
-\code{\link{print.summary.tna}()},
-\code{\link{print.tna}()},
 \code{\link{print.tna_data}()},
-\code{\link{simulate.tna}()},
-\code{\link{summary.group_tna}()},
-\code{\link{summary.tna}()},
-\code{\link{tna-package}}
+\code{\link{simulate.tna}()}
 }
-\concept{basic}
+\concept{data}
