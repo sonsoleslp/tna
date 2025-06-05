@@ -4,8 +4,8 @@
 \alias{plot_sequences}
 \alias{plot_sequences.tna}
 \alias{plot_sequences.tna_data}
-\alias{plot_sequences.group_tna}
 \alias{plot_sequences.default}
+\alias{plot_sequences.group_tna}
 \title{Create a Sequence Index Plot or a Distribution Plot}
 \usage{
 plot_sequences(x, ...)
@@ -28,14 +28,14 @@ plot_sequences(x, ...)
   tick = 1
 )
 
-\method{plot_sequences}{tna_data}(x, ...)
-
-\method{plot_sequences}{group_tna}(
+\method{plot_sequences}{tna_data}(
   x,
+  group,
   type = "index",
   scale = "proportion",
   geom = "bar",
   include_na = FALSE,
+  colors,
   na_color = "white",
   sort_by,
   show_n = TRUE,
@@ -56,6 +56,23 @@ plot_sequences(x, ...)
   geom = "bar",
   include_na = FALSE,
   colors,
+  na_color = "white",
+  sort_by,
+  show_n = TRUE,
+  border,
+  title,
+  legend_title,
+  xlab,
+  ylab,
+  tick = 1
+)
+
+\method{plot_sequences}{group_tna}(
+  x,
+  type = "index",
+  scale = "proportion",
+  geom = "bar",
+  include_na = FALSE,
   na_color = "white",
   sort_by,
   show_n = TRUE,
@@ -124,11 +141,11 @@ The default is \code{"Sequence"} for index plots, and \code{"Proportion"} or
 e.g., \code{tick = 5} would show every 5th label. The default is 1 showing
 every label.}
 
-\item{cols}{A \code{character} Vector of column names to be treated as
-time points. If missing, all columns will be used.}
-
 \item{colors}{A named \code{character} vector mapping states to colors, or an
 unnamed \code{character} vector. If missing, a default palette is used.}
+
+\item{cols}{A \code{character} Vector of column names to be treated as
+time points. If missing, all columns will be used.}
 }
 \description{
 Create a Sequence Index Plot or a Distribution Plot

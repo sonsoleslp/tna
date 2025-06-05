@@ -3,9 +3,9 @@
 #' @export
 #' @family basic
 #' @inheritParams graphics::hist
-#' @param ... Additional arguments passed to [graphics::hist()].
 #' @param main A `character` string defining the title of the plot.
 #' @param xlab A `character` string defining the vertical axis label.
+#' @param ... Additional arguments passed to [graphics::hist()].
 #' @return A `histogram` object of edge weights.
 #' @examples
 #' model <- tna(group_regulation)
@@ -68,12 +68,12 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param colors See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
 #' @param cut Edge color and width emphasis cutoff value. The default is
-#' the median of the edge weights. See [qgraph::qgraph()] for details.
+#'   the median of the edge weights. See [qgraph::qgraph()] for details.
 #' @param show_pruned A `logical` value indicating if pruned edges removed by
-#' [prune()] should be shown in the plot.  The default is `TRUE`, and the
-#' edges are drawn as dashed with a different color to distinguish them.
+#'   [prune()] should be shown in the plot.  The default is `TRUE`, and the
+#'   edges are drawn as dashed with a different color to distinguish them.
 #' @param pruned_edge_color A `character` string for the color to use for
-#' pruned edges when `show_pruned = TRUE`. The default is `"pink"`.
+#'   pruned edges when `show_pruned = TRUE`. The default is `"pink"`.
 #' @param edge.color See [qgraph::qgraph()].
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param edge.label.position See [qgraph::qgraph()].

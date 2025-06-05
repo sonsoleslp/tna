@@ -23,22 +23,17 @@ data.}
 Print a TNA Data Object
 }
 \examples{
-data_single_session <- tibble::tibble(
-  action = c(
-    "view", "click", "add_cart", "view", "checkout", "view", "click", "share"
-   )
-)
-results_single <- prepare_data(data_single_session, action = "action")
-print(results_single, which = "sequence")
-print(results_single, which = "meta")
-print(results_single, which = "long")
+res <- prepare_data(group_regulation_long, action = "Action", actor = "Actor",
+time = "Time")
+print(res, which = "sequence")
+print(res, which = "meta")
+print(res, which = "long")
 
 }
 \seealso{
 Other data: 
 \code{\link{import_data}()},
 \code{\link{prepare_data}()},
-\code{\link{prepare_ts}()},
 \code{\link{simulate.tna}()}
 }
 \concept{data}

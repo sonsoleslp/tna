@@ -84,7 +84,6 @@ Basic functions
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
 \code{\link{plot.group_tna}()},
-\code{\link{plot.tna_data}()},
 \code{\link{plot_frequencies}()},
 \code{\link{plot_frequencies.group_tna}()},
 \code{\link{plot_mosaic}()},

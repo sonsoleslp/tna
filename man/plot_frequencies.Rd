@@ -32,7 +32,6 @@ Basic functions
 \code{\link{hist.tna}()},
 \code{\link{plot.group_tna}()},
 \code{\link{plot.tna}()},
-\code{\link{plot.tna_data}()},
 \code{\link{plot_frequencies.group_tna}()},
 \code{\link{plot_mosaic}()},
 \code{\link{plot_mosaic.group_tna}()},

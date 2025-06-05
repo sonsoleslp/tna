@@ -1,6 +1,18 @@
+# tna 0.6.0
+
+* Added a new method `plot_sequences()` for sequence index plots and state distribution plots.
+
+# tna 0.5.1
+
+* Fixed the handling of missing values in `group_model()` with `stslist` objects.
+* Fixed an issue with `plot.group_tna_permutation()` that resulted in plotting arguments not being passed to `qgraph`.
+
+# tna 0.5.0
+
+* Added a new dataset `group_regulation_long`.
+
 # tna 0.4.9
 
-* Added the function `prepare_ts()` for importing time-series data as sequence data via discretization.
 * Switched to `matrix` as the internal data format used by TNA models for performance improvements across all functions.
 
 # tna 0.4.8
