@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,7 +70,56 @@ groups are plotted.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Same as <code><a href="plot.tna.html">plot.tna()</a></code>.</p></dd>
+<dd><p>Arguments passed on to <code><a href="plot.tna.html">plot.tna</a></code></p><dl><dt><code>labels</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>colors</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>pie</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>cut</code></dt>
+<dd><p>Edge color and width emphasis cutoff value. The default is
+the median of the edge weights. See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code> for details.</p></dd>
+
+    <dt><code>show_pruned</code></dt>
+<dd><p>A <code>logical</code> value indicating if pruned edges removed by
+<code><a href="prune.html">prune()</a></code> should be shown in the plot.  The default is <code>TRUE</code>, and the
+edges are drawn as dashed with a different color to distinguish them.</p></dd>
+
+    <dt><code>pruned_edge_color</code></dt>
+<dd><p>A <code>character</code> string for the color to use for
+pruned edges when <code>show_pruned = TRUE</code>. The default is <code>"pink"</code>.</p></dd>
+
+    <dt><code>edge.color</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>edge.labels</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>edge.label.position</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>layout</code></dt>
+<dd><p>One of the following:</p><ul><li><p>A <code>character</code> string describing a <code>qgraph</code> layout.</p></li>
+<li><p>A <code>matrix</code> of node positions to use, with a row for each node and
+<code>x</code> and <code>y</code> columns for the node positions.</p></li>
+<li><p>A layout function from <code>igraph</code>.</p></li>
+</ul></dd>
+
+    <dt><code>layout_args</code></dt>
+<dd><p>A <code>list</code> of arguments to pass to the <code>igraph</code> layout
+function when <code>layout</code> is a function.</p></dd>
+
+    <dt><code>mar</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+    <dt><code>theme</code></dt>
+<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+
+
+</dl></dd>
 
 </dl></div>
     <div class="section level2">
@@ -83,20 +132,16 @@ groups are plotted.</p></dd>
 <code><a href="build_model.html">build_model</a>()</code>,
 <code><a href="hist.group_tna.html">hist.group_tna</a>()</code>,
 <code><a href="hist.tna.html">hist.tna</a>()</code>,
-<code><a href="import_data.html">import_data</a>()</code>,
 <code><a href="plot.tna.html">plot.tna</a>()</code>,
 <code><a href="plot_frequencies.html">plot_frequencies</a>()</code>,
 <code><a href="plot_frequencies.group_tna.html">plot_frequencies.group_tna</a>()</code>,
 <code><a href="plot_mosaic.html">plot_mosaic</a>()</code>,
 <code><a href="plot_mosaic.group_tna.html">plot_mosaic.group_tna</a>()</code>,
 <code><a href="plot_mosaic.tna_data.html">plot_mosaic.tna_data</a>()</code>,
-<code><a href="prepare_data.html">prepare_data</a>()</code>,
 <code><a href="print.group_tna.html">print.group_tna</a>()</code>,
 <code><a href="print.summary.group_tna.html">print.summary.group_tna</a>()</code>,
 <code><a href="print.summary.tna.html">print.summary.tna</a>()</code>,
 <code><a href="print.tna.html">print.tna</a>()</code>,
-<code><a href="print.tna_data.html">print.tna_data</a>()</code>,
-<code><a href="simulate.tna.html">simulate.tna</a>()</code>,
 <code><a href="summary.group_tna.html">summary.group_tna</a>()</code>,
 <code><a href="summary.tna.html">summary.tna</a>()</code>,
 <code><a href="tna-package.html">tna-package</a></code></p></div>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,7 +47,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mmm_stats</span><span class="op">(</span><span class="va">x</span>, use_t_dist <span class="op">=</span> <span class="cn">TRUE</span>, level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mmm_stats</span><span class="op">(</span><span class="va">x</span>, level <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,11 +56,6 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A <code>mhmm</code> object.</p></dd>
-
-
-<dt id="arg-use-t-dist">use_t_dist<a class="anchor" aria-label="anchor" href="#arg-use-t-dist"></a></dt>
-<dd><p>A <code>logical</code> value. If <code>TRUE</code> (the default), the
-t-distribution is used to compute confidence intervals.</p></dd>
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
@@ -83,10 +78,10 @@ hypothesis testing and confidence intervals. Defaults to <code>0.05</code>.</p><
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">mmm_stats</span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     cluster    variable  estimate      p_value    ci_lower  ci_Upper std_rrror</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cluster    variable  estimate      p_value    ci_lower  ci_upper std_rrror</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 Cluster 2 (Intercept) 0.3641003 9.648771e-02 -0.06524374 0.7934444 0.2190571</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 Cluster 3 (Intercept) 1.1704507 1.225029e-09  0.79295086 1.5479505 0.1926055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    t_value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    z_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 1.662125</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 6.076933</span>
 <span class="r-in"><span></span></span>
