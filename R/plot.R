@@ -1927,5 +1927,5 @@ plot_associations.tna <- function(x, edge.color, ...) {
     edge.color[res < -2 & res >= -4] <- "#E495A5"
     edge.color[res < -4] <- "#D33F6A"
   }
-  plot_model(res, edge.color = edge.color, ...)
+  plot_model(res, edge.color = edge.color, labels = x$labels, ...)
 }
