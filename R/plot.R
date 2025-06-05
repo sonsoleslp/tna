@@ -1886,3 +1886,46 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
     xlab, ylab, tick
   )
 }
+
+# Associations ------------------------------------------------------------
+
+#' Plot an Association Network
+#'
+#' @export
+#' @rdname plot_associations
+#' @param x A `tna` object.
+#' @param ... Additional arguments passed to [plot_model()].
+#' @return A `qgraph` plot of the network.
+#' @examples
+#' model <- ftna(group_regulation)
+#' plot_associations(model)
+#'
+plot_associations <- function(x, ...) {
+  UseMethod("plot_associations")
+}
+
+#' @export
+#' @rdname plot_associations
+plot_associations.tna <- function(x, edge.color, ...) {
+  check_missing(x)
+  check_class(x, "tna")
+  stopifnot_(
+    attr(x, "type") %in% c("frequency", "co-occurrence"),
+    "Association network plot are supported only for
+     integer-valued weight matrices."
+  )
+  tab <- as.table(t(x$weights))
+  # TODO suppress for now
+  chisq <- suppressWarnings(stats::chisq.test(tab))
+  res <- as.numeric(chisq$stdres)
+  dim(res) <- dim(tab)
+  if (missing(edge.color)) {
+    edge.color <- matrix(NA_character_, ncol = ncol(res))
+    edge.color[res > 4] <- "#4A6FE3"
+    edge.color[res > 2 & res <= 4] <- "#9DA8E2"
+    edge.color[res <= 2 & res >= -2] <- "#E2E2E2"
+    edge.color[res < -2 & res >= -4] <- "#E495A5"
+    edge.color[res < -4] <- "#D33F6A"
+  }
+  plot_model(res, edge.color = edge.color, ...)
+}
