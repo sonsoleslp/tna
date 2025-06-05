@@ -25,7 +25,8 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1
+  tick = 1,
+  ...
 )
 
 \method{plot_sequences}{tna_data}(
@@ -44,7 +45,8 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1
+  tick = 1,
+  ...
 )
 
 \method{plot_sequences}{default}(
@@ -64,7 +66,8 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1
+  tick = 1,
+  ...
 )
 
 \method{plot_sequences}{group_tna}(
@@ -81,12 +84,15 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1
+  tick = 1,
+  ...
 )
 }
 \arguments{
 \item{x}{A \code{tna}, \code{group_tna}, \code{tna_data} or a \code{data.frame} object with
 sequence data in wide format.}
+
+\item{...}{Ignored.}
 
 \item{group}{A vector indicating the group assignment of each
 row of the data. Must have the same length as the
@@ -149,4 +155,20 @@ time points. If missing, all columns will be used.}
 }
 \description{
 Create a Sequence Index Plot or a Distribution Plot
+}
+\examples{
+# Sequence index plot (default)
+plot_sequences(
+  group_regulation,
+  group = rep(1:2, each = 1000),
+  tick = 5
+)
+# State distribution plot
+plot_sequences(
+  group_regulation,
+  group = rep(1:2, each = 1000),
+  type = "distribution",
+  tick = 5
+)
+
 }

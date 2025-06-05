@@ -1127,6 +1127,22 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @param tick An `integer` specifying the horizontal axis label interval,
 #' e.g., `tick = 5` would show every 5th label. The default is 1 showing
 #' every label.
+#' @param ... Ignored.
+#' @examples
+#' # Sequence index plot (default)
+#' plot_sequences(
+#'   group_regulation,
+#'   group = rep(1:2, each = 1000),
+#'   tick = 5
+#' )
+#' # State distribution plot
+#' plot_sequences(
+#'   group_regulation,
+#'   group = rep(1:2, each = 1000),
+#'   type = "distribution",
+#'   tick = 5
+#' )
+#'
 plot_sequences <- function(x, ...) {
   UseMethod("plot_sequences")
 }
@@ -1137,7 +1153,7 @@ plot_sequences.tna <- function(x, group, type = "index",
                                scale = "proportion", geom = "bar",
                                include_na = TRUE, na_color = "white", sort_by,
                                show_n = TRUE, border, title, legend_title,
-                               xlab, ylab, tick = 1) {
+                               xlab, ylab, tick = 1, ...) {
   check_missing(x)
   check_tna_seq(x)
   d <- as.data.frame(x$data)
@@ -1168,7 +1184,7 @@ plot_sequences.tna_data <- function(x, group, type = "index",
                                     geom = "bar", include_na = FALSE,
                                     colors, na_color = "white", sort_by,
                                     show_n = TRUE, border, title,
-                                    legend_title, xlab, ylab, tick = 1) {
+                                    legend_title, xlab, ylab, tick = 1, ...) {
   check_missing(x)
   check_class(x, "tna_data")
   wide <- cbind(x$sequence_data, x$meta_data)
@@ -1186,7 +1202,7 @@ plot_sequences.default <- function(x, cols, group, type = "index",
                                    include_na = FALSE, colors,
                                    na_color = "white", sort_by,
                                    show_n = TRUE, border, title,
-                                   legend_title, xlab, ylab, tick = 1) {
+                                   legend_title, xlab, ylab, tick = 1, ...) {
   check_missing(x)
   stopifnot_(
     inherits(x, "stslist") || inherits(x, "data.frame"),
@@ -1274,9 +1290,9 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
       values_to = "state"
     ) |>
     dplyr::mutate(
-      .seq_id = factor(.seq_id),
-      time = factor(time, levels = cols),
-      state = factor(state, levels = lev, labels = lab)
+      .seq_id = factor(!!rlang::sym(".seq_id")),
+      time = factor(!!rlang::sym("time"), levels = cols),
+      state = factor(!!rlang::sym("state"), levels = lev, labels = lab)
     )
   colors <- ifelse_(
     missing(colors),
@@ -1312,8 +1328,6 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
 
 create_index_plot <- function(x, group, colors, na_color, border, title,
                               title_n, legend_title, xlab, ylab, tick) {
-  # For R CMD Check
-  .seq_id <- state <- NULL
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(missing(ylab), "Sequence", ylab)
   title <- ifelse_(missing(title), "\"Sequence Index Plot \"", title)
@@ -1321,9 +1335,13 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
   legend_title <- ifelse_(missing(legend_title), NULL, legend_title)
   every_nth <- function(y) y[(seq_along(y) - 1L) %% tick == 0]
   p <- ggplot2::ggplot(
-    x,
-    ggplot2::aes(x = time, y = .seq_id)) +
-    ggplot2::geom_raster(ggplot2::aes(fill = state)) +
+      x,
+      ggplot2::aes(
+        x = !!rlang::sym("time"),
+        y = !!rlang::sym(".seq_id")
+      )
+    ) +
+    ggplot2::geom_raster(ggplot2::aes(fill = !!rlang::sym("state"))) +
     ggplot2::scale_fill_manual(
       values = colors,
       name = legend_title,
@@ -1340,7 +1358,7 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
     )
   if (!missing(border)) {
     p <- p + ggplot2::geom_tile(
-      ggplot2::aes(fill = state),
+      ggplot2::aes(fill = !!rlang::sym("state")),
       color = border,
       linewidth = 0.1,
       na.rm = FALSE
@@ -1348,7 +1366,7 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
   }
   if (!missing(group)) {
     p <- p + ggplot2::facet_wrap(
-      as.formula(paste0("~", group)),
+      ggplot2::vars(!!rlang::sym(group)),
       scales = "free_y"
     )
   }
@@ -1358,8 +1376,6 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
 create_distribution_plot <- function(x, group, scale, geom, include_na,
                                      colors, na_color, border, title, title_n,
                                      legend_title, xlab, ylab, tick) {
-  # For R CMD Check
-  .seq_id <- state <- NULL
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(
     missing(ylab),
@@ -1375,13 +1391,25 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
     x <- x |> tidyr::drop_na()
   }
   if (geom == "bar") {
-    p <- ggplot2::ggplot(x, ggplot2::aes(x = time, fill = state)) +
+    p <- ggplot2::ggplot(
+        x,
+        ggplot2::aes(
+          x = !!rlang::sym("time"),
+          fill = !!rlang::sym("state")
+        )
+      )+
       ggplot2::geom_bar(na.rm = FALSE, width = 1, position = position) +
       ggplot2::scale_x_discrete(breaks = every_nth)
   } else if (geom == "area") {
     time_levels <- levels(x$time)
     x$time <- as.numeric(x$time)
-    p <- ggplot2::ggplot(x, ggplot2::aes(x = time, fill = state)) +
+    p <- ggplot2::ggplot(
+        x,
+        ggplot2::aes(
+          x = !!rlang::sym("time"),
+          fill = !!rlang::sym("state")
+        )
+      )+
       ggplot2::geom_area(position = position, stat = "count") +
       ggplot2::scale_x_continuous(
         breaks = every_nth(seq_along(time_levels)),
@@ -1404,7 +1432,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
     )
   if (!missing(group)) {
     p <- p + ggplot2::facet_wrap(
-      as.formula(paste0("~", group)),
+      ggplot2::vars(!!rlang::sym(group)),
       scales = "free_y"
     )
   }
@@ -1843,7 +1871,7 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
                                      geom = "bar", include_na = FALSE,
                                      na_color = "white", sort_by,
                                      show_n = TRUE, border, title,
-                                     legend_title, xlab, ylab, tick = 1) {
+                                     legend_title, xlab, ylab, tick = 1, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   d <- combine_data(x)
