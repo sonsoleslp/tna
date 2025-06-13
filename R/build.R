@@ -360,11 +360,10 @@ create_seqdata <- function(x, cols, alphabet) {
   )
   structure(
     as.matrix(x[, cols]),
-    class = c("matrix", "array"),
+    class = c("tna_seq_data", "matrix", "array"),
     alphabet = alphabet,
     labels = labels,
-    colors = colors#,
-    #cols = cols
+    colors = colors
   )
 }
 

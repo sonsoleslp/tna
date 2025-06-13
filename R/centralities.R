@@ -348,7 +348,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
     )
   }
   if (progressbar) {
-    cli::cli_process_done()
+    cli::cli_progress_done()
   }
   structure(
     out,

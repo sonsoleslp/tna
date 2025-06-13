@@ -122,9 +122,9 @@ as.igraph.group_tna <- function(x, which, ...) {
 #' @noRd
 log_sum_exp <- function(x) {
   n <- length(x)
-  L <- x[1]
-  for (i in seq_len(n - 1)) {
-    L <- max(x[i + 1], L) + log1p(exp(-abs(x[i + 1] - L)))
+  L <- x[1L]
+  for (i in seq_len(n - 1L)) {
+    L <- max(x[i + 1L], L) + log1p(exp(-abs(x[i + 1L] - L)))
   }
   L
 }
@@ -219,5 +219,5 @@ message_ <- function(message, ...) {
 #' @param x A `character` vector.
 #' @noRd
 cs <- function(...) {
-  paste0(c(...), collapse = ", ")
+  paste0(c(...), collapse = ",")
 }
