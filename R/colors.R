@@ -36,7 +36,7 @@
 #'
 #' @noRd
 map_to_color <- function(x, palette) {
-  if (length(unique(x)) == 1) {
+  if (n_unique(x) == 1) {
     # Handle the case where all values are the same
     return(rep(palette[1], length(x))) # Map to the first color in the palette
   }

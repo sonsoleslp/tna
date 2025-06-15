@@ -38,7 +38,6 @@ reference:
     - print.tna_data
     - summary.tna
     - hist.tna
-    - simulate.tna
     - print.summary.tna
     - plot_frequencies
     - plot_frequencies.group_tna
@@ -50,6 +49,14 @@ reference:
     - hist.group_tna
     - plot_mosaic.group_tna
     - print.summary.group_tna
+    - plot_sequences
+
+  - title: Importing/generating data
+    contents:
+    - import_data
+    - prepare_data
+    - print.tna_data
+    - simulate.tna
 
   - title: Centralities
     contents:
@@ -130,4 +137,3 @@ reference:
     - engagement_mmm
     - group_regulation
     - group_regulation_long
-

@@ -15,7 +15,34 @@ will be used for all plots) or a list (one per group)}
 \item{which}{An optional \code{integer} vector of groups to plot. By default, all
 groups are plotted.}
 
-\item{...}{Same as \code{\link[=plot.tna]{plot.tna()}}.}
+\item{...}{
+  Arguments passed on to \code{\link[=plot.tna]{plot.tna}}
+  \describe{
+    \item{\code{labels}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{colors}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{pie}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{cut}}{Edge color and width emphasis cutoff value. The default is
+the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
+    \item{\code{show_pruned}}{A \code{logical} value indicating if pruned edges removed by
+\code{\link[=prune]{prune()}} should be shown in the plot.  The default is \code{TRUE}, and the
+edges are drawn as dashed with a different color to distinguish them.}
+    \item{\code{pruned_edge_color}}{A \code{character} string for the color to use for
+pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
+    \item{\code{edge.color}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{edge.labels}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{edge.label.position}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{layout}}{One of the following:
+\itemize{
+\item A \code{character} string describing a \code{qgraph} layout.
+\item A \code{matrix} of node positions to use, with a row for each node and
+\code{x} and \code{y} columns for the node positions.
+\item A layout function from \code{igraph}.
+}}
+    \item{\code{layout_args}}{A \code{list} of arguments to pass to the \code{igraph} layout
+function when \code{layout} is a function.}
+    \item{\code{mar}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+    \item{\code{theme}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+  }}
 }
 \value{
 \code{NULL} (invisibly).
@@ -33,20 +60,16 @@ Basic functions
 \code{\link{build_model}()},
 \code{\link{hist.group_tna}()},
 \code{\link{hist.tna}()},
-\code{\link{import_data}()},
 \code{\link{plot.tna}()},
 \code{\link{plot_frequencies}()},
 \code{\link{plot_frequencies.group_tna}()},
 \code{\link{plot_mosaic}()},
 \code{\link{plot_mosaic.group_tna}()},
 \code{\link{plot_mosaic.tna_data}()},
-\code{\link{prepare_data}()},
 \code{\link{print.group_tna}()},
 \code{\link{print.summary.group_tna}()},
 \code{\link{print.summary.tna}()},
 \code{\link{print.tna}()},
-\code{\link{print.tna_data}()},
-\code{\link{simulate.tna}()},
 \code{\link{summary.group_tna}()},
 \code{\link{summary.tna}()},
 \code{\link{tna-package}}

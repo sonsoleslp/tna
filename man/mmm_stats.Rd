@@ -4,13 +4,10 @@
 \alias{mmm_stats}
 \title{Retrieve Statistics from a Mixture Markov Model (MMM)}
 \usage{
-mmm_stats(x, use_t_dist = TRUE, level = 0.05)
+mmm_stats(x, level = 0.05)
 }
 \arguments{
 \item{x}{A \code{mhmm} object.}
-
-\item{use_t_dist}{A \code{logical} value. If \code{TRUE} (the default), the
-t-distribution is used to compute confidence intervals.}
 
 \item{level}{A \code{numeric} value representing the significance level for
 hypothesis testing and confidence intervals. Defaults to \code{0.05}.}

@@ -6,7 +6,7 @@
 #' widening the data.
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param data A `data.frame` or containing the action/event data.
 #' @param actor A `character` string giving the name of the column that
 #' represents a user/actor identifier. If not provided and neither `time` nor
@@ -90,7 +90,10 @@ prepare_data <- function(data, actor, time, action, order,
   check_string(order)
   check_values(time_threshold, type = "numeric")
   check_flag(is_unix_time)
-  check_match(unix_time_unit, c("seconds", "milliseconds", "microseconds"))
+  unix_time_unit <- check_match(
+    unix_time_unit,
+    c("seconds", "milliseconds", "microseconds")
+  )
 
   # Create some NULLs for R CMD Check
   .session_id <- .session_nr <- .new_session <- .time_gap <-
@@ -114,16 +117,7 @@ prepare_data <- function(data, actor, time, action, order,
     onlyif(!missing(time), time),
     onlyif(!missing(order), order)
   )
-  cols_obs <- cols_req %in% names(data)
-  cols_mis <- cols_req[!cols_obs]
-  stopifnot_(
-    all(cols_obs),
-    c(
-      "The columns {.val {cols_req}} must exist in the data.",
-      `x` = "The following columns were
-             not found in the data: {.val {cols_mis}}."
-    )
-  )
+  check_cols(cols_req, names(data))
   long_data <- data
   default_actor <- FALSE
   default_order <- FALSE
@@ -308,6 +302,7 @@ prepare_data <- function(data, actor, time, action, order,
       meta_data = meta_data,
       statistics = stats
     ),
+    type = "eventdata",
     class = "tna_data"
   )
 }
@@ -489,7 +484,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
 #' these windows.
 #'
 #' @export
-#' @family basic
+#' @family data
 #' @param data A `data.frame` in wide format.
 #' @param cols An `expression` giving a tidy selection of column names to be
 #' transformed into long format (actions). This can be a vector of column names

@@ -342,3 +342,16 @@ check_clusters <- function(x, i, j) {
     )
   }
 }
+
+check_cols <- function(cols, data_names) {
+  cols_obs <- cols %in% data_names
+  cols_mis <- cols[!cols_obs]
+  stopifnot_(
+    all(cols_obs),
+    c(
+      "The columns {.val {cols}} must exist in the data.",
+      `x` = "The following columns were
+             not found in the data: {.val {cols_mis}}."
+    )
+  )
+}
