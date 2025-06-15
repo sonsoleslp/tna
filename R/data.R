@@ -320,6 +320,7 @@ prepare_data <- function(data, actor, time, action, order,
 #' values and treats them as NA
 #'
 #' @param time A `vector` of time values.
+#' @return A `POSIXct` object.
 #' @inheritParams prepare_data
 #' @noRd
 parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
