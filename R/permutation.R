@@ -53,7 +53,7 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
   check_tna_seq(y)
   check_values(iter, strict = TRUE)
   check_flag(paired)
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
   permutation_test_(
     x = x,
     y = y,
@@ -96,7 +96,7 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
   )
   check_values(iter, strict = TRUE)
   check_flag(paired)
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
   x_names <- names(x)
   groups <- ifelse_(missing(groups), seq_along(x), groups)
   check_cluster(x, groups)

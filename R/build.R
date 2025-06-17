@@ -178,13 +178,12 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 #' @rdname build_model
 #' @param cols An `integer`/`character` vector giving the indices/names of the
 #' columns that should be considered as sequence data.
-#' Defaults to all columns, i.e., `seq(1, ncol(x))`.
+#' Defaults to all columns, i.e., `seq(1, ncol(x))`. Column names not found
+#' in `x` will be ignored without warning.
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = seq(1, ncol(x)), params = list(), ...) {
   check_missing(x)
   check_class(x, "stslist")
-  #TODO conditional
-  #check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x, cols)
@@ -208,7 +207,6 @@ build_model.data.frame <- function(x, type = "relative",
                                    params = list(), ...) {
   check_missing(x)
   check_class(x, "data.frame")
-  check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x, cols)
@@ -372,6 +370,9 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param alphabet Optional `character` vector of the alphabet.
 #' @noRd
 create_seqdata <- function(x, cols, alphabet) {
+  if (is.numeric(cols)) {
+    check_range(cols, scalar = FALSE, lower = 1L, upper = ncol(x))
+  }
   cols <- ifelse_(
     is.character(cols),
     which(names(x) %in% cols),

@@ -6,7 +6,7 @@
 \usage{
 cluster_mmm(
   data,
-  cols,
+  cols = seq(1L, ncol(data)),
   k,
   criterion = "bic",
   n_starts = 10L,
@@ -27,7 +27,8 @@ appropriately. The columns should be either \code{integer}, \code{character} or
 
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
 columns that should be considered as sequence data.
-Defaults to all columns, i.e., \code{seq(1, ncol(x))}.}
+Defaults to all columns, i.e., \code{seq(1, ncol(data))}. Column names not
+found in \code{data} will be ignored without warning.}
 
 \item{k}{An \code{integer} vector specifying the numbers of mixture components
 (clusters) to fit. The values must be between 2 and the number of sequences
@@ -56,7 +57,7 @@ per restart. Default is 300.}
 parallel processing. The default is 1 for no parallel processing.}
 
 \item{cl}{An optional prespecified cluster object with a registered
-parallel backend to use when \code{parallel = TRUE}.}
+parallel backend. Ignores \code{parallel} if provided.}
 
 \item{tol}{A \code{numeric} value specifying the convergence tolerance for the
 log-likelihood change between iterations. Default is 1e-6.}

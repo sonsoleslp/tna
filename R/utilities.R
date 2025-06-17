@@ -219,5 +219,5 @@ message_ <- function(message, ...) {
 #' @param x A `character` vector.
 #' @noRd
 cs <- function(...) {
-  paste0(c(...), collapse = ",")
+  paste0(c(...), collapse = ", ")
 }

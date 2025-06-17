@@ -564,7 +564,7 @@ plot.tna_permutation <- function(x, colors,
 #'
 plot.tna_stability <- function(x, level = 0.05, ...) {
   check_class(x, "tna_stability")
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
   x$detailed_results <- NULL
   x_names <- names(x)
   drop_prop <- attr(x, "drop_prop")

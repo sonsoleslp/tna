@@ -41,7 +41,8 @@ group_model(x, ...)
   scaling = character(0L),
   groupwise = FALSE,
   params = list(),
-  na.rm = TRUE
+  na.rm = TRUE,
+  ...
 )
 
 group_tna(x, ...)
@@ -56,7 +57,8 @@ group_atna(x, ...)
 \item{x}{An \code{stslist} object describing a sequence of events or states to
 be used for building the Markov model. The argument \code{x} also accepts
 \code{data.frame} objects in wide format, and \code{tna_data} objects.
-Alternatively, the function accepts a mixture Markov model from \code{seqHMM}.}
+Alternatively, the function accepts a mixture Markov model from \code{seqHMM}
+or from \code{\link[=cluster_mmm]{cluster_mmm()}}.}
 
 \item{...}{Ignored.}
 

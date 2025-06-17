@@ -237,8 +237,8 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   check_flag(normalize)
   check_flag(progressbar)
   check_values(iter, strict = TRUE)
-  check_range(threshold)
-  check_range(certainty)
+  check_range(threshold, lower = 0, upper = 1)
+  check_range(certainty, lower = 0, upper = 1)
   check_measures(measures)
   d <- x$data
   type <- attr(x, "type")
@@ -246,7 +246,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   params <- attr(x, "params")
   model <- initialize_model(d, type, scaling, params, transitions = TRUE)
   trans <- model$trans
-  a <- dim(trans)[2]
+  a <- dim(trans)[2L]
   n <- nrow(d)
   n_seq <- seq_len(n)
   n_prop <- length(drop_prop)

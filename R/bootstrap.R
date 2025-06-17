@@ -83,7 +83,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   check_missing(x)
   check_tna_seq(x)
   check_values(iter, strict = TRUE)
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
   method <- check_match(method, c("stability", "threshold"))
   if (missing(threshold)) {
     threshold <- unname(stats::quantile(x$weights, probs = 0.1))

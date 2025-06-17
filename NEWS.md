@@ -2,6 +2,7 @@
 
 * Clustering
 * The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
+* Added the function `import_onehot()` to read one-hot data.
 
 # tna 0.6.1
 

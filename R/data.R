@@ -634,6 +634,18 @@ import_onehot <- function(data, cols, window) {
   expr_cols <- rlang::enquo(cols)
   pos <- tidyselect::eval_select(expr_cols, data = data)
   cols <- names(pos)
+  for (col in cols) {
+    data_vals <- unique(data[[col]])
+    invalid_vals <- data_vals[!is.na(data_vals) & !data_vals %in% c(0, 1)]
+    stopifnot_(
+      length(invalid_vals) == 0L,
+      c(
+        "All data values of {.arg cols} must be either 0, 1, or NA.",
+        `x` = "Found invalid values in column
+               {.val {col}}: {.val {invalid_vals}}."
+      )
+    )
+  }
   data <- data |>
     dplyr::select(c(dplyr::all_of(cols), !!rlang::sym(window))) |>
     dplyr::filter(
@@ -653,7 +665,7 @@ import_onehot <- function(data, cols, window) {
     dplyr::select(dplyr::all_of(cols))
   n <- nrow(data)
   p <- length(cols)
-  out <- matrix(0.0, nrow = p, ncol = p, dimnames = list(cols, cols))
+  out <- matrix(0, nrow = p, ncol = p, dimnames = list(cols, cols))
   from <- which(data[1L, ] == 1L)
   for (i in seq(2L, n)) {
     to <- which(data[i, ] == 1L)

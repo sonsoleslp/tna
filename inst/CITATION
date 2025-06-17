@@ -1,6 +1,15 @@
 citHeader("To cite tna in publications use:")
 
 bibentry(
+  key = "tna_package",
+  bibtype = "Article",
+  title = "{tna}: An {R} Package for Transition Network Analysis",
+  author = c(person("Santtu", "Tikka"), person("Sonsoles", "L\u00f3pez-Pernas"), person("Mohammed", "Saqr")),
+  year = "2025",
+  doi = "10.1177/01466216251348840",
+  journal = "Applied Psychological Measurement"
+)
+bibentry(
   key = "tna_lak",
   bibtype  = "InProceedings",
   booktitle = "Proceedings of the 15th International Learning Analytics and Knowledge Conference (LAK '25)",
@@ -11,13 +20,13 @@ bibentry(
   year = "2025"
 )
 bibentry(
-  key = "tna_package",
+  key = "tna_cran",
   bibtype = "Misc",
   title = "{tna}: Transition Network Analysis ({TNA})",
   author = c(person("Mohammed", "Saqr"), person("Santtu", "Tikka"), person("Sonsoles", "L\u00f3pez-Pernas")),
   note = "{R} package version 0.5.0",
   year = "2025",
-  DOI = "10.32614/cran.package.tna",
+  doi = "10.32614/cran.package.tna",
   journal = "CRAN: Contributed Packages",
   publisher = "The R Foundation"
 )

@@ -113,7 +113,9 @@ test_that("invalid range check fails", {
     scalar = c(FALSE, TRUE)
   )
   f <- function(i, z) {
-    check_range(z, type = opts[i, 1], scalar = opts[i, 2], min = -2, max = 2)
+    check_range(
+      z, type = opts[i, 1], scalar = opts[i, 2], lower = -2, upper = 2
+    )
   }
   expect_error(
     f(i = 1, z = 3),

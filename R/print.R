@@ -321,6 +321,38 @@ print.tna_permutation <- function(x, ...) {
   invisible(x)
 }
 
+#' Print a Mixed Markov Model Fit
+#'
+#' @export
+#' @param x A `tna_mmm` object.
+#' @param ... (Ignored)
+#' @return `x` (invisibly)
+#' @examples
+#' #' \dontrun{
+#' model <- cluster_mmm(engagement, k = 3)
+#' print(model)
+#' }
+#'
+print.tna_mmm <- function(x, ...) {
+  cat("Data:", x$data_name, "\n")
+  cat("Number of clusters (k):", x$k, "\n")
+  cat("Number of sequences (n):", length(x$assignments), "\n")
+  cat("States:", cs(x$states), "\n")
+  conv <- ifelse_(
+    x$converged,
+    "Converged:",
+    "Failed to converge:"
+  )
+  cat(conv, "after", x$iterations, "iterations\n")
+  cat("Log-likelihood:", round(x$loglik, 4), "\n")
+  cat("AIC:", round(x$aic, 4), "\n")
+  cat("BIC:", round(x$bic, 4), "\n")
+  cat("Cluster sizes:", cs(x$sizes), "\n")
+  cat("Cluster proportions:", cs(round(x$proportions, 3)), "\n")
+  cat("Mixture weights:", cs(round(x$mixture, 3)), "\n")
+  invisible(x)
+}
+
 # Clusters ----------------------------------------------------------------
 
 #' Print a `group_tna` Object

@@ -14,7 +14,8 @@
 #'   `factor` variables.
 #' @param cols An `integer`/`character` vector giving the indices/names of the
 #'   columns that should be considered as sequence data.
-#'   Defaults to all columns, i.e., `seq(1, ncol(x))`.
+#'   Defaults to all columns, i.e., `seq(1, ncol(data))`. Column names not
+#'   found in `data` will be ignored without warning.
 #' @param k An `integer` vector specifying the numbers of mixture components
 #'   (clusters) to fit. The values must be between 2 and the number of sequences
 #'   minus 1.
@@ -36,7 +37,7 @@
 #' @param n_cores An `integer` specifying the number of cores to use for
 #'   parallel processing. The default is 1 for no parallel processing.
 #' @param cl An optional prespecified cluster object with a registered
-#'   parallel backend to use when `parallel = TRUE`.
+#'   parallel backend. Ignores `parallel` if provided.
 #'
 #' @details
 #' The function implements a mixture of first-order Markov models where each
@@ -60,10 +61,20 @@
 #' model <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
 #' }
 #'
-cluster_mmm <- function(data, cols, k, criterion = "bic", n_starts = 10L,
-                        min_size = 1L, progressbar = TRUE, max_iter = 500L,
-                        reltol = 1e-10, parallel = FALSE, n_cores, cl) {
+cluster_mmm <- function(data, cols = seq(1L, ncol(data)), k, criterion = "bic",
+                        n_starts = 10L, min_size = 1L, progressbar = TRUE,
+                        max_iter = 500L, reltol = 1e-10, parallel = FALSE,
+                        n_cores, cl) {
+  data_name <- deparse(substitute(data))
   data <- create_seqdata(x = data, cols = cols)
+  criterion <- check_match(criterion, c("bic", "aic"))
+  check_values(n_starts, strict = TRUE)
+  check_values(min_size, strict = TRUE)
+  check_values(max_iter, strict = TRUE)
+  check_values(reltol, type = "numeric", strict = TRUE)
+  check_flag(progressbar)
+  check_flag(parallel)
+  check_range(k, type = "integer", lower = 2L, upper = nrow(data) - 1L)
   s <- length(attr(data, "labels"))
   if (parallel && missing(cl)) {
     stopifnot_(
@@ -78,11 +89,25 @@ cluster_mmm <- function(data, cols, k, criterion = "bic", n_starts = 10L,
     doParallel::registerDoParallel(cl)
     on.exit(parallel::stopCluster(cl), add = TRUE)
   }
+  parallel <- parallel || !missing(cl)
+  if (parallel) {
+    stopifnot_(
+      inherits(cl, "cluster"),
+      "Argument {.arg cl} must be a {.cls cluster} object."
+    )
+    stopifnot_(
+      isTRUE(foreach::getDoParRegistered()),
+      "A parallel backend must be registered for parallel computation."
+    )
+    dopar <- foreach::getDoParName()
+    workers <- foreach::getDoParWorkers()
+    message_("Using {dopar} with {workers} workers.")
+  }
   k_len <- length(k)
   results <- vector(mode = "list", length = k_len)
   if (progressbar && k_len > 1L) {
     cli::cli_progress_bar(
-      name = "Estimating mixed Markov models",
+      name = "Estimating mixture Markov models",
       total = k_len
     )
   }
@@ -133,6 +158,7 @@ cluster_mmm <- function(data, cols, k, criterion = "bic", n_starts = 10L,
     out <- results[[1L]]
   }
   out$data <- data
+  out$data_name <- data_name
   structure(
     out,
     class = "tna_mmm"
@@ -202,7 +228,7 @@ fit_mmm <- function(data, k, n_starts, min_size, progressbar, max_iter, reltol,
   )
 }
 
-# The EM Algorithm for a mixed Markov Model
+# The EM Algorithm for a mixture Markov Model
 em <- function(start, data, k, s, max_iter, reltol) {
   set.seed(start)
   # For some reason export does not work for this function

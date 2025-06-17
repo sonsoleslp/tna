@@ -10,7 +10,8 @@
 #' @param x An `stslist` object describing a sequence of events or states to
 #'   be used for building the Markov model. The argument `x` also accepts
 #'   `data.frame` objects in wide format, and `tna_data` objects.
-#'   Alternatively, the function accepts a mixture Markov model from `seqHMM`.
+#'   Alternatively, the function accepts a mixture Markov model from `seqHMM`
+#'   or from [cluster_mmm()].
 #' @param group A `vector` indicating the group assignment of each
 #'   row of the data/sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
@@ -54,8 +55,7 @@ group_model.default <- function(x, group, type = "relative",
   check_flag(groupwise)
   check_flag(na.rm)
   stopifnot_(
-    inherits(x, "stslist") ||
-      inherits(x, "data.frame") || inherits(x, "tna_data"),
+    inherits(x, c("stslist", "data.frame", "tna_data")),
     "Argument {.arg x} must be {.cls stslist} (sequence object), a
     {.cls data.frame} or a {.cls tna_data} object."
   )
@@ -65,7 +65,13 @@ group_model.default <- function(x, group, type = "relative",
     x <- wide
   } else {
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
-    check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
+    check_range(
+      cols,
+      type = "integer",
+      scalar = FALSE,
+      lower = 1L,
+      upper = ncol(x)
+    )
   }
   group <- ifelse_(
     missing(group),
@@ -185,9 +191,9 @@ group_model.default <- function(x, group, type = "relative",
 
 #' @export
 #' @rdname group_model
-group_model.mhmm <- function(x, type = "relative",
-                             scaling = character(0L), groupwise = FALSE,
-                             params = list(), na.rm = TRUE, ...) {
+group_model.mhmm <- function(x, type = "relative", scaling = character(0L),
+                             groupwise = FALSE, params = list(),
+                             na.rm = TRUE, ...) {
   stopifnot_(
     requireNamespace("seqHMM", quietly = TRUE),
     "Please install the {.pkg seqHMM} package."
@@ -209,10 +215,14 @@ group_model.mhmm <- function(x, type = "relative",
 #' @rdname group_model
 group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
                                 groupwise = FALSE, params = list(),
-                                na.rm = TRUE) {
+                                na.rm = TRUE, ...) {
   check_missing(x)
+  lab <- attr(x$data, "labels")
+  data <- as.data.frame(
+    lapply(as.data.frame(x$data), function(y) factor(y, labels = lab))
+  )
   group_model.default(
-    x = x$data,
+    x = data,
     group = x$assignments,
     type = type,
     scaling = scaling,
@@ -277,7 +287,7 @@ mmm_stats <- function(x, level = 0.05) {
     "Please install the {.pkg seqHMM} package."
   )
   check_missing(x)
-  check_range(level)
+  check_range(level, lower = 0.0, upper = 1.0)
   stopifnot_(
     inherits(x, "mhmm"),
     c(

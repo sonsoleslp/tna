@@ -139,17 +139,17 @@ check_values <- function(x, type = "integer", strict = FALSE,
   )
   strictness <- ifelse_(strict, "positive", "non-negative")
   stopifnot_(
-    test_fun(x = x, lower = as.integer(strict)),
+    test_fun(x = x, lower = as.integer(strict && type == "integer")),
     "Argument {.arg {arg}} must be a {strictness} {.cls {type}}{suffix}."
   )
 }
 
 #' Check that `x` is between a minimum and a maximum value
 #'
-#' @param x An \R object expected to be a single  `numeric` or `integer` value.
+#' @param x An \R object expected to be within a specific range.
 #' @noRd
 check_range <- function(x, type = "numeric", scalar = TRUE,
-                        min = 0.0, max = 1.0) {
+                        lower = -Inf, upper = Inf) {
   arg <- deparse(substitute(x))
   prefix <- ifelse_(scalar, "be a single", "only contain")
   suffix <- ifelse_(
@@ -162,10 +162,18 @@ check_range <- function(x, type = "numeric", scalar = TRUE,
     ifelse_(scalar, checkmate::test_number, checkmate::test_numeric),
     ifelse_(scalar, checkmate::test_int, checkmate::test_integer)
   )
+  bounds <- ""
+  if (is.infinite(lower)) {
+    bounds <- paste0("less than or equal to ", upper)
+  } else if (is.infinite(upper)) {
+    bounds <- paste0("greater than or equal to ", lower)
+  } else {
+    bounds <- paste0("between ", lower, " and ", upper)
+  }
   stopifnot_(
-    test_fun(x = x, lower = min, upper = max),
+    test_fun(x = x, lower = lower, upper = upper),
     "Argument {.arg {arg}} must {prefix}
-    {.cls {type}} {suffix} between {min} and {max}."
+    {.cls {type}} {suffix} {bounds}."
   )
 }
 
