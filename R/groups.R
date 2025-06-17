@@ -1,7 +1,7 @@
 #' Build a Grouped Transition Network Analysis Model
 #'
 #' This function constructs a transition network analysis (TNA) model for
-#' each cluster from a given sequence, wide-format dataframe,
+#' each group from a given sequence, wide-format dataframe
 #' or a mixture Markov model.
 #'
 #' @export
@@ -11,8 +11,8 @@
 #'   be used for building the Markov model. The argument `x` also accepts
 #'   `data.frame` objects in wide format, and `tna_data` objects.
 #'   Alternatively, the function accepts a mixture Markov model from `seqHMM`.
-#' @param group A vector indicating the cluster assignment of each
-#'   row of the data / sequence. Must have the same length as the number of
+#' @param group A `vector` indicating the group assignment of each
+#'   row of the data/sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
 #'   format `data.frame` or a `tna_data` object. If not provided, each row of
@@ -20,13 +20,14 @@
 #' @param cols An `integer`/`character` vector giving the indices/names of the
 #'   columns that should be considered as sequence data.
 #'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
-#'   automatically determined for `tna_data` objects.
+#'   automatically determined for `tna_data` objects. The `group` column
+#'   is automatically removed from these columns if provided.
 #' @param na.rm A `logical` value that determines if observations with `NA`
-#' value in `group` be removed. If `FALSE`, an additional category for `NA`
-#' values will be added. The default is `FALSE` and a warning is issued
-#' if `NA` values are detected.
+#'   value in `group` be removed. If `FALSE`, an additional category for `NA`
+#'   values will be added. The default is `FALSE` and a warning is issued
+#'   if `NA` values are detected.
 #' @param groupwise A `logical` value that indicates whether scaling methods
-#' should be applied by group (`TRUE`) or globally (`FALSE`, the default).
+#'   should be applied by group (`TRUE`) or globally (`FALSE`, the default).
 #' @inheritParams build_model
 #' @param ... Ignored.
 #' @return An object of class `group_tna` which is a `list` containing one
@@ -83,12 +84,14 @@ group_model.default <- function(x, group, type = "relative",
   label <- "Cluster"
   prefix <- "Argument"
   if (group_len == 1L) {
+    x_names <- names(x)
     stopifnot_(
-      group %in% names(x),
+      group %in% x_names,
       "Argument {.arg group} must be a column name of {.arg x}
        when of length one."
     )
     label <- group
+    cols <- setdiff(cols, which(x_names == group))
     group <- x[[group]]
     prefix <- "Column"
   }
@@ -102,7 +105,14 @@ group_model.default <- function(x, group, type = "relative",
       )
     )
   }
-  group <- ifelse_(is.factor(group), group, factor(group))
+  group <- ifelse_(
+    is.factor(group),
+    group,
+    factor(
+      group,
+      labels = paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
+    )
+  )
   group <- ifelse_(group_na && !na.rm, addNA(group), group)
   levs <- levels(group)
   n_group <- length(levs)
@@ -177,20 +187,36 @@ group_model.default <- function(x, group, type = "relative",
 #' @rdname group_model
 group_model.mhmm <- function(x, type = "relative",
                              scaling = character(0L), groupwise = FALSE,
-                             cols, params = list(), na.rm = TRUE, ...) {
+                             params = list(), na.rm = TRUE, ...) {
   stopifnot_(
     requireNamespace("seqHMM", quietly = TRUE),
     "Please install the {.pkg seqHMM} package."
   )
   check_missing(x)
-  group <- summary(x)$most_probable_cluster
   group_model.default(
     x = x$observations,
-    group = group,
+    group = summary(x)$most_probable_cluster,
     type = type,
     scaling = scaling,
     groupwise = groupwise,
-    cols = cols,
+    params = params,
+    na.rm = na.rm,
+    ...
+  )
+}
+
+#' @export
+#' @rdname group_model
+group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
+                                groupwise = FALSE, params = list(),
+                                na.rm = TRUE) {
+  check_missing(x)
+  group_model.default(
+    x = x$data,
+    group = x$assignments,
+    type = type,
+    scaling = scaling,
+    groupwise = groupwise,
     params = params,
     na.rm = na.rm,
     ...

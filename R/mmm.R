@@ -12,6 +12,9 @@
 #'   columns represent time points. Missing values (`NA`) are handled
 #'   appropriately. The columns should be either `integer`, `character` or
 #'   `factor` variables.
+#' @param cols An `integer`/`character` vector giving the indices/names of the
+#'   columns that should be considered as sequence data.
+#'   Defaults to all columns, i.e., `seq(1, ncol(x))`.
 #' @param k An `integer` vector specifying the numbers of mixture components
 #'   (clusters) to fit. The values must be between 2 and the number of sequences
 #'   minus 1.
@@ -57,10 +60,10 @@
 #' model <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
 #' }
 #'
-cluster_mmm <- function(data, k, criterion = "bic", n_starts = 10L,
+cluster_mmm <- function(data, cols, k, criterion = "bic", n_starts = 10L,
                         min_size = 1L, progressbar = TRUE, max_iter = 500L,
                         reltol = 1e-10, parallel = FALSE, n_cores, cl) {
-  data <- create_seqdata(data, cols = seq_len(ncol(data)))
+  data <- create_seqdata(x = data, cols = cols)
   s <- length(attr(data, "labels"))
   if (parallel && missing(cl)) {
     stopifnot_(
@@ -97,7 +100,6 @@ cluster_mmm <- function(data, k, criterion = "bic", n_starts = 10L,
         cl = cl
       ),
       error = function(e) {
-        print(e)
         NULL
       }
     )
@@ -130,6 +132,7 @@ cluster_mmm <- function(data, k, criterion = "bic", n_starts = 10L,
   } else {
     out <- results[[1L]]
   }
+  out$data <- data
   structure(
     out,
     class = "tna_mmm"
@@ -199,7 +202,7 @@ fit_mmm <- function(data, k, n_starts, min_size, progressbar, max_iter, reltol,
   )
 }
 
-# The EM Algoritm for a mixed Markov Model
+# The EM Algorithm for a mixed Markov Model
 em <- function(start, data, k, s, max_iter, reltol) {
   set.seed(start)
   # For some reason export does not work for this function
@@ -240,6 +243,7 @@ em <- function(start, data, k, s, max_iter, reltol) {
   loglik_prev <- 0
   loglik_reldiff <- Inf
   loglik_mat <- matrix(-Inf, n, k)
+  log_sum_exp_vec <- numeric(n)
   posterior <- matrix(NA, n, k)
   post_clust_arr <- array(0, dim = c(n, s, s))
   while (loglik_reldiff > reltol && iter < max_iter) {
@@ -252,7 +256,8 @@ em <- function(start, data, k, s, max_iter, reltol) {
         sum(x * log(trans_prob + 1e-10))
       })
     }
-    posterior[] <- exp(loglik_mat - log_sum_exp_rows(loglik_mat, m = n, n = k))
+    log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
+    posterior[] <- exp(loglik_mat - log_sum_exp_vec)
     # M-step
     mixture <- .colMeans(posterior, m = n, n = k)
     for (j in 1:k) {
@@ -269,7 +274,7 @@ em <- function(start, data, k, s, max_iter, reltol) {
       trans_new <- apply(trans * post_clust_arr, c(2L, 3L), sum)
       models[[j]]$trans <- trans_new / .rowSums(trans_new, s, s)
     }
-    loglik <- sum(log_sum_exp_rows(loglik_mat, m = n, n = k))
+    loglik <- sum(log_sum_exp_vec)
     if (iter > 1L) {
       loglik_reldiff <- (loglik - loglik_prev) / (abs(loglik_prev) + 0.1)
     }

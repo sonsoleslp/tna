@@ -110,6 +110,7 @@ print(results_single$statistics)
 \seealso{
 Other data: 
 \code{\link{import_data}()},
+\code{\link{import_onehot}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()}
 }

@@ -183,7 +183,8 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = seq(1, ncol(x)), params = list(), ...) {
   check_missing(x)
   check_class(x, "stslist")
-  check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
+  #TODO conditional
+  #check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   x <- create_seqdata(x, cols)
@@ -284,6 +285,53 @@ atna <- function(x, ...) {
   build_model(x = x, type = "attention", ...)
 }
 
+#' Build a Social Network Analysis Model
+#'
+#' @export
+#' @param x A `data.frame` or a `matrix` with three columns: the first two
+#' representing the states and the third giving the weights.
+#' @param aggregate A `function` to use for aggregating the weights. The
+#' default is [sum()].
+#' @param ... Additional arguments passed to `aggregate`.
+#' @return A `tna` object representing the model.
+#' @examples
+#' set.seed(123)
+#' d <- data.frame(
+#'   from = sample(LETTERS[1:4], 100, replace = TRUE),
+#'   to = sample(LETTERS[1:4], 100, replace = TRUE),
+#'   weight = rexp(100)
+#' )
+#' model <- sna(d)
+#'
+sna <- function(x, aggregate = sum, ...) {
+  check_missing(x)
+  x <- try_(as.data.frame(x))
+  stopifnot_(
+    !inherits(x, "try-error"),
+    "Argument {.arg x} must be coercible to a {.cls data.frame}."
+  )
+  check_na(x)
+  nc <- ncol(x)
+  stopifnot_(
+    nc == 3L,
+    "Argument {.arg x} must have three columns (from, to, weight)."
+  )
+  colnames(x) <- c("from", "to", "weight")
+  x <- x |>
+    dplyr::group_by(!!rlang::sym("from"), !!rlang::sym("to")) |>
+    dplyr::summarize(weight = aggregate(weight, ...))
+  lab <- unique(unlist(x[, c("from", "to")]))
+  n <- length(lab)
+  out <- matrix(0.0, n, n, dimnames = list(lab, lab))
+  idx <- cbind(match(x$from, lab), match(x$to, lab))
+  out[idx] <- x$weight
+  build_model_(
+    weights = out,
+    labels = lab,
+    type = character(0L),
+    scaling = character(0L)
+  )
+}
 
 # Internal ----------------------------------------------------------------
 

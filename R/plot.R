@@ -1101,8 +1101,8 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @param geom A `character` string for the type of geom to use for
 #'   distribution plots. The options are `"bar"` (the default) and `"area"`.
 #' @param include_na A `logical` value for whether to include missing values
-#'   for distribution plots. The default is `TRUE`: missing values
-#'   are converted to a new state and included in the plot.
+#'   for distribution plots. The default is `FALSE`. If `TRUE`, the missing
+#'   values are converted to a new state and included in the plot.
 #' @param colors A named `character` vector mapping states to colors, or an
 #'   unnamed `character` vector. If missing, a default palette is used.
 #' @param na_color A `character` string giving the color to use for missing
@@ -1124,23 +1124,22 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @param ylab A `character` string giving the label for the vertical axis.
 #'   The default is `"Sequence"` for index plots, and `"Proportion"` or
 #'   `"Count"` based on `scale` for distribution plots.
-#' @param tick An `integer` specifying the horizontal axis label interval,
-#' e.g., `tick = 5` would show every 5th label. The default is 1 showing
+#' @param tick An `integer` specifying the horizontal axis label interval. The
+#' default value `tick = 5` shows every 5th label. Setting this to 1 will show
 #' every label.
+#' @param ncol Number of columns to use for the facets. The default is 2.
 #' @param ... Ignored.
 #' @examples
 #' # Sequence index plot (default)
 #' plot_sequences(
 #'   group_regulation,
 #'   group = rep(1:2, each = 1000),
-#'   tick = 5
 #' )
 #' # State distribution plot
 #' plot_sequences(
 #'   group_regulation,
 #'   group = rep(1:2, each = 1000),
 #'   type = "distribution",
-#'   tick = 5
 #' )
 #'
 plot_sequences <- function(x, ...) {
@@ -1151,9 +1150,9 @@ plot_sequences <- function(x, ...) {
 #' @rdname plot_sequences
 plot_sequences.tna <- function(x, group, type = "index",
                                scale = "proportion", geom = "bar",
-                               include_na = TRUE, na_color = "white", sort_by,
+                               include_na = FALSE, na_color = "white", sort_by,
                                show_n = TRUE, border, title, legend_title,
-                               xlab, ylab, tick = 1, ...) {
+                               xlab, ylab, tick = 5, ncol = 2L, ...) {
   check_missing(x)
   check_tna_seq(x)
   d <- as.data.frame(x$data)
@@ -1173,7 +1172,7 @@ plot_sequences.tna <- function(x, group, type = "index",
   plot_sequences_(
     d, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
+    xlab, ylab, tick, ncol
   )
 }
 
@@ -1184,14 +1183,15 @@ plot_sequences.tna_data <- function(x, group, type = "index",
                                     geom = "bar", include_na = FALSE,
                                     colors, na_color = "white", sort_by,
                                     show_n = TRUE, border, title,
-                                    legend_title, xlab, ylab, tick = 1, ...) {
+                                    legend_title, xlab, ylab, tick = 5,
+                                    ncol = 2L, ...) {
   check_missing(x)
   check_class(x, "tna_data")
   wide <- cbind(x$sequence_data, x$meta_data)
   cols <- names(x$sequence_data)
   plot_sequences.default(
     wide, cols, group, type, scale, geom, include_na, colors, na_color,
-    sort_by, show_n, border, title, legend_title, xlab, ylab, tick
+    sort_by, show_n, border, title, legend_title, xlab, ylab, tick, ncol
   )
 }
 
@@ -1202,7 +1202,8 @@ plot_sequences.default <- function(x, cols, group, type = "index",
                                    include_na = FALSE, colors,
                                    na_color = "white", sort_by,
                                    show_n = TRUE, border, title,
-                                   legend_title, xlab, ylab, tick = 1, ...) {
+                                   legend_title, xlab, ylab, tick = 5,
+                                   ncol = 2L, ...) {
   check_missing(x)
   stopifnot_(
     inherits(x, "stslist") || inherits(x, "data.frame"),
@@ -1241,13 +1242,14 @@ plot_sequences.default <- function(x, cols, group, type = "index",
   plot_sequences_(
     x, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
+    xlab, ylab, tick, ncol
   )
 }
 
-plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
-                            include_na, colors, na_color, sort_by, show_n,
-                            border, title, legend_title, xlab, ylab, tick) {
+plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
+                            geom, include_na, colors, na_color, sort_by,
+                            show_n, border, title, legend_title,
+                            xlab, ylab, tick, ncol) {
   type <- check_match(type, c("distribution", "index"))
   scale <- check_match(scale, c("count", "proportion"))
   geom <- check_match(geom, c("area", "bar"))
@@ -1316,18 +1318,18 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
   if (type == "index") {
     create_index_plot(
       long_data, group, colors, na_color, border,
-      title, title_n, legend_title, xlab, ylab, tick
+      title, title_n, legend_title, xlab, ylab, tick, ncol
     )
   } else {
     create_distribution_plot(
       long_data, group, scale, geom, include_na, colors, na_color,
-      border, title, title_n, legend_title, xlab, ylab, tick
+      border, title, title_n, legend_title, xlab, ylab, tick, ncol
     )
   }
 }
 
 create_index_plot <- function(x, group, colors, na_color, border, title,
-                              title_n, legend_title, xlab, ylab, tick) {
+                              title_n, legend_title, xlab, ylab, tick, ncol) {
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(missing(ylab), "Sequence", ylab)
   title <- ifelse_(missing(title), "\"Sequence Index Plot \"", title)
@@ -1367,7 +1369,8 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
   if (!missing(group)) {
     p <- p + ggplot2::facet_wrap(
       ggplot2::vars(!!rlang::sym(group)),
-      scales = "free_y"
+      ncol = ncol,
+      scales = "free_y",
     )
   }
   p
@@ -1375,7 +1378,7 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
 
 create_distribution_plot <- function(x, group, scale, geom, include_na,
                                      colors, na_color, border, title, title_n,
-                                     legend_title, xlab, ylab, tick) {
+                                     legend_title, xlab, ylab, tick, ncol) {
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(
     missing(ylab),
@@ -1433,6 +1436,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
   if (!missing(group)) {
     p <- p + ggplot2::facet_wrap(
       ggplot2::vars(!!rlang::sym(group)),
+      ncol = ncol,
       scales = "free_y"
     )
   }
@@ -1869,9 +1873,9 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
 #' @rdname plot_sequences
 plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
                                      geom = "bar", include_na = FALSE,
-                                     na_color = "white", sort_by,
-                                     show_n = TRUE, border, title,
-                                     legend_title, xlab, ylab, tick = 1, ...) {
+                                     na_color = "white", sort_by, show_n = TRUE,
+                                     border, title, legend_title, xlab, ylab,
+                                     tick = 1, ncol = 2L, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   d <- combine_data(x)
@@ -1883,7 +1887,7 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
   plot_sequences_(
     d, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
+    xlab, ylab, tick, ncol
   )
 }
 

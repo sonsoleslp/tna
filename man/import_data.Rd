@@ -66,6 +66,7 @@ long_data2 <- import_data(
 }
 \seealso{
 Other data: 
+\code{\link{import_onehot}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()}

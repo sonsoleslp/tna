@@ -1,3 +1,12 @@
+# tna 0.7.0
+
+* Clustering
+* The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
+
+# tna 0.6.1
+
+* The `group` column is now automatically removed from `cols` in `group_model()`.
+
 # tna 0.6.0
 
 * Added a new method `plot_sequences()` for sequence index plots and state distribution plots.

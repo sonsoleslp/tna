@@ -595,3 +595,78 @@ import_data <- function(data, cols, id_cols,
       order
     )
 }
+
+#' Import One-Hot Data and Create a Co-Occurrence Network Model
+#'
+#' @export
+#' @family data
+#' @param data A `data.frame` in wide format.
+#' @param cols An `expression` giving a tidy selection of column names to be
+#' transformed into long format (actions). This can be a vector of column names
+#' (e.g., `c(feature1, feature2)`) or a range  specified as `feature1:feature6`
+#' (without quotes) to include all columns from 'feature1' to 'feature6'
+#' in the order they appear in the data frame. For more information on
+#' tidy selections, see [dplyr::select()].
+#' @param window An `integer` specifying the size of the window for
+#' sequence grouping. Default is 1 (each row is a separate window). Can
+#' also be a `character` string giving a name of the column in `data` whose
+#' levels define the windows.
+#' @return A `tna` object for the co-occurrence model.
+#' @examples
+#' # TODO examples
+#'
+import_onehot <- function(data, cols, window) {
+  check_missing(data)
+  check_class(data, "data.frame")
+  window <- ifelse_(missing(window), 1L, window)
+  data_names <- colnames(data)
+  n <- nrow(data)
+  if (is.character(window)) {
+    stopifnot_(
+      length(window) == 1L && window %in% data_names,
+      "Argument {.arg window} must be a column name of {.arg data} when of
+      {.cls character} type."
+    )
+  } else {
+    data$.window <- rep(seq(1L, n %/% window + 1L), each = window)[1:n]
+    window <- ".window"
+  }
+  expr_cols <- rlang::enquo(cols)
+  pos <- tidyselect::eval_select(expr_cols, data = data)
+  cols <- names(pos)
+  data <- data |>
+    dplyr::select(c(dplyr::all_of(cols), !!rlang::sym(window))) |>
+    dplyr::filter(
+      dplyr::across(
+        c(dplyr::all_of(cols), !!rlang::sym(window)),
+        ~ !is.na(.x)
+      )
+    ) |>
+    dplyr::group_by(!!rlang::sym(window)) |>
+    dplyr::summarize(
+      dplyr::across(
+        dplyr::all_of(cols),
+        max,
+        .names = "{col}"
+      )
+    ) |>
+    dplyr::select(dplyr::all_of(cols))
+  n <- nrow(data)
+  p <- length(cols)
+  out <- matrix(0.0, nrow = p, ncol = p, dimnames = list(cols, cols))
+  from <- which(data[1L, ] == 1L)
+  for (i in seq(2L, n)) {
+    to <- which(data[i, ] == 1L)
+    pairs <- as.matrix(expand.grid(from, to))
+    out[pairs] <- out[pairs] + 1L
+    from <- to
+  }
+  t_out <- t(out)
+  diag(t_out) <- 0
+  out <- out + t_out
+  build_model_(
+    weights = out,
+    type = "co-occurrence",
+    labels = cols
+  )
+}
