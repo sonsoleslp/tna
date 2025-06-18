@@ -94,11 +94,9 @@ prepare_data <- function(data, actor, time, action, order,
     unix_time_unit,
     c("seconds", "milliseconds", "microseconds")
   )
-
   # Create some NULLs for R CMD Check
   .session_id <- .session_nr <- .new_session <- .time_gap <-
     .standardized_time <- .sequence <- n_sessions <- n_actions <- NULL
-
   rlang_verbose <- getOption("rlib_message_verbosity")
   onlyif(
     is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
@@ -274,27 +272,6 @@ prepare_data <- function(data, actor, time, action, order,
       )
     )
   }
-  # if (!default_actor) {
-  #   message_(c(`i` = "Sessions per user:"))
-  #   for (i in seq_len(nrow(stats$sessions_per_user))) {
-  #     msg <- paste0(
-  #       stats$sessions_per_user[[actor]][i],
-  #       ": ",
-  #       "{.val {", stats$sessions_per_user$n_sessions[i], "}}"
-  #     )
-  #     message_(c(` ` = msg))
-  #   }
-  # }
-  # message_(c(`i` = "Top 5 longest sessions:"))
-  # max_rows <- min(nrow(stats$actions_per_session), 5L)
-  # for (i in seq_len(max_rows)) {
-  #   msg <- paste0(
-  #     stats$actions_per_session$.session_id[i],
-  #     ": ",
-  #     "{.val {", stats$actions_per_session$n_actions[i], "}}"
-  #   )
-  #   message_(c(` ` = msg))
-  # }
   structure(
     list(
       long_data = long_data,
@@ -302,7 +279,6 @@ prepare_data <- function(data, actor, time, action, order,
       meta_data = meta_data,
       statistics = stats
     ),
-    type = "eventdata",
     class = "tna_data"
   )
 }
@@ -648,29 +624,28 @@ import_onehot <- function(data, cols, window) {
   }
   data <- data |>
     dplyr::select(c(dplyr::all_of(cols), !!rlang::sym(window))) |>
-    dplyr::filter(
-      dplyr::across(
-        c(dplyr::all_of(cols), !!rlang::sym(window)),
-        ~ !is.na(.x)
-      )
-    ) |>
+    dplyr::filter(!is.na(!!rlang::sym(window))) |>
     dplyr::group_by(!!rlang::sym(window)) |>
     dplyr::summarize(
       dplyr::across(
         dplyr::all_of(cols),
-        max,
+        sum,
         .names = "{col}"
       )
     ) |>
-    dplyr::select(dplyr::all_of(cols))
+    dplyr::select(dplyr::all_of(cols)) |>
+    as.matrix()
   n <- nrow(data)
   p <- length(cols)
   out <- matrix(0, nrow = p, ncol = p, dimnames = list(cols, cols))
-  from <- which(data[1L, ] == 1L)
+  from <- which(data[1L, ] > 0)
   for (i in seq(2L, n)) {
-    to <- which(data[i, ] == 1L)
-    pairs <- as.matrix(expand.grid(from, to))
-    out[pairs] <- out[pairs] + 1L
+    to <- which(data[i, ] > 0)
+    if (length(from) > 0 && length(to) > 0) {
+      pairs <- create_pairs(data[i - 1L, from], data[i, to])
+      pairs_idx <- create_pairs(from, to)
+      out[pairs_idx] <- out[pairs_idx] + pairs[, 1L] * pairs[, 2L]
+    }
     from <- to
   }
   t_out <- t(out)
