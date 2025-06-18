@@ -18,7 +18,7 @@
 Print a Mixed Markov Model Fit
 }
 \examples{
-#' \dontrun{
+\dontrun{
 model <- cluster_mmm(engagement, k = 3)
 print(model)
 }

@@ -328,7 +328,7 @@ print.tna_permutation <- function(x, ...) {
 #' @param ... (Ignored)
 #' @return `x` (invisibly)
 #' @examples
-#' #' \dontrun{
+#' \dontrun{
 #' model <- cluster_mmm(engagement, k = 3)
 #' print(model)
 #' }
