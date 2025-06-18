@@ -12,6 +12,7 @@ startup <- function() {
     "  Applied Psychological Measurement.\n",
     "  https://doi.org/10.1177/01466216251348840\n",
     "------------------------------------------------------\n",
-    "Please type 'citation(\"tna\")' for more citation information.\n"
+    "Please type 'citation(\"tna\")' for more citation information.\n",
+    "See the package website at https://sonsoles.me/tna/\n"
   )
 }

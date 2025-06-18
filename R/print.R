@@ -349,7 +349,11 @@ print.tna_mmm <- function(x, ...) {
   cat("BIC:", round(x$bic, 4), "\n")
   cat("Cluster sizes:", cs(x$sizes), "\n")
   cat("Cluster proportions:", cs(round(x$proportions, 3)), "\n")
-  cat("Mixture weights:", cs(round(x$mixture, 3)), "\n")
+  if (is.null(x$formula)) {
+    cat("Mixture weights:", cs(round(x$mixture, 3)), "\n")
+  } else {
+    cat("Formula:", as.character(x$formula))
+  }
   invisible(x)
 }
 

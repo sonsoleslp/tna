@@ -148,7 +148,7 @@ test_that("invalid logical fails", {
 test_that("invalid plotting layout fails", {
   expect_error(
     check_layout(mock_tna, "unknown"),
-    "A <character> layout must be either \"circle\", \"groups\", or \"spring\"\\."
+    "A <character> layout must be either \"circle\", \"groups\", \"spring\", or the name of an igraph layout\\."
   )
   expect_error(
     check_layout(mock_tna, matrix(0, 2, 1000)),

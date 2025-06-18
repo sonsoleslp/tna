@@ -33,13 +33,15 @@ pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
     \item{\code{edge.label.position}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
     \item{\code{layout}}{One of the following:
 \itemize{
-\item A \code{character} string describing a \code{qgraph} layout.
+\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
+or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
 \item A \code{matrix} of node positions to use, with a row for each node and
 \code{x} and \code{y} columns for the node positions.
 \item A layout function from \code{igraph}.
 }}
     \item{\code{layout_args}}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function.}
+function when \code{layout} is a function or a character string that specifies
+a function name.}
     \item{\code{mar}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
     \item{\code{theme}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
   }}

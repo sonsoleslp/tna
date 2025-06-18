@@ -48,13 +48,13 @@
 #' model <- tna(group_regulation)
 #' comm <- communities(model)
 #'
-communities <- function(x, ...) {
+communities <- function(x, methods, gamma) {
   UseMethod("communities")
 }
 
 #' @export
 #' @rdname communities
-communities.tna <- function(x, methods, gamma = 1, ...) {
+communities.tna <- function(x, methods, gamma = 1) {
   check_missing(x)
   check_class(x, "tna")
   if (missing(methods)) {
@@ -124,7 +124,7 @@ communities.tna <- function(x, methods, gamma = 1, ...) {
 #' @export
 #' @family clusters
 #' @rdname communities
-communities.group_tna <- function(x, methods, gamma = 1, ...) {
+communities.group_tna <- function(x, methods, gamma = 1) {
   check_missing(x)
   check_class(x, "group_tna")
   if (missing(methods)) {
@@ -132,7 +132,7 @@ communities.group_tna <- function(x, methods, gamma = 1, ...) {
   }
   structure(
     stats::setNames(
-      lapply(x, communities, methods = methods, gamma = gamma, ...),
+      lapply(x, communities, methods = methods, gamma = gamma),
       names(x)
     ),
     class = "group_tna_communities"

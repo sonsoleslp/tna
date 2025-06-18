@@ -197,15 +197,23 @@ check_flag <- function(x) {
 #' @param ... Additional arguments passed to `as.igraph`.
 #' @noRd
 check_layout <- function(x, layout, args = list(), ...) {
+
   if (is.character(layout)) {
     layout <- tolower(layout)
-    layout <- try_(match.arg(layout, c("circle", "groups", "spring")))
+    layout_parsed <- try_(match.arg(layout, c("circle", "groups", "spring")))
+    if (inherits(layout_parsed, "try-error")) {
+      layout_fun <- str2lang(paste0("igraph::", layout))
+      args$graph <- as.igraph(x, ...)
+      layout_parsed <- try_(
+        do.call(what = eval(layout_fun), args = args)
+      )
+    }
     stopifnot_(
-      !inherits(layout, "try-error"),
+      !inherits(layout_parsed, "try-error"),
       "A {.cls character} layout must be either {.val circle}, {.val groups},
-      or {.val spring}."
+      {.val spring}, or the name of an {.pkg igraph} layout."
     )
-    return(layout)
+    return(layout_parsed)
   }
   if (is.matrix(layout)) {
     stopifnot_(
