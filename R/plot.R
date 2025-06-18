@@ -78,12 +78,14 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param edge.label.position See [qgraph::qgraph()].
 #' @param layout One of the following:
-#'   * A `character` string describing a `qgraph` layout.
+#'   * A `character` string describing a `qgraph` layout (e.g., `"circle"`)
+#'     or the name of a `igraph` layout function (e.g., `"layout_on_grid"`).
 #'   * A `matrix` of node positions to use, with a row for each node and
 #'     `x` and `y` columns for the node positions.
 #'   * A layout function from `igraph`.
 #' @param layout_args A `list` of arguments to pass to the `igraph` layout
-#'   function when `layout` is a function.
+#'   function when `layout` is a function or a character string that specifies
+#'   a function name.
 #' @param mar See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
@@ -103,7 +105,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
   check_flag(show_pruned)
   check_flag(edge.labels)
   check_range(edge.label.position, scalar = FALSE)
-  layout <- check_layout(x, layout, layout_args)
+  layout <- check_layout(x, layout = layout, layout_args)
   if (missing(pie)) {
     pie <- x$inits
   }

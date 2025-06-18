@@ -6,19 +6,20 @@
 #' @export
 #' @family centralities
 #' @param x A `tna` object.
-#' @param ... Ignored.
+#' @param directed A `logical` value. If `TRUE`, the network is considered
+#' directed.
 #' @return A `tna` object where the edge weights are edge betweenness values.
 #' @examples
 #' model <- tna(group_regulation)
 #' betweenness_network(model)
 #'
-betweenness_network <- function(x, ...) {
+betweenness_network <- function(x, directed) {
   UseMethod("betweenness_network")
 }
 
 #' @rdname betweenness_network
 #' @export
-betweenness_network.tna <- function(x, ...) {
+betweenness_network.tna <- function(x, directed) {
   check_missing(x)
   check_class(x, "tna")
   weights <- x$weights

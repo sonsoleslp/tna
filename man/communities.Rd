@@ -6,16 +6,14 @@
 \alias{communities.group_tna}
 \title{Community Detection for Transition Networks}
 \usage{
-communities(x, ...)
+communities(x, methods, gamma)
 
-\method{communities}{tna}(x, methods, gamma = 1, ...)
+\method{communities}{tna}(x, methods, gamma = 1)
 
-\method{communities}{group_tna}(x, methods, gamma = 1, ...)
+\method{communities}{group_tna}(x, methods, gamma = 1)
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object.}
-
-\item{...}{Ignored.}
 
 \item{methods}{A \code{character} vector of community detection algorithms to
 apply to the network. The supported options are:
@@ -35,6 +33,8 @@ If not provided, all methods are applied.}
 
 \item{gamma}{A \code{numeric} value depicting a parameter that affects the
 behavior of certain algorithms like the Spin Glass method. Defaults to \code{1}.}
+
+\item{...}{Ignored.}
 }
 \value{
 An object of class \code{tna_communities} which is a \code{list} with an

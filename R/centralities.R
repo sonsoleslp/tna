@@ -46,7 +46,6 @@
 #'   measures should be computed. If missing, all available measures are
 #'   returned. See 'Details' for available measures. The elements are partially
 #'   matched ignoring case.
-#' @param ... Ignored.
 #' @return A `tna_centralities` object which is a tibble (`tbl_df`).
 #'   containing centrality measures for each state.
 #' @examples
@@ -61,14 +60,13 @@
 #' # Centrality measures normalized
 #' centralities(model, normalize = TRUE)
 #'
-centralities <- function(x, loops = FALSE, normalize = FALSE, measures, ...) {
+centralities <- function(x, loops = FALSE, normalize = FALSE, measures) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, loops = FALSE,
-                             normalize = FALSE, measures, ...) {
+centralities.tna <- function(x, loops = FALSE, normalize = FALSE, measures) {
   check_missing(x)
   check_class(x, "tna")
   out <- centralities_(
@@ -85,8 +83,7 @@ centralities.tna <- function(x, loops = FALSE,
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = FALSE,
-                                normalize = FALSE, measures, ...) {
+centralities.matrix <- function(x, loops = FALSE, normalize = FALSE, measures) {
   check_missing(x)
   stopifnot_(
     is.matrix(x),
@@ -148,7 +145,8 @@ diffusion <- function(mat) {
 
 #' @export
 #' @rdname estimate_centrality_stability
-estimate_cs <- function(x, ...) {
+estimate_cs <- function(x, loops, normalize, measures, iter, method,
+                        drop_prop, threshold, certainty, progressbar) {
   UseMethod("estimate_cs")
 }
 
@@ -202,7 +200,6 @@ estimate_centrality_stability <- estimate_cs
 #' for the CS-coefficient. Default is 0.95.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
 #' Defaults to `FALSE`
-#' @param ... Ignored.
 #'
 #' @return A `tna_stability` object which is a `list` with an element for each
 #' `measure` with the following elements:
@@ -231,7 +228,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
                             ), iter = 1000, method = "pearson",
                             drop_prop = seq(0.1, 0.9, by = 0.1),
                             threshold = 0.7, certainty = 0.95,
-                            progressbar = FALSE, ...) {
+                            progressbar = FALSE) {
   check_tna_seq(x)
   check_flag(loops)
   check_flag(normalize)

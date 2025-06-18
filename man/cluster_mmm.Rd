@@ -7,6 +7,7 @@
 cluster_mmm(
   data,
   cols = seq(1L, ncol(data)),
+  formula,
   k,
   criterion = "bic",
   n_starts = 10L,
@@ -29,6 +30,9 @@ appropriately. The columns should be either \code{integer}, \code{character} or
 columns that should be considered as sequence data.
 Defaults to all columns, i.e., \code{seq(1, ncol(data))}. Column names not
 found in \code{data} will be ignored without warning.}
+
+\item{formula}{An optional \code{formula} object that specifies the covariates
+to use for the cluster membership probabilities.}
 
 \item{k}{An \code{integer} vector specifying the numbers of mixture components
 (clusters) to fit. The values must be between 2 and the number of sequences

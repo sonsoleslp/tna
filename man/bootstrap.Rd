@@ -6,7 +6,7 @@
 \alias{bootstrap.group_tna}
 \title{Bootstrap Transition Networks from Sequence Data}
 \usage{
-bootstrap(x, ...)
+bootstrap(x, iter, level, method, threshold, consistency_range)
 
 \method{bootstrap}{tna}(
   x,
@@ -14,8 +14,7 @@ bootstrap(x, ...)
   level = 0.05,
   method = "stability",
   threshold,
-  consistency_range = c(0.75, 1.25),
-  ...
+  consistency_range = c(0.75, 1.25)
 )
 
 \method{bootstrap}{group_tna}(
@@ -24,14 +23,11 @@ bootstrap(x, ...)
   level = 0.05,
   method = "stability",
   threshold,
-  consistency_range = c(0.75, 1.25),
-  ...
+  consistency_range = c(0.75, 1.25)
 )
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object created from sequence data.}
-
-\item{...}{Ignored.}
 
 \item{iter}{An \code{integer} specifying the number of bootstrap samples to
 draw. Defaults to \code{1000}.}
