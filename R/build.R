@@ -326,7 +326,7 @@ sna <- function(x, aggregate = sum, ...) {
   build_model_(
     weights = out,
     labels = lab,
-    type = character(0L),
+    type = "",
     scaling = character(0L)
   )
 }
