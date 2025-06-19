@@ -164,6 +164,7 @@ group_model.default <- function(x, group, type = "relative",
       params = params
     )
   }
+  names(groups) <- names(clusters)
   if (!groupwise && length(scaling > 0)) {
     weights <- scale_weights_global(
       weights = lapply(clusters, "[[", "weights"),
@@ -412,6 +413,11 @@ combine_data <- function(x) {
   data <- dplyr::bind_rows(
     lapply(x, function(y) as.data.frame(y$data))
   )
-  data$.group <- unlist(groups)
+  if (is.null(attr(x, "levels"))) {
+    data$.group <- unlist(groups)
+  } else {
+    data$.group <- attr(x, "levels")[unlist(groups)]
+  }
+
   data
 }

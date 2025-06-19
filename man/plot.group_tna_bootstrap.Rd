@@ -4,10 +4,12 @@
 \alias{plot.group_tna_bootstrap}
 \title{Plot a Bootstrapped Grouped Transition Network Analysis Model}
 \usage{
-\method{plot}{group_tna_bootstrap}(x, ...)
+\method{plot}{group_tna_bootstrap}(x, title = names(x), ...)
 }
 \arguments{
 \item{x}{A \code{group_tna_bootstrap} object.}
+
+\item{title}{A \code{character} vector of titles to use for each plot.}
 
 \item{...}{Additional arguments passed to \code{\link[=plot.tna]{plot.tna()}}.}
 }

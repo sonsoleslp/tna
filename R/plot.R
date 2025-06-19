@@ -205,7 +205,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                   scales = c("free_x", "fixed"),
                                   colors, labels = TRUE, ...) {
   check_class(x, "tna_centralities")
-  plot_centralities_(x, reorder, ncol, scales, colors, labels)
+  plot_centralities_(x, reorder, ncol, scales, colors, NULL, labels)
 }
 
 #' Plot Cliques of a TNA Network
@@ -655,7 +655,8 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #'
 #' @inheritParams plot.tna_centralities
 #' @noRd
-plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
+plot_centralities_ <- function(x, reorder, ncol, scales, colors,
+                               palette, labels) {
   check_flag(reorder)
   check_flag(labels)
   scales <- check_match(scales, c("free_x", "fixed"))
@@ -669,7 +670,7 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
   ifelse_(
     inherits(x, "tna_centralities"),
     plot_centralities_single(x, reorder, ncol, scales, colors, labels),
-    plot_centralities_multiple(x, reorder, ncol, scales, colors, labels)
+    plot_centralities_multiple(x, reorder, ncol, scales, colors, palette, labels)
   )
 }
 
@@ -747,8 +748,8 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     ggplot2::ylab("")
 }
 
-plot_centralities_multiple <- function(x, reorder, ncol,
-                                       scales, colors, labels) {
+plot_centralities_multiple <- function(x, reorder, ncol, scales,
+                                        colors, palette = "Set2", labels) {
   measures <- names(x)[3:ncol(x)]
   n_clusters <- n_unique(x$group)
   x$state <- factor(x$state)
@@ -776,13 +777,13 @@ plot_centralities_multiple <- function(x, reorder, ncol,
     ifelse_(
       !is.null(colors) & (n_unique(colors) == n_clusters),
       ggplot2::scale_color_manual(values = colors),
-      ggplot2::scale_color_discrete()
+      ggplot2::scale_color_brewer(palette = palette)
     ) +
     ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
     ifelse_(
       !is.null(colors) & (n_unique(colors) == n_clusters),
       ggplot2::scale_fill_manual(values = colors),
-      ggplot2::scale_fill_discrete()
+      ggplot2::scale_fill_brewer(palette = palette)
     ) +
     ggplot2::theme_minimal() +
     ggplot2::xlab("Centrality") +
@@ -1576,6 +1577,7 @@ plot.group_tna <- function(x, title, which, ...) {
 #' @export
 #' @family validation
 #' @param x A `group_tna_bootstrap` object.
+#' @param title A `character` vector of titles to use for each plot.
 #' @param ... Additional arguments passed to [plot.tna()].
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -1583,7 +1585,7 @@ plot.group_tna <- function(x, title, which, ...) {
 #' boot <- bootstrap(model, iter = 50)
 #' plot(boot)
 #'
-plot.group_tna_bootstrap <- function(x, ...) {
+plot.group_tna_bootstrap <- function(x, title = names(x), ...) {
   check_missing(x)
   check_class(x, "group_tna_bootstrap")
   invisible(lapply(x, plot.tna_bootstrap, ...))
@@ -1594,6 +1596,7 @@ plot.group_tna_bootstrap <- function(x, ...) {
 #' @export
 #' @family centralities
 #' @param x A `group_tna_centralities` object.
+#' @param palette A color palette to be applied if `colors` is not specified
 #' @inheritParams plot.tna_centralities
 #' @return A `ggplot` object displaying a line chart for each centrality
 #' with one line per cluster.
@@ -1604,10 +1607,11 @@ plot.group_tna_bootstrap <- function(x, ...) {
 #'
 plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                         scales = c("free_x", "fixed"),
-                                        colors, labels = TRUE, ...) {
+                                        colors, palette = "Set2",
+                                        labels = TRUE, ...) {
   check_missing(x)
   check_class(x, "group_tna_centralities")
-  plot_centralities_(x, reorder, ncol, scales, colors, labels)
+  plot_centralities_(x, reorder, ncol, scales, colors, palette, labels)
 }
 
 #' Plot Found Cliques
@@ -1771,6 +1775,7 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
 #' the grouping factor name if `x` was not constructed using a column name of
 #' the original data.
 #' @param colors A vector of colors to be used in the plot (one per group)
+#' @param palette A palette to be used if colors are not passed
 #' @param width Width of the bars. Default is 0.7,
 #' @param hjust Horizontal adjustment of the labels. Default is 1.2.
 #' @param position Position of the bars: "dodge", "dodge2", "fill" or "stack"
@@ -1795,6 +1800,7 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
 #' plot_frequencies(model, position = "fill", hjust = 1.1)
 #'
 plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
+                                       palette = "Set2",
                                        show_label = TRUE, position = "dodge",
                                        hjust = 1.2, ...) {
   check_missing(x)
@@ -1845,7 +1851,7 @@ plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
     colors <- rep(colors, length.out = length(x))
     p <- p + ggplot2::scale_fill_manual(name = label, values = colors)
   } else {
-    p <- p + ggplot2::scale_fill_brewer(name = label, palette = "Set2")
+    p <- p + ggplot2::scale_fill_brewer(name = label, palette = palette)
   }
   p +
     ggplot2::theme_minimal() +

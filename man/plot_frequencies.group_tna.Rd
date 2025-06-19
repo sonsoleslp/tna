@@ -9,6 +9,7 @@
   label,
   colors,
   width = 0.7,
+  palette = "Set2",
   show_label = TRUE,
   position = "dodge",
   hjust = 1.2,
@@ -25,6 +26,8 @@ the original data.}
 \item{colors}{A vector of colors to be used in the plot (one per group)}
 
 \item{width}{Width of the bars. Default is 0.7,}
+
+\item{palette}{A palette to be used if colors are not passed}
 
 \item{show_label}{Boolean indicating whether to show a label with the
 frequency counts. Default is \code{TRUE}.}
