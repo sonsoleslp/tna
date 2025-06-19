@@ -76,7 +76,7 @@ compare.matrix <- function(x, y, scaling = "none", ...) {
   compare_(x, y, scaling = scaling, ...)
 }
 
-#' Compare TNA Clusters with Comprehensive Metrics
+#' Compare Grouped TNA Models with Comprehensive Metrics
 #'
 #' @export
 #' @family comparison

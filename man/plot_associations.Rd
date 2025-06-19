@@ -13,6 +13,10 @@ plot_associations(x, ...)
 \item{x}{A \code{tna} object.}
 
 \item{...}{Additional arguments passed to \code{\link[=plot_model]{plot_model()}}.}
+
+\item{edge.color}{An optional \code{character} vector of colors for the edges.
+By default, the colors are specified by the magnitude of the
+standardized residual.}
 }
 \value{
 A \code{qgraph} plot of the network.

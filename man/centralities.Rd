@@ -13,7 +13,7 @@ centralities(x, loops = FALSE, normalize = FALSE, measures)
 
 \method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures)
 
-\method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
+\method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, measures)
 }
 \arguments{
 \item{x}{A \code{tna} object, a \code{group_tna} object, or

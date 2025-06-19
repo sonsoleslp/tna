@@ -33,8 +33,6 @@ If not provided, all methods are applied.}
 
 \item{gamma}{A \code{numeric} value depicting a parameter that affects the
 behavior of certain algorithms like the Spin Glass method. Defaults to \code{1}.}
-
-\item{...}{Ignored.}
 }
 \value{
 An object of class \code{tna_communities} which is a \code{list} with an

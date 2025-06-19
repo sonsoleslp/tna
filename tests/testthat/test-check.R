@@ -182,3 +182,19 @@ test_that("cluster check fails on invalid clusters", {
     "Argument `j` must be a name of `x` when of type <character>\\."
   )
 })
+
+test_that("range check variants are correct", {
+  value <- 1
+  expect_error(
+    check_range(value, lower = 2),
+    "Argument `value` must be a single <numeric> value greater than or equal to 2\\."
+  )
+  expect_error(
+    check_range(value, upper = 0),
+    "Argument `value` must be a single <numeric> value less than or equal to 0\\."
+  )
+  expect_error(
+    check_range(value, lower = -1, upper = 0),
+    "Argument `value` must be a single <numeric> value between -1 and 0\\."
+  )
+})

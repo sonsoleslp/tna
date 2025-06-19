@@ -196,3 +196,10 @@ test_that("permutation test results can be printed for clusters", {
     NA
   )
 })
+
+test_that("mixture Markov model results can be printed", {
+  expect_error(
+    capture.output(print(engagement_tna_mmm)),
+    NA
+  )
+})

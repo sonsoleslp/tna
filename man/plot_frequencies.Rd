@@ -7,28 +7,23 @@
 \usage{
 plot_frequencies(x, ...)
 
-\method{plot_frequencies}{tna}(
-  x,
-  width = 0.7,
-  hjust = 1.2,
-  show_label = TRUE,
-  colors = attr(x$data, "colors")
-)
+\method{plot_frequencies}{tna}(x, width = 0.7, hjust = 1.2, show_label = TRUE, colors, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
 
 \item{...}{Ignored.}
 
-\item{width}{Width of the bars. Default is 0.7,}
+\item{width}{A \code{numeric} value for the Width of the bars. Default is 0.7,}
 
-\item{hjust}{Horizontal adjustment of the labels. Default is 1.2.}
+\item{hjust}{A \code{numeric} value for the horizontal adjustment of the labels.
+Default is 1.2.}
 
-\item{show_label}{Boolean indicating whether to show a label with the
-frequency counts. Default is \code{TRUE}.}
+\item{show_label}{A \code{logical} value indicating whether to show a label with
+the frequency counts. Default is \code{TRUE}.}
 
-\item{colors}{A vector of colors to be used in the plot (one per label) or
-a single color}
+\item{colors}{A \code{character} vector of colors to be used in the plot
+(one per label) or a single color.}
 }
 \value{
 A \code{ggplot} object.

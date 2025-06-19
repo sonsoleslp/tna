@@ -15,6 +15,7 @@ cluster_mmm(
   progressbar = TRUE,
   max_iter = 500L,
   reltol = 1e-10,
+  seed = 1L,
   parallel = FALSE,
   n_cores,
   cl
@@ -55,6 +56,14 @@ parallel processing.}
 \item{max_iter}{An \code{integer} specifying the maximum number of EM iterations
 per restart. Default is 300.}
 
+\item{reltol}{A \code{numeric} value specifying the relative convergence
+tolerance for the log-likelihood change between iterations.
+Default is 1e-10.}
+
+\item{seed}{An \code{integer} value specifying the base random seed.
+The initial values are generated for each restart using \code{seed + i} as
+the seed where \code{i} is the index of the restart.}
+
 \item{parallel}{A \code{logical} value.}
 
 \item{n_cores}{An \code{integer} specifying the number of cores to use for
@@ -62,9 +71,6 @@ parallel processing. The default is 1 for no parallel processing.}
 
 \item{cl}{An optional prespecified cluster object with a registered
 parallel backend. Ignores \code{parallel} if provided.}
-
-\item{tol}{A \code{numeric} value specifying the convergence tolerance for the
-log-likelihood change between iterations. Default is 1e-6.}
 }
 \description{
 Fits a mixture of first-order Markov models to sequence data using the
@@ -92,8 +98,11 @@ information criterion.
 }
 \examples{
 \dontrun{
-# Find optimal k and model using BIC
-model <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
+# Fit a MMM with k = 3
+model1 <- cluster_mmm(engagement, k = 3)
+
+# Find optimal k for k = 2,3,4 using BIC
+model2 <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
 }
 
 }

@@ -414,12 +414,12 @@ wcc <- function(mat) {
 }
 
 
-# Clusters ----------------------------------------------------------------
+# Groups ----------------------------------------------------------------
 
 #' @export
 #' @rdname centralities
 centralities.group_tna <- function(x, loops = FALSE,
-                                   normalize = FALSE, measures, ...) {
+                                   normalize = FALSE, measures) {
   check_missing(x)
   check_class(x, "group_tna")
   # missing() does not work with lapply, need to evaluate measures here.
@@ -437,8 +437,7 @@ centralities.group_tna <- function(x, loops = FALSE,
             x = i,
             loops = loops,
             normalize = normalize,
-            measures = measures,
-            ...
+            measures = measures
           )
         )
       }
@@ -459,7 +458,7 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
                                   ), iter = 1000, method = "pearson",
                                   drop_prop = seq(0.1, 0.9, by = 0.1),
                                   threshold = 0.7, certainty = 0.95,
-                                  progressbar = FALSE, ...) {
+                                  progressbar = FALSE) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
@@ -476,8 +475,7 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
           drop_prop = drop_prop,
           threshold = threshold,
           certainty = certainty,
-          progressbar = progressbar,
-          ...
+          progressbar = progressbar
         )
       }
     ),

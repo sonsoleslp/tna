@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare.R
 \name{compare.group_tna}
 \alias{compare.group_tna}
-\title{Compare TNA Clusters with Comprehensive Metrics}
+\title{Compare Grouped TNA Models with Comprehensive Metrics}
 \usage{
 \method{compare}{group_tna}(x, i = 1L, j = 2L, scaling = "none", ...)
 }
@@ -23,7 +23,7 @@
 A \code{tna_comparison} object. See \code{\link[=compare.tna]{compare.tna()}} for details.
 }
 \description{
-Compare TNA Clusters with Comprehensive Metrics
+Compare Grouped TNA Models with Comprehensive Metrics
 }
 \examples{
 model <- group_model(engagement_mmm)

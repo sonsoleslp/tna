@@ -33,8 +33,12 @@
 #'   parallel processing.
 #' @param max_iter An `integer` specifying the maximum number of EM iterations
 #'   per restart. Default is 300.
-#' @param tol A `numeric` value specifying the convergence tolerance for the
-#'   log-likelihood change between iterations. Default is 1e-6.
+#' @param reltol A `numeric` value specifying the relative convergence
+#'   tolerance for the log-likelihood change between iterations.
+#'   Default is 1e-10.
+#' @param seed An `integer` value specifying the base random seed.
+#'   The initial values are generated for each restart using `seed + i` as
+#'   the seed where `i` is the index of the restart.
 #' @param parallel A `logical` value.
 #' @param n_cores An `integer` specifying the number of cores to use for
 #'   parallel processing. The default is 1 for no parallel processing.
@@ -59,19 +63,22 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Find optimal k and model using BIC
-#' model <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
+#' # Fit a MMM with k = 3
+#' model1 <- cluster_mmm(engagement, k = 3)
+#'
+#' # Find optimal k for k = 2,3,4 using BIC
+#' model2 <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
 #' }
 #'
 cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
                         k, criterion = "bic", n_starts = 10L, min_size = 1L,
                         progressbar = TRUE, max_iter = 500L, reltol = 1e-10,
-                        parallel = FALSE, n_cores, cl) {
+                        seed = 1L, parallel = FALSE, n_cores, cl) {
   data_name <- deparse(substitute(data))
   mm <- ifelse_(
     missing(formula),
     NULL,
-    model.matrix(formula, data = data)
+    stats::model.matrix(formula, data = data)
   )
   data <- create_seqdata(x = data, cols = cols)
   criterion <- check_match(criterion, c("bic", "aic"))
@@ -81,7 +88,9 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
   check_values(reltol, type = "numeric", strict = TRUE)
   check_flag(progressbar)
   check_flag(parallel)
-  check_range(k, type = "integer", lower = 2L, upper = nrow(data) - 1L)
+  check_range(
+    k, scalar = FALSE, type = "integer", lower = 2L, upper = nrow(data) - 1L
+  )
   s <- length(attr(data, "labels"))
   if (parallel && missing(cl)) {
     stopifnot_(
@@ -129,11 +138,13 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
         progressbar = progressbar && k_len == 1L,
         max_iter = max_iter,
         reltol = reltol,
+        seed = seed,
         parallel = parallel,
         cl = cl
       ),
       error = function(e) {
         print(e)
+        NULL
       }
     )
     if (progressbar && k_len > 1L) {
@@ -163,6 +174,10 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     criteria <- vapply(results, "[[", numeric(1L), criterion)
     out <- results[[which.min(criteria)]]
   } else {
+    stopifnot_(
+      !is.null(results[[1L]]),
+      "Fitting the model with k = {k} failed."
+    )
     out <- results[[1L]]
   }
   out$data <- data
@@ -180,7 +195,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
 #' @inheritParams cluster_mmm
 #' @noRd
 fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
-                    max_iter, reltol, parallel, cl) {
+                    max_iter, reltol, seed, parallel, cl) {
   `%d%` <- ifelse_(parallel, foreach::`%dopar%`, foreach::`%do%`)
   progressbar <- progressbar && !parallel
   if (progressbar) {
@@ -191,8 +206,10 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
   }
   s <- length(attr(data, "labels"))
   em_fun <- ifelse_(is.null(mm), em, em_covariates)
-  results <- foreach::foreach(i = seq_len(n_starts), .export = "em_fun") %d% {
-    res <- em_fun(i, data, mm, k, s, max_iter, reltol)
+  # Avoid NSE Note with foreach index variable
+  i <- NULL
+  results <- foreach::foreach(i = seq_len(n_starts)) %d% {
+    res <- em_fun(i, seed, data, mm, k, s, max_iter, reltol)
     if (progressbar) {
       cli::cli_progress_update()
     }
@@ -243,8 +260,8 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
 }
 
 # The EM Algorithm for a mixture Markov Model
-em <- function(start, data, mm, k, s, max_iter, reltol) {
-  set.seed(start)
+em <- function(start, seed, data, mm, k, s, max_iter, reltol) {
+  set.seed(seed + start)
   # For some reason export does not work for this function
   # defining it here instead as a workaround
   log_sum_exp_rows <- function(x, m, n) {
@@ -253,14 +270,13 @@ em <- function(start, data, mm, k, s, max_iter, reltol) {
   }
   n <- nrow(data)
   p <- ncol(data)
-  mixture <- runif(k, 0.8, 1.2)
+  mixture <- stats::runif(k)
   mixture <- mixture / sum(mixture)
   models <- vector("list", length = k)
   for (i in seq_len(k)) {
-    inits <- rep(1 / s, s) + runif(s, 0, 0.05)
+    inits <- stats::runif(s)
     inits <- inits / sum(inits)
-    trans <- diag(0.6, s) + matrix(0.4 / s, s, s) +
-      matrix(runif(s^2, 0, 0.05), s, s)
+    trans <- matrix(stats::runif(s^2), s, s)
     trans <- trans / .rowSums(trans, s, s)
     models[[i]] <- list(inits = inits, trans = trans)
   }
@@ -334,8 +350,8 @@ em <- function(start, data, mm, k, s, max_iter, reltol) {
 }
 
 # The EM Algorithm for a mixture Markov Model with Covariates
-em_covariates <- function(start, data, mm, k, s, max_iter, reltol) {
-  set.seed(start)
+em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
+  set.seed(seed + start)
   # For some reason export does not work for this function
   # defining it here instead as a workaround
   log_sum_exp_rows <- function(x, m, n) {
@@ -347,15 +363,14 @@ em_covariates <- function(start, data, mm, k, s, max_iter, reltol) {
   q <- ncol(mm)
   models <- vector("list", length = k)
   for (i in seq_len(k)) {
-    inits <- rep(1 / s, s) + runif(s, 0, 0.05)
+    inits <- stats::runif(s)
     inits <- inits / sum(inits)
-    trans <- diag(0.6, s) + matrix(0.4 / s, s, s) +
-      matrix(runif(s^2, 0, 0.05), s, s)
+    trans <- matrix(stats::runif(s^2), s, s)
     trans <- trans / .rowSums(trans, s, s)
     models[[i]] <- list(
       inits = inits,
       trans = trans,
-      beta = rep(0, q) + (i > 1) * runif(q, -0.01, 0.01)
+      beta = rep(0, q) + (i > 1) * stats::runif(q, -0.01, 0.01)
     )
   }
   idx <- seq_len(n)

@@ -200,3 +200,24 @@ test_that("wide format sequence data can be imported", {
     c("feature3", "other_col", "ID", "Time", "action", "value", "order")
   )
 })
+
+test_that("one-hot data can be imported", {
+  d <- data.frame(
+    window = gl(100, 5),
+    feature1 = rbinom(500, 1, prob = 0.33),
+    feature2 = rbinom(500, 1, prob = 0.25),
+    feature3 = rbinom(500, 1, prob = 0.50)
+  )
+  expect_error(
+    model1 <- import_onehot(d, feature1:feature3, window = "window"),
+    NA
+  )
+  expect_error(
+    model2 <- import_onehot(d, feature1:feature3, window = 5),
+    NA
+  )
+  expect_equal(
+    model1,
+    model2
+  )
+})

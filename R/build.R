@@ -315,9 +315,21 @@ sna <- function(x, aggregate = sum, ...) {
     "Argument {.arg x} must have three columns (from, to, weight)."
   )
   colnames(x) <- c("from", "to", "weight")
+  stopifnot_(
+    is.function(aggregate),
+    "Argument {.arg aggregate} must be a function."
+  )
+  test_aggregate <- try_(aggregate(stats::runif(3L), ...))
+  stopifnot_(
+    !inherits(test_aggregate, "try-error") &&
+      length(test_aggregate) == 1L &&
+      is.numeric(test_aggregate),
+    "Argument {.arg aggregate} must be a function that takes a {.cls numeric}
+    vector and returns a single {.cls numeric} value."
+  )
   x <- x |>
     dplyr::group_by(!!rlang::sym("from"), !!rlang::sym("to")) |>
-    dplyr::summarize(weight = aggregate(weight, ...))
+    dplyr::summarize(weight = aggregate(!!rlang::sym("weight"), ...))
   lab <- unique(unlist(x[, c("from", "to")]))
   n <- length(lab)
   out <- matrix(0.0, n, n, dimnames = list(lab, lab))

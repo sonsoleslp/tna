@@ -10,6 +10,7 @@ n <- length(tna_model$labels)
 g <- 3
 
 trans_probs <- simulate_transition_probs(n, g)
+
 init_probs <- list(
   c(0.70, 0.20, 0.10),
   c(0.15, 0.70, 0.15),
@@ -35,6 +36,23 @@ engagement_mmm <- fit_mmm$model
 
 usethis::use_data(
   engagement_mmm,
+  overwrite = TRUE,
+  compress = "xz"
+)
+
+# MMM using TNA
+
+engagement_tna_mmm <- cluster_mmm(
+  engagement,
+  k = 3,
+  progressbar = FALSE,
+  seed = 213,
+  parallel = TRUE,
+  n_starts = 200
+)
+
+usethis::use_data(
+  engagement_tna_mmm,
   overwrite = TRUE,
   compress = "xz"
 )

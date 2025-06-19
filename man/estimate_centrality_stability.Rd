@@ -71,8 +71,7 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE,
-  ...
+  progressbar = FALSE
 )
 
 \method{estimate_centrality_stability}{group_tna}(
@@ -85,8 +84,7 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE,
-  ...
+  progressbar = FALSE
 )
 }
 \arguments{

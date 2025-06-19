@@ -119,7 +119,7 @@ reference:
     - summary.tna_bootstrap
     - summary.group_tna_bootstrap
 
-  - title: Clusters
+  - title: Groups
     contents:
     - group_model
     - rename_groups

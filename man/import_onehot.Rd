@@ -28,7 +28,13 @@ A \code{tna} object for the co-occurrence model.
 Import One-Hot Data and Create a Co-Occurrence Network Model
 }
 \examples{
-# TODO examples
+d <- data.frame(
+  window = gl(100, 5),
+  feature1 = rbinom(500, 1, prob = 0.33),
+  feature2 = rbinom(500, 1, prob = 0.25),
+  feature3 = rbinom(500, 1, prob = 0.50)
+)
+model <- import_onehot(d, feature1:feature3, window = "window")
 
 }
 \seealso{

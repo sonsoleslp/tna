@@ -175,7 +175,7 @@ test_that("group model can be plotted", {
     NA
   )
   expect_error(
-    plot(mmm_model, title = "Clusters"),
+    plot(mmm_model, title = "Groups"),
     NA
   )
 })
@@ -216,7 +216,7 @@ test_that("cliques can be plotted clusters", {
     NA
   )
   expect_error(
-    plot(cliq, title = "Clusters"),
+    plot(cliq, title = "Groups"),
     NA
   )
 })
@@ -297,9 +297,13 @@ test_that("permutation test results can be plotted for clusters", {
   )
 })
 
-test_that("frequencies can be plotted for clusters", {
+test_that("frequencies can be plotted for groups", {
   expect_error(
     plot_frequencies(mmm_model),
+    NA
+  )
+  expect_error(
+    plot_frequencies(mmm_model, colors = c("red", "green", "blue")),
     NA
   )
 })
@@ -376,3 +380,10 @@ test_that("border can be added for sequence index plot", {
   )
 })
 
+test_that("association plots can be created", {
+  model <- ftna(mock_sequence)
+  expect_error(
+    plot_associations(model),
+    NA
+  )
+})

@@ -55,7 +55,7 @@ test_that("centrality stability can be estimated for clusters", {
 
 test_that("progressbar works", {
   expect_error(
-    capture.output(
+    suppressMessages(
       estimate_cs(
         mmm_model,
         drop_prop = seq(0.3, 0.9, by = 0.1),
@@ -80,6 +80,6 @@ test_that("no cases dropped warns", {
 
 test_that("RSP is NA with no transitions", {
   mat <- mock_matrix
-  mat[1,] <- 0
+  mat[1, ] <- 0
   expect_equal(rsp_bet(mat), NA)
 })

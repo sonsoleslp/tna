@@ -1,7 +1,7 @@
 # A mock transition matrix
 set.seed(0)
 mock_matrix <- matrix(
-  c(0, runif(15)),
+  c(0, stats::runif(15)),
   nrow = 4,
   ncol = 4,
   dimnames = replicate(2, LETTERS[1:4], simplify = FALSE)

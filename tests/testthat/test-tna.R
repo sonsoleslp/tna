@@ -172,3 +172,37 @@ test_that("number of nodes is correct", {
   expect_equal(nodes(mmm_model), 3)
   expect_equal(nodes(mock_matrix), 4)
 })
+
+test_that("sna works", {
+  set.seed(123)
+  d <- data.frame(
+    from = sample(LETTERS[1:4], 10, replace = TRUE),
+    to = sample(LETTERS[1:4], 10, replace = TRUE),
+    weight = rexp(10)
+  )
+  expect_error(
+    sna(d),
+    NA
+  )
+  expect_error(
+    sna(d, aggregate = mean),
+    NA
+  )
+})
+
+test_that("sna fails with incorrect aggregate", {
+  set.seed(123)
+  d <- data.frame(
+    from = sample(LETTERS[1:4], 10, replace = TRUE),
+    to = sample(LETTERS[1:4], 10, replace = TRUE),
+    weight = rexp(10)
+  )
+  expect_error(
+    sna(d, aggregate = "not function"),
+    "Argument `aggregate` must be a function\\."
+  )
+  expect_error(
+    sna(d, aggregate = matrix),
+    "Argument `aggregate` must be a function that takes a <numeric> vector and returns a single <numeric> value\\."
+  )
+})

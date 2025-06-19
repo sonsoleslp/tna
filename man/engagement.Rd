@@ -23,6 +23,7 @@ A full program study"
 \seealso{
 Datasets
 \code{\link{engagement_mmm}},
+\code{\link{engagement_tna_mmm}},
 \code{\link{group_regulation}},
 \code{\link{group_regulation_long}}
 }

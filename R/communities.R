@@ -31,7 +31,6 @@
 #' If not provided, all methods are applied.
 #' @param gamma A `numeric` value depicting a parameter that affects the
 #' behavior of certain algorithms like the Spin Glass method. Defaults to `1`.
-#' @param ... Ignored.
 #' @return An object of class `tna_communities` which is a `list` with an
 #'   element for each cluster containing:
 #'

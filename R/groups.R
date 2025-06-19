@@ -337,7 +337,7 @@ mmm_stats <- function(x, level = 0.05) {
   results
 }
 
-#' Rename Clusters
+#' Rename Groups
 #'
 #' @export
 #' @family clusters

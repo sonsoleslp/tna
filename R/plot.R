@@ -660,14 +660,12 @@ plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
   check_flag(labels)
   scales <- check_match(scales, c("free_x", "fixed"))
   scales <- ifelse_(scales == "free_x", "free", "free_y")
-  if (missing(colors) && !is.null(attr(x, "colors"))) {
-    colors <- attr(x, "colors")
-  }
-  if (missing(colors)) {
-    colors <- rep("black", length.out = n_unique(x$state))
-  } else if (!is.list(colors) && length(colors) == 1) {
-    colors <- rep(colors, length.out = n_unique(x$state))
-  }
+  n <- n_unique(x$state)
+  colors <- ifelse_(
+    missing(colors),
+    attr(x, "colors") %||% rep("black", n),
+    rep(colors, length.out = n)
+  )
   ifelse_(
     inherits(x, "tna_centralities"),
     plot_centralities_single(x, reorder, ncol, scales, colors, labels),
@@ -865,12 +863,13 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
 #' @export
 #' @family basic
 #' @param x A `tna` object created from sequence data.
-#' @param colors A vector of colors to be used in the plot (one per label) or
-#' a single color
-#' @param width Width of the bars. Default is 0.7,
-#' @param hjust Horizontal adjustment of the labels. Default is 1.2.
-#' @param show_label Boolean indicating whether to show a label with the
-#'  frequency counts. Default is `TRUE`.
+#' @param colors A `character` vector of colors to be used in the plot
+#'   (one per label) or a single color.
+#' @param width A `numeric` value for the Width of the bars. Default is 0.7,
+#' @param hjust A `numeric` value for the horizontal adjustment of the labels.
+#'   Default is 1.2.
+#' @param show_label A `logical` value indicating whether to show a label with
+#'   the frequency counts. Default is `TRUE`.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
@@ -884,9 +883,30 @@ plot_frequencies <- function(x, ...) {
 
 #' @export
 #' @rdname plot_frequencies
-plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2, show_label = TRUE, colors = attr(x$data, "colors")) {
+plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
+                                 show_label = TRUE, colors, ...) {
   check_missing(x)
   check_tna_seq(x)
+  check_values(width, type = "numeric")
+  check_numeric(hjust)
+  check_flag(show_label)
+  colors <- ifelse_(
+    missing(colors),
+    attr(x$data, "colors") %||% "black",
+    colors
+  )
+  n_colors <- length(colors)
+  n_labels <- length(x$labels)
+  stopifnot_(
+    n_colors == 1L || n_colors == n_labels,
+    "The number of {.arg colors} does not match
+     the number of labels in {.arg x}."
+  )
+  colors <- ifelse_(
+    n_colors == 1L,
+    rep(colors, n_labels),
+    colors
+  )
   tab <- table(unlist(x$data))
   d <- as.data.frame(tab)
   names(d) <- c("state", "freq")
@@ -909,32 +929,17 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2, show_label = TRUE,
         hjust = hjust
       )
   }
-  p <- p +
+  p +
     ggplot2::theme_minimal() +
     ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
     ggplot2::labs(y = "State", x = "Frequency") +
     ggplot2::theme(
       axis.title =  ggplot2::element_text(face = "bold"),
       axis.text = ggplot2::element_text(color = "black"),
-      text = ggplot2::element_text(color = "black"))
-  if (!is.null(colors)) {
-    if (length(colors) == length(x$labels)) {
-      names(colors) <- x$labels
-      p +
-        ggplot2::scale_fill_manual(values = colors) +
-        ggplot2::theme(legend.position = "none")
-    } else if (length(colors) == 1) {
-      p +
-        ggplot2::scale_fill_manual(values = rep(colors, length(x$labels))) +
-        ggplot2::theme(legend.position = "none")
-    } else {
-      stop("The number of {.arg colors} does not match the number of labels in {.arg x}")
-    }
-  } else {
-    p +
-      ggplot2::scale_fill_manual(values = rep("black", length(x$labels))) +
-      ggplot2::theme(legend.position = "none")
-  }
+      text = ggplot2::element_text(color = "black")
+    ) +
+    ggplot2::scale_fill_manual(values = colors) +
+    ggplot2::theme(legend.position = "none")
 }
 
 #' Plot a Transition Network Model from a Matrix of Edge Weights
@@ -1509,7 +1514,7 @@ create_heatmap <- function(data, title) {
     )
 }
 
-# Clusters ----------------------------------------------------------------
+# Groups ----------------------------------------------------------------
 
 #' Plot a Histogram of Edge Weights for a `group_tna` Object.
 #'
@@ -1734,7 +1739,7 @@ plot.group_tna_permutation <- function(x, title, ...) {
   )
 }
 
-#' Plot the Difference Network Between Two Clusters
+#' Plot the Difference Network Between Two Groups
 #'
 #' @export
 #' @family comparison
@@ -1778,33 +1783,42 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
 #' # Default
 #' plot_frequencies(model)
 #' # Default labels outside and custom colors
-#' plot_frequencies(model, width = 0.9, hjust = -0.3,
-#'                  colors = c("#218516","#f9c22e","#53b3cb"))
+#' plot_frequencies(
+#'   model,
+#'   width = 0.9,
+#'   hjust = -0.3,
+#'   colors = c("#218516", "#f9c22e", "#53b3cb")
+#' )
 #' # Stacked with no labels
-#' plot_frequencies(model,position = "stack", show_label = FALSE)
+#' plot_frequencies(model, position = "stack", show_label = FALSE)
 #' # Fill
-#' plot_frequencies(model,position = "fill", hjust = 1.1)
+#' plot_frequencies(model, position = "fill", hjust = 1.1)
 #'
-plot_frequencies.group_tna <- function(x, label, colors = NULL, width = 0.7,
-                                       show_label = T,
-                                       position =  "dodge", hjust = 1.2, ...) {
+plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
+                                       show_label = TRUE, position = "dodge",
+                                       hjust = 1.2, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   label <- ifelse_(missing(label), attr(x, "label"), label)
   combined <- combine_data(x)
   long <- tidyr::pivot_longer(combined, cols = !(!!rlang::sym(".group")))
+  check_values(width, type = "numeric")
+  check_numeric(hjust)
+  check_flag(show_label)
   long$value <- factor(x[[1L]]$labels[long$value], levels = rev(x[[1L]]$labels))
   long$.group <- factor(long$.group)
-  if (position == "dodge") {
-    position <- ggplot2::position_dodge(width = width)
-  } else if (position == "dodge2") {
-    position <- ggplot2::position_dodge(width = width)
-  }
+  position <- check_match(position, c("dodge", "dodge2", "fill", "stack"))
+  position <- switch(position,
+    dodge = ggplot2::position_dodge(width = width),
+    dodge2 = ggplot2::position_dodge2(width = width),
+    stack = "stack",
+    fill = "fill"
+  )
   d <- long |>
     dplyr::group_by(!!rlang::sym(".group"), !!rlang::sym("value")) |>
     dplyr::summarize(freq = dplyr::n()) |>
     dplyr::ungroup() |>
-    dplyr::filter(!is.na(value))
+    dplyr::filter(!is.na(!!rlang::sym("value")))
 
   p <- ggplot2::ggplot(
     d,
@@ -1827,25 +1841,23 @@ plot_frequencies.group_tna <- function(x, label, colors = NULL, width = 0.7,
         hjust = hjust
       )
   }
-  if (!is.null(colors)) {
-    if (length(colors) == length(x)) {
-      p <- p + ggplot2::scale_fill_manual(name = label, values = colors)
-    } else {
-      stop("The number of {.arg colors} does not match the number of groups in {.arg x}")
-    }
+  if (!missing(colors)) {
+    colors <- rep(colors, length.out = length(x))
+    p <- p + ggplot2::scale_fill_manual(name = label, values = colors)
   } else {
     p <- p + ggplot2::scale_fill_brewer(name = label, palette = "Set2")
   }
-  p <- p +
+  p +
     ggplot2::theme_minimal() +
-    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
+    ggplot2::scale_x_continuous(
+      expand = ggplot2::expansion(mult = c(0, 0.1))
+    ) +
     ggplot2::labs(y = "State", x = "Frequency") +
     ggplot2::theme(
       legend.position =  "bottom",
       axis.title =  ggplot2::element_text(face = "bold"),
       axis.text = ggplot2::element_text(color = "black"),
       text = ggplot2::element_text(color = "black"))
-  p
 }
 
 #' Plot State Frequencies as a Mosaic Between Two Groups
@@ -1975,6 +1987,9 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
 #' @export
 #' @rdname plot_associations
 #' @param x A `tna` object.
+#' @param edge.color An optional `character` vector of colors for the edges.
+#'   By default, the colors are specified by the magnitude of the
+#'   standardized residual.
 #' @param ... Additional arguments passed to [plot_model()].
 #' @return A `qgraph` plot of the network.
 #' @examples

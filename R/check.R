@@ -113,6 +113,18 @@ check_measures <- function(x) {
   available_measures[measures_match]
 }
 
+#' Check that `x` is numeric
+#'
+#' @param x An \R object expected to be a `numeric` value.
+#' @noRd
+check_numeric <- function(x) {
+  arg <- deparse(substitute(x))
+  stopifnot_(
+    checkmate::test_number(x = x),
+    "Argument {.arg {arg}} must be a single {.cls numeric} value."
+  )
+}
+
 #' Check that `x` is a non-negative
 #'
 #' @param x An \R object expected to be a `numeric` or `integer`
@@ -160,7 +172,7 @@ check_range <- function(x, type = "numeric", scalar = TRUE,
   test_fun <- ifelse_(
     type == "numeric",
     ifelse_(scalar, checkmate::test_number, checkmate::test_numeric),
-    ifelse_(scalar, checkmate::test_int, checkmate::test_integer)
+    ifelse_(scalar, checkmate::test_int, checkmate::test_integerish)
   )
   bounds <- ""
   if (is.infinite(lower)) {

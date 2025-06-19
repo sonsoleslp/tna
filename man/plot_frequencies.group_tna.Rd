@@ -7,9 +7,9 @@
 \method{plot_frequencies}{group_tna}(
   x,
   label,
-  colors = NULL,
+  colors,
   width = 0.7,
-  show_label = T,
+  show_label = TRUE,
   position = "dodge",
   hjust = 1.2,
   ...
@@ -46,12 +46,16 @@ model <- group_model(engagement_mmm)
 # Default
 plot_frequencies(model)
 # Default labels outside and custom colors
-plot_frequencies(model, width = 0.9, hjust = -0.3,
-                 colors = c("#218516","#f9c22e","#53b3cb"))
+plot_frequencies(
+  model,
+  width = 0.9,
+  hjust = -0.3,
+  colors = c("#218516", "#f9c22e", "#53b3cb")
+)
 # Stacked with no labels
-plot_frequencies(model,position = "stack", show_label = FALSE)
+plot_frequencies(model, position = "stack", show_label = FALSE)
 # Fill
-plot_frequencies(model,position = "fill", hjust = 1.1)
+plot_frequencies(model, position = "fill", hjust = 1.1)
 
 }
 \seealso{

@@ -589,7 +589,13 @@ import_data <- function(data, cols, id_cols,
 #' levels define the windows.
 #' @return A `tna` object for the co-occurrence model.
 #' @examples
-#' # TODO examples
+#' d <- data.frame(
+#'   window = gl(100, 5),
+#'   feature1 = rbinom(500, 1, prob = 0.33),
+#'   feature2 = rbinom(500, 1, prob = 0.25),
+#'   feature3 = rbinom(500, 1, prob = 0.50)
+#' )
+#' model <- import_onehot(d, feature1:feature3, window = "window")
 #'
 import_onehot <- function(data, cols, window) {
   check_missing(data)
@@ -604,6 +610,7 @@ import_onehot <- function(data, cols, window) {
       {.cls character} type."
     )
   } else {
+    check_values(window, strict = TRUE)
     data$.window <- rep(seq(1L, n %/% window + 1L), each = window)[1:n]
     window <- ".window"
   }
@@ -638,15 +645,18 @@ import_onehot <- function(data, cols, window) {
   n <- nrow(data)
   p <- length(cols)
   out <- matrix(0, nrow = p, ncol = p, dimnames = list(cols, cols))
-  from <- which(data[1L, ] > 0)
-  for (i in seq(2L, n)) {
-    to <- which(data[i, ] > 0)
-    if (length(from) > 0 && length(to) > 0) {
-      pairs <- create_pairs(data[i - 1L, from], data[i, to])
-      pairs_idx <- create_pairs(from, to)
-      out[pairs_idx] <- out[pairs_idx] + pairs[, 1L] * pairs[, 2L]
+  for (i in seq_len(n)) {
+    pos <- which(data[i, ] > 0)
+    if (length(pos) > 0) {
+      data_pos <- data[i, pos]
+      pairs <- create_pairs(data_pos, data_pos)
+      pairs_idx <- create_pairs(pos, pos)
+      inc <- pairs[, 1L] * pairs[, 2L]
+      same <- pairs_idx[, 1] == pairs_idx[, 2L]
+      data_same <- pairs[same, 1L]
+      inc[same] <- (data_same * (data_same - 1L)) %/% 2L
+      out[pairs_idx] <- out[pairs_idx] + inc
     }
-    from <- to
   }
   t_out <- t(out)
   diag(t_out) <- 0
