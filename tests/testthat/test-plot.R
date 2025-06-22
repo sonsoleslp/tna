@@ -312,7 +312,7 @@ test_that("sequence index plots can be created", {
   model1 <- tna(engagement)
   model2 <- group_tna(engagement_mmm)
   expect_error(
-    plot_sequences(model1, group = rep(1:4, each = 50)),
+    plot_sequences(model1, group = rep(1:4, each = 250)),
     NA
   )
   expect_error(
@@ -337,7 +337,7 @@ test_that("sequence distribution plots can be created", {
   model1 <- tna(engagement)
   model2 <- group_tna(engagement_mmm)
   expect_error(
-    plot_sequences(model1, type = "distr", group = rep(1:4, each = 50)),
+    plot_sequences(model1, type = "distr", group = rep(1:4, each = 250)),
     NA
   )
   expect_error(

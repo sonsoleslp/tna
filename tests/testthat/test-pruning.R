@@ -28,7 +28,7 @@ test_that("pruning works with disparity filter", {
 
 test_that("pruning works with bootstrap", {
   set.seed(0)
-  tna_object <- tna(engagement)
+  tna_object <- tna(group_regulation)
   result <- prune(tna_object, method = "bootstrap", iter = 100) |>
     attr("pruning")
   expect_true(is.list(result))

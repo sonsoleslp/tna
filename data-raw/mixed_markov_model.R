@@ -18,7 +18,7 @@ init_probs <- list(
 )
 
 mmm <- build_mmm(
-  seqdef(engagement),
+  engagement,
   transition_probs = trans_probs,
   initial_probs = init_probs
 )

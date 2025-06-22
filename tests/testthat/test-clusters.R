@@ -32,7 +32,7 @@ test_that("MMM can be fitted with multiple k values", {
 
 test_that("MMM can be fitted covariates", {
   d <- engagement
-  d$x <- gl(2, 100)
+  d$x <- gl(2, 500)
   expect_error(
     suppressMessages(
       cluster_mmm(
