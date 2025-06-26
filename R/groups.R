@@ -98,7 +98,7 @@ group_model.default <- function(x, group, type = "relative",
     )
     label <- group
     cols <- setdiff(cols, which(x_names == group))
-    group <- x[[group]]
+    group <- as.factor(x[[group]])
     prefix <- "Column"
   }
   group_na <- any(is.na(group))

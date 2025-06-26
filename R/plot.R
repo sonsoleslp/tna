@@ -1596,7 +1596,7 @@ plot.group_tna_bootstrap <- function(x, title = names(x), ...) {
 #' @export
 #' @family centralities
 #' @param x A `group_tna_centralities` object.
-#' @param palette A color palette to be applied if `colors` is not specified
+#' @param palette A color palette to be applied if `colors` is not specified.
 #' @inheritParams plot.tna_centralities
 #' @return A `ggplot` object displaying a line chart for each centrality
 #' with one line per cluster.
@@ -1775,8 +1775,8 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
 #' the grouping factor name if `x` was not constructed using a column name of
 #' the original data.
 #' @param colors A vector of colors to be used in the plot (one per group)
-#' @param palette A palette to be used if colors are not passed
-#' @param width Width of the bars. Default is 0.7,
+#' @param palette A palette to be used if colors are not passed.
+#' @param width Width of the bars. Default is 0.7.
 #' @param hjust Horizontal adjustment of the labels. Default is 1.2.
 #' @param position Position of the bars: "dodge", "dodge2", "fill" or "stack"
 #' @param show_label Boolean indicating whether to show a label with the
