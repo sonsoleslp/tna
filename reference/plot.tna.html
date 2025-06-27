@@ -70,6 +70,8 @@ the edge weights of the network.</p>
 <span>  edge.label.position <span class="op">=</span> <span class="fl">0.65</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"circle"</span>,</span>
 <span>  layout_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">scale_nodes</span>,</span>
+<span>  scaling_factor <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">4</span><span class="op">)</span>,</span>
 <span>  theme <span class="op">=</span> <span class="st">"colorblind"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -125,7 +127,8 @@ pruned edges when <code>show_pruned = TRUE</code>. The default is <code>"pink"</
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p>One of the following:</p><ul><li><p>A <code>character</code> string describing a <code>qgraph</code> layout.</p></li>
+<dd><p>One of the following:</p><ul><li><p>A <code>character</code> string describing a <code>qgraph</code> layout (e.g., <code>"circle"</code>)
+or the name of a <code>igraph</code> layout function (e.g., <code>"layout_on_grid"</code>).</p></li>
 <li><p>A <code>matrix</code> of node positions to use, with a row for each node and
 <code>x</code> and <code>y</code> columns for the node positions.</p></li>
 <li><p>A layout function from <code>igraph</code>.</p></li>
@@ -134,7 +137,22 @@ pruned edges when <code>show_pruned = TRUE</code>. The default is <code>"pink"</
 
 <dt id="arg-layout-args">layout_args<a class="anchor" aria-label="anchor" href="#arg-layout-args"></a></dt>
 <dd><p>A <code>list</code> of arguments to pass to the <code>igraph</code> layout
-function when <code>layout</code> is a function.</p></dd>
+function when <code>layout</code> is a function or a character string that specifies
+a function name.</p></dd>
+
+
+<dt id="arg-scale-nodes">scale_nodes<a class="anchor" aria-label="anchor" href="#arg-scale-nodes"></a></dt>
+<dd><p>A <code>character</code> string giving the name of a centrality
+measure to scale the node size by. See <code><a href="centralities.html">centralities()</a></code> for valid names.
+If missing (the default), uses default <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code> scaling.
+Overrides <code>vsize</code> provided via <code>...</code>.</p></dd>
+
+
+<dt id="arg-scaling-factor">scaling_factor<a class="anchor" aria-label="anchor" href="#arg-scaling-factor"></a></dt>
+<dd><p>A <code>numeric</code> value specifying how strongly to scale
+the nodes when <code>node_scaling</code> is provided. The default is <code>0.5</code>. Values
+closer to zero will result in more similar node sizes and values larger
+than 1 will result in greater differences.</p></dd>
 
 
 <dt id="arg-mar">mar<a class="anchor" aria-label="anchor" href="#arg-mar"></a></dt>

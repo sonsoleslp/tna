@@ -108,7 +108,8 @@ in the plots or not.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p>One of the following:</p><ul><li><p>A <code>character</code> string describing a <code>qgraph</code> layout.</p></li>
+<dd><p>One of the following:</p><ul><li><p>A <code>character</code> string describing a <code>qgraph</code> layout (e.g., <code>"circle"</code>)
+or the name of a <code>igraph</code> layout function (e.g., <code>"layout_on_grid"</code>).</p></li>
 <li><p>A <code>matrix</code> of node positions to use, with a row for each node and
 <code>x</code> and <code>y</code> columns for the node positions.</p></li>
 <li><p>A layout function from <code>igraph</code>.</p></li>
@@ -117,7 +118,8 @@ in the plots or not.</p></dd>
 
 <dt id="arg-layout-args">layout_args<a class="anchor" aria-label="anchor" href="#arg-layout-args"></a></dt>
 <dd><p>A <code>list</code> of arguments to pass to the <code>igraph</code> layout
-function when <code>layout</code> is a function.</p></dd>
+function when <code>layout</code> is a function or a character string that specifies
+a function name.</p></dd>
 
 
 <dt id="arg-cut">cut<a class="anchor" aria-label="anchor" href="#arg-cut"></a></dt>
