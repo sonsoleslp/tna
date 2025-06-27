@@ -42,6 +42,14 @@ or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
     \item{\code{layout_args}}{A \code{list} of arguments to pass to the \code{igraph} layout
 function when \code{layout} is a function or a character string that specifies
 a function name.}
+    \item{\code{scale_nodes}}{A \code{character} string giving the name of a centrality
+measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
+If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling.
+Overrides \code{vsize} provided via \code{...}.}
+    \item{\code{scaling_factor}}{A \code{numeric} value specifying how strongly to scale
+the nodes when \code{node_scaling} is provided. The default is \code{0.5}. Values
+closer to zero will result in more similar node sizes and values larger
+than 1 will result in greater differences.}
     \item{\code{mar}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
     \item{\code{theme}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
   }}

@@ -7,10 +7,12 @@
 \alias{build_model.stslist}
 \alias{build_model.data.frame}
 \alias{build_model.tna_data}
+\alias{build_model.tsn}
 \alias{tna}
 \alias{ftna}
 \alias{ctna}
 \alias{atna}
+\alias{tsn}
 \title{Build a Transition Network Analysis Model}
 \usage{
 build_model(x, type = "relative", scaling = character(0L), ...)
@@ -46,6 +48,8 @@ build_model(x, type = "relative", scaling = character(0L), ...)
 
 \method{build_model}{tna_data}(x, type = "relative", scaling = character(0), params = list(), ...)
 
+\method{build_model}{tsn}(x, type = "relative", scaling = character(0), params = list(), ...)
+
 tna(x, ...)
 
 ftna(x, ...)
@@ -53,6 +57,8 @@ ftna(x, ...)
 ctna(x, ...)
 
 atna(x, ...)
+
+tsn(x, ...)
 }
 \arguments{
 \item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, a \code{matrix}, or
@@ -166,6 +172,8 @@ model <- ftna(group_regulation)
 model <- ctna(group_regulation)
 
 model <- atna(group_regulation)
+
+# TODO
 
 }
 \seealso{

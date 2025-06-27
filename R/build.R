@@ -244,6 +244,41 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
   )
 }
 
+#' @export
+#' @rdname build_model
+build_model.tsn <- function(x, type = "relative", scaling = character(0),
+                            params = list(), ...) {
+  check_missing(x)
+  check_class(x, "tsn")
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
+  id <- attr(x, "id_col")
+  state <- attr(x, "state_col")
+  time <- attr(x, "time_col")
+  wide <- x |>
+    dplyr::select(
+      c(!!rlang::sym(id), !!rlang::sym(state), !!rlang::sym(time))
+    ) |>
+    tidyr::pivot_wider(
+      id_cols = attr(x, "id_col"),
+      values_from = !!rlang::sym(state),
+      names_from = !!rlang::sym(time),
+      names_prefix = "T"
+    ) |>
+    dplyr::select(!(!!rlang::sym(id)))
+  x <- create_seqdata(wide, cols = seq_len(ncol(wide)))
+  model <- initialize_model(x, type, scaling, params)
+  build_model_(
+    weights = model$weights,
+    inits = model$inits,
+    labels = model$labels,
+    type = type,
+    scaling = scaling,
+    data = x,
+    params = params
+  )
+}
+
 # Aliases -----------------------------------------------------------------
 
 #' @export
@@ -281,6 +316,15 @@ ctna <- function(x, ...) {
 #'
 atna <- function(x, ...) {
   build_model(x = x, type = "attention", ...)
+}
+
+#' @export
+#' @rdname build_model
+#' @examples
+#' # TODO
+#'
+tsn <- function(x, ...) {
+  build_model.tsn(x = x, ...)
 }
 
 #' Build a Social Network Analysis Model
