@@ -33,13 +33,23 @@ pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
     \item{\code{edge.label.position}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
     \item{\code{layout}}{One of the following:
 \itemize{
-\item A \code{character} string describing a \code{qgraph} layout.
+\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
+or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
 \item A \code{matrix} of node positions to use, with a row for each node and
 \code{x} and \code{y} columns for the node positions.
 \item A layout function from \code{igraph}.
 }}
     \item{\code{layout_args}}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function.}
+function when \code{layout} is a function or a character string that specifies
+a function name.}
+    \item{\code{scale_nodes}}{A \code{character} string giving the name of a centrality
+measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
+If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling.
+Overrides \code{vsize} provided via \code{...}.}
+    \item{\code{scaling_factor}}{A \code{numeric} value specifying how strongly to scale
+the nodes when \code{node_scaling} is provided. The default is \code{0.5}. Values
+closer to zero will result in more similar node sizes and values larger
+than 1 will result in greater differences.}
     \item{\code{mar}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
     \item{\code{theme}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
   }}
