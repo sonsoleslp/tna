@@ -78,12 +78,22 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param edge.labels See [qgraph::qgraph()].
 #' @param edge.label.position See [qgraph::qgraph()].
 #' @param layout One of the following:
-#'   * A `character` string describing a `qgraph` layout.
+#'   * A `character` string describing a `qgraph` layout (e.g., `"circle"`)
+#'     or the name of a `igraph` layout function (e.g., `"layout_on_grid"`).
 #'   * A `matrix` of node positions to use, with a row for each node and
 #'     `x` and `y` columns for the node positions.
 #'   * A layout function from `igraph`.
 #' @param layout_args A `list` of arguments to pass to the `igraph` layout
-#'   function when `layout` is a function.
+#'   function when `layout` is a function or a character string that specifies
+#'   a function name.
+#' @param scale_nodes A `character` string giving the name of a centrality
+#'   measure to scale the node size by. See [centralities()] for valid names.
+#'   If missing (the default), uses default [qgraph::qgraph()] scaling.
+#'   Overrides `vsize` provided via `...`.
+#' @param scaling_factor A `numeric` value specifying how strongly to scale
+#'   the nodes when `node_scaling` is provided. The default is `0.5`. Values
+#'   closer to zero will result in more similar node sizes and values larger
+#'   than 1 will result in greater differences.
 #' @param mar See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
@@ -96,14 +106,15 @@ plot.tna <- function(x, labels, colors, pie, cut,
                      show_pruned = TRUE, pruned_edge_color = "pink",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
-                     layout_args = list(), mar = rep(5, 4),
-                     theme = "colorblind", ...) {
+                     layout_args = list(), scale_nodes, scaling_factor = 0.5,
+                     mar = rep(5, 4), theme = "colorblind", ...) {
   check_missing(x)
   check_class(x, "tna")
   check_flag(show_pruned)
   check_flag(edge.labels)
   check_range(edge.label.position, scalar = FALSE)
-  layout <- check_layout(x, layout, layout_args)
+  layout <- check_layout(x, layout = layout, layout_args)
+  vsize <- list(...)$vsize
   if (missing(pie)) {
     pie <- x$inits
   }
@@ -135,6 +146,14 @@ plot.tna <- function(x, labels, colors, pie, cut,
     attr(x, "pruning")$original,
     x$weights
   )
+  n <- nodes(x)
+  if (!missing(scale_nodes)) {
+    check_string(scale_nodes)
+    cent <- centralities(x, measures = scale_nodes)[[2L]]
+    vsize <- rep(8 * exp(-n / 80)) * (cent)^scaling_factor
+  } else {
+    vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
+  }
   qgraph::qgraph(
     input = weights,
     color = colors,
@@ -144,6 +163,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
     labels = labels,
     layout = layout,
     theme = theme,
+    vsize = vsize,
     pie = pie,
     mar = mar,
     lty = lty,
@@ -151,6 +171,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
     ...
   )
 }
+
 
 #' Plot a Bootstrapped Transition Network Analysis Model
 #'
