@@ -68,9 +68,9 @@ If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph
 Overrides \code{vsize} provided via \code{...}.}
 
 \item{scaling_factor}{A \code{numeric} value specifying how strongly to scale
-the nodes when \code{node_scaling} is provided. The default is \code{0.5}. Values
-closer to zero will result in more similar node sizes and values larger
-than 1 will result in greater differences.}
+the nodes when \code{scale_nodes} is provided. Values
+between 0 and 1 will result in smaller differences and values larger
+than 1 will result in greater differences. The default is \code{0.5}.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
