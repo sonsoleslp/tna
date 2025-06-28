@@ -1,11 +1,8 @@
 #' Mixture Markov Model Clustering for Sequences
 #'
 #' Fits a mixture of first-order Markov models to sequence data using the
-#' Expectation-Maximization (EM) algorithm. Provides robust estimation through
-#' multiple random restarts and comprehensive model diagnostics.
-#' Also performs model selection across a range of cluster numbers using
-#' information criteria (AIC or BIC) with comprehensive diagnostics and
-#' performance metrics.
+#' Expectation-Maximization (EM) algorithm. Also performs model selection
+#' for the number of clusters using information criteria (AIC or BIC).
 #'
 #' @export
 #' @param data A `data.frame` or `matrix` where rows represent sequences and
@@ -49,10 +46,7 @@
 #' The function implements a mixture of first-order Markov models where each
 #' component models sequences with initial state probabilities and transition
 #' probabilities between states, along with mixing weights for component
-#' membership.
-#'
-#' The EM algorithm alternates between E-step (computing posterior
-#' probabilities of cluster membership) and M-step (updating model parameters).
+#' membership. The estimation is carried out using the EM algorithm.
 #'
 #' Multiple random restarts are performed to avoid local optima, with the
 #' best solution (highest log-likelihood) selected as the final result.
@@ -243,6 +237,7 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
       assignments = best$assignments,
       posterior = best$posterior,
       loglik = best$loglik,
+      information = best$information,
       k = k,
       bic = bic,
       aic = aic,
@@ -343,6 +338,7 @@ em <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     loglik = loglik,
     models = models,
     mixture = mixture,
+    information = NULL,
     converged = iter < max_iter,
     iterations = iter,
     sizes = table(factor(assignments, levels = 1:k))
@@ -423,7 +419,7 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
         for (r in 1:max_iter) {
           w <- mixture[, j] * (1 - mixture[, j])
           z <- linpred[, j] + (posterior[, j] - mixture[, j]) / w
-          Wdiag <- diag(w)
+          Wdiag <- diag(w + 1e-10)
           WtWdiag <- crossprod(mm, Wdiag)
           beta <- solve(WtWdiag %*% mm) %*% WtWdiag %*% z
           beta_resid <- sum((beta - beta_prev)^2)
@@ -456,12 +452,22 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     loglik_prev <- loglik
   }
   assignments <- max.col(posterior)
+  information <- replicate(k, matrix(0, q, q), simplify = FALSE)
+  information[1L] <- list(NULL)
+  for (i in 1:n) {
+    xx <- tcrossprod(mm[i, ])
+    for (j in 2:k) {
+      information[[j]] <- information[[j]] +
+        posterior[i, j] * (1 - posterior[i, j]) * xx
+    }
+  }
   list(
     assignments = assignments,
     posterior = posterior,
     loglik = loglik,
     models = models,
     mixture = mixture,
+    information = information,
     converged = iter < max_iter,
     iterations = iter,
     sizes = table(factor(assignments, levels = 1:k))

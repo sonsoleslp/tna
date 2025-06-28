@@ -1,8 +1,8 @@
 # tna 0.7.0
 
-* Clustering
-* The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
+* Added the function `cluster_mmm()` to cluster sequence data by fitting a mixture Markov model via the EM algorithm.
 * Added the function `import_onehot()` to read one-hot data.
+* The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
 
 # tna 0.6.1
 

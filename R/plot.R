@@ -91,8 +91,8 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #'   If missing (the default), uses default [qgraph::qgraph()] scaling.
 #'   Overrides `vsize` provided via `...`.
 #' @param scaling_factor A `numeric` value specifying how strongly to scale
-#'   the nodes when `node_scaling` is provided. The default is `0.5`. Values
-#'   closer to zero will result in more similar node sizes and values larger
+#'   the nodes when `node_scaling` is provided. The default is `1.0`. Values
+#'   between 0 and 1 will result in more similar node sizes and values larger
 #'   than 1 will result in greater differences.
 #' @param mar See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
@@ -106,7 +106,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
                      show_pruned = TRUE, pruned_edge_color = "pink",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
-                     layout_args = list(), scale_nodes, scaling_factor = 0.5,
+                     layout_args = list(), scale_nodes, scaling_factor = 1.0,
                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_missing(x)
   check_class(x, "tna")
@@ -149,8 +149,9 @@ plot.tna <- function(x, labels, colors, pie, cut,
   n <- nodes(x)
   if (!missing(scale_nodes)) {
     check_string(scale_nodes)
-    cent <- centralities(x, measures = scale_nodes)[[2L]]
-    vsize <- rep(8 * exp(-n / 80)) * (cent)^scaling_factor
+    check_range(scaling_factor, lower = 0)
+    cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
+    vsize <- rep(8 * exp(-n / 80)) * (0.5 + cent)^scaling_factor
   } else {
     vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
   }
