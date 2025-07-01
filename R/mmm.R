@@ -209,6 +209,14 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
     }
     res
   }
+  # results <- vector(mode = "list", length = n_starts)
+  # for (i in seq_len(n_starts)) {
+  #   res <- em_fun(i, seed, data, mm, k, s, max_iter, reltol)
+  #   if (progressbar) {
+  #     cli::cli_progress_update()
+  #   }
+  #   results[[i]] <- res
+  # }
   valid <- vapply(
     results,
     function(x) {
@@ -237,7 +245,7 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
       assignments = best$assignments,
       posterior = best$posterior,
       loglik = best$loglik,
-      information = best$information,
+      hessian = best$hessian,
       k = k,
       bic = bic,
       aic = aic,
@@ -332,13 +340,18 @@ em <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     loglik_prev <- loglik
   }
   assignments <- max.col(posterior)
+  hessian <- replicate(k, numeric(1L), simplify = FALSE)
+  hessian[1L] <- list(NULL)
+  for (j in 2:k) {
+    hessian[[j]] <- -1.0 * sum(posterior[, j] * (1 - posterior[, j]))
+  }
   list(
     assignments = assignments,
     posterior = posterior,
     loglik = loglik,
     models = models,
     mixture = mixture,
-    information = NULL,
+    hessian = hessian,
     converged = iter < max_iter,
     iterations = iter,
     sizes = table(factor(assignments, levels = 1:k))
@@ -366,7 +379,7 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     models[[i]] <- list(
       inits = inits,
       trans = trans,
-      beta = rep(0, q) + (i > 1) * stats::runif(q, -0.01, 0.01)
+      beta = rep(0, q) + (i > 1) * stats::runif(q, 0.5, 1.0)
     )
   }
   idx <- seq_len(n)
@@ -391,15 +404,17 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
   log_sum_exp_vec <- numeric(n)
   linpred <- matrix(0, n, k)
   mixture <- matrix(0, n, k)
+  for (j in 2:k) {
+    linpred[, j] <- mm %*% models[[j]]$beta
+  }
+  mixture[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
+  gradient <- numeric((k - 1L) * q)
+  hessian <- matrix(0, (k - 1L) * q, (k - 1L) * q)
   posterior <- matrix(NA, n, k)
   post_clust_arr <- array(0, dim = c(n, s, s))
   while (loglik_reldiff > reltol && iter < max_iter) {
     iter <- iter + 1L
     # E-step
-    for (j in 1:k) {
-      linpred[ ,j] <- mm %*% models[[j]]$beta
-    }
-    mixture[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
     for (j in 1:k) {
       trans_prob <- models[[j]]$trans
       log_prob <- log(models[[j]]$inits[init_state]) + log(mixture[, j])
@@ -410,28 +425,45 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
     # M-step
-    for (j in 1:k) {
-      # Iteratively Reweighted Least Squares
-      if (j > 1) {
-        beta_prev <- models[[j]]$beta
-        beta_prev_resid <- sum(beta_prev^2)
-        beta <- 0
-        for (r in 1:max_iter) {
-          w <- mixture[, j] * (1 - mixture[, j])
-          z <- linpred[, j] + (posterior[, j] - mixture[, j]) / w
-          Wdiag <- diag(w + 1e-10)
-          WtWdiag <- crossprod(mm, Wdiag)
-          beta <- solve(WtWdiag %*% mm) %*% WtWdiag %*% z
-          beta_resid <- sum((beta - beta_prev)^2)
-          rel <- beta_resid / (beta_prev_resid + 1e-9)
-          if (rel < reltol) {
-            break
+    beta_prev <- unlist(lapply(models[-1L], "[[", "beta"))
+    # Iteratively Reweighted Least Squares
+    for (r in 1:max_iter) {
+      for (j in 2:k) {
+        idx_row <- seq((j - 2) * q + 1, (j - 1) * q)
+        gradient[idx_row] <- crossprod(mm, posterior[, j] - mixture[, j])
+        for (l in 2:j) {
+          idx_col <- seq((l - 2) * q + 1, (l - 1) * q)
+          w <- ifelse_(
+            j == l,
+            sqrt(diag(mixture[, j] * (1 - mixture[, j]))),
+            1i * sqrt(diag(mixture[, j] * mixture[, l]))
+          )
+          hessian[idx_row, idx_col] <- crossprod(w %*% mm)
+          if (j != l) {
+            hessian[idx_col, idx_row] <- t(hessian[idx_row, idx_col])
           }
-          beta_prev <- beta
-          beta_prev_resid <- beta_resid
         }
-        models[[j]]$beta <- beta
       }
+      hessian <- -1.0 * Re(hessian)
+      # Regularization
+      f <- norm(hessian, type = "F")
+      lambda <- diag(rep(max(1e-8, 1e-6 * f), q * (k - 1L)))
+      # TODO step size argument
+      beta <- beta_prev - 0.1 * solve(hessian - lambda) %*% gradient
+      beta_diff <- sum((beta - beta_prev)^2)
+      beta_prev <- beta
+      for (j in 2:k) {
+        idx <- seq((j - 2) * q + 1, (j - 1) * q)
+        models[[j]]$beta <- beta[idx]
+        linpred[, j] <- mm %*% models[[j]]$beta
+      }
+      mixture[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
+      # TODO tol argument for beta
+      if (beta_diff < 1e-6) {
+        break
+      }
+    }
+    for (j in 1:k) {
       post_clust <- posterior[, j]
       inits <- vapply(
         1:s,
@@ -452,14 +484,11 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     loglik_prev <- loglik
   }
   assignments <- max.col(posterior)
-  information <- replicate(k, matrix(0, q, q), simplify = FALSE)
-  information[1L] <- list(NULL)
-  for (i in 1:n) {
-    xx <- tcrossprod(mm[i, ])
-    for (j in 2:k) {
-      information[[j]] <- information[[j]] +
-        posterior[i, j] * (1 - posterior[i, j]) * xx
-    }
+  hessian_clust <- replicate(k, matrix(0, q, q), simplify = FALSE)
+  hessian_clust[1L] <- list(NULL)
+  for (j in 2:k) {
+    idx <- seq((j - 2) * q + 1, (j - 1) * q)
+    hessian_clust[[j]] <- hessian[idx, idx]
   }
   list(
     assignments = assignments,
@@ -467,7 +496,7 @@ em_covariates <- function(start, seed, data, mm, k, s, max_iter, reltol) {
     loglik = loglik,
     models = models,
     mixture = mixture,
-    information = information,
+    hessian = hessian_clust,
     converged = iter < max_iter,
     iterations = iter,
     sizes = table(factor(assignments, levels = 1:k))
