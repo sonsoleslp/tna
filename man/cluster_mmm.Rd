@@ -74,20 +74,14 @@ parallel backend. Ignores \code{parallel} if provided.}
 }
 \description{
 Fits a mixture of first-order Markov models to sequence data using the
-Expectation-Maximization (EM) algorithm. Provides robust estimation through
-multiple random restarts and comprehensive model diagnostics.
-Also performs model selection across a range of cluster numbers using
-information criteria (AIC or BIC) with comprehensive diagnostics and
-performance metrics.
+Expectation-Maximization (EM) algorithm. Also performs model selection
+for the number of clusters using information criteria (AIC or BIC).
 }
 \details{
 The function implements a mixture of first-order Markov models where each
 component models sequences with initial state probabilities and transition
 probabilities between states, along with mixing weights for component
-membership.
-
-The EM algorithm alternates between E-step (computing posterior
-probabilities of cluster membership) and M-step (updating model parameters).
+membership. The estimation is carried out using the EM algorithm.
 
 Multiple random restarts are performed to avoid local optima, with the
 best solution (highest log-likelihood) selected as the final result.

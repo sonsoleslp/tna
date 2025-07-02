@@ -47,8 +47,8 @@ measure to scale the node size by. See \code{\link[=centralities]{centralities()
 If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling.
 Overrides \code{vsize} provided via \code{...}.}
     \item{\code{scaling_factor}}{A \code{numeric} value specifying how strongly to scale
-the nodes when \code{node_scaling} is provided. The default is \code{0.5}. Values
-closer to zero will result in more similar node sizes and values larger
+the nodes when \code{scale_nodes} is provided. The default is \code{1.0}. Values
+between 0 and 1 will result in smaller differences and values larger
 than 1 will result in greater differences.}
     \item{\code{mar}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
     \item{\code{theme}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}

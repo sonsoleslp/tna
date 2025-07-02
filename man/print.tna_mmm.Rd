@@ -2,20 +2,20 @@
 % Please edit documentation in R/print.R
 \name{print.tna_mmm}
 \alias{print.tna_mmm}
-\title{Print a Mixed Markov Model Fit}
+\title{Print a Mixture Markov Model Fit}
 \usage{
 \method{print}{tna_mmm}(x, ...)
 }
 \arguments{
 \item{x}{A \code{tna_mmm} object.}
 
-\item{...}{(Ignored)}
+\item{...}{Not used.}
 }
 \value{
 \code{x} (invisibly)
 }
 \description{
-Print a Mixed Markov Model Fit
+Print a Mixture Markov Model Fit
 }
 \examples{
 \dontrun{

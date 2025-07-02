@@ -321,11 +321,11 @@ print.tna_permutation <- function(x, ...) {
   invisible(x)
 }
 
-#' Print a Mixed Markov Model Fit
+#' Print a Mixture Markov Model Fit
 #'
 #' @export
 #' @param x A `tna_mmm` object.
-#' @param ... (Ignored)
+#' @param ... Not used.
 #' @return `x` (invisibly)
 #' @examples
 #' \dontrun{
@@ -334,27 +334,47 @@ print.tna_permutation <- function(x, ...) {
 #' }
 #'
 print.tna_mmm <- function(x, ...) {
+  cat("Mixture Markov Model\n\n")
   cat("Data:", x$data_name, "\n")
-  cat("Number of clusters (k):", x$k, "\n")
-  cat("Number of sequences (n):", length(x$assignments), "\n")
+  cat("Number of sequences:", nrow(x$data), "\n")
+  cat("Number of time points:", ncol(x$data), "\n")
+  cat("Number of clusters:", x$k, "\n")
   cat("States:", cs(x$states), "\n")
-  conv <- ifelse_(
-    x$converged,
-    "Converged:",
-    "Failed to converge:"
-  )
-  cat(conv, "after", x$iterations, "iterations\n")
-  cat("Log-likelihood:", round(x$loglik, 4), "\n")
-  cat("AIC:", round(x$aic, 4), "\n")
-  cat("BIC:", round(x$bic, 4), "\n")
-  cat("Cluster sizes:", cs(x$sizes), "\n")
-  cat("Cluster proportions:", cs(round(x$proportions, 3)), "\n")
-  if (is.null(x$formula)) {
-    cat("Mixture weights:", cs(round(x$mixture, 3)), "\n")
-  } else {
-    cat("Formula:", as.character(x$formula))
+  cat("Coefficients:\n")
+  d <- as.data.frame(do.call("cbind", lapply(x$models, "[[", "beta")))
+  rownames(d) <- names(x$models[[1L]]$beta)
+  colnames(d) <- paste("Cluster", seq_len(x$k))
+  print(d)
+  cat("\n")
+  cat("Intial probabilities:\n")
+  for (i in seq_len(x$k)) {
+    cat("Cluster", i, "\n")
+    print(round(x$models[[i]]$inits, 3L))
+    cat("\n")
   }
-  invisible(x)
+  cat("Transition probabilities:\n")
+  for (i in seq_len(x$k)) {
+    cat("Cluster", i, "\n")
+    print(round(x$models[[i]]$trans, 3L))
+    cat("\n")
+  }
+  #conv <- ifelse_(
+  #  x$converged,
+  #  "Converged:",
+  #  "Failed to converge:"
+  #)
+  #cat(conv, "after", x$iterations, "iterations\n")
+  # cat("Log-likelihood:", round(x$loglik, 4), "\n")
+  # cat("AIC:", round(x$aic, 4), "\n")
+  # cat("BIC:", round(x$bic, 4), "\n")
+  # cat("Cluster sizes:", cs(x$sizes), "\n")
+  # cat("Cluster proportions:", cs(round(x$proportions, 3)), "\n")
+  # if (is.null(x$formula)) {
+  #   cat("Mixture weights:", cs(round(x$mixture, 3)), "\n")
+  # } else {
+  #   cat("Formula:", as.character(x$formula))
+  # }
+  # invisible(x)
 }
 
 # Groups ----------------------------------------------------------------

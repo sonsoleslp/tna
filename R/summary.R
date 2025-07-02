@@ -216,3 +216,46 @@ summary.group_tna_bootstrap <- function(object, ...) {
     class = c("summary.group_tna_bootstrap", "data.frame")
   )
 }
+
+#' Summarize a Mixture Markov Model Fit
+#'
+#' @export
+#' @param object A `tna_mmm` object.
+#' @param ... Not used.
+#' @return A `summary.tna_mmm` object containing the log-likelihood value,
+#' the regression coefficients, the variance-covariance matrix and other
+#' details.
+#' @examples
+#' # TODO
+#'
+summary.tna_mmm <- function(object, ...) {
+  check_missing(object)
+  check_class(object, "tna_mmm")
+  assignment <- max.col(object$posterior)
+  mean_prob <- do.call(
+    "rbind",
+    lapply(
+      seq_len(object$k),
+      function(i) {
+        colMeans(object$posterior[assignment == i, ])
+      }
+    )
+  )
+  dimnames(mean_prob) <- list(object$states, object$states)
+  structure(
+    list(
+      loglik = object$loglik,
+      aic = object$aic,
+      bic = object$bic,
+      vcov = -1.0 * solve(object$hessian),
+      prior = object$prior,
+      posterior = object$posterior,
+      assignment = factor(
+        assignment,
+        labels = paste("Cluster", seq_len(object$k))
+      ),
+      classification = mean_prob
+    ),
+    class = "summary.tna_mmm"
+  )
+}
