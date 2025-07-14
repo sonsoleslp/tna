@@ -91,9 +91,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #'   If missing (the default), uses default [qgraph::qgraph()] scaling.
 #'   Overrides `vsize` provided via `...`.
 #' @param scaling_factor A `numeric` value specifying how strongly to scale
-#'   the nodes when `scale_nodes` is provided. The default is `1.0`. Values
+#'   the nodes when `scale_nodes` is provided. Values
 #'   between 0 and 1 will result in smaller differences and values larger
-#'   than 1 will result in greater differences.
+#'   than 1 will result in greater differences. The default is `0.5`.
 #' @param mar See [qgraph::qgraph()].
 #' @param theme See [qgraph::qgraph()].
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
@@ -106,7 +106,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
                      show_pruned = TRUE, pruned_edge_color = "pink",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
-                     layout_args = list(), scale_nodes, scaling_factor = 1.0,
+                     layout_args = list(), scale_nodes, scaling_factor = 0.5,
                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_missing(x)
   check_class(x, "tna")
@@ -151,7 +151,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
     check_string(scale_nodes)
     check_range(scaling_factor, lower = 0)
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
-    vsize <- rep(8 * exp(-n / 80)) * (1.0 + cent)^scaling_factor
+    vsize <- rep(8 * exp(-n / 80)) * (1 + cent)^scaling_factor
   } else {
     vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
   }
@@ -172,6 +172,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
     ...
   )
 }
+
 
 #' Plot a Bootstrapped Transition Network Analysis Model
 #'
@@ -1379,7 +1380,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
   if (type == "index") {
     create_index_plot(
       long_data, group, colors, na_color, border,
-      title, title_n, legend_title, xlab, ylab, tick, ncol
+      title, include_na, title_n, legend_title, xlab, ylab, tick, ncol
     )
   } else {
     create_distribution_plot(
@@ -1389,7 +1390,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
   }
 }
 
-create_index_plot <- function(x, group, colors, na_color, border, title,
+create_index_plot <- function(x, group, colors, na_color, border, title, include_na,
                               title_n, legend_title, xlab, ylab, tick, ncol) {
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(missing(ylab), "Sequence", ylab)
@@ -1397,6 +1398,9 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
   title <- str2expression(paste0(title, " * ", title_n))
   legend_title <- ifelse_(missing(legend_title), NULL, legend_title)
   every_nth <- function(y) y[(seq_along(y) - 1L) %% tick == 0]
+  if (!include_na) {
+    x <- x |> tidyr::drop_na()
+  }
   p <- ggplot2::ggplot(
       x,
       ggplot2::aes(
@@ -1488,6 +1492,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
     ) +
     ggplot2::labs(title = title, x = xlab, y = ylab) +
     ggplot2::theme_minimal() +
+    ggplot2::scale_y_reverse() +
     ggplot2::theme(
       panel.grid = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),

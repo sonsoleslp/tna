@@ -18,7 +18,7 @@
   layout = "circle",
   layout_args = list(),
   scale_nodes,
-  scaling_factor = 1,
+  scaling_factor = 0.5,
   mar = rep(5, 4),
   theme = "colorblind",
   ...
@@ -68,9 +68,9 @@ If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph
 Overrides \code{vsize} provided via \code{...}.}
 
 \item{scaling_factor}{A \code{numeric} value specifying how strongly to scale
-the nodes when \code{scale_nodes} is provided. The default is \code{1.0}. Values
+the nodes when \code{scale_nodes} is provided. Values
 between 0 and 1 will result in smaller differences and values larger
-than 1 will result in greater differences.}
+than 1 will result in greater differences. The default is \code{0.5}.}
 
 \item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
