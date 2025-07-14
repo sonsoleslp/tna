@@ -113,6 +113,18 @@ check_measures <- function(x) {
   available_measures[measures_match]
 }
 
+#' Check that `x` is numeric
+#'
+#' @param x An \R object expected to be a `numeric` value.
+#' @noRd
+check_numeric <- function(x) {
+  arg <- deparse(substitute(x))
+  stopifnot_(
+    checkmate::test_number(x = x),
+    "Argument {.arg {arg}} must be a single {.cls numeric} value."
+  )
+}
+
 #' Check that `x` is a non-negative
 #'
 #' @param x An \R object expected to be a `numeric` or `integer`
@@ -139,17 +151,17 @@ check_values <- function(x, type = "integer", strict = FALSE,
   )
   strictness <- ifelse_(strict, "positive", "non-negative")
   stopifnot_(
-    test_fun(x = x, lower = as.integer(strict)),
+    test_fun(x = x, lower = as.integer(strict && type == "integer")),
     "Argument {.arg {arg}} must be a {strictness} {.cls {type}}{suffix}."
   )
 }
 
 #' Check that `x` is between a minimum and a maximum value
 #'
-#' @param x An \R object expected to be a single  `numeric` or `integer` value.
+#' @param x An \R object expected to be within a specific range.
 #' @noRd
 check_range <- function(x, type = "numeric", scalar = TRUE,
-                        min = 0.0, max = 1.0) {
+                        lower = -Inf, upper = Inf) {
   arg <- deparse(substitute(x))
   prefix <- ifelse_(scalar, "be a single", "only contain")
   suffix <- ifelse_(
@@ -160,12 +172,20 @@ check_range <- function(x, type = "numeric", scalar = TRUE,
   test_fun <- ifelse_(
     type == "numeric",
     ifelse_(scalar, checkmate::test_number, checkmate::test_numeric),
-    ifelse_(scalar, checkmate::test_int, checkmate::test_integer)
+    ifelse_(scalar, checkmate::test_int, checkmate::test_integerish)
   )
+  bounds <- ""
+  if (is.infinite(lower)) {
+    bounds <- paste0("less than or equal to ", upper)
+  } else if (is.infinite(upper)) {
+    bounds <- paste0("greater than or equal to ", lower)
+  } else {
+    bounds <- paste0("between ", lower, " and ", upper)
+  }
   stopifnot_(
-    test_fun(x = x, lower = min, upper = max),
+    test_fun(x = x, lower = lower, upper = upper),
     "Argument {.arg {arg}} must {prefix}
-    {.cls {type}} {suffix} between {min} and {max}."
+    {.cls {type}} {suffix} {bounds}."
   )
 }
 
@@ -189,15 +209,23 @@ check_flag <- function(x) {
 #' @param ... Additional arguments passed to `as.igraph`.
 #' @noRd
 check_layout <- function(x, layout, args = list(), ...) {
+
   if (is.character(layout)) {
     layout <- tolower(layout)
-    layout <- try_(match.arg(layout, c("circle", "groups", "spring")))
+    layout_parsed <- try_(match.arg(layout, c("circle", "groups", "spring")))
+    if (inherits(layout_parsed, "try-error")) {
+      layout_fun <- str2lang(paste0("igraph::", layout))
+      args$graph <- as.igraph(x, ...)
+      layout_parsed <- try_(
+        do.call(what = eval(layout_fun), args = args)
+      )
+    }
     stopifnot_(
-      !inherits(layout, "try-error"),
+      !inherits(layout_parsed, "try-error"),
       "A {.cls character} layout must be either {.val circle}, {.val groups},
-      or {.val spring}."
+      {.val spring}, or the name of an {.pkg igraph} layout."
     )
-    return(layout)
+    return(layout_parsed)
   }
   if (is.matrix(layout)) {
     stopifnot_(

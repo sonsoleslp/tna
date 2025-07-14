@@ -7,12 +7,23 @@
 \usage{
 plot_frequencies(x, ...)
 
-\method{plot_frequencies}{tna}(x, ...)
+\method{plot_frequencies}{tna}(x, width = 0.7, hjust = 1.2, show_label = TRUE, colors, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object created from sequence data.}
 
 \item{...}{Ignored.}
+
+\item{width}{A \code{numeric} value for the Width of the bars. Default is 0.7,}
+
+\item{hjust}{A \code{numeric} value for the horizontal adjustment of the labels.
+Default is 1.2.}
+
+\item{show_label}{A \code{logical} value indicating whether to show a label with
+the frequency counts. Default is \code{TRUE}.}
+
+\item{colors}{A \code{character} vector of colors to be used in the plot
+(one per label) or a single color.}
 }
 \value{
 A \code{ggplot} object.
@@ -23,6 +34,7 @@ Plot the Frequency Distribution of States
 \examples{
 model <- tna(group_regulation)
 plot_frequencies(model)
+plot_frequencies(model, width =  0.5, colors = "pink")
 
 }
 \seealso{

@@ -6,9 +6,9 @@
 ^README\.Rmd$
 ^codemeta\.json$
 ^data-raw$
-^doc$
 ^Meta$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
 Rplots.pdf
+^doc$

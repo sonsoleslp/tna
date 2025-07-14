@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.R
 \name{plot_compare.group_tna}
 \alias{plot_compare.group_tna}
-\title{Plot the Difference Network Between Two Clusters}
+\title{Plot the Difference Network Between Two Groups}
 \usage{
 \method{plot_compare}{group_tna}(x, i = 1L, j = 2L, ...)
 }
@@ -22,7 +22,7 @@ A \code{qgraph} object displaying the difference network between the
 two clusters
 }
 \description{
-Plot the Difference Network Between Two Clusters
+Plot the Difference Network Between Two Groups
 }
 \examples{
 model <- group_model(engagement_mmm)

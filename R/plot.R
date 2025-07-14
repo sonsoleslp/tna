@@ -22,9 +22,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
     xlab <- paste0(
       "Edge Weights (",
       switch(type,
-        `relative` = "Probabilities",
-        `frequency` = "Frequencies",
-        `co-occurrence` = "Co-occurrences"
+             `relative` = "Probabilities",
+             `frequency` = "Frequencies",
+             `co-occurrence` = "Co-occurrences"
       ),
       ")"
     )
@@ -149,6 +149,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
   n <- nodes(x)
   if (!missing(scale_nodes)) {
     check_string(scale_nodes)
+    check_range(scaling_factor, lower = 0)
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
     vsize <- rep(8 * exp(-n / 80)) * (1 + cent)^scaling_factor
   } else {
@@ -224,7 +225,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                   scales = c("free_x", "fixed"),
                                   colors, labels = TRUE, ...) {
   check_class(x, "tna_centralities")
-  plot_centralities_(x, reorder, ncol, scales, colors, labels)
+  plot_centralities_(x, reorder, ncol, scales, colors, NULL, labels)
 }
 
 #' Plot Cliques of a TNA Network
@@ -585,7 +586,7 @@ plot.tna_permutation <- function(x, colors,
 #'
 plot.tna_stability <- function(x, level = 0.05, ...) {
   check_class(x, "tna_stability")
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
   x$detailed_results <- NULL
   x_names <- names(x)
   drop_prop <- attr(x, "drop_prop")
@@ -674,23 +675,22 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #'
 #' @inheritParams plot.tna_centralities
 #' @noRd
-plot_centralities_ <- function(x, reorder, ncol, scales, colors, labels) {
+plot_centralities_ <- function(x, reorder, ncol, scales, colors,
+                               palette, labels) {
   check_flag(reorder)
   check_flag(labels)
   scales <- check_match(scales, c("free_x", "fixed"))
   scales <- ifelse_(scales == "free_x", "free", "free_y")
-  if (missing(colors) && !is.null(attr(x, "colors"))) {
-    colors <- attr(x, "colors")
-  }
-  if (missing(colors)) {
-    colors <- rep("black", length.out = n_unique(x$state))
-  } else if (!is.list(colors) && length(colors) == 1) {
-    colors <- rep(colors, length.out = n_unique(x$state))
-  }
+  n <- n_unique(x$state)
+  colors <- ifelse_(
+    missing(colors),
+    attr(x, "colors") %||% rep("black", n),
+    rep(colors, length.out = n)
+  )
   ifelse_(
     inherits(x, "tna_centralities"),
     plot_centralities_single(x, reorder, ncol, scales, colors, labels),
-    plot_centralities_multiple(x, reorder, ncol, scales, colors, labels)
+    plot_centralities_multiple(x, reorder, ncol, scales, colors, palette, labels)
   )
 }
 
@@ -768,8 +768,8 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
     ggplot2::ylab("")
 }
 
-plot_centralities_multiple <- function(x, reorder, ncol,
-                                       scales, colors, labels) {
+plot_centralities_multiple <- function(x, reorder, ncol, scales,
+                                       colors, palette = "Set2", labels) {
   measures <- names(x)[3:ncol(x)]
   n_clusters <- n_unique(x$group)
   x$state <- factor(x$state)
@@ -784,26 +784,26 @@ plot_centralities_multiple <- function(x, reorder, ncol,
     )
   x$name <- factor(x$name, levels = measures)
   ggplot2::ggplot(x,
-      ggplot2::aes(
-        x = !!rlang::sym("value"),
-        y = !!rlang::sym("state"),
-        color = !!rlang::sym("group"),
-        fill = !!rlang::sym("group"),
-        group = !!rlang::sym("group")
-      )
-    ) +
+                  ggplot2::aes(
+                    x = !!rlang::sym("value"),
+                    y = !!rlang::sym("state"),
+                    color = !!rlang::sym("group"),
+                    fill = !!rlang::sym("group"),
+                    group = !!rlang::sym("group")
+                  )
+  ) +
     ggplot2::facet_wrap("name", ncol = ncol, scales = scales) +
     ggplot2::geom_path() +
     ifelse_(
       !is.null(colors) & (n_unique(colors) == n_clusters),
       ggplot2::scale_color_manual(values = colors),
-      ggplot2::scale_color_discrete()
+      ggplot2::scale_color_brewer(palette = palette)
     ) +
     ggplot2::geom_point(size = 2, shape = 21, stroke = NA) +
     ifelse_(
       !is.null(colors) & (n_unique(colors) == n_clusters),
       ggplot2::scale_fill_manual(values = colors),
-      ggplot2::scale_fill_discrete()
+      ggplot2::scale_fill_brewer(palette = palette)
     ) +
     ggplot2::theme_minimal() +
     ggplot2::xlab("Centrality") +
@@ -884,11 +884,19 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
 #' @export
 #' @family basic
 #' @param x A `tna` object created from sequence data.
+#' @param colors A `character` vector of colors to be used in the plot
+#'   (one per label) or a single color.
+#' @param width A `numeric` value for the Width of the bars. Default is 0.7,
+#' @param hjust A `numeric` value for the horizontal adjustment of the labels.
+#'   Default is 1.2.
+#' @param show_label A `logical` value indicating whether to show a label with
+#'   the frequency counts. Default is `TRUE`.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
 #' model <- tna(group_regulation)
 #' plot_frequencies(model)
+#' plot_frequencies(model, width =  0.5, colors = "pink")
 #'
 plot_frequencies <- function(x, ...) {
   UseMethod("plot_frequencies")
@@ -896,30 +904,63 @@ plot_frequencies <- function(x, ...) {
 
 #' @export
 #' @rdname plot_frequencies
-plot_frequencies.tna <- function(x, ...) {
+plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
+                                 show_label = TRUE, colors, ...) {
   check_missing(x)
   check_tna_seq(x)
+  check_values(width, type = "numeric")
+  check_numeric(hjust)
+  check_flag(show_label)
+  colors <- ifelse_(
+    missing(colors),
+    attr(x$data, "colors") %||% "black",
+    colors
+  )
+  n_colors <- length(colors)
+  n_labels <- length(x$labels)
+  stopifnot_(
+    n_colors == 1L || n_colors == n_labels,
+    "The number of {.arg colors} does not match
+     the number of labels in {.arg x}."
+  )
+  colors <- ifelse_(
+    n_colors == 1L,
+    rep(colors, n_labels),
+    colors
+  )
   tab <- table(unlist(x$data))
   d <- as.data.frame(tab)
   names(d) <- c("state", "freq")
-  d[[1L]] <- factor(x$labels[d[[1L]]])
-  ggplot2::ggplot(
+  d[[1L]] <- factor(x$labels[d[[1L]]], levels = rev(x$labels))
+  p <- ggplot2::ggplot(
     d,
-    ggplot2::aes(x = !!rlang::sym("state"), y = !!rlang::sym("freq"))
+    ggplot2::aes(y = !!rlang::sym("state"), x = !!rlang::sym("freq"))
   ) +
     ggplot2::geom_bar(
+      ggplot2::aes(fill = !!rlang::sym("state")),
       stat = "identity",
-      colour = "black",
-      width = 0.7
-    ) +
-    ggplot2::geom_text(
-      ggplot2::aes(label = !!rlang::sym("freq")),
-      position = ggplot2::position_dodge(width = 0.7),
-      vjust = -0.5
-    ) +
+      width = width
+    )
+
+  if (show_label) {
+    p <- p +
+      ggplot2::geom_text(
+        ggplot2::aes(label = !!rlang::sym("freq")),
+        position = ggplot2::position_dodge(width = width),
+        hjust = hjust
+      )
+  }
+  p +
     ggplot2::theme_minimal() +
-    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
-    ggplot2::labs(x = "State", y = "Frequency")
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
+    ggplot2::labs(y = "State", x = "Frequency") +
+    ggplot2::theme(
+      axis.title =  ggplot2::element_text(face = "bold"),
+      axis.text = ggplot2::element_text(color = "black"),
+      text = ggplot2::element_text(color = "black")
+    ) +
+    ggplot2::scale_fill_manual(values = colors) +
+    ggplot2::theme(legend.position = "none")
 }
 
 #' Plot a Transition Network Model from a Matrix of Edge Weights
@@ -1122,8 +1163,8 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @param geom A `character` string for the type of geom to use for
 #'   distribution plots. The options are `"bar"` (the default) and `"area"`.
 #' @param include_na A `logical` value for whether to include missing values
-#'   for distribution plots. The default is `FALSE`: missing values
-#'   are ignored.
+#'   for distribution plots. The default is `FALSE`. If `TRUE`, the missing
+#'   values are converted to a new state and included in the plot.
 #' @param colors A named `character` vector mapping states to colors, or an
 #'   unnamed `character` vector. If missing, a default palette is used.
 #' @param na_color A `character` string giving the color to use for missing
@@ -1145,23 +1186,22 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @param ylab A `character` string giving the label for the vertical axis.
 #'   The default is `"Sequence"` for index plots, and `"Proportion"` or
 #'   `"Count"` based on `scale` for distribution plots.
-#' @param tick An `integer` specifying the horizontal axis label interval,
-#' e.g., `tick = 5` would show every 5th label. The default is 1 showing
+#' @param tick An `integer` specifying the horizontal axis label interval. The
+#' default value `tick = 5` shows every 5th label. Setting this to 1 will show
 #' every label.
+#' @param ncol Number of columns to use for the facets. The default is 2.
 #' @param ... Ignored.
 #' @examples
 #' # Sequence index plot (default)
 #' plot_sequences(
 #'   group_regulation,
 #'   group = rep(1:2, each = 1000),
-#'   tick = 5
 #' )
 #' # State distribution plot
 #' plot_sequences(
 #'   group_regulation,
 #'   group = rep(1:2, each = 1000),
 #'   type = "distribution",
-#'   tick = 5
 #' )
 #'
 plot_sequences <- function(x, ...) {
@@ -1174,7 +1214,7 @@ plot_sequences.tna <- function(x, group, type = "index",
                                scale = "proportion", geom = "bar",
                                include_na = FALSE, na_color = "white", sort_by,
                                show_n = TRUE, border, title, legend_title,
-                               xlab, ylab, tick = 1, ...) {
+                               xlab, ylab, tick = 5, ncol = 2L, ...) {
   check_missing(x)
   check_tna_seq(x)
   d <- as.data.frame(x$data)
@@ -1194,7 +1234,7 @@ plot_sequences.tna <- function(x, group, type = "index",
   plot_sequences_(
     d, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
+    xlab, ylab, tick, ncol
   )
 }
 
@@ -1205,14 +1245,15 @@ plot_sequences.tna_data <- function(x, group, type = "index",
                                     geom = "bar", include_na = FALSE,
                                     colors, na_color = "white", sort_by,
                                     show_n = TRUE, border, title,
-                                    legend_title, xlab, ylab, tick = 1, ...) {
+                                    legend_title, xlab, ylab, tick = 5,
+                                    ncol = 2L, ...) {
   check_missing(x)
   check_class(x, "tna_data")
   wide <- cbind(x$sequence_data, x$meta_data)
   cols <- names(x$sequence_data)
   plot_sequences.default(
     wide, cols, group, type, scale, geom, include_na, colors, na_color,
-    sort_by, show_n, border, title, legend_title, xlab, ylab, tick
+    sort_by, show_n, border, title, legend_title, xlab, ylab, tick, ncol
   )
 }
 
@@ -1223,7 +1264,8 @@ plot_sequences.default <- function(x, cols, group, type = "index",
                                    include_na = FALSE, colors,
                                    na_color = "white", sort_by,
                                    show_n = TRUE, border, title,
-                                   legend_title, xlab, ylab, tick = 1, ...) {
+                                   legend_title, xlab, ylab, tick = 5,
+                                   ncol = 2L, ...) {
   check_missing(x)
   stopifnot_(
     inherits(x, "stslist") || inherits(x, "data.frame"),
@@ -1262,13 +1304,14 @@ plot_sequences.default <- function(x, cols, group, type = "index",
   plot_sequences_(
     x, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
+    xlab, ylab, tick, ncol
   )
 }
 
-plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
-                            include_na, colors, na_color, sort_by, show_n,
-                            border, title, legend_title, xlab, ylab, tick) {
+plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
+                            geom, include_na, colors, na_color, sort_by,
+                            show_n, border, title, legend_title,
+                            xlab, ylab, tick, ncol) {
   type <- check_match(type, c("distribution", "index"))
   scale <- check_match(scale, c("count", "proportion"))
   geom <- check_match(geom, c("area", "bar"))
@@ -1337,18 +1380,18 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
   if (type == "index") {
     create_index_plot(
       long_data, group, colors, na_color, border,
-      title, include_na, title_n, legend_title, xlab, ylab, tick
+      title, include_na, title_n, legend_title, xlab, ylab, tick, ncol
     )
   } else {
     create_distribution_plot(
       long_data, group, scale, geom, include_na, colors, na_color,
-      border, title, title_n, legend_title, xlab, ylab, tick
+      border, title, title_n, legend_title, xlab, ylab, tick, ncol
     )
   }
 }
 
 create_index_plot <- function(x, group, colors, na_color, border, title, include_na,
-                              title_n, legend_title, xlab, ylab, tick) {
+                              title_n, legend_title, xlab, ylab, tick, ncol) {
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(missing(ylab), "Sequence", ylab)
   title <- ifelse_(missing(title), "\"Sequence Index Plot \"", title)
@@ -1359,12 +1402,12 @@ create_index_plot <- function(x, group, colors, na_color, border, title, include
     x <- x |> tidyr::drop_na()
   }
   p <- ggplot2::ggplot(
-      x,
-      ggplot2::aes(
-        x = !!rlang::sym("time"),
-        y = !!rlang::sym(".seq_id")
-      )
-    ) +
+    x,
+    ggplot2::aes(
+      x = !!rlang::sym("time"),
+      y = !!rlang::sym(".seq_id")
+    )
+  ) +
     ggplot2::geom_raster(ggplot2::aes(fill = !!rlang::sym("state"))) +
     ggplot2::scale_fill_manual(
       values = colors,
@@ -1391,7 +1434,8 @@ create_index_plot <- function(x, group, colors, na_color, border, title, include
   if (!missing(group)) {
     p <- p + ggplot2::facet_wrap(
       ggplot2::vars(!!rlang::sym(group)),
-      scales = "free_y"
+      ncol = ncol,
+      scales = "free_y",
     )
   }
   p
@@ -1399,7 +1443,7 @@ create_index_plot <- function(x, group, colors, na_color, border, title, include
 
 create_distribution_plot <- function(x, group, scale, geom, include_na,
                                      colors, na_color, border, title, title_n,
-                                     legend_title, xlab, ylab, tick) {
+                                     legend_title, xlab, ylab, tick, ncol) {
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(
     missing(ylab),
@@ -1416,24 +1460,24 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
   }
   if (geom == "bar") {
     p <- ggplot2::ggplot(
-        x,
-        ggplot2::aes(
-          x = !!rlang::sym("time"),
-          fill = !!rlang::sym("state")
-        )
-      )+
+      x,
+      ggplot2::aes(
+        x = !!rlang::sym("time"),
+        fill = !!rlang::sym("state")
+      )
+    )+
       ggplot2::geom_bar(na.rm = FALSE, width = 1, position = position) +
       ggplot2::scale_x_discrete(breaks = every_nth)
   } else if (geom == "area") {
     time_levels <- levels(x$time)
     x$time <- as.numeric(x$time)
     p <- ggplot2::ggplot(
-        x,
-        ggplot2::aes(
-          x = !!rlang::sym("time"),
-          fill = !!rlang::sym("state")
-        )
-      )+
+      x,
+      ggplot2::aes(
+        x = !!rlang::sym("time"),
+        fill = !!rlang::sym("state")
+      )
+    )+
       ggplot2::geom_area(position = position, stat = "count") +
       ggplot2::scale_x_continuous(
         breaks = every_nth(seq_along(time_levels)),
@@ -1458,6 +1502,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
   if (!missing(group)) {
     p <- p + ggplot2::facet_wrap(
       ggplot2::vars(!!rlang::sym(group)),
+      ncol = ncol,
       scales = "free_y"
     )
   }
@@ -1476,7 +1521,7 @@ create_heatmap <- function(data, title) {
       x = !!rlang::sym("target"),
       y = !!rlang::sym("source"),
       fill = !!rlang::sym("value")
-  )) +
+    )) +
     ggplot2::geom_tile() +
     ggplot2::scale_fill_gradient2(
       low = "blue",
@@ -1494,7 +1539,7 @@ create_heatmap <- function(data, title) {
     )
 }
 
-# Clusters ----------------------------------------------------------------
+# Groups ----------------------------------------------------------------
 
 #' Plot a Histogram of Edge Weights for a `group_tna` Object.
 #'
@@ -1503,7 +1548,7 @@ create_heatmap <- function(data, title) {
 #' @param x A `group_tna` object.
 #' @param ... Additional arguments passed to [graphics::hist()].
 #' @return A `list` (invisibly) of `histogram` objects of the edge weights of
-#' each cluster.
+#'   each cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' hist(model)
@@ -1522,9 +1567,9 @@ hist.group_tna <- function(x, ...) {
 #' @family basic
 #' @param x A `group_model` object.
 #' @param title A title for each plot. It can be a single string (the same one
-#'  will be used for all plots) or a list (one per group)
+#'   will be used for all plots) or a list (one per group)
 #' @param which An optional `integer` vector of groups to plot. By default, all
-#' groups are plotted.
+#'   groups are plotted.
 #' @param ... Same as [plot.tna()].
 #' @return `NULL` (invisibly).
 #' @inheritDotParams plot.tna
@@ -1556,6 +1601,7 @@ plot.group_tna <- function(x, title, which, ...) {
 #' @export
 #' @family validation
 #' @param x A `group_tna_bootstrap` object.
+#' @param title A `character` vector of titles to use for each plot.
 #' @param ... Additional arguments passed to [plot.tna()].
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -1563,7 +1609,7 @@ plot.group_tna <- function(x, title, which, ...) {
 #' boot <- bootstrap(model, iter = 50)
 #' plot(boot)
 #'
-plot.group_tna_bootstrap <- function(x, ...) {
+plot.group_tna_bootstrap <- function(x, title = names(x), ...) {
   check_missing(x)
   check_class(x, "group_tna_bootstrap")
   invisible(lapply(x, plot.tna_bootstrap, ...))
@@ -1574,6 +1620,7 @@ plot.group_tna_bootstrap <- function(x, ...) {
 #' @export
 #' @family centralities
 #' @param x A `group_tna_centralities` object.
+#' @param palette A color palette to be applied if `colors` is not specified.
 #' @inheritParams plot.tna_centralities
 #' @return A `ggplot` object displaying a line chart for each centrality
 #' with one line per cluster.
@@ -1584,10 +1631,11 @@ plot.group_tna_bootstrap <- function(x, ...) {
 #'
 plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
                                         scales = c("free_x", "fixed"),
-                                        colors, labels = TRUE, ...) {
+                                        colors, palette = "Set2",
+                                        labels = TRUE, ...) {
   check_missing(x)
   check_class(x, "group_tna_centralities")
-  plot_centralities_(x, reorder, ncol, scales, colors, labels)
+  plot_centralities_(x, reorder, ncol, scales, colors, palette, labels)
 }
 
 #' Plot Found Cliques
@@ -1647,7 +1695,7 @@ plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
     )
   )
   if (is.null(title) ||
-    (is.vector(title) && is.atomic(title) && (length(title) == 1))) {
+      (is.vector(title) && is.atomic(title) && (length(title) == 1))) {
     title <- replicate(n, title, simplify = FALSE)
   }
   invisible(
@@ -1719,7 +1767,7 @@ plot.group_tna_permutation <- function(x, title, ...) {
   )
 }
 
-#' Plot the Difference Network Between Two Clusters
+#' Plot the Difference Network Between Two Groups
 #'
 #' @export
 #' @family comparison
@@ -1750,46 +1798,96 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
 #' @param label An optional `character` string that can be provided to specify
 #' the grouping factor name if `x` was not constructed using a column name of
 #' the original data.
+#' @param colors A vector of colors to be used in the plot (one per group)
+#' @param palette A palette to be used if colors are not passed.
+#' @param width Width of the bars. Default is 0.7.
+#' @param hjust Horizontal adjustment of the labels. Default is 1.2.
+#' @param position Position of the bars: "dodge", "dodge2", "fill" or "stack"
+#' @param show_label Boolean indicating whether to show a label with the
+#'  frequency counts. Default is `TRUE`.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
 #' model <- group_model(engagement_mmm)
+#' # Default
 #' plot_frequencies(model)
+#' # Default labels outside and custom colors
+#' plot_frequencies(
+#'   model,
+#'   width = 0.9,
+#'   hjust = -0.3,
+#'   colors = c("#218516", "#f9c22e", "#53b3cb")
+#' )
+#' # Stacked with no labels
+#' plot_frequencies(model, position = "stack", show_label = FALSE)
+#' # Fill
+#' plot_frequencies(model, position = "fill", hjust = 1.1)
 #'
-plot_frequencies.group_tna <- function(x, label, ...) {
+plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
+                                       palette = "Set2",
+                                       show_label = TRUE, position = "dodge",
+                                       hjust = 1.2, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   label <- ifelse_(missing(label), attr(x, "label"), label)
   combined <- combine_data(x)
   long <- tidyr::pivot_longer(combined, cols = !(!!rlang::sym(".group")))
-  long$value <- factor(x[[1L]]$labels[long$value])
+  check_values(width, type = "numeric")
+  check_numeric(hjust)
+  check_flag(show_label)
+  long$value <- factor(x[[1L]]$labels[long$value], levels = rev(x[[1L]]$labels))
   long$.group <- factor(long$.group)
+  position <- check_match(position, c("dodge", "dodge2", "fill", "stack"))
+  position <- switch(position,
+                     dodge = ggplot2::position_dodge(width = width),
+                     dodge2 = ggplot2::position_dodge2(width = width),
+                     stack = "stack",
+                     fill = "fill"
+  )
   d <- long |>
     dplyr::group_by(!!rlang::sym(".group"), !!rlang::sym("value")) |>
     dplyr::summarize(freq = dplyr::n()) |>
-    dplyr::ungroup()
-  ggplot2::ggplot(
+    dplyr::ungroup() |>
+    dplyr::filter(!is.na(!!rlang::sym("value")))
+
+  p <- ggplot2::ggplot(
     d,
     ggplot2::aes(
-      x = !!rlang::sym("value"),
-      y = !!rlang::sym("freq"),
+      y = !!rlang::sym("value"),
+      x = !!rlang::sym("freq"),
       fill = !!rlang::sym(".group"))
   ) +
     ggplot2::geom_bar(
       stat = "identity",
       colour = "black",
-      position = ggplot2::position_dodge(),
-      width = 0.7
-    ) +
-    ggplot2::geom_text(
-      ggplot2::aes(label = !!rlang::sym("freq")),
-      position = ggplot2::position_dodge(width = 0.7),
-      vjust = -0.5
-    ) +
-    ggplot2::scale_fill_brewer(name = label, palette = "Set2") +
+      position = position,
+      width = width
+    )
+  if(show_label) {
+    p <- p +
+      ggplot2::geom_text(
+        ggplot2::aes(label = !!rlang::sym("freq")),
+        position = position,
+        hjust = hjust
+      )
+  }
+  if (!missing(colors)) {
+    colors <- rep(colors, length.out = length(x))
+    p <- p + ggplot2::scale_fill_manual(name = label, values = colors)
+  } else {
+    p <- p + ggplot2::scale_fill_brewer(name = label, palette = palette)
+  }
+  p +
     ggplot2::theme_minimal() +
-    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, .1))) +
-    ggplot2::labs(x = "State", y = "Frequency")
+    ggplot2::scale_x_continuous(
+      expand = ggplot2::expansion(mult = c(0, 0.1))
+    ) +
+    ggplot2::labs(y = "State", x = "Frequency") +
+    ggplot2::theme(
+      legend.position =  "bottom",
+      axis.title =  ggplot2::element_text(face = "bold"),
+      axis.text = ggplot2::element_text(color = "black"),
+      text = ggplot2::element_text(color = "black"))
 }
 
 #' Plot State Frequencies as a Mosaic Between Two Groups
@@ -1894,9 +1992,9 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
 #' @rdname plot_sequences
 plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
                                      geom = "bar", include_na = FALSE,
-                                     na_color = "white", sort_by,
-                                     show_n = TRUE, border, title,
-                                     legend_title, xlab, ylab, tick = 1, ...) {
+                                     na_color = "white", sort_by, show_n = TRUE,
+                                     border, title, legend_title, xlab, ylab,
+                                     tick = 1, ncol = 2L, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   d <- combine_data(x)
@@ -1908,6 +2006,6 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
   plot_sequences_(
     d, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
-    xlab, ylab, tick
+    xlab, ylab, tick, ncol
   )
 }

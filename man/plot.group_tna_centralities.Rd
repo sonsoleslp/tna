@@ -10,6 +10,7 @@
   ncol = 3,
   scales = c("free_x", "fixed"),
   colors,
+  palette = "Set2",
   labels = TRUE,
   ...
 )
@@ -28,6 +29,8 @@ the same values are used for all axes.}
 
 \item{colors}{The colors for each node (default is the model colors
 if the \code{tna} model object is passed, otherwise \code{"black"}).}
+
+\item{palette}{A color palette to be applied if \code{colors} is not specified.}
 
 \item{labels}{A \code{logical} value indicating whether to show the centrality
 numeric values. The default is \code{TRUE}.}

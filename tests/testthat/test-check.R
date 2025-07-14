@@ -113,7 +113,9 @@ test_that("invalid range check fails", {
     scalar = c(FALSE, TRUE)
   )
   f <- function(i, z) {
-    check_range(z, type = opts[i, 1], scalar = opts[i, 2], min = -2, max = 2)
+    check_range(
+      z, type = opts[i, 1], scalar = opts[i, 2], lower = -2, upper = 2
+    )
   }
   expect_error(
     f(i = 1, z = 3),
@@ -146,7 +148,7 @@ test_that("invalid logical fails", {
 test_that("invalid plotting layout fails", {
   expect_error(
     check_layout(mock_tna, "unknown"),
-    "A <character> layout must be either \"circle\", \"groups\", or \"spring\"\\."
+    "A <character> layout must be either \"circle\", \"groups\", \"spring\", or the name of an igraph layout\\."
   )
   expect_error(
     check_layout(mock_tna, matrix(0, 2, 1000)),
@@ -178,5 +180,21 @@ test_that("cluster check fails on invalid clusters", {
   expect_error(
     check_clusters(mmm_model, i = 1, j = "Cluster 4"),
     "Argument `j` must be a name of `x` when of type <character>\\."
+  )
+})
+
+test_that("range check variants are correct", {
+  value <- 1
+  expect_error(
+    check_range(value, lower = 2),
+    "Argument `value` must be a single <numeric> value greater than or equal to 2\\."
+  )
+  expect_error(
+    check_range(value, upper = 0),
+    "Argument `value` must be a single <numeric> value less than or equal to 0\\."
+  )
+  expect_error(
+    check_range(value, lower = -1, upper = 0),
+    "Argument `value` must be a single <numeric> value between -1 and 0\\."
   )
 })

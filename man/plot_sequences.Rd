@@ -25,7 +25,8 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1,
+  tick = 5,
+  ncol = 2L,
   ...
 )
 
@@ -45,7 +46,8 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1,
+  tick = 5,
+  ncol = 2L,
   ...
 )
 
@@ -66,7 +68,8 @@ plot_sequences(x, ...)
   legend_title,
   xlab,
   ylab,
-  tick = 1,
+  tick = 5,
+  ncol = 2L,
   ...
 )
 
@@ -85,6 +88,7 @@ plot_sequences(x, ...)
   xlab,
   ylab,
   tick = 1,
+  ncol = 2L,
   ...
 )
 }
@@ -113,8 +117,8 @@ respectively.}
 distribution plots. The options are \code{"bar"} (the default) and \code{"area"}.}
 
 \item{include_na}{A \code{logical} value for whether to include missing values
-for distribution plots. The default is \code{FALSE}: missing values
-are ignored.}
+for distribution plots. The default is \code{FALSE}. If \code{TRUE}, the missing
+values are converted to a new state and included in the plot.}
 
 \item{na_color}{A \code{character} string giving the color to use for missing
 values. The default is \code{"white"}.}
@@ -143,9 +147,11 @@ The default is \code{"Time"}.}
 The default is \code{"Sequence"} for index plots, and \code{"Proportion"} or
 \code{"Count"} based on \code{scale} for distribution plots.}
 
-\item{tick}{An \code{integer} specifying the horizontal axis label interval,
-e.g., \code{tick = 5} would show every 5th label. The default is 1 showing
+\item{tick}{An \code{integer} specifying the horizontal axis label interval. The
+default value \code{tick = 5} shows every 5th label. Setting this to 1 will show
 every label.}
+
+\item{ncol}{Number of columns to use for the facets. The default is 2.}
 
 \item{colors}{A named \code{character} vector mapping states to colors, or an
 unnamed \code{character} vector. If missing, a default palette is used.}
@@ -161,14 +167,12 @@ Create a Sequence Index Plot or a Distribution Plot
 plot_sequences(
   group_regulation,
   group = rep(1:2, each = 1000),
-  tick = 5
 )
 # State distribution plot
 plot_sequences(
   group_regulation,
   group = rep(1:2, each = 1000),
   type = "distribution",
-  tick = 5
 )
 
 }

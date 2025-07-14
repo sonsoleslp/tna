@@ -1,3 +1,7 @@
+# tna 1.0.0
+* CRAN release
+* The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
+
 # tna 0.6.0
 
 * Added a new method `plot_sequences()` for sequence index plots and state distribution plots.

@@ -130,7 +130,8 @@ frequency, co-occurrence and reverse model types. The default is
 
 \item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
 columns that should be considered as sequence data.
-Defaults to all columns, i.e., \code{seq(1, ncol(x))}.}
+Defaults to all columns, i.e., \code{seq(1, ncol(x))}. Column names not found
+in \code{x} will be ignored without warning.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

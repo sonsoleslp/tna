@@ -53,8 +53,7 @@ group_model.default <- function(x, group, type = "relative",
   check_flag(groupwise)
   check_flag(na.rm)
   stopifnot_(
-    inherits(x, "stslist") ||
-      inherits(x, "data.frame") || inherits(x, "tna_data"),
+    inherits(x, c("stslist", "data.frame", "tna_data")),
     "Argument {.arg x} must be {.cls stslist} (sequence object), a
     {.cls data.frame} or a {.cls tna_data} object."
   )
@@ -64,7 +63,13 @@ group_model.default <- function(x, group, type = "relative",
     x <- wide
   } else {
     cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
-    check_range(cols, type = "integer", scalar = FALSE, min = 1L, max = ncol(x))
+    check_range(
+      cols,
+      type = "integer",
+      scalar = FALSE,
+      lower = 1L,
+      upper = ncol(x)
+    )
   }
   group <- ifelse_(
     missing(group),
@@ -83,13 +88,15 @@ group_model.default <- function(x, group, type = "relative",
   label <- "Cluster"
   prefix <- "Argument"
   if (group_len == 1L) {
+    x_names <- names(x)
     stopifnot_(
-      group %in% names(x),
+      group %in% x_names,
       "Argument {.arg group} must be a column name of {.arg x}
        when of length one."
     )
     label <- group
-    group <- x[[group]]
+    cols <- setdiff(cols, which(x_names == group))
+    group <- as.factor(x[[group]])
     prefix <- "Column"
   }
   group_na <- any(is.na(group))
@@ -102,7 +109,14 @@ group_model.default <- function(x, group, type = "relative",
       )
     )
   }
-  group <- ifelse_(is.factor(group), group, factor(group))
+  group <- ifelse_(
+    is.factor(group),
+    group,
+    factor(
+      group,
+      labels = paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
+    )
+  )
   group <- ifelse_(group_na && !na.rm, addNA(group), group)
   levs <- levels(group)
   n_group <- length(levs)
@@ -148,6 +162,7 @@ group_model.default <- function(x, group, type = "relative",
       params = params
     )
   }
+  names(groups) <- names(clusters)
   if (!groupwise && length(scaling > 0)) {
     weights <- scale_weights_global(
       weights = lapply(clusters, "[[", "weights"),
