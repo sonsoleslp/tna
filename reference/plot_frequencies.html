@@ -50,7 +50,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_frequencies</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
-<span><span class="fu">plot_frequencies</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">plot_frequencies</span><span class="op">(</span><span class="va">x</span>, width <span class="op">=</span> <span class="fl">0.7</span>, hjust <span class="op">=</span> <span class="fl">1.2</span>, show_label <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">colors</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,6 +63,25 @@
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Ignored.</p></dd>
+
+
+<dt id="arg-width">width<a class="anchor" aria-label="anchor" href="#arg-width"></a></dt>
+<dd><p>A <code>numeric</code> value for the Width of the bars. Default is 0.7,</p></dd>
+
+
+<dt id="arg-hjust">hjust<a class="anchor" aria-label="anchor" href="#arg-hjust"></a></dt>
+<dd><p>A <code>numeric</code> value for the horizontal adjustment of the labels.
+Default is 1.2.</p></dd>
+
+
+<dt id="arg-show-label">show_label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
+<dd><p>A <code>logical</code> value indicating whether to show a label with
+the frequency counts. Default is <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
+<dd><p>A <code>character</code> vector of colors to be used in the plot
+(one per label) or a single color.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -95,6 +114,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plot_frequencies</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_frequencies-1.png" alt="" width="1080" height="1080"></span>
+<span class="r-in"><span><span class="fu">plot_frequencies</span><span class="op">(</span><span class="va">model</span>, width <span class="op">=</span>  <span class="fl">0.5</span>, colors <span class="op">=</span> <span class="st">"pink"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot_frequencies-2.png" alt="" width="1080" height="1080"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -65,7 +65,8 @@
 <span>  <span class="va">legend_title</span>,</span>
 <span>  <span class="va">xlab</span>,</span>
 <span>  <span class="va">ylab</span>,</span>
-<span>  tick <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  tick <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -86,7 +87,8 @@
 <span>  <span class="va">legend_title</span>,</span>
 <span>  <span class="va">xlab</span>,</span>
 <span>  <span class="va">ylab</span>,</span>
-<span>  tick <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  tick <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -108,7 +110,8 @@
 <span>  <span class="va">legend_title</span>,</span>
 <span>  <span class="va">xlab</span>,</span>
 <span>  <span class="va">ylab</span>,</span>
-<span>  tick <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  tick <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -128,6 +131,7 @@
 <span>  <span class="va">xlab</span>,</span>
 <span>  <span class="va">ylab</span>,</span>
 <span>  tick <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="fl">2L</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -173,8 +177,8 @@ distribution plots. The options are <code>"bar"</code> (the default) and <code>"
 
 <dt id="arg-include-na">include_na<a class="anchor" aria-label="anchor" href="#arg-include-na"></a></dt>
 <dd><p>A <code>logical</code> value for whether to include missing values
-for distribution plots. The default is <code>FALSE</code>: missing values
-are ignored.</p></dd>
+for distribution plots. The default is <code>FALSE</code>. If <code>TRUE</code>, the missing
+values are converted to a new state and included in the plot.</p></dd>
 
 
 <dt id="arg-na-color">na_color<a class="anchor" aria-label="anchor" href="#arg-na-color"></a></dt>
@@ -221,9 +225,13 @@ The default is <code>"Sequence"</code> for index plots, and <code>"Proportion"</
 
 
 <dt id="arg-tick">tick<a class="anchor" aria-label="anchor" href="#arg-tick"></a></dt>
-<dd><p>An <code>integer</code> specifying the horizontal axis label interval,
-e.g., <code>tick = 5</code> would show every 5th label. The default is 1 showing
+<dd><p>An <code>integer</code> specifying the horizontal axis label interval. The
+default value <code>tick = 5</code> shows every 5th label. Setting this to 1 will show
 every label.</p></dd>
+
+
+<dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
+<dd><p>Number of columns to use for the facets. The default is 2.</p></dd>
 
 
 <dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
@@ -243,7 +251,6 @@ time points. If missing, all columns will be used.</p></dd>
 <span class="r-in"><span><span class="fu">plot_sequences</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">group_regulation</span>,</span></span>
 <span class="r-in"><span>  group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, each <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  tick <span class="op">=</span> <span class="fl">5</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_sequences-1.png" alt="" width="1080" height="1080"></span>
 <span class="r-in"><span><span class="co"># State distribution plot</span></span></span>
@@ -251,7 +258,6 @@ time points. If missing, all columns will be used.</p></dd>
 <span class="r-in"><span>  <span class="va">group_regulation</span>,</span></span>
 <span class="r-in"><span>  group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, each <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  type <span class="op">=</span> <span class="st">"distribution"</span>,</span></span>
-<span class="r-in"><span>  tick <span class="op">=</span> <span class="fl">5</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_sequences-2.png" alt="" width="1080" height="1080"></span>
 <span class="r-in"><span></span></span>
