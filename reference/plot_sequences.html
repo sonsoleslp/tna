@@ -56,7 +56,7 @@
 <span>  type <span class="op">=</span> <span class="st">"index"</span>,</span>
 <span>  scale <span class="op">=</span> <span class="st">"proportion"</span>,</span>
 <span>  geom <span class="op">=</span> <span class="st">"bar"</span>,</span>
-<span>  include_na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_na <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  na_color <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  <span class="va">sort_by</span>,</span>
 <span>  show_n <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -173,8 +173,8 @@ distribution plots. The options are <code>"bar"</code> (the default) and <code>"
 
 <dt id="arg-include-na">include_na<a class="anchor" aria-label="anchor" href="#arg-include-na"></a></dt>
 <dd><p>A <code>logical</code> value for whether to include missing values
-for distribution plots. The default is <code>TRUE</code>: missing values
-are converted to a new state and included in the plot.</p></dd>
+for distribution plots. The default is <code>FALSE</code>: missing values
+are ignored.</p></dd>
 
 
 <dt id="arg-na-color">na_color<a class="anchor" aria-label="anchor" href="#arg-na-color"></a></dt>
