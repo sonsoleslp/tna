@@ -16,7 +16,7 @@ plot_sequences(x, ...)
   type = "index",
   scale = "proportion",
   geom = "bar",
-  include_na = TRUE,
+  include_na = FALSE,
   na_color = "white",
   sort_by,
   show_n = TRUE,
@@ -113,8 +113,8 @@ respectively.}
 distribution plots. The options are \code{"bar"} (the default) and \code{"area"}.}
 
 \item{include_na}{A \code{logical} value for whether to include missing values
-for distribution plots. The default is \code{TRUE}: missing values
-are converted to a new state and included in the plot.}
+for distribution plots. The default is \code{FALSE}: missing values
+are ignored.}
 
 \item{na_color}{A \code{character} string giving the color to use for missing
 values. The default is \code{"white"}.}

@@ -1122,8 +1122,8 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @param geom A `character` string for the type of geom to use for
 #'   distribution plots. The options are `"bar"` (the default) and `"area"`.
 #' @param include_na A `logical` value for whether to include missing values
-#'   for distribution plots. The default is `TRUE`: missing values
-#'   are converted to a new state and included in the plot.
+#'   for distribution plots. The default is `FALSE`: missing values
+#'   are ignored.
 #' @param colors A named `character` vector mapping states to colors, or an
 #'   unnamed `character` vector. If missing, a default palette is used.
 #' @param na_color A `character` string giving the color to use for missing
@@ -1172,7 +1172,7 @@ plot_sequences <- function(x, ...) {
 #' @rdname plot_sequences
 plot_sequences.tna <- function(x, group, type = "index",
                                scale = "proportion", geom = "bar",
-                               include_na = TRUE, na_color = "white", sort_by,
+                               include_na = FALSE, na_color = "white", sort_by,
                                show_n = TRUE, border, title, legend_title,
                                xlab, ylab, tick = 1, ...) {
   check_missing(x)
