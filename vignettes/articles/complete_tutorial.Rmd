@@ -200,7 +200,7 @@ print(Permutation$centralities$stats)
 
 ### Interpreting the Results of the Case-Dropping Bootstrap for Centrality Indices
 
-```{r, cache=TRUE, fig.align='center', fig.width=7, fig.height=4}
+```{r, fig.align='center', fig.width=7, fig.height=4}
 # Results of the Case-Dropping Bootstrap for Centrality Indices
 Centrality_stability <- estimate_centrality_stability(model, iter = 100)
 plot(Centrality_stability)
