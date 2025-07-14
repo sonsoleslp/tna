@@ -120,7 +120,9 @@ centralities_ <- function(x, loops, normalize, measures) {
   names(measures_out) <- measures
   out <- as.data.frame(measures_out)
   if (normalize) {
-    out[, measures] <- as.data.frame(lapply(out[, measures], ranger))
+    out[, measures] <- as.data.frame(
+      lapply(out[, measures, drop = FALSE], ranger)
+    )
   }
   rn <- rownames(out)
   out <- tibble::rownames_to_column(out, "state")
