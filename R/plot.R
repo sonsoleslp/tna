@@ -1337,7 +1337,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
   if (type == "index") {
     create_index_plot(
       long_data, group, colors, na_color, border,
-      title, title_n, legend_title, xlab, ylab, tick
+      title, include_na, title_n, legend_title, xlab, ylab, tick
     )
   } else {
     create_distribution_plot(
@@ -1347,7 +1347,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale, geom,
   }
 }
 
-create_index_plot <- function(x, group, colors, na_color, border, title,
+create_index_plot <- function(x, group, colors, na_color, border, title, include_na,
                               title_n, legend_title, xlab, ylab, tick) {
   xlab <- ifelse_(missing(xlab), "Time", xlab)
   ylab <- ifelse_(missing(ylab), "Sequence", ylab)
@@ -1355,6 +1355,9 @@ create_index_plot <- function(x, group, colors, na_color, border, title,
   title <- str2expression(paste0(title, " * ", title_n))
   legend_title <- ifelse_(missing(legend_title), NULL, legend_title)
   every_nth <- function(y) y[(seq_along(y) - 1L) %% tick == 0]
+  if (!include_na) {
+    x <- x |> tidyr::drop_na()
+  }
   p <- ggplot2::ggplot(
       x,
       ggplot2::aes(
@@ -1445,6 +1448,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
     ) +
     ggplot2::labs(title = title, x = xlab, y = ylab) +
     ggplot2::theme_minimal() +
+    ggplot2::scale_y_reverse() +
     ggplot2::theme(
       panel.grid = ggplot2::element_blank(),
       axis.text.y = ggplot2::element_blank(),
