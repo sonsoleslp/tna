@@ -2,13 +2,13 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  articles/communities_and_cliques: communities_and_cliques.html
-  articles/complete_tutorial: complete_tutorial.html
+  communities_and_cliques: communities_and_cliques.html
+  complete_tutorial: complete_tutorial.html
   articles/ftna: ftna.html
-  articles/grouped_sequences: grouped_sequences.html
-  articles/prepare_data: prepare_data.html
+  grouped_sequences: grouped_sequences.html
+  prepare_data: prepare_data.html
   tna: tna.html
-last_built: 2025-07-14T20:58Z
+last_built: 2025-07-14T23:16Z
 urls:
   reference: http://sonsoles.me/tna/reference
   article: http://sonsoles.me/tna/articles
