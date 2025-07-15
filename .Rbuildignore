@@ -12,3 +12,5 @@
 ^pkgdown$
 Rplots.pdf
 ^doc$
+^vignettes/*_files$
+^vignettes/*\.R$
