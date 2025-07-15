@@ -1,3 +1,6 @@
+# tna 1.0.0
+* CRAN release
+
 # tna 0.7.0
 
 * Added the function `cluster_mmm()` to cluster sequence data by fitting a mixture Markov model via the EM algorithm.

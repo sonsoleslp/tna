@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
   out.width = "100%",
   message = FALSE,
   fig.show = TRUE,
+  dev = "jpeg",
+  dpi = 100,
   results = "hide",  
   comment = "#>"
 )
@@ -102,7 +104,7 @@ tna_by_session_custom <- tna(by_session_custom)
 plot(tna_by_session_custom)
 ```
 Another advantage of using `prepare_data` prior to constructing the `tna` model is that we get to keep other variables of the data and use them in our analysis. For instance, we can use `group_tna` to create a `tna` model by achievement group just by passing the result of `prepare_data` as a first argument, and indicating the name of the column in the data that we want to group by.
-```{r,fig.width=8,fig.height=3,fig.dpi=900,echo=2:3}
+```{r,fig.width=8,fig.height=3, echo=2:3}
 layout(t(1:2))
 gtna <- group_tna(by_user, group = "achievement")
 plot(gtna)

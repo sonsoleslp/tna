@@ -22,9 +22,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
     xlab <- paste0(
       "Edge Weights (",
       switch(type,
-        `relative` = "Probabilities",
-        `frequency` = "Frequencies",
-        `co-occurrence` = "Co-occurrences"
+             `relative` = "Probabilities",
+             `frequency` = "Frequencies",
+             `co-occurrence` = "Co-occurrences"
       ),
       ")"
     )
@@ -769,7 +769,7 @@ plot_centralities_single <- function(x, reorder, ncol, scales, colors, labels) {
 }
 
 plot_centralities_multiple <- function(x, reorder, ncol, scales,
-                                        colors, palette = "Set2", labels) {
+                                       colors, palette = "Set2", labels) {
   measures <- names(x)[3:ncol(x)]
   n_clusters <- n_unique(x$group)
   x$state <- factor(x$state)
@@ -784,14 +784,14 @@ plot_centralities_multiple <- function(x, reorder, ncol, scales,
     )
   x$name <- factor(x$name, levels = measures)
   ggplot2::ggplot(x,
-      ggplot2::aes(
-        x = !!rlang::sym("value"),
-        y = !!rlang::sym("state"),
-        color = !!rlang::sym("group"),
-        fill = !!rlang::sym("group"),
-        group = !!rlang::sym("group")
-      )
-    ) +
+                  ggplot2::aes(
+                    x = !!rlang::sym("value"),
+                    y = !!rlang::sym("state"),
+                    color = !!rlang::sym("group"),
+                    fill = !!rlang::sym("group"),
+                    group = !!rlang::sym("group")
+                  )
+  ) +
     ggplot2::facet_wrap("name", ncol = ncol, scales = scales) +
     ggplot2::geom_path() +
     ifelse_(
@@ -1402,12 +1402,12 @@ create_index_plot <- function(x, group, colors, na_color, border, title, include
     x <- x |> tidyr::drop_na()
   }
   p <- ggplot2::ggplot(
-      x,
-      ggplot2::aes(
-        x = !!rlang::sym("time"),
-        y = !!rlang::sym(".seq_id")
-      )
-    ) +
+    x,
+    ggplot2::aes(
+      x = !!rlang::sym("time"),
+      y = !!rlang::sym(".seq_id")
+    )
+  ) +
     ggplot2::geom_raster(ggplot2::aes(fill = !!rlang::sym("state"))) +
     ggplot2::scale_fill_manual(
       values = colors,
@@ -1460,24 +1460,24 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
   }
   if (geom == "bar") {
     p <- ggplot2::ggplot(
-        x,
-        ggplot2::aes(
-          x = !!rlang::sym("time"),
-          fill = !!rlang::sym("state")
-        )
-      )+
+      x,
+      ggplot2::aes(
+        x = !!rlang::sym("time"),
+        fill = !!rlang::sym("state")
+      )
+    )+
       ggplot2::geom_bar(na.rm = FALSE, width = 1, position = position) +
       ggplot2::scale_x_discrete(breaks = every_nth)
   } else if (geom == "area") {
     time_levels <- levels(x$time)
     x$time <- as.numeric(x$time)
     p <- ggplot2::ggplot(
-        x,
-        ggplot2::aes(
-          x = !!rlang::sym("time"),
-          fill = !!rlang::sym("state")
-        )
-      )+
+      x,
+      ggplot2::aes(
+        x = !!rlang::sym("time"),
+        fill = !!rlang::sym("state")
+      )
+    )+
       ggplot2::geom_area(position = position, stat = "count") +
       ggplot2::scale_x_continuous(
         breaks = every_nth(seq_along(time_levels)),
@@ -1521,7 +1521,7 @@ create_heatmap <- function(data, title) {
       x = !!rlang::sym("target"),
       y = !!rlang::sym("source"),
       fill = !!rlang::sym("value")
-  )) +
+    )) +
     ggplot2::geom_tile() +
     ggplot2::scale_fill_gradient2(
       low = "blue",
@@ -1695,7 +1695,7 @@ plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
     )
   )
   if (is.null(title) ||
-    (is.vector(title) && is.atomic(title) && (length(title) == 1))) {
+      (is.vector(title) && is.atomic(title) && (length(title) == 1))) {
     title <- replicate(n, title, simplify = FALSE)
   }
   invisible(

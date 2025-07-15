@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
   fig.width = 6,
   fig.height = 4,
   out.width = "100%",
+  dev = "png",
+  dpi = 150,
   comment = "#>"
 )
 suppressPackageStartupMessages({
@@ -292,7 +294,7 @@ plot(Permutation, minimum = 0.01)
 
 ## Centrality stability
 
-```{r, fig.width=5, fig.height=3}
+```{r, fig.width=7, fig.height=4}
 Centrality_stability <- estimate_centrality_stability(model_scaled, iter = 100)
 plot(Centrality_stability)
 ```

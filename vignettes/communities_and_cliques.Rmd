@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
   fig.width = 6,
   fig.height = 4,
   out.width = "100%",
+  dev = "jpeg",
+  dpi = 100,
   comment = "#>"
 )
 ```

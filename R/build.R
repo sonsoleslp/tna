@@ -472,6 +472,7 @@ create_seqdata <- function(x, cols, alphabet) {
   )
 }
 
+
 #' Compute Edge Weights from Sequence Data
 #'
 #' @param x A data object from `create_seqdata()`
