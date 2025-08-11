@@ -447,11 +447,12 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
         gradient[idx_row] <- crossprod(mm, posterior[, j] - prior[, j])
         for (l in 2:j) {
           idx_col <- seq((l - 2) * q + 1, (l - 1) * q)
-          w <- ifelse_(
-            j == l,
-            sqrt(diag(prior[, j] * (1 - prior[, j]))),
+          # No need to export ifelse_ for this
+          w <- if (j == l) {
+            sqrt(diag(prior[, j] * (1 - prior[, j])))
+          } else {
             1i * sqrt(diag(prior[, j] * prior[, l]))
-          )
+          }
           hessian[idx_row, idx_col] <- crossprod(w %*% mm)
           if (j != l) {
             hessian[idx_col, idx_row] <- t(hessian[idx_row, idx_col])
