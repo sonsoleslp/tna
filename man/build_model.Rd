@@ -158,7 +158,7 @@ internal format used by the package when \code{x} is a \code{stslist} or a
 Construct a transition network analysis (TNA) model from sequence data.
 The function takes a data set of sequence of events or states as input and
 builds a TNA model. It extracts the edge weights and initial probabilities
-from the data along with the state labels. THe function also accepts weight
+from the data along with the state labels. The function also accepts weight
 matrices and initial state probabilities directly.
 }
 \examples{

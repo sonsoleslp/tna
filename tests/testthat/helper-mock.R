@@ -57,7 +57,7 @@ mock_tsn <- structure(
         stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
       )
     ),
-    series_state = sample(3, 100),
+    series_state = sample(3, 100, replace = TRUE),
     .time = gl(100, 10)
   ),
   id_col = "id",

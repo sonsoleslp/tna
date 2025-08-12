@@ -4,7 +4,7 @@
 \alias{print.tna}
 \title{Print a \code{tna} Object}
 \usage{
-\method{print}{tna}(x, digits = getOption("digits"), generic = FALSE, ...)
+\method{print}{tna}(x, digits = 3, generic = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}

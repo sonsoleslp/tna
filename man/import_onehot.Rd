@@ -4,7 +4,7 @@
 \alias{import_onehot}
 \title{Import One-Hot Data and Create a Co-Occurrence Network Model}
 \usage{
-import_onehot(data, cols, window)
+import_onehot(data, cols, window = 1L)
 }
 \arguments{
 \item{data}{A \code{data.frame} in wide format.}

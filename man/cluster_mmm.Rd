@@ -9,6 +9,7 @@ cluster_mmm(
   cols = seq(1L, ncol(data)),
   formula,
   k,
+  cluster_names,
   criterion = "bic",
   n_starts = 10L,
   min_size = 1L,
@@ -36,8 +37,12 @@ found in \code{data} will be ignored without warning.}
 to use for the cluster membership probabilities.}
 
 \item{k}{An \code{integer} vector specifying the numbers of mixture components
-(clusters) to fit. The values must be between 2 and the number of sequences
-minus 1.}
+(clusters) to fit. The values must be between 2 and the number of
+sequences minus 1.}
+
+\item{cluster_names}{An optional \code{character} vector of cluster names.
+The default naming scheme is Cluster 1, Cluster 2, etc. The length of
+the vector must be the same as the largest value of \code{k}.}
 
 \item{criterion}{A \code{character} string specifying the information criterion
 to use for model selection. Either \code{"bic"} (default) for Bayesian
