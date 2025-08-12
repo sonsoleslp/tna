@@ -174,6 +174,15 @@ ifelse_ <- function(test, yes, no) {
   }
 }
 
+#' Default value operator for a missing argument
+#'
+#' @param x An \R object
+#' @param y An \R object to assign if `x` is missing
+#' @noRd
+`%m%` <- function(x, y) {
+  if (missing(x)) y else x
+}
+
 #' Return `yes` if `test` is `TRUE`, otherwise return `NULL`
 #'
 #' @param test \[`logical(1)`] Condition to evaluate.

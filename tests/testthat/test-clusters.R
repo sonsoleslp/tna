@@ -56,3 +56,35 @@ test_that("MMM can be fitted covariates", {
     NA
   )
 })
+
+test_that("MMM fit can be summarized", {
+  expect_error(
+    summary(engagement_tna_mmm),
+    NA
+  )
+})
+
+test_that("Variance-covariance matrix of a MMM can be obtained", {
+  expect_error(
+    vcov(engagement_tna_mmm),
+    NA
+  )
+  expect_error(
+    vcov(summary(engagement_tna_mmm)),
+    NA
+  )
+  vc <- vcov(engagement_tna_mmm)
+  expect_true(ncol(vc) == 2L)
+  expect_true(nrow(vc) == 2L)
+  expect_true(isSymmetric(vc))
+})
+
+test_that("Coefficient estimates of a MMM can be obtained", {
+  expect_error(
+    coef(engagement_tna_mmm),
+    NA
+  )
+  cf <- coef(engagement_tna_mmm)
+  expect_true(nrow(cf) == 1L)
+  expect_true(ncol(cf) == 3L)
+})

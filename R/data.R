@@ -598,10 +598,9 @@ import_data <- function(data, cols, id_cols,
 #' )
 #' model <- import_onehot(d, feature1:feature3, window = "window")
 #'
-import_onehot <- function(data, cols, window) {
+import_onehot <- function(data, cols, window = 1L) {
   check_missing(data)
   check_class(data, "data.frame")
-  window <- ifelse_(missing(window), 1L, window)
   data_names <- colnames(data)
   n <- nrow(data)
   if (is.character(window)) {

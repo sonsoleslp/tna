@@ -203,3 +203,10 @@ test_that("mixture Markov model results can be printed", {
     NA
   )
 })
+
+test_that("mixture Markov model summary can be printed", {
+  expect_error(
+    capture.output(print(summary(engagement_tna_mmm))),
+    NA
+  )
+})

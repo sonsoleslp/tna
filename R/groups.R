@@ -64,7 +64,7 @@ group_model.default <- function(x, group, type = "relative",
     cols <- seq_len(ncol(x$sequence_data))
     x <- wide
   } else {
-    cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
+    cols <- cols %m% seq_len(ncol(x))
     check_range(
       cols,
       type = "integer",
@@ -73,11 +73,7 @@ group_model.default <- function(x, group, type = "relative",
       upper = ncol(x)
     )
   }
-  group <- ifelse_(
-    missing(group),
-    seq_len(nrow(x)),
-    group
-  )
+  group <- group %m% seq_len(nrow(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   group_len <- length(group)
@@ -222,9 +218,10 @@ group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
   data <- as.data.frame(
     lapply(as.data.frame(x$data), function(y) factor(y, labels = lab))
   )
+  assignment <- factor(max.col(x$posterior), labels = x$cluster_names)
   group_model.default(
     x = data,
-    group = x$assignments,
+    group = assignment,
     type = type,
     scaling = scaling,
     groupwise = groupwise,

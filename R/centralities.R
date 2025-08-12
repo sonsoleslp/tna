@@ -100,11 +100,7 @@ centralities.matrix <- function(x, loops = FALSE, normalize = FALSE, measures) {
 centralities_ <- function(x, loops, normalize, measures) {
   check_flag(loops)
   check_flag(normalize)
-  measures <- ifelse_(
-    missing(measures),
-    names(centrality_funs),
-    measures
-  )
+  measures <- measures %m% names(centrality_funs)
   measures <- check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
   g <- as.igraph(x)
@@ -425,11 +421,7 @@ centralities.group_tna <- function(x, loops = FALSE,
   check_missing(x)
   check_class(x, "group_tna")
   # missing() does not work with lapply, need to evaluate measures here.
-  measures <- ifelse_(
-    missing(measures),
-    names(centrality_funs),
-    measures
-  )
+  measures <- measures %m% names(centrality_funs)
   out <- dplyr::bind_rows(
     lapply(
       x,

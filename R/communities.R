@@ -56,9 +56,7 @@ communities <- function(x, methods, gamma) {
 communities.tna <- function(x, methods, gamma = 1) {
   check_missing(x)
   check_class(x, "tna")
-  if (missing(methods)) {
-    methods <- names(supported_communities)
-  }
+  methods <- methods %m% names(supported_communities)
   methods <- check_match(
     methods,
     names(supported_communities),
@@ -126,9 +124,7 @@ communities.tna <- function(x, methods, gamma = 1) {
 communities.group_tna <- function(x, methods, gamma = 1) {
   check_missing(x)
   check_class(x, "group_tna")
-  if (missing(methods)) {
-    methods <- names(supported_communities)
-  }
+  methods <- methods %m% names(supported_communities)
   structure(
     stats::setNames(
       lapply(x, communities, methods = methods, gamma = gamma),

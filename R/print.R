@@ -32,13 +32,70 @@ print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }
 
+#' Print a Summary of a Mixture Markov Model Fit
+#'
+#' @export
+#' @family groups
+#' @param x A `summary.tna_mmm` object.
+#' @param ... Arguments passed to the generic `print` method.
+#' @return A `summary.tna_mmm` object (invisibly) with details of the model fit.
+#' @examples
+#' sumr <- summary(engagement_tna_mmm)
+#' print(sumr)
+#'
+print.summary.tna_mmm <- function(x, digits = 3L, ...) {
+  cat("Covariate effects :\n")
+  cat("Reference cluster:", x$cluster_names[1L], "\n\n")
+  cf <- x$coefficients
+  v <- diag(x$vcov)
+  k <- ncol(x$prior)
+  q <- nrow(cf)
+  mean_prior <- colMeans(x$prior)
+  names(mean_prior) <- x$cluster_names
+  clust_tab <- table(x$assignment)
+  tab <- matrix(
+    c(
+      as.character(clust_tab),
+      as.character(round(prop.table(clust_tab), digits = digits))
+    ),
+    nrow = 2L,
+    byrow = TRUE
+  )
+  colnames(tab) <- x$cluster_names
+  rownames(tab) <- c("count", "proportion")
+  for (i in seq(2L, k)) {
+    idx <- seq((i - 2L) * q + 1L, (i - 1L) * q)
+    cat(x$cluster_names[i], ":\n")
+    d <- data.frame(
+      `Estimate` = round(cf[, i], digits = digits),
+      `Std. error` = round(sqrt(v[idx]), digits = digits),
+      check.names = FALSE
+    )
+    rownames(d) <- rownames(cf)
+    print(d, digits = digits, ...)
+    cat("\n")
+  }
+  cat("Log-likelihood:", round(x$loglik, digits = digits), "\n")
+  cat("AIC:", round(x$aic, digits = digits), "\n")
+  cat("BIC:", round(x$bic, digits = digits), "\n\n")
+  cat("Mean of prior cluster probabilities :\n")
+  print(mean_prior, digits = digits, ...)
+  cat("\nMost probable clusters :\n")
+  print.default(tab, quote = FALSE, print.gap = 2L, right = TRUE)
+  cat("\n")
+  cat("Classification table :\n")
+  cat("Mean cluster probabilities (columns) by the most probable cluster (rows)\n\n")
+  print(x$classification, digits = digits, ...)
+  invisible(x)
+}
+
 #' Print a `tna` Object
 #'
 #' @export
 #' @family basic
 #' @param x A `tna` object.
-#' @param digits An `integer` giving the number of
-#' *significant* digits to print.
+#' @param digits An `integer` giving the number of *significant* digits
+#'   to print.
 #' @param generic A `logical` value. If `TRUE`, use generic print method
 #' instead. Defaults to `FALSE`.
 #' @param ... Ignored.
@@ -47,12 +104,12 @@ print.summary.tna_bootstrap <- function(x, ...) {
 #' model <- tna(group_regulation)
 #' print(model)
 #'
-print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
+print.tna <- function(x, digits = 3, generic = FALSE, ...) {
   check_missing(x)
   check_class(x, "tna")
   check_flag(generic)
   if (generic) {
-    NextMethod(generic = "print", object = x, ...)
+    NextMethod(generic = "print", object = x, digits = digits, ...)
     return()
   }
   check_values(digits)
@@ -67,13 +124,14 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
     `betweenness` = "Edge Betweenness",
     "Edge Weight"
   )
-  cat("State Labels\n\n")
-  cat(paste(x$labels, collapse = ", "), "\n")
-  cat("\n", mat_type, " Matrix\n\n", sep = "")
-  print(x$weights, digits)
+  cat("State Labels : \n\n")
+  cat("  ", paste(x$labels, collapse = ", "), "\n")
+  cat("\n", mat_type, " Matrix :\n\n", sep = "")
+  print(x$weights, digits = digits)
+  inits <- stats::setNames(x$inits, x$labels)
   if (!is.null(x$inits)) {
-    cat("\nInitial Probabilities\n\n", sep = "")
-    print(x$inits, digits)
+    cat("\nInitial Probabilities : \n\n", sep = "")
+    print(inits, digits = digits)
   }
   invisible(x)
 }
@@ -324,57 +382,28 @@ print.tna_permutation <- function(x, ...) {
 #' Print a Mixture Markov Model Fit
 #'
 #' @export
+#' @family groups
 #' @param x A `tna_mmm` object.
-#' @param ... Not used.
+#' @param ... Arguments passed to the generic `print` method
 #' @return `x` (invisibly)
 #' @examples
-#' \dontrun{
-#' model <- cluster_mmm(engagement, k = 3)
-#' print(model)
-#' }
+#' print(engagement_tna_mmm)
 #'
-print.tna_mmm <- function(x, ...) {
+print.tna_mmm <- function(x, digits = 3L, ...) {
   cat("Mixture Markov Model\n\n")
   cat("Data:", x$data_name, "\n")
   cat("Number of sequences:", nrow(x$data), "\n")
   cat("Number of time points:", ncol(x$data), "\n")
   cat("Number of clusters:", x$k, "\n")
   cat("States:", cs(x$states), "\n")
-  cat("Coefficients:\n")
-  d <- as.data.frame(do.call("cbind", lapply(x$models, "[[", "beta")))
-  rownames(d) <- names(x$models[[1L]]$beta)
-  colnames(d) <- paste("Cluster", seq_len(x$k))
-  print(d)
+  cat("Coefficients :\n")
+  print(coef(x))
   cat("\n")
-  cat("Intial probabilities:\n")
-  for (i in seq_len(x$k)) {
-    cat("Cluster", i, "\n")
-    print(round(x$models[[i]]$inits, 3L))
-    cat("\n")
-  }
-  cat("Transition probabilities:\n")
-  for (i in seq_len(x$k)) {
-    cat("Cluster", i, "\n")
-    print(round(x$models[[i]]$trans, 3L))
-    cat("\n")
-  }
-  #conv <- ifelse_(
-  #  x$converged,
-  #  "Converged:",
-  #  "Failed to converge:"
-  #)
-  #cat(conv, "after", x$iterations, "iterations\n")
-  # cat("Log-likelihood:", round(x$loglik, 4), "\n")
-  # cat("AIC:", round(x$aic, 4), "\n")
-  # cat("BIC:", round(x$bic, 4), "\n")
-  # cat("Cluster sizes:", cs(x$sizes), "\n")
-  # cat("Cluster proportions:", cs(round(x$proportions, 3)), "\n")
-  # if (is.null(x$formula)) {
-  #   cat("Mixture weights:", cs(round(x$mixture, 3)), "\n")
-  # } else {
-  #   cat("Formula:", as.character(x$formula))
-  # }
-  # invisible(x)
+  cat("Intial probabilities :\n")
+  print.listof(x$inits, digits = digits)
+  cat("Transition probabilities :\n")
+  print.listof(x$trans, digits = digits)
+  invisible(x)
 }
 
 # Groups ----------------------------------------------------------------
@@ -393,14 +422,15 @@ print.tna_mmm <- function(x, ...) {
 print.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x)
+  # prefix <- ""
+  # nm <- names(x)
+  # for (i in seq_along(x)) {
+  #   cat(prefix)
+  #   cat(nm[i], "\n\n", sep = "")
+  #   print(x[[i]])
+  #   prefix <- "\n"
+  # }
   invisible(x)
 }
 

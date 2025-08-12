@@ -1,5 +1,6 @@
 # A mock transition matrix
 set.seed(0)
+
 mock_matrix <- matrix(
   c(0, stats::runif(15)),
   nrow = 4,
@@ -45,6 +46,24 @@ mock_long <- data.frame(
   time = rep(1:5, 4),
   group = rep(1:4, each = 5),
   event =  as.vector(t(as.matrix(mock_sequence)))
+)
+
+mock_tsn <- structure(
+  list(
+    id = gl(10, 100),
+    series = c(
+      replicate(
+        10,
+        stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
+      )
+    ),
+    series_state = sample(3, 100),
+    .time = gl(100, 10)
+  ),
+  id_col = "id",
+  value_col = "series",
+  state_col = "series_state",
+  time_col = ".time"
 )
 
 {

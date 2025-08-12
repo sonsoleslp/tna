@@ -16,8 +16,11 @@
 #' @param formula An optional `formula` object that specifies the covariates
 #'   to use for the cluster membership probabilities.
 #' @param k An `integer` vector specifying the numbers of mixture components
-#'   (clusters) to fit. The values must be between 2 and the number of sequences
-#'   minus 1.
+#'   (clusters) to fit. The values must be between 2 and the number of
+#'   sequences minus 1.
+#' @param cluster_names An optional `character` vector of cluster names.
+#'   The default naming scheme is Cluster 1, Cluster 2, etc. The length of
+#'   the vector must be the same as the largest value of `k`.
 #' @param criterion A `character` string specifying the information criterion
 #'   to use for model selection. Either `"bic"` (default) for Bayesian
 #'   information criterion or `"aic"` for Akaike information criterion.
@@ -65,9 +68,10 @@
 #' }
 #'
 cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
-                        k, criterion = "bic", n_starts = 10L, min_size = 1L,
-                        progressbar = TRUE, max_iter = 500L, reltol = 1e-10,
-                        seed = 1L, parallel = FALSE, n_cores, cl) {
+                        k, cluster_names, criterion = "bic", n_starts = 10L,
+                        min_size = 1L, progressbar = TRUE, max_iter = 500L,
+                        reltol = 1e-10, seed = 1L, parallel = FALSE,
+                        n_cores, cl) {
   data_name <- deparse(substitute(data))
   mm <- ifelse_(
     missing(formula),
@@ -85,6 +89,12 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
   check_range(
     k, scalar = FALSE, type = "integer", lower = 2L, upper = nrow(data) - 1L
   )
+  cluster_names <- cluster_names %m% paste("Cluster", seq_len(max(k)))
+  stopifnot_(
+    length(cluster_names) == max(k) && is.character(cluster_names),
+    "Argument {.arg cluster_names} must be a {.cls character}
+     vector with {.code max(k)} elements."
+  )
   s <- length(attr(data, "labels"))
   if (parallel && missing(cl)) {
     stopifnot_(
@@ -93,7 +103,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
       "Please install the {.pkg parallel}, {.pkg doParallel}
        packages for parallel computation."
     )
-    n_cores <- ifelse_(missing(n_cores), parallel::detectCores(), n_cores)
+    n_cores <- n_cores %m% parallel::detectCores()
     n_cores <- min(n_cores, parallel::detectCores())
     cl <- parallel::makeCluster(n_cores)
     doParallel::registerDoParallel(cl)
@@ -174,6 +184,9 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     )
     out <- results[[1L]]
   }
+  cluster_names <- cluster_names[seq_len(out$k)]
+  out$cluster_names <- cluster_names
+  names(out$inits) <- names(out$trans) <- names(out$beta) <- cluster_names
   out$data <- data
   out$data_name <- data_name
   if (!missing(formula)) {
@@ -250,7 +263,9 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
       k = k,
       bic = bic,
       aic = aic,
-      models = best$models,
+      inits = best$inits,
+      trans = best$trans,
+      beta = best$beta,
       n_parameters = n_param,
       converged = best$converged,
       iterations = best$iterations,
@@ -275,18 +290,19 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
   p <- ncol(data)
   prior <- stats::runif(k)
   prior <- prior / sum(prior)
-  models <- vector("list", length = k)
+  inits <- vector("list", length = k)
+  trans <- vector("list", length = k)
+  beta <- vector("list", length = k)
   for (i in seq_len(k)) {
-    inits <- stats::runif(s)
-    inits <- inits / sum(inits)
-    trans <- matrix(stats::runif(s^2), s, s)
-    trans <- trans / .rowSums(trans, s, s)
-    dimnames(trans) <- state_names
-    names(inits) <- labels
-    models[[i]] <- list(inits = inits, trans = trans)
+    inits[[i]] <- stats::runif(s)
+    inits[[i]] <- inits[[i]] / sum(inits[[i]])
+    trans[[i]] <- matrix(stats::runif(s^2), s, s)
+    trans[[i]] <- trans[[i]] / .rowSums(trans[[i]], s, s)
+    dimnames(trans[[i]]) <- state_names
+    names(inits[[i]]) <- labels
   }
   idx <- seq_len(n)
-  trans <- array(0L, dim = c(n, s, s))
+  trans_count <- array(0L, dim = c(n, s, s))
   from_na <- is.na(data[, 1L])
   init_state <- data[!from_na, 1L]
   init_state_idx <- lapply(1:s, function(x) which(init_state == x))
@@ -296,7 +312,7 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     to_na <- is.na(to)
     any_na <- from_na | to_na
     new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-    trans[new_trans] <- trans[new_trans] + 1L
+    trans_count[new_trans] <- trans_count[new_trans] + 1L
     from_na <- to_na
   }
   iter <- 0L
@@ -311,10 +327,9 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     iter <- iter + 1L
     # E-step
     for (j in 1:k) {
-      trans_prob <- models[[j]]$trans
-      log_prob <- log(models[[j]]$inits[init_state]) + log(prior[j])
-      loglik_mat[, j] <- log_prob + apply(trans, 1L, function(x) {
-        sum(x * log(trans_prob + 1e-10))
+      log_prob <- log(inits[[j]][init_state]) + log(prior[j])
+      loglik_mat[, j] <- log_prob + apply(trans_count, 1L, function(x) {
+        sum(x * log(trans[[j]] + 1e-10))
       })
     }
     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
@@ -323,17 +338,17 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     prior[] <- .colMeans(posterior, m = n, n = k)
     for (j in 1:k) {
       post_clust <- posterior[, j]
-      inits <- vapply(
-        1:s,
+      inits_new <- vapply(
+        seq_len(s),
         function(x) {
           sum(post_clust[init_state_idx[[x]]])
         },
         numeric(1L)
       )
-      models[[j]]$inits[] <- (inits + 1e-10) / sum(inits + s * 1e-10)
+      inits[[j]][] <- (inits_new + 1e-10) / sum(inits_new + s * 1e-10)
       post_clust_arr[] <- rep(post_clust, s^2)
-      trans_new <- apply(trans * post_clust_arr, c(2L, 3L), sum)
-      models[[j]]$trans[] <- trans_new / .rowSums(trans_new, s, s)
+      trans_new <- apply(trans_count * post_clust_arr, c(2L, 3L), sum)
+      trans[[j]][] <- trans_new / .rowSums(trans_new, s, s)
     }
     loglik <- sum(log_sum_exp_vec)
     if (iter > 1L) {
@@ -342,9 +357,9 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     loglik_prev <- loglik
   }
   hessian <- matrix(0.0, k - 1L, k - 1L)
-  models[[1L]]$beta <- c(`(Intercept)` = 0.0)
+  beta[[1L]] <- c(`(Intercept)` = 0.0)
   for (j in 2:k) {
-    models[[j]]$beta = c(`(Intercept)` = log(prior[j] / prior[1L]))
+    beta[[j]] <- c(`(Intercept)` = log(prior[j] / prior[1L]))
     for (l in 2:j) {
       hessian[j - 1L, l - 1L] <- -1.0 *
         sum(posterior[, j] * ((j == l) - posterior[, l]))
@@ -354,14 +369,16 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     }
   }
   list(
-    prior = prior,
+    prior = matrix(rep(prior, each = n), nrow = n, ncol = k),
     posterior = posterior,
     loglik = loglik,
-    models = models,
+    inits = inits,
+    trans = trans,
+    beta = beta,
     hessian = hessian,
     converged = iter < max_iter,
     iterations = iter,
-    sizes = table(factor(max.col(posterior), levels = 1:k))
+    sizes = table(factor(max.col(posterior), levels = seq_len(k)))
   )
 }
 
@@ -379,25 +396,21 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
   n <- nrow(data)
   p <- ncol(data)
   q <- ncol(mm)
-  models <- vector("list", length = k)
+  inits <- vector("list", length = k)
+  trans <- vector("list", length = k)
+  beta <- vector("list", length = k)
   for (i in seq_len(k)) {
-    inits <- stats::runif(s)
-    inits <- inits / sum(inits)
-    trans <- matrix(stats::runif(s^2), s, s)
-    trans <- trans / .rowSums(trans, s, s)
-    dimnames(trans) <- state_names
-    names(inits) <- labels
-    models[[i]] <- list(
-      inits = inits,
-      trans = trans,
-      beta = stats::setNames(
-        rep(0, q) + (i > 1) * stats::runif(q, 0.5, 1.0),
-        colnames(mm)
-      )
-    )
+    inits[[i]] <- stats::runif(s)
+    inits[[i]] <- inits[[i]] / sum(inits[[i]])
+    trans[[i]] <- matrix(stats::runif(s^2), s, s)
+    trans[[i]] <- trans[[i]] / .rowSums(trans[[i]], s, s)
+    dimnames(trans[[i]]) <- state_names
+    names(inits[[i]]) <- labels
+    beta[[i]] <- rep(0, q) + (i > 1) * stats::runif(q, 0.5, 1.0)
+    names(beta[[i]]) <- colnames(mm)
   }
   idx <- seq_len(n)
-  trans <- array(0L, dim = c(n, s, s))
+  trans_count <- array(0L, dim = c(n, s, s))
   from_na <- is.na(data[, 1L])
   init_state <- data[!from_na, 1L]
   init_state_idx <- lapply(1:s, function(x) which(init_state == x))
@@ -407,7 +420,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     to_na <- is.na(to)
     any_na <- from_na | to_na
     new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-    trans[new_trans] <- trans[new_trans] + 1L
+    trans_count[new_trans] <- trans_count[new_trans] + 1L
     from_na <- to_na
   }
   iter <- 0L
@@ -419,7 +432,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
   prior <- matrix(0, n, k)
   linpred <- matrix(0, n, k)
   for (j in 2:k) {
-    linpred[, j] <- mm %*% models[[j]]$beta
+    linpred[, j] <- mm %*% beta[[j]]
   }
   prior[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
   gradient <- numeric((k - 1L) * q)
@@ -429,16 +442,15 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     iter <- iter + 1L
     # E-step
     for (j in 1:k) {
-      trans_prob <- models[[j]]$trans
-      log_prob <- log(models[[j]]$inits[init_state]) + log(prior[, j])
-      loglik_mat[, j] <- log_prob + apply(trans, 1L, function(x) {
-        sum(x * log(trans_prob + 1e-10))
+      log_prob <- log(inits[[j]][init_state]) + log(prior[, j])
+      loglik_mat[, j] <- log_prob + apply(trans_count, 1L, function(x) {
+        sum(x * log(trans[[j]] + 1e-10))
       })
     }
     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
     # M-step
-    beta_prev <- unlist(lapply(models[-1L], "[[", "beta"))
+    beta_prev <- unlist(beta[-1L])
     # Iteratively Reweighted Least Squares
     for (r in 1:max_iter) {
       hessian <- matrix(0i, (k - 1L) * q, (k - 1L) * q)
@@ -464,13 +476,13 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
       f <- norm(hessian, type = "F")
       lambda <- diag(rep(max(1e-8, 1e-6 * f), q * (k - 1L)))
       # TODO step size argument
-      beta <- beta_prev - 0.1 * solve(hessian - lambda) %*% gradient
-      beta_diff <- sum((beta - beta_prev)^2)
-      beta_prev <- beta
+      beta_vec <- beta_prev - 0.1 * solve(hessian - lambda) %*% gradient
+      beta_diff <- sum((beta_vec - beta_prev)^2)
+      beta_prev <- beta_vec
       for (j in 2:k) {
         idx <- seq((j - 2) * q + 1, (j - 1) * q)
-        models[[j]]$beta[] <- beta[idx]
-        linpred[, j] <- mm %*% models[[j]]$beta
+        beta[[j]][] <- beta_vec[idx]
+        linpred[, j] <- mm %*% beta[[j]]
       }
       prior[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
       # TODO tol argument for beta
@@ -480,17 +492,17 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     }
     for (j in 1:k) {
       post_clust <- posterior[, j]
-      inits <- vapply(
-        1:s,
+      inits_new <- vapply(
+        seq_len(s),
         function(x) {
           sum(post_clust[init_state_idx[[x]]])
         },
         numeric(1L)
       )
-      models[[j]]$inits[] <- (inits + 1e-10) / sum(inits + s * 1e-10)
+      inits[[j]][] <- (inits_new + 1e-10) / sum(inits_new + s * 1e-10)
       post_clust_arr[] <- rep(post_clust, s^2)
-      trans_new <- apply(trans * post_clust_arr, c(2L, 3L), sum)
-      models[[j]]$trans[] <- trans_new / .rowSums(trans_new, s, s)
+      trans_new <- apply(trans_count * post_clust_arr, c(2L, 3L), sum)
+      trans[[j]][] <- trans_new / .rowSums(trans_new, s, s)
     }
     loglik <- sum(log_sum_exp_vec)
     if (iter > 1L) {
@@ -502,10 +514,12 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     prior = prior,
     posterior = posterior,
     loglik = loglik,
-    models = models,
+    trans = trans,
+    inits = inits,
+    beta = beta,
     hessian = hessian,
     converged = iter < max_iter,
     iterations = iter,
-    sizes = table(factor(max.col(posterior), levels = 1:k))
+    sizes = table(factor(max.col(posterior), levels = seq_len(k)))
   )
 }

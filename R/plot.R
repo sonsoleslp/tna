@@ -115,12 +115,8 @@ plot.tna <- function(x, labels, colors, pie, cut,
   check_range(edge.label.position, scalar = FALSE)
   layout <- check_layout(x, layout = layout, layout_args)
   vsize <- list(...)$vsize
-  if (missing(pie)) {
-    pie <- x$inits
-  }
-  if (missing(labels)) {
-    labels <- x$labels
-  }
+  pie <- pie %m% x$inits
+  labels <- labels %m% x$labels
   if (missing(colors)) {
     colors <- ifelse_(
       is.null(x$data),
@@ -128,9 +124,7 @@ plot.tna <- function(x, labels, colors, pie, cut,
       attr(x$data, "colors")
     )
   }
-  if (missing(cut)) {
-    cut <- stats::median(x$weights, na.rm = TRUE)
-  }
+  cut <- cut %m% stats::median(x$weights, na.rm = TRUE)
   lty <- 1
   if (!is.null(attr(x, "pruning")) && show_pruned) {
     lty <- x$weights
@@ -260,11 +254,7 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     warning_("No {size}-cliques were found in the network.")
     return(invisible(NULL))
   }
-  colors <- ifelse_(
-    missing(colors),
-    attr(x, "colors"),
-    colors
-  )
+  colors <- colors %m% attr(x, "colors")
   labels <- attr(x, "labels")
   max_cliques <- min(first + n - 1L, n_cliques)
   if (interactive()) { # nocov start
@@ -339,11 +329,7 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
     "The {.val {method}} method is not available in {.arg x}."
   )
   y <- attr(x, "tna")
-  colors <- ifelse_(
-    missing(colors),
-    default_colors,
-    colors
-  )
+  colors <- colors %m% default_colors
   plot(y, colors = map_to_color(x$assignment[[method]], colors), ...)
 }
 
@@ -530,11 +516,7 @@ plot.tna_permutation <- function(x, colors,
                                  posCol = "#009900", negCol = "red", ...) {
   check_missing(x)
   check_class(x, "tna_permutation")
-  colors <- ifelse_(
-    missing(colors),
-    attr(x, "colors"),
-    colors
-  )
+  colors <- colors %m% attr(x, "colors")
   plot_model(
     x$edges$diffs_sig,
     labels = attr(x, "labels"),
@@ -983,15 +965,9 @@ plot_model <- function(x, labels, colors, cut,
     "Argument {.arg x} must be a square matrix."
   )
   nc <- ncol(x)
-  if (missing(labels)) {
-    labels <- seq_len(nc)
-  }
-  if (missing(colors)) {
-    colors <- color_palette(nc)
-  }
-  if (missing(cut)) {
-    cut <- stats::median(x, na.rm = TRUE)
-  }
+  labels <- labels %m% seq_len(nc)
+  colors <- colors %m% color_palette(nc)
+  cut <- cut %m% stats::median(x, na.rm = TRUE)
   layout <- check_layout(x, layout, layout_args)
   qgraph::qgraph(
     input = x,
@@ -1273,7 +1249,7 @@ plot_sequences.default <- function(x, cols, group, type = "index",
     {.cls data.frame} or object."
   )
   x_names <- names(x)
-  cols <- ifelse_(missing(cols), x_names, cols)
+  cols <- cols %m% x_names
   check_cols(cols, x_names)
   if (!missing(group)) {
     group_len <- length(group)
@@ -1358,11 +1334,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
       time = factor(!!rlang::sym("time"), levels = cols),
       state = factor(!!rlang::sym("state"), levels = lev, labels = lab)
     )
-  colors <- ifelse_(
-    missing(colors),
-    color_palette(n_unique(long_data$state)),
-    colors
-  )
+  colors <- colors %m% color_palette(n_unique(long_data$state))
   if (show_n) {
     if (!missing(group)) {
       group_n <- x |>
@@ -1390,13 +1362,14 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
   }
 }
 
-create_index_plot <- function(x, group, colors, na_color, border, title, include_na,
-                              title_n, legend_title, xlab, ylab, tick, ncol) {
-  xlab <- ifelse_(missing(xlab), "Time", xlab)
-  ylab <- ifelse_(missing(ylab), "Sequence", ylab)
-  title <- ifelse_(missing(title), "\"Sequence Index Plot \"", title)
-  title <- str2expression(paste0(title, " * ", title_n))
-  legend_title <- ifelse_(missing(legend_title), NULL, legend_title)
+create_index_plot <- function(x, group, colors, na_color, border,
+                              title, include_na, title_n, legend_title,
+                              xlab, ylab, tick, ncol) {
+  title <- title %m% "Sequence Index Plot"
+  xlab <- xlab %m% "Time"
+  ylab <- ylab %m% "Sequence"
+  legend_title <- legend_title %m% NULL
+  title <- str2expression(paste0("\"", title, " \" * ", title_n))
   every_nth <- function(y) y[(seq_along(y) - 1L) %% tick == 0]
   if (!include_na) {
     x <- x |> tidyr::drop_na()
@@ -1442,17 +1415,18 @@ create_index_plot <- function(x, group, colors, na_color, border, title, include
 }
 
 create_distribution_plot <- function(x, group, scale, geom, include_na,
-                                     colors, na_color, border, title, title_n,
-                                     legend_title, xlab, ylab, tick, ncol) {
-  xlab <- ifelse_(missing(xlab), "Time", xlab)
+                                     colors, na_color, border,
+                                     title, title_n, legend_title,
+                                     xlab, ylab, tick, ncol) {
+  title <- title %m% "Sequence Distribution Plot"
+  xlab <- xlab %m% "Time"
   ylab <- ifelse_(
     missing(ylab),
     ifelse_(scale == "proportion", "Proportion", "Count"),
     ylab
   )
-  title <- ifelse_(missing(title), "\"Sequence Distribution Plot \"", title)
-  title <- str2expression(paste0(title, " * ", title_n))
-  legend_title <- ifelse_(missing(legend_title), NULL, legend_title)
+  legend_title <- legend_title %m% NULL
+  title <- str2expression(paste0("\"", title, " \" * ", title_n))
   every_nth <- function(y) y[(seq_along(y) - 1L) %% tick == 0]
   position <- ifelse_(scale == "proportion", "fill", "stack")
   if (!include_na) {
@@ -1465,7 +1439,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
         x = !!rlang::sym("time"),
         fill = !!rlang::sym("state")
       )
-    )+
+    ) +
       ggplot2::geom_bar(na.rm = FALSE, width = 1, position = position) +
       ggplot2::scale_x_discrete(breaks = every_nth)
   } else if (geom == "area") {
@@ -1477,7 +1451,7 @@ create_distribution_plot <- function(x, group, scale, geom, include_na,
         x = !!rlang::sym("time"),
         fill = !!rlang::sym("state")
       )
-    )+
+    ) +
       ggplot2::geom_area(position = position, stat = "count") +
       ggplot2::scale_x_continuous(
         breaks = every_nth(seq_along(time_levels)),
@@ -1580,12 +1554,12 @@ hist.group_tna <- function(x, ...) {
 plot.group_tna <- function(x, title, which, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  if (missing(title)) {
-    title <- names(x)
-  } else if (length(title) == 1) {
-    title <- rep(title, length(x))
-  }
-  which <- ifelse_(missing(which), seq_along(x), which)
+  title <- ifelse_(
+    missing(title),
+    names(x),
+    rep(title, length(x))
+  )
+  which <- which %m% seq_along(x)
   stopifnot_(
     all(which %in% seq_along(x)),
     "Argument {.arg which} must only contain valid cluster indices."
@@ -1754,11 +1728,7 @@ plot.group_tna_stability <- function(x, ...) {
 plot.group_tna_permutation <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna_permutation")
-  title <- ifelse_(
-    missing(title),
-    names(x),
-    title
-  )
+  title <- title %m% names(x)
   invisible(
     lapply(
       seq_along(x),
@@ -1829,7 +1799,7 @@ plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
                                        hjust = 1.2, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  label <- ifelse_(missing(label), attr(x, "label"), label)
+  label <- label %m% attr(x, "label")
   combined <- combine_data(x)
   long <- tidyr::pivot_longer(combined, cols = !(!!rlang::sym(".group")))
   check_values(width, type = "numeric")
@@ -1972,7 +1942,7 @@ plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   check_values(digits, strict = TRUE)
-  label <- ifelse_(missing(label), attr(x, "label"), label)
+  label <- label %m% attr(x, "label")
   combined <- combine_data(x)
   long <- tidyr::pivot_longer(combined, cols = !(!!rlang::sym(".group")))
   labels <- x[[1L]]$labels

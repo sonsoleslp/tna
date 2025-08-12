@@ -4,12 +4,12 @@
 \alias{print.tna_mmm}
 \title{Print a Mixture Markov Model Fit}
 \usage{
-\method{print}{tna_mmm}(x, ...)
+\method{print}{tna_mmm}(x, digits = 3L, ...)
 }
 \arguments{
 \item{x}{A \code{tna_mmm} object.}
 
-\item{...}{Not used.}
+\item{...}{Arguments passed to the generic \code{print} method}
 }
 \value{
 \code{x} (invisibly)
@@ -18,9 +18,11 @@
 Print a Mixture Markov Model Fit
 }
 \examples{
-\dontrun{
-model <- cluster_mmm(engagement, k = 3)
-print(model)
-}
+print(engagement_tna_mmm)
 
 }
+\seealso{
+Other groups: 
+\code{\link{print.summary.tna_mmm}()}
+}
+\concept{groups}

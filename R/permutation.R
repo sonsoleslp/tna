@@ -98,7 +98,7 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
   check_flag(paired)
   check_range(level, lower = 0, upper = 1)
   x_names <- names(x)
-  groups <- ifelse_(missing(groups), seq_along(x), groups)
+  groups <- groups %m% seq_along(x)
   check_cluster(x, groups)
   groups <- ifelse_(
     is.character(groups),

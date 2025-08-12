@@ -20,6 +20,6 @@ details.
 Summarize a Mixture Markov Model Fit
 }
 \examples{
-# TODO
+summary(engagement_tna_mmm)
 
 }

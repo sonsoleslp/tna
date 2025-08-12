@@ -118,6 +118,48 @@ summary.tna_bootstrap <- function(object, ...) {
   )
 }
 
+#' Summarize a Mixture Markov Model Fit
+#'
+#' @export
+#' @param object A `tna_mmm` object.
+#' @param ... Not used.
+#' @return A `summary.tna_mmm` object containing the log-likelihood value,
+#' the regression coefficients, the variance-covariance matrix and other
+#' details.
+#' @examples
+#' summary(engagement_tna_mmm)
+#'
+summary.tna_mmm <- function(object, ...) {
+  check_missing(object)
+  check_class(object, "tna_mmm")
+  assignment <- max.col(object$posterior)
+  mean_prob <- do.call(
+    "rbind",
+    lapply(
+      seq_len(object$k),
+      function(i) {
+        colMeans(object$posterior[assignment == i, ])
+      }
+    )
+  )
+  dimnames(mean_prob) <- list(object$cluster_names, object$cluster_names)
+  structure(
+    list(
+      loglik = object$loglik,
+      aic = object$aic,
+      bic = object$bic,
+      coefficients = coef(object, ...),
+      vcov = vcov(object, ...),
+      prior = object$prior,
+      posterior = object$posterior,
+      assignment = factor(assignment, labels = object$cluster_names),
+      classification = mean_prob,
+      cluster_names = object$cluster_names
+    ),
+    class = "summary.tna_mmm"
+  )
+}
+
 #' Calculate Summary of Network Metrics for a grouped Transition Network
 #'
 #' This function calculates a variety of network metrics for a `tna` object.
@@ -214,48 +256,5 @@ summary.group_tna_bootstrap <- function(object, ...) {
       .id = "group"
     ),
     class = c("summary.group_tna_bootstrap", "data.frame")
-  )
-}
-
-#' Summarize a Mixture Markov Model Fit
-#'
-#' @export
-#' @param object A `tna_mmm` object.
-#' @param ... Not used.
-#' @return A `summary.tna_mmm` object containing the log-likelihood value,
-#' the regression coefficients, the variance-covariance matrix and other
-#' details.
-#' @examples
-#' # TODO
-#'
-summary.tna_mmm <- function(object, ...) {
-  check_missing(object)
-  check_class(object, "tna_mmm")
-  assignment <- max.col(object$posterior)
-  mean_prob <- do.call(
-    "rbind",
-    lapply(
-      seq_len(object$k),
-      function(i) {
-        colMeans(object$posterior[assignment == i, ])
-      }
-    )
-  )
-  dimnames(mean_prob) <- list(object$states, object$states)
-  structure(
-    list(
-      loglik = object$loglik,
-      aic = object$aic,
-      bic = object$bic,
-      vcov = -1.0 * solve(object$hessian),
-      prior = object$prior,
-      posterior = object$posterior,
-      assignment = factor(
-        assignment,
-        labels = paste("Cluster", seq_len(object$k))
-      ),
-      classification = mean_prob
-    ),
-    class = "summary.tna_mmm"
   )
 }

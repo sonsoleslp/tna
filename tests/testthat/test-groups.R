@@ -49,7 +49,7 @@ test_that("group_model returns correct type", {
   )
 })
 
-test_that("mixed Markov model statistics can be obtained", {
+test_that("mixture Markov model statistics can be obtained", {
   expect_error(
     mmm_stats(engagement_mmm),
     NA
@@ -120,6 +120,13 @@ test_that("missing values in group variable warns", {
 test_that("groupwise models can be constructed with scaling", {
   expect_error(
     group_model(engagement_mmm, scaling = c("minmax", "rank", "max")),
+    NA
+  )
+})
+
+test_that("group model can be constructed from a mixture Markov model", {
+  expect_error(
+    group_model(engagement_tna_mmm),
     NA
   )
 })
