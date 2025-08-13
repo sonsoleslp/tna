@@ -397,7 +397,7 @@ print.tna_mmm <- function(x, digits = 3L, ...) {
   cat("Number of clusters:", x$k, "\n")
   cat("States:", cs(x$states), "\n")
   cat("Coefficients :\n")
-  print(coef(x))
+  print(coef(x), digits = digits)
   cat("\n")
   cat("Intial probabilities :\n")
   print.listof(x$inits, digits = digits)

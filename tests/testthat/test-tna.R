@@ -206,3 +206,16 @@ test_that("sna fails with incorrect aggregate", {
     "Argument `aggregate` must be a function that takes a <numeric> vector and returns a single <numeric> value\\."
   )
 })
+
+test_that("tna from tsn works", {
+  expect_error(
+    model <- build_model(mock_tsn),
+    NA
+  )
+  expect_true(
+    all(model$weights > 0)
+  )
+  expect_true(
+    all(model$inits > 0)
+  )
+})

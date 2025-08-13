@@ -25,10 +25,6 @@ mmm <- build_mmm(
 
 fit_mmm <- fit_model(
   mmm,
-  global_step = TRUE,
-  control_global = list(algorithm = "NLOPT_GD_STOGO_RAND"),
-  local_step = TRUE,
-  threads = 60,
   control_em = list(restart = list(times = 100, n_optimum = 101))
 )
 
@@ -46,9 +42,9 @@ engagement_tna_mmm <- cluster_mmm(
   engagement,
   k = 3,
   progressbar = FALSE,
-  seed = 213,
+  seed = 6000,
   parallel = TRUE,
-  n_starts = 200
+  n_starts = 100
 )
 
 usethis::use_data(
