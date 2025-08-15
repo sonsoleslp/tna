@@ -5,6 +5,7 @@
 #' for the number of clusters using information criteria (AIC or BIC).
 #'
 #' @export
+#' @family clusters
 #' @param data A `data.frame` or `matrix` where rows represent sequences and
 #'   columns represent time points. Missing values (`NA`) are handled
 #'   appropriately. The columns should be either `integer`, `character` or
@@ -147,7 +148,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
         cl = cl
       ),
       error = function(e) {
-        print(e)
+        # print(e)
         NULL
       }
     )

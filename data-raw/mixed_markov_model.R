@@ -38,6 +38,7 @@ usethis::use_data(
 
 # MMM using TNA
 
+# Seed selected to get the same cluster order as seqHMM
 engagement_tna_mmm <- cluster_mmm(
   engagement,
   k = 3,

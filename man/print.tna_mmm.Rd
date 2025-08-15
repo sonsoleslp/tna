@@ -22,7 +22,11 @@ print(engagement_tna_mmm)
 
 }
 \seealso{
-Other groups: 
-\code{\link{print.summary.tna_mmm}()}
+Cluster-related functions
+\code{\link{cluster_mmm}()},
+\code{\link{communities}()},
+\code{\link{group_model}()},
+\code{\link{mmm_stats}()},
+\code{\link{rename_groups}()}
 }
-\concept{groups}
+\concept{clusters}

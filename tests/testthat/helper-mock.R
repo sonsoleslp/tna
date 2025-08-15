@@ -68,6 +68,12 @@ mock_tsn <- structure(
   class = c("tsn", "data.frame")
 )
 
+mock_cluster_data <- data.frame(
+  T1 = c("A", "B", "A", "C", "A", "B"),
+  T2 = c("B", "A", "B", "A", "C", "A"),
+  T3 = c("C", "C", "A", "B", "B", "C")
+)
+
 {
   rlang::local_options(rlib_message_verbosity = "quiet")
   mock_tna_data <- prepare_data(

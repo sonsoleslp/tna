@@ -5,6 +5,7 @@
 \alias{group_model.default}
 \alias{group_model.mhmm}
 \alias{group_model.tna_mmm}
+\alias{group_model.tna_clustering}
 \alias{group_tna}
 \alias{group_ftna}
 \alias{group_ctna}
@@ -45,6 +46,16 @@ group_model(x, ...)
   ...
 )
 
+\method{group_model}{tna_clustering}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  groupwise = FALSE,
+  params = list(),
+  na.rm = TRUE,
+  ...
+)
+
 group_tna(x, ...)
 
 group_ftna(x, ...)
@@ -58,7 +69,8 @@ group_atna(x, ...)
 be used for building the Markov model. The argument \code{x} also accepts
 \code{data.frame} objects in wide format, and \code{tna_data} objects.
 Alternatively, the function accepts a mixture Markov model from \code{seqHMM}
-or from \code{\link[=cluster_mmm]{cluster_mmm()}}.}
+or from \code{\link[=cluster_mmm]{cluster_mmm()}}. This can also be the output of clustering from
+\code{\link[=cluster_sequences]{cluster_sequences()}}.}
 
 \item{...}{Ignored.}
 
@@ -67,7 +79,8 @@ row of the data/sequence. Must have the same length as the number of
 rows/sequences of \code{x}. Alternatively, a single \code{character} string giving
 the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object. If not provided, each row of
-the data forms a cluster.}
+the data forms a cluster. Not used when \code{x} is a mixture Markov model
+or a clustering result.}
 
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:
@@ -167,8 +180,10 @@ model <- group_atna(group_regulation, group = gl(2, 1000))
 }
 \seealso{
 Cluster-related functions
+\code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{mmm_stats}()},
+\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

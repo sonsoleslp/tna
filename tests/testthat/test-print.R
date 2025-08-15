@@ -210,3 +210,11 @@ test_that("mixture Markov model summary can be printed", {
     NA
   )
 })
+
+test_that("clustering output can be printed", {
+  clust <- cluster_sequences(mock_cluster_data, k = 2)
+  expect_error(
+    capture.output(print(clust)),
+    NA
+  )
+})

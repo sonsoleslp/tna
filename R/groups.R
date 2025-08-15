@@ -11,13 +11,15 @@
 #'   be used for building the Markov model. The argument `x` also accepts
 #'   `data.frame` objects in wide format, and `tna_data` objects.
 #'   Alternatively, the function accepts a mixture Markov model from `seqHMM`
-#'   or from [cluster_mmm()].
+#'   or from [cluster_mmm()]. This can also be the output of clustering from
+#'   [cluster_sequences()].
 #' @param group A `vector` indicating the group assignment of each
 #'   row of the data/sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
 #'   format `data.frame` or a `tna_data` object. If not provided, each row of
-#'   the data forms a cluster.
+#'   the data forms a cluster. Not used when `x` is a mixture Markov model
+#'   or a clustering result.
 #' @param cols An `integer`/`character` vector giving the indices/names of the
 #'   columns that should be considered as sequence data.
 #'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
@@ -196,6 +198,7 @@ group_model.mhmm <- function(x, type = "relative", scaling = character(0L),
     "Please install the {.pkg seqHMM} package."
   )
   check_missing(x)
+  check_class(x, "mhmm")
   group_model.default(
     x = x$observations,
     group = summary(x)$most_probable_cluster,
@@ -214,6 +217,7 @@ group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
                                 groupwise = FALSE, params = list(),
                                 na.rm = TRUE, ...) {
   check_missing(x)
+  check_class(x, "tna_mmm")
   lab <- attr(x$data, "labels")
   data <- as.data.frame(
     lapply(as.data.frame(x$data), function(y) factor(y, labels = lab))
@@ -222,6 +226,26 @@ group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
   group_model.default(
     x = data,
     group = assignment,
+    type = type,
+    scaling = scaling,
+    groupwise = groupwise,
+    params = params,
+    na.rm = na.rm,
+    ...
+  )
+}
+
+#' @export
+#' @rdname group_model
+group_model.tna_clustering <- function(x, type = "relative",
+                                       scaling = character(0L),
+                                       groupwise = FALSE, params = list(),
+                                       na.rm = TRUE, ...) {
+  check_missing(x)
+  check_class(x, "tna_clustering")
+  group_model.default(
+    x = x$data,
+    group = x$assignment,
     type = type,
     scaling = scaling,
     groupwise = groupwise,
@@ -297,7 +321,7 @@ rename_groups <- function(x, new_names) {
 
 #' Scale Transition Network Weights
 #'
-#' @param weights A `lsit` of edge weights matrices
+#' @param weights A `list` of edge weights matrices
 #' @param type Type of the transition network as a `character` string.
 #' @param scaling Scaling methods to apply as a `character` vector.
 #' @param a An `integer`, the number of states.
@@ -343,11 +367,6 @@ combine_data <- function(x) {
   data <- dplyr::bind_rows(
     lapply(x, function(y) as.data.frame(y$data))
   )
-  if (is.null(attr(x, "levels"))) {
-    data$.group <- unlist(groups)
-  } else {
-    data$.group <- attr(x, "levels")[unlist(groups)]
-  }
-
+  data$.group <- attr(x, "levels")[unlist(groups)]
   data
 }

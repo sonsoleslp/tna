@@ -105,3 +105,12 @@ model2 <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
 }
 
 }
+\seealso{
+Cluster-related functions
+\code{\link{communities}()},
+\code{\link{group_model}()},
+\code{\link{mmm_stats}()},
+\code{\link{print.tna_mmm}()},
+\code{\link{rename_groups}()}
+}
+\concept{clusters}

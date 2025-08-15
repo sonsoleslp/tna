@@ -209,6 +209,10 @@ test_that("sna fails with incorrect aggregate", {
 
 test_that("tna from tsn works", {
   expect_error(
+    tsn(mock_tsn),
+    NA
+  )
+  expect_error(
     model <- build_model(mock_tsn),
     NA
   )

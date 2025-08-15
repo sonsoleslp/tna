@@ -320,9 +320,6 @@ atna <- function(x, ...) {
 
 #' @export
 #' @rdname build_model
-#' @examples
-#' # TODO
-#'
 tsn <- function(x, ...) {
   build_model.tsn(x = x, ...)
 }
@@ -485,8 +482,6 @@ create_seqdata <- function(x, cols, alphabet) {
 initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
-  #cols <- attr(x, "cols")
-  #m <- as.matrix(x[, cols])
   a <- length(alphabet)
   inits <- factor(x[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))

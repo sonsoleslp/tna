@@ -387,3 +387,10 @@ test_that("association plots can be created", {
     NA
   )
 })
+
+test_that("node size can be scaled based on centrality measures", {
+  expect_error(
+    plot(mock_tna, scale_nodes = "OutStrength"),
+    NA
+  )
+})

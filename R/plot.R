@@ -1554,11 +1554,8 @@ hist.group_tna <- function(x, ...) {
 plot.group_tna <- function(x, title, which, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  title <- ifelse_(
-    missing(title),
-    names(x),
-    rep(title, length(x))
-  )
+  title <- title %m% names(x)
+  title <- rep_len(title, length(x))
   which <- which %m% seq_along(x)
   stopifnot_(
     all(which %in% seq_along(x)),
@@ -1580,13 +1577,17 @@ plot.group_tna <- function(x, title, which, ...) {
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Small number of iterations for CRAN
-#' boot <- bootstrap(model, iter = 50)
+#' boot <- bootstrap(model, iter = 10)
 #' plot(boot)
 #'
-plot.group_tna_bootstrap <- function(x, title = names(x), ...) {
+plot.group_tna_bootstrap <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna_bootstrap")
-  invisible(lapply(x, plot.tna_bootstrap, ...))
+  title <- title %m% names(x)
+  title <- rep_len(title, length(x))
+  invisible(
+    Map(function(y, i) plot.tna_bootstrap(y, title = i, ...), x, title)
+  )
 }
 
 #' Plot Centrality Measures
@@ -1630,11 +1631,8 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 plot.group_tna_cliques <- function(x, title, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
-  if (missing(title)) {
-    title <- names(x)
-  } else if (length(title) == 1) {
-    title <- rep(title, length(x))
-  }
+  title <- title %m% names(x)
+  title <- rep_len(title, length(x))
   invisible(
     Map(function(y, i) plot.tna_cliques(y, title = i, ...), x, title)
   )
@@ -1655,23 +1653,14 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' comm <- communities(model)
 #' plot(comm)
 #'
-plot.group_tna_communities <- function(x, title = names(x), colors, ...) {
+plot.group_tna_communities <- function(x, title, colors, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
   n <- length(x)
-  colors <- ifelse_(
-    missing(colors),
-    replicate(n, default_colors, simplify = FALSE),
-    ifelse_(
-      is.vector(colors) && is.atomic(colors),
-      replicate(n, colors, simplify = FALSE),
-      colors
-    )
-  )
-  if (is.null(title) ||
-      (is.vector(title) && is.atomic(title) && (length(title) == 1))) {
-    title <- replicate(n, title, simplify = FALSE)
-  }
+  colors <- colors %m% default_colors
+  colors <- rep_len(colors, n)
+  title <- title %m% names(x)
+  title <- rep_len(title, n)
   invisible(
     Map(
       function(y, i, j) {
@@ -1938,7 +1927,7 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
 #' model <- group_model(engagement_mmm)
 #' plot_mosaic(model)
 #'
-plot_mosaic.group_tna <- function(x, label, digits = 1, ...) {
+plot_mosaic.group_tna <- function(x, label, digits = 1L, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   check_values(digits, strict = TRUE)

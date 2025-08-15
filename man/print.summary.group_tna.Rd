@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A \code{summary.group_tna} object.}
 
-\item{...}{Arguments passed to \code{\link[=print.summary.tna]{print.summary.tna()}}.}
+\item{...}{Arguments passed to the \code{tibble} print method}
 }
 \value{
 \code{x} (invisibly).

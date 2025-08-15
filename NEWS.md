@@ -1,10 +1,14 @@
+# tna 1.1.0
+
+* Added the function `cluster_mmm()` to cluster sequence data by fitting mixture Markov models via the EM algorithm.
+* Added the function `cluster_sequences()` to cluster sequence data using string distance measures of the `stringdist` package.
+
 # tna 1.0.0
 
 * CRAN release
 
 # tna 0.7.0
 
-* Added the function `cluster_mmm()` to cluster sequence data by fitting a mixture Markov model via the EM algorithm.
 * Added the function `import_onehot()` to read one-hot data.
 * The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
 

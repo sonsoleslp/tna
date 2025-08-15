@@ -22,8 +22,4 @@ sumr <- summary(engagement_tna_mmm)
 print(sumr)
 
 }
-\seealso{
-Other groups: 
-\code{\link{print.tna_mmm}()}
-}
 \concept{groups}
