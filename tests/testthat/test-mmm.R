@@ -99,9 +99,9 @@ test_that("mixture Markov model statistics can be obtained", {
 })
 
 test_that("model fit failure is handled", {
-  expect_error(
+  expect_warning(
     cluster_mmm(engagement, k = 5, n_starts = 1, seed = 1),
-    "Fitting the model with k = 5 failed\\."
+    "All EM algorithm runs failed to converge\\."
   )
 })
 

@@ -132,13 +132,12 @@ summary.tna_bootstrap <- function(object, ...) {
 summary.tna_mmm <- function(object, ...) {
   check_missing(object)
   check_class(object, "tna_mmm")
-  assignment <- max.col(object$posterior)
   mean_prob <- do.call(
     "rbind",
     lapply(
       seq_len(object$k),
       function(i) {
-        colMeans(object$posterior[assignment == i, ])
+        colMeans(object$posterior[object$assignments == i, ])
       }
     )
   )
@@ -152,7 +151,7 @@ summary.tna_mmm <- function(object, ...) {
       vcov = vcov(object, ...),
       prior = object$prior,
       posterior = object$posterior,
-      assignment = factor(assignment, labels = object$cluster_names),
+      assignments = object$assignments,
       classification = mean_prob,
       cluster_names = object$cluster_names
     ),

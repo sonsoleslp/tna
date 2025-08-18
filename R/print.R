@@ -52,7 +52,7 @@ print.summary.tna_mmm <- function(x, digits = 3L, ...) {
   q <- nrow(cf)
   mean_prior <- colMeans(x$prior)
   names(mean_prior) <- x$cluster_names
-  clust_tab <- table(x$assignment)
+  clust_tab <- table(x$assignments)
   tab <- matrix(
     c(
       as.character(clust_tab),
@@ -395,9 +395,12 @@ print.tna_mmm <- function(x, digits = 3L, ...) {
   cat("Number of sequences:", nrow(x$data), "\n")
   cat("Number of time points:", ncol(x$data), "\n")
   cat("Number of clusters:", x$k, "\n")
-  cat("States:", cs(x$states), "\n")
+  cat("States:", cs(x$states), "\nn")
   cat("Coefficients :\n")
   print(coef(x), digits = digits)
+  cat("\n")
+  cat("Cluster sizes:\n")
+  print(x$sizes)
   cat("\n")
   cat("Intial probabilities :\n")
   print.listof(x$inits, digits = digits)

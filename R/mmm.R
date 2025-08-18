@@ -164,32 +164,36 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
   }
   if (k_len > 1L) {
     nulls <- vapply(results, is.null, logical(1L))
-    stopifnot_(
-      !all(nulls),
-      "Fitting the model failed with all values of {.arg k}."
-    )
-    if (any(nulls)) {
-      failed <- k[which(nulls)]
-      k_failed <- cs(failed)
-      warning_(
-        "Fitting the model with k = {k_failed} failed."
-      )
-    }
+    # stopifnot_(
+    #   !all(nulls),
+    #   "Fitting the model failed with all values of {.arg k}."
+    # )
+    # if (any(nulls)) {
+    #   failed <- k[which(nulls)]
+    #   k_failed <- cs(failed)
+    #   warning_(
+    #     "Fitting the model with k = {k_failed} failed."
+    #   )
+    # }
     results <- results[!nulls]
     criteria <- vapply(results, "[[", numeric(1L), criterion)
     out <- results[[which.min(criteria)]]
   } else {
-    stopifnot_(
-      !is.null(results[[1L]]),
-      "Fitting the model with k = {k} failed."
-    )
+    # stopifnot_(
+    #   !is.null(results[[1L]]),
+    #   "Fitting the model with k = {k} failed."
+    # )
     out <- results[[1L]]
   }
   cluster_names <- cluster_names[seq_len(out$k)]
   out$cluster_names <- cluster_names
-  names(out$inits) <- names(out$trans) <- names(out$beta) <- cluster_names
+  names(out$inits) <- cluster_names
+  names(out$trans) <- cluster_names
+  names(out$beta) <- cluster_names
+  names(out$sizes) <- cluster_names
   out$data <- data
   out$data_name <- data_name
+  out$assignments <- factor(max.col(out$posterior), labels = cluster_names)
   if (!missing(formula)) {
     out$formula <- formula
   }
@@ -232,20 +236,26 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
   #   }
   #   results[[i]] <- res
   # }
-  valid <- vapply(
-    results,
-    function(x) {
-      x$converged && min(x$sizes) >= min_size
-    },
-    logical(1L)
-  )
-  valid_results <- results[valid]
-  stopifnot_(
-    any(valid),
-    "All EM algorithm runs failed."
-  )
-  logliks <- vapply(valid_results, "[[", numeric(1L), "loglik")
-  best <- valid_results[[which.max(logliks)]]
+  #converged <- vapply(results, "[[", logical(1L), "converged")
+  # has_min <- vapply(
+  #   results,
+  #   function(x) {
+  #     min(x$sizes) >= min_size
+  #   },
+  #   logical(1L)
+  # )
+  # if (all(!converged)) {
+  #   warning_(
+  #     "All EM algorithm runs failed to converge."
+  #   )
+  # }
+  # if (all(!has_min)) {
+  #   warning_(
+  #     "Minimum cluster size constraint was not satisfied."
+  #   )
+  # }
+  logliks <- vapply(results, "[[", numeric(1L), "loglik")
+  best <- results[[which.max(logliks)]]
   q <- ifelse_(is.null(mm), 1L, ncol(mm))
   n <- nrow(data)
   # Parameters: mixture + initial + transition
@@ -270,6 +280,7 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
       n_parameters = n_param,
       converged = best$converged,
       iterations = best$iterations,
+      sizes = best$sizes,
       states = lab
     ),
     class = "tna_mmm"
@@ -452,7 +463,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
     # M-step
     beta_prev <- unlist(beta[-1L])
-    # Iteratively Reweighted Least Squares
+    # Multinomial regression
     for (r in 1:max_iter) {
       hessian <- matrix(0i, (k - 1L) * q, (k - 1L) * q)
       for (j in 2:k) {
@@ -477,7 +488,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
       f <- norm(hessian, type = "F")
       lambda <- diag(rep(max(1e-8, 1e-6 * f), q * (k - 1L)))
       # TODO step size argument
-      beta_vec <- beta_prev - 0.1 * solve(hessian - lambda) %*% gradient
+      beta_vec <- beta_prev - 0.5 * solve(hessian - lambda) %*% gradient
       beta_diff <- sum((beta_vec - beta_prev)^2)
       beta_prev <- beta_vec
       for (j in 2:k) {
@@ -487,7 +498,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
       }
       prior[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
       # TODO tol argument for beta
-      if (beta_diff < 1e-6) {
+      if (beta_diff < 1e-4) {
         break
       }
     }
