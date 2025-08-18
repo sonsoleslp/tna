@@ -1,3 +1,5 @@
+# Model comparison --------------------------------------------------------
+
 #' Compare Two Matrices or TNA Models with Comprehensive Metrics
 #'
 #' Various distances, measures of dissimilarity and similarity, correlations
@@ -353,4 +355,41 @@ rv_coefficient <- function(x, y) {
   tr_xx_xx <- sum(diag(xx %*% xx))
   tr_yy_yy <- sum(diag(yy %*% yy))
   tr_xx_yy / sqrt(tr_xx_xx * tr_yy_yy)
+}
+
+
+# Sequence comparison -----------------------------------------------------
+
+compare_sequences <- function(x, ...) {
+  UseMethod("compare_sequences")
+}
+
+extract_subsequences <- function(m, q, labels) {
+  n <- nrow(m)
+  p <- ncol(m)
+  out <- character(n * sum(p - q + 1L))
+  idx <- seq(1L, n)
+  mis <- is.na(m)
+  for (i in seq_len(p - 1L)) {
+    for (j in q) {
+      if (i + j - 1L > p) {
+        next
+      }
+      pattern_idx <- i:(i + j - 1L)
+      pattern <- m[, pattern_idx]
+      pattern_mis <- mis[, pattern_idx]
+      invalid <- apply(pattern_mis, 1L, any)
+      subseq <- apply(
+        pattern,
+        1L,
+        function(x) {
+          paste0(labels[x], collapse = "-")
+        }
+      )
+      out[idx] <- subseq
+      out[idx[invalid]] <- ""
+      idx <- idx + n
+    }
+  }
+  out[nzchar(out)]
 }
