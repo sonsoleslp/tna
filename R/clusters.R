@@ -17,6 +17,15 @@
 #'   `"complete"`,`"average"`, `"single"`, `"mcquitty"`, `"median"`, and
 #'   `"centroid"`. See [cluster::pam()] and [stats::hclust()] for more
 #'   information on these methods.
+#' @param na_syms A `character` vector of symbols or factor levels to convert
+#'   to explicit missing values.
+#' @param weighted A `logical` value indicating whether the dissimilarity
+#'   measure should be weighted (the default is `FALSE` for no weighting).
+#'   If `TRUE`, earlier observations of the sequences receive a greater weight
+#'   in the distance calculation with an exponential decay. Currently only
+#'   supported for the Hamming distance.
+#' @param lambda A `numeric` value defining the strength of the decay when
+#'   `weighted = TRUE`. The default is `1.0`.
 #' @param ... Additional arguments passed to [stringdist::stringdist()].
 #' @return A `tna_clustering` object which is a  `list` containing:
 #'
@@ -40,8 +49,9 @@
 #' print(result)
 #'
 #' @export
-cluster_sequences <- function(data, k, dissimilarity = "osa",
-                              method = "pam", na_syms = c("*", "%"), ...) {
+cluster_sequences <- function(data, k, dissimilarity = "hamming",
+                              method = "pam", na_syms = c("*", "%"),
+                              weighted = FALSE, lambda = 1.0, ...) {
   stopifnot_(
     is.data.frame(data) || is.matrix(data),
     "Argument {.arg data} must be a {.cls data.frame} or a {.cls matrix}."
@@ -55,13 +65,27 @@ cluster_sequences <- function(data, k, dissimilarity = "osa",
     method,
     available_clustering_methods
   )
-  strings <- seq2str(data, na_syms)
-  dist_mat <- stringdist::stringdistmatrix(
-    a = strings,
-    method = dissimilarity,
-    ...
+  stopifnot_(
+    !weighted || dissimilarity == "hamming",
+    "Weighting is only supported for the Hamming distance."
   )
-  # Perform clustering
+  if (weighted && dissimilarity == "hamming") {
+    dist_mat <- weighted_hamming(
+      mat = seq2str(
+        data,
+        na_syms = na_syms,
+        na_include = TRUE,
+        collapse = FALSE
+      ),
+      lambda = lambda
+    )
+  } else {
+    dist_mat <- stringdist::stringdistmatrix(
+      a = seq2str(data, na_syms),
+      method = dissimilarity,
+      ...
+    )
+  }
   if (method == "pam") {
     clust_result <- cluster::pam(dist_mat, diss = TRUE, k = k)
     assignments <- clust_result$clustering
@@ -91,8 +115,12 @@ cluster_sequences <- function(data, k, dissimilarity = "osa",
 #'
 #' @param data A `data.frame` or a `matrix`
 #' @param na_syms An optional `vector` of values to convert to `NA` values.
+#' @param na_convert A `logical` value indicating whether to include missing
+#'   values as an explicit value.
+#' @param collapse A `logical` value indicating whether the character matrix
+#'   should be collapsed to a `vector` of strings.
 #' @noRd
-seq2str <- function(data, na_syms) {
+seq2str <- function(data, na_syms, na_include = FALSE, collapse = TRUE) {
   data <- as.matrix(data)
   chr_mat <- matrix(NA_character_, nrow = nrow(data), ncol = ncol(data))
   data[data %in% na_syms] <- NA
@@ -102,13 +130,41 @@ seq2str <- function(data, na_syms) {
   obs_vals <- data[obs]
   idx <- match(obs_vals, u_vals)
   chr_mat[obs] <- base[idx]
-  apply(
-    chr_mat,
-    1L,
-    function(x) {
-      paste0(x[!is.na(x)], collapse = "")
+  if (na_include) {
+    chr_mat[!obs] <- base[max(idx) + 1L]
+  }
+  if (collapse) {
+    apply(
+      chr_mat,
+      1L,
+      function(x) {
+        paste0(x[!is.na(x)], collapse = "")
+      }
+    )
+  } else {
+    chr_mat
+  }
+}
+
+#' Attention-Weighted Hamming Distance
+#'
+#' @param mat A `character` matrix
+#' @param lambda A `numeric` value for the decay rate
+#' @noRd
+weighted_hamming <- function(mat, lambda) {
+  n <- nrow(mat)
+  k <- ncol(mat)
+  weights <- rev(cumsum(exp(-lambda * seq(0, k - 1))))
+  weights <- weights / max(weights)
+  d <- matrix(0.0, n, n)
+  for (i in seq_len(n - 1L)) {
+    for (j in seq(i + 1L, n)) {
+      d[i, j] <- d[j, i] <- sum(
+        (mat[i, ] != mat[j, ]) * weights
+      )
     }
-  )
+  }
+  as.dist(d)
 }
 
 available_clustering_dissimilarities <- c(
