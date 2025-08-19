@@ -653,6 +653,100 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
     ggplot2::ylim(-1, 1)
 }
 
+#' Plot a Sequence Comparison
+#'
+#' @export
+#' @family comparison
+#' @param x A `tna_sequence_comparison` object.
+#' @param n An `integer` giving the number of patterns to plot.
+#'   The default is `10`.
+#' @param legend  A `logical` value indicating whether to show the color scale
+#'   legend. The default is `TRUE`.
+#' @param cells A `logical` value indicating whether to display the
+#'   numeric values in each cell. The default is `FALSE`.
+#' @return A `ggplot` object.
+#' @examples
+#' # TODO
+plot.tna_sequence_comparison <- function(x, n = 10,
+                                         legend = TRUE, cells = FALSE, ...) {
+  pat <- x$pattern[seq_len(n)]
+  resid <- attr(x, "residuals")[pat, ]
+  m <- ncol(resid)
+  d <- data.frame(xmin = rep(0, n * m), xmax = 0, ymin = 0, ymax = 0)
+  for (i in seq_len(n)) {
+    for (j in seq_len(m)) {
+      row <- (i - 1) * m + j
+      d[row, "xmin"] <- j
+      d[row, "xmax"] <- j + 1.0
+      d[row, "ymin"] <- -i
+      d[row, "ymax"] <- -i - 1.0
+      d[row, "resid"] <- resid[i, j]
+      d[row, "label"] <- round(resid[i, j], 2L)
+    }
+  }
+  d$xcent <- (d$xmin + d$xmax) / 2
+  d$ycent <- (d$ymin + d$ymax) / 2
+  out <-
+    ggplot2::ggplot(
+      d,
+      ggplot2::aes(
+        xmin = !!rlang::sym("xmin"),
+        xmax = !!rlang::sym("xmax"),
+        ymin = !!rlang::sym("ymin"),
+        ymax = !!rlang::sym("ymax"),
+        fill = !!rlang::sym("resid")
+      )
+    ) +
+    ggplot2::geom_rect(color = "black", show.legend = legend) +
+    ggplot2::scale_fill_gradient2(
+      name = "",
+      oob = bound,
+      low = "#D33F6A",
+      high = "#4A6FE3",
+      limits = c(-1.96, 1.96),
+      breaks = c(-1.96, 0, 1.96)
+    ) +
+    ggplot2::scale_x_continuous(
+      breaks = unique(d$xcent),
+      labels = colnames(resid),
+      position = "bottom",
+      expand = c(0.01, 0)
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = unique(d$ycent),
+      labels = rownames(resid),
+      expand = c(0.01, 0)
+    ) +
+    ggplot2::theme_classic() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      plot.subtitle = ggplot2::element_text(hjust = 0.5),
+      axis.ticks = ggplot2::element_blank(),
+      axis.line = ggplot2::element_blank(),
+      axis.text.x =  ggplot2::element_text(
+        angle =  ifelse(n > 3, 90, 0),
+        hjust =  ifelse(n > 3, 0, 0.5),
+        vjust =  ifelse(n > 3, 0.5, 0)
+      ),
+      legend.key.size = ggplot2::unit(1, "cm"),
+      axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
+    ) +
+    ggplot2::labs(x = "Groups", y = "")
+  if (cells) {
+    out <- out +
+      ggplot2::geom_text(
+        mapping = ggplot2::aes(
+          x = !!rlang::sym("xcent"),
+          y = !!rlang::sym("ycent"),
+          label = !!rlang::sym("label")
+        )
+      )
+  }
+  out
+  #d$row <- rep(dimnames(tab)[[1]], m)
+  #d$col <- rep(dimnames(tab)[[2]], each = n)
+}
+
 #' Plot Centrality Measures
 #'
 #' @inheritParams plot.tna_centralities
@@ -1023,7 +1117,8 @@ plot_mosaic.tna <- function(x, digits = 1, ...) {
 plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
   n <- nrow(tab)
   m <- ncol(tab)
-  widths <- c(0, cumsum(apply(tab, 1L, sum))) / sum(tab)
+  rs <- .rowSums(tab, n, m)
+  widths <- c(0, cumsum(rs)) / sum(tab)
   heights <- apply(tab, 1L, function(y) c(0, cumsum(y / sum(y))))
   d <- data.frame(xmin = rep(0, n * m), xmax = 0, ymin = 0, ymax = 0)
   for (i in seq_len(n)) {
@@ -1252,13 +1347,13 @@ plot_sequences.default <- function(x, cols, group, type = "index",
   cols <- cols %m% x_names
   check_cols(cols, x_names)
   if (!missing(group)) {
-    group_len <- length(group)
+    n_group <- length(group)
     stopifnot_(
-      group_len == nrow(x) || group_len == 1L,
+      n_group == nrow(x) || n_group == 1L,
       "Argument {.arg group} must be of length one or the same length as the
        number of rows in {.arg x}."
     )
-    if (group_len == 1L) {
+    if (n_group == 1L) {
       stopifnot_(
         group %in% x_names,
         "Argument {.arg group} must be a column name of {.arg x}
@@ -1882,13 +1977,13 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
   check_class(x, "tna_data")
   check_missing(group)
   check_string(label)
-  group_len <- length(group)
+  n_group <- length(group)
   stopifnot_(
-    group_len == nrow(x$sequence_data) || group_len == 1L,
+    n_group == nrow(x$sequence_data) || n_group == 1L,
     "Argument {.arg group} must be of length one or the same length as the
      number of rows/sequences in {.arg x}."
   )
-  if (group_len == 1L) {
+  if (n_group == 1L) {
     stopifnot_(
       group %in% names(x$meta_data),
       "Argument {.arg group} must be a column name of the input data

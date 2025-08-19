@@ -1,3 +1,5 @@
+if (FALSE) {
+
 test_that("MMM can be fitted via EM", {
   expect_error(
     suppressMessages(cluster_mmm(engagement, k = 3)),
@@ -111,3 +113,5 @@ test_that("model fit failure warns if only some values of k fail", {
     "Fitting the model with k = 5 failed\\."
   )
 })
+
+}

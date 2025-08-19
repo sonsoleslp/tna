@@ -8,9 +8,11 @@
 cluster_sequences(
   data,
   k,
-  dissimilarity = "osa",
+  dissimilarity = "hamming",
   method = "pam",
   na_syms = c("*", "\%"),
+  weighted = FALSE,
+  lambda = 1,
   ...
 )
 
@@ -32,6 +34,18 @@ The available methods are \code{"pam"}, \code{"ward.D"}, \code{"ward.D2"},
 \code{"complete"},\code{"average"}, \code{"single"}, \code{"mcquitty"}, \code{"median"}, and
 \code{"centroid"}. See \code{\link[cluster:pam]{cluster::pam()}} and \code{\link[stats:hclust]{stats::hclust()}} for more
 information on these methods.}
+
+\item{na_syms}{A \code{character} vector of symbols or factor levels to convert
+to explicit missing values.}
+
+\item{weighted}{A \code{logical} value indicating whether the dissimilarity
+measure should be weighted (the default is \code{FALSE} for no weighting).
+If \code{TRUE}, earlier observations of the sequences receive a greater weight
+in the distance calculation with an exponential decay. Currently only
+supported for the Hamming distance.}
+
+\item{lambda}{A \code{numeric} value defining the strength of the decay when
+\code{weighted = TRUE}. The default is \code{1.0}.}
 
 \item{...}{Additional arguments passed to \code{\link[stringdist:stringdist]{stringdist::stringdist()}}.}
 

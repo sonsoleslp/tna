@@ -173,8 +173,6 @@ model <- ctna(group_regulation)
 
 model <- atna(group_regulation)
 
-# TODO
-
 }
 \seealso{
 Basic functions

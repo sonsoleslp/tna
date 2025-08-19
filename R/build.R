@@ -510,7 +510,8 @@ compute_transitions <- function(m, a, type, params) {
   p <- ncol(m)
   idx <- seq_len(n)
   trans <- array(0L, dim = c(n, a, a))
-  seq_lengths <- apply(m, 1L, function(x) sum(!is.na(x)))
+  #seq_lengths <- apply(m, 1L, function(x) sum(!is.na(x)))
+  seq_lengths <- .rowSums(!is.na(m), m = n, n = p)
   weight <- ifelse_(isTRUE(params$weighted), 1.0 / seq_lengths, rep(1L, n))
   if (type %in% c("relative", "frequency")) {
     weight <- ifelse_(type == "frequency", weight, rep(1L, n))

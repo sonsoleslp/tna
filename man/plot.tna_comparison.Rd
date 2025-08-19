@@ -63,6 +63,8 @@ doi:10.1214/009053607000000505
 Model comparison functions
 \code{\link{compare}()},
 \code{\link{compare.group_tna}()},
+\code{\link{compare_sequences}()},
+\code{\link{plot.tna_sequence_comparison}()},
 \code{\link{plot_compare}()},
 \code{\link{plot_compare.group_tna}()},
 \code{\link{print.tna_comparison}()}

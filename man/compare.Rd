@@ -82,7 +82,9 @@ comp3 <- compare(mat_x, model_y)
 \seealso{
 Model comparison functions
 \code{\link{compare.group_tna}()},
+\code{\link{compare_sequences}()},
 \code{\link{plot.tna_comparison}()},
+\code{\link{plot.tna_sequence_comparison}()},
 \code{\link{plot_compare}()},
 \code{\link{plot_compare.group_tna}()},
 \code{\link{print.tna_comparison}()}

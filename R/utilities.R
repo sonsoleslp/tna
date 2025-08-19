@@ -157,6 +157,20 @@ create_pairs <- function(x, y) {
   out
 }
 
+#' Force values into bounds
+#'
+#' @param x A `numeric` vector of values
+#' @param range A `numeric` vector of length 2 giving the bounds.
+#' @noRd
+bound <- function(x, range) {
+  force(range)
+  low <- range[1L]
+  high <- range[2L]
+  x[x < low] <- low
+  x[x > high] <- high
+  x
+}
+
 # Functions borrowed from the `dynamite` package --------------------------
 # https://github.com/ropensci/dynamite
 

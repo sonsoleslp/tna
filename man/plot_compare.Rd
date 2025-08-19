@@ -55,7 +55,9 @@ plot_compare(model_x, model_y)
 Model comparison functions
 \code{\link{compare}()},
 \code{\link{compare.group_tna}()},
+\code{\link{compare_sequences}()},
 \code{\link{plot.tna_comparison}()},
+\code{\link{plot.tna_sequence_comparison}()},
 \code{\link{plot_compare.group_tna}()},
 \code{\link{print.tna_comparison}()}
 }

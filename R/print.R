@@ -422,6 +422,14 @@ print.tna_clustering <- function(x, ...) {
   invisible(x)
 }
 
+#' Print a Comparison of Sequences
+#'
+#' @export
+#' @rdname compare_sequences
+print.tna_sequence_comparison <- function(x, ...) {
+  NextMethod(generic = "print", object = x, ...)
+}
+
 # Groups ----------------------------------------------------------------
 
 #' Print a `group_tna` Object

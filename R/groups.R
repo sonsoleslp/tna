@@ -78,16 +78,16 @@ group_model.default <- function(x, group, type = "relative",
   group <- group %m% seq_len(nrow(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  group_len <- length(group)
+  n_group <- length(group)
   data <- NULL
   stopifnot_(
-    group_len == nrow(x) || group_len == 1L,
+    n_group == nrow(x) || n_group == 1L,
     "Argument {.arg group} must be of length one or the same length as the
      number of rows/sequences in {.arg x}."
   )
   label <- "Cluster"
   prefix <- "Argument"
-  if (group_len == 1L) {
+  if (n_group == 1L) {
     x_names <- names(x)
     stopifnot_(
       group %in% x_names,
@@ -109,14 +109,14 @@ group_model.default <- function(x, group, type = "relative",
       )
     )
   }
-  group <- ifelse_(
-    is.factor(group),
-    group,
-    factor(
-      group,
-      labels = paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
+  if (!is.factor(group)) {
+    labels <- ifelse_(
+      is.character(group),
+      unique(group),
+      paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
     )
-  )
+    group <- factor(group, labels = labels)
+  }
   group <- ifelse_(group_na && !na.rm, addNA(group), group)
   levs <- levels(group)
   n_group <- length(levs)

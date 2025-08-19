@@ -33,7 +33,9 @@ compare(model, i = 1, j = 2)
 \seealso{
 Model comparison functions
 \code{\link{compare}()},
+\code{\link{compare_sequences}()},
 \code{\link{plot.tna_comparison}()},
+\code{\link{plot.tna_sequence_comparison}()},
 \code{\link{plot_compare}()},
 \code{\link{plot_compare.group_tna}()},
 \code{\link{print.tna_comparison}()}
