@@ -20,9 +20,11 @@ prepare_data(
 \arguments{
 \item{data}{A \code{data.frame} or containing the action/event data.}
 
-\item{actor}{A \code{character} string giving the name of the column that
-represents a user/actor identifier. If not provided and neither \code{time} nor
-\code{order} is specified, the entire dataset is treated as a single session.}
+\item{actor}{A \code{character} vector giving the names of the columns that
+represents a user/actor identifiers. If not provided and neither \code{time} nor
+\code{order} is specified, the entire dataset is treated as a single session.
+In the case of multiple actors, a new \code{.actor} column is added that
+represents the interaction of the given columns.}
 
 \item{time}{A \code{character} string giving the name of the column representing
 timestamps of the action events.}
@@ -80,6 +82,7 @@ print(results$sequence_data)
 print(results$meta_data)
 print(results$statistics)
 
+# Custom order column
 data_ordered <- tibble::tibble(
    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
    order = c(1, 2, 3, 1, 2, 1, 2, 3),
@@ -95,6 +98,7 @@ print(results_ordered$sequence_data)
 print(results_ordered$meta_data)
 print(results_ordered$statistics)
 
+# No actor scenario leading to a single session
 data_single_session <- tibble::tibble(
   action = c(
     "view", "click", "add_cart", "view",
@@ -105,6 +109,19 @@ results_single <- prepare_data(data_single_session, action = "action")
 print(results_single$sequence_data)
 print(results_single$meta_data)
 print(results_single$statistics)
+
+# Multiple actors (synthetic example)
+grl <- group_regulation_long
+grl$Class <- rep(LETTERS[1:3], length.out = nrow(grl))
+results_multi_actor <- prepare_data(
+  grl,
+  actor = c("Actor", "Class"),
+  time = "Time",
+  action = "Action"
+)
+print(results_multi_actor$sequence_data)
+print(results_multi_actor$meta_data)
+print(results_multi_actor$statistics)
 
 }
 \seealso{

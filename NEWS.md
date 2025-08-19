@@ -2,6 +2,8 @@
 
 * Added the function `cluster_mmm()` to cluster sequence data by fitting mixture Markov models via the EM algorithm.
 * Added the function `cluster_sequences()` to cluster sequence data using string distance measures of the `stringdist` package.
+* Added the function `compare_sequences()` to compare the frequencies of patterns between groups for sequence data.
+* `prepare_data()` now accepts a character vector for the `actor` argument.
 
 # tna 1.0.0
 

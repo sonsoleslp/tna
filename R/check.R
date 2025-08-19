@@ -209,7 +209,6 @@ check_flag <- function(x) {
 #' @param ... Additional arguments passed to `as.igraph`.
 #' @noRd
 check_layout <- function(x, layout, args = list(), ...) {
-
   if (is.character(layout)) {
     layout <- tolower(layout)
     layout_parsed <- try_(match.arg(layout, c("circle", "groups", "spring")))
@@ -311,8 +310,28 @@ check_string <- function(x) {
   }
   arg <- deparse(substitute(x))
   stopifnot_(
-    is.character(x) && length(x) == 1L,
+    checkmate::test_string(x = x),
     "Argument {.arg {arg}} must be a {.cls character} vector of length 1."
+  )
+}
+
+#' Check if argument is a character vector
+#'
+#' @param x An \R object.
+#' @noRd
+check_character <- function(x) {
+  if (missing(x)) {
+    return()
+  }
+  arg <- deparse(substitute(x))
+  stopifnot_(
+    checkmate::test_character(
+      x = x,
+      min.len = 1L,
+      any.missing = FALSE,
+      unique = TRUE,
+    ),
+    "Argument {.arg {arg}} must be a {.cls character} vector."
   )
 }
 

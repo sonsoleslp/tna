@@ -8,9 +8,11 @@
 #' @export
 #' @family data
 #' @param data A `data.frame` or containing the action/event data.
-#' @param actor A `character` string giving the name of the column that
-#' represents a user/actor identifier. If not provided and neither `time` nor
+#' @param actor A `character` vector giving the names of the columns that
+#' represents a user/actor identifiers. If not provided and neither `time` nor
 #' `order` is specified, the entire dataset is treated as a single session.
+#' In the case of multiple actors, a new `.actor` column is added that
+#' represents the interaction of the given columns.
 #' @param time A `character` string giving the name of the column representing
 #' timestamps of the action events.
 #' @param action A `character` string giving the name of the column holding
@@ -51,6 +53,7 @@
 #' print(results$meta_data)
 #' print(results$statistics)
 #'
+#' # Custom order column
 #' data_ordered <- tibble::tibble(
 #'    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
 #'    order = c(1, 2, 3, 1, 2, 1, 2, 3),
@@ -66,6 +69,7 @@
 #' print(results_ordered$meta_data)
 #' print(results_ordered$statistics)
 #'
+#' # No actor scenario leading to a single session
 #' data_single_session <- tibble::tibble(
 #'   action = c(
 #'     "view", "click", "add_cart", "view",
@@ -77,6 +81,19 @@
 #' print(results_single$meta_data)
 #' print(results_single$statistics)
 #'
+#' # Multiple actors (synthetic example)
+#' grl <- group_regulation_long
+#' grl$Class <- rep(LETTERS[1:3], length.out = nrow(grl))
+#' results_multi_actor <- prepare_data(
+#'   grl,
+#'   actor = c("Actor", "Class"),
+#'   time = "Time",
+#'   action = "Action"
+#' )
+#' print(results_multi_actor$sequence_data)
+#' print(results_multi_actor$meta_data)
+#' print(results_multi_actor$statistics)
+#'
 prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
                          is_unix_time = FALSE, unix_time_unit = "seconds",
@@ -84,7 +101,7 @@ prepare_data <- function(data, actor, time, action, order,
   check_missing(data)
   check_class(data, "data.frame")
   check_missing(action)
-  check_string(actor)
+  check_character(actor)
   check_string(time)
   check_string(action)
   check_string(order)
@@ -119,11 +136,17 @@ prepare_data <- function(data, actor, time, action, order,
   long_data <- data
   default_actor <- FALSE
   default_order <- FALSE
+  multi_actor <- FALSE
   if (missing(actor)) {
     # Placeholder actor column
     actor <- ".actor"
     long_data$.actor <- "session"
     default_actor <- TRUE
+  } else if (length(actor) > 1L) {
+    actor_cols <- lapply(actor, function(x) long_data[[x]])
+    long_data$.actor <- interaction(actor_cols, sep = "-")
+    actor <- ".actor"
+    multi_actor <- TRUE
   }
   if (missing(order)) {
     # Placeholder order column
