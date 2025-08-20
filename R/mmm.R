@@ -134,14 +134,17 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     )
   }
   for (i in seq_along(k)) {
-    results[[i]] <- fit_mmm(
-      data = data,
-      mm = mm,
-      k = k[i],
-      progressbar = progressbar && k_len == 1L,
-      parallel = parallel,
-      cl = cl,
-      control = control
+    results[[i]] <- tryCatch({
+      fit_mmm(
+        data = data,
+        mm = mm,
+        k = k[i],
+        progressbar = progressbar && k_len == 1L,
+        parallel = parallel,
+        cl = cl,
+        control = control
+      )},
+      error = NULL
     )
     if (progressbar && k_len > 1L) {
       cli::cli_progress_update()

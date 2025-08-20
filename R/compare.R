@@ -485,24 +485,12 @@ compare_sequences_ <- function(x, q, min_freq, correction) {
     n <- nrow(pat)
     if (n > 0L) {
       freq_mat <- as.matrix(pat[, freq_cols])
-      #prop_cols <- paste0("prop_", groups)
-      #prop_mat <- as.matrix(pat[, prop_cols])
-      resid <- matrix(0, nrow = n, ncol = n_group)
+      resid <- matrix(0.0, nrow = n, ncol = n_group)
       rownames(resid) <- pat$pattern
       colnames(resid) <- groups
       pat$statistic <- NA
       pat$p_value <- NA
       for (i in seq_len(n)) {
-        # if (n_group == 2L) {
-        #   freq <- freq_mat[i, ]
-        #   prop <- prop_mat[i, ]
-        #   prop_pooled <- sum(freq) / sum(total)
-        #   s <- sqrt(prop_pooled * (1.0 - prop_pooled) * sum(1.0 / total))
-        #   z <- (prop[1L] - prop[2L]) / s
-        #   pat$statistic[i] <- z
-        #   pat$p_value[i] <- pnorm(abs(z), lower.tail = FALSE)
-        #
-        # }
         tab <- matrix(c(freq_mat[i, ], total), nrow = 2L, byrow = TRUE)
         chisq <- suppressWarnings(stats::chisq.test(tab))
         pat$statistic[i] <- chisq$statistic
