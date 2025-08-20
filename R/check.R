@@ -408,10 +408,9 @@ check_em_control <- function(control) {
     maxiter = 500L,
     maxiter_m = 500L,
     reltol = 1e-10,
+    reltol_m = 1e-6,
     restarts = 10L,
-    seed = 1L,
-    step = 0.9,
-    tol = 1e-6
+    seed = 1L
   )
   if (missing(control)) {
     return(em_control_defaults)
@@ -421,11 +420,11 @@ check_em_control <- function(control) {
       control[[n]] <- em_control_defaults[[n]]
     }
   }
-  check_values(control$restarts, strict = TRUE)
   check_values(control$maxiter, strict = TRUE)
+  check_values(control$maxiter_m, strict = TRUE)
   check_values(control$reltol, type = "numeric", strict = TRUE)
-  check_values(control$tol, type = "numeric", strict = TRUE)
+  check_values(control$reltol_m, type = "numeric", strict = TRUE)
+  check_values(control$restarts, strict = TRUE)
   check_values(control$seed)
-  check_values(control$step, type = "numeric", strict = TRUE)
   control
 }

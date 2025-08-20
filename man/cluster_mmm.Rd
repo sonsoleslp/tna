@@ -11,15 +11,11 @@ cluster_mmm(
   k,
   cluster_names,
   criterion = "bic",
-  n_starts = 10L,
-  min_size = 1L,
   progressbar = TRUE,
-  max_iter = 500L,
-  reltol = 1e-10,
-  seed = 1L,
   parallel = FALSE,
   n_cores,
-  cl
+  cl,
+  control
 )
 }
 \arguments{
@@ -48,26 +44,8 @@ the vector must be the same as the largest value of \code{k}.}
 to use for model selection. Either \code{"bic"} (default) for Bayesian
 information criterion or \code{"aic"} for Akaike information criterion.}
 
-\item{n_starts}{An \code{integer} specifying the number of random restarts to
-perform. Multiple restarts help avoid local optima. Default is 10.}
-
-\item{min_size}{An \code{integer} specifying the minimum number of sequences
-required per cluster for a solution to be considered valid. Default is 1.}
-
-\item{progressbar}{#' @param progressbar A \code{logical} value. If \code{TRUE}, a
-progress bar is displayed. The default is \code{FALSE}. Disables when using
-parallel processing.}
-
-\item{max_iter}{An \code{integer} specifying the maximum number of EM iterations
-per restart. Default is 300.}
-
-\item{reltol}{A \code{numeric} value specifying the relative convergence
-tolerance for the log-likelihood change between iterations.
-Default is 1e-10.}
-
-\item{seed}{An \code{integer} value specifying the base random seed.
-The initial values are generated for each restart using \code{seed + i} as
-the seed where \code{i} is the index of the restart.}
+\item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed.
+The default is \code{FALSE}. Disabled when using parallel processing.}
 
 \item{parallel}{A \code{logical} value.}
 
@@ -76,6 +54,26 @@ parallel processing. The default is 1 for no parallel processing.}
 
 \item{cl}{An optional prespecified cluster object with a registered
 parallel backend. Ignores \code{parallel} if provided.}
+
+\item{control}{An optional \code{list} of arguments for the EM algorithm.
+The possible arguments are:
+\itemize{
+\item \code{maxiter}: An \code{integer} for the maximum number of EM iterations per
+restart. The default is \code{500}.
+\item \code{maxiter_m}: An \code{integer} for the maximum number of Newton-Rhapson
+iterations in the M-step (only with covariates). The default is \code{500}.
+\item \code{reltol}: A \code{numeric} value specifying the relative convergence
+tolerance for the log-likelihood change between iterations.
+The default is \code{1e-10}.
+\item \code{reltol_m}: A \code{numeric} value specifying the relative tolerance for the
+Newton-Rhapson optimization in the M-step (only with covariates).
+The default is \code{1e-6}.
+\item \code{restarts}: An \code{integer} specifying the number of random restarts to
+perform. Multiple restarts help avoid local optima. The default is \code{10}.
+\item \code{seed}: An \code{integer} specifying the base random seed.
+The initial values are generated for each restart using \code{seed + i} as
+the seed where \code{i} is the index of the restart.
+}}
 }
 \description{
 Fits a mixture of first-order Markov models to sequence data using the

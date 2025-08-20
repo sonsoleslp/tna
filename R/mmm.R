@@ -25,9 +25,8 @@
 #' @param criterion A `character` string specifying the information criterion
 #'   to use for model selection. Either `"bic"` (default) for Bayesian
 #'   information criterion or `"aic"` for Akaike information criterion.
-#' @param progressbar #' @param progressbar A `logical` value. If `TRUE`, a
-#'   progress bar is displayed. The default is `FALSE`. Disables when using
-#'   parallel processing.
+#' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed.
+#'   The default is `FALSE`. Disabled when using parallel processing.
 #' @param parallel A `logical` value.
 #' @param n_cores An `integer` specifying the number of cores to use for
 #'   parallel processing. The default is 1 for no parallel processing.
@@ -43,10 +42,9 @@
 #'   * `reltol`: A `numeric` value specifying the relative convergence
 #'     tolerance for the log-likelihood change between iterations.
 #'     The default is `1e-10`.
-#'   * `tol`: A `numeric` value specifying the tolerance for the Newton-Rhapson
-#'     optimization in the M-step (only with covariates).
-#'   * `step`: Step size for the line search in the M-step
-#'     (only with covariates). The default is `0.9`.
+#'   * `reltol_m`: A `numeric` value specifying the relative tolerance for the
+#'     Newton-Rhapson optimization in the M-step (only with covariates).
+#'     The default is `1e-6`.
 #'   * `restarts`: An `integer` specifying the number of random restarts to
 #'     perform. Multiple restarts help avoid local optima. The default is `10`.
 #'   * `seed`: An `integer` specifying the base random seed.
@@ -389,11 +387,10 @@ em <- function(start, data, mm, k, labels, control) {
 # The EM Algorithm for a mixture Markov Model with Covariates
 em_covariates <- function(start, data, mm, k, labels, control) {
   set.seed(control$seed + start)
-  reltol <- control$reltol
-  tol <- control$tol
   maxiter <- control$maxiter
   maxiter_m <- control$maxiter_m
-  step <- control$step
+  reltol <- control$reltol
+  reltol_m <- control$reltol_m
   s <- length(labels)
   state_names <- list(labels, labels)
   # For some reason export does not work for this function
@@ -445,7 +442,7 @@ em_covariates <- function(start, data, mm, k, labels, control) {
     linpred[, j] <- mm %*% beta[[j]]
   }
   prior[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
-  gradient <- numeric((k - 1L) * q)
+  grad <- numeric((k - 1L) * q)
   posterior <- matrix(NA, n, k)
   post_clust_arr <- array(0, dim = c(n, s, s))
   while (loglik_reldiff > reltol && iter < maxiter) {
@@ -461,12 +458,11 @@ em_covariates <- function(start, data, mm, k, labels, control) {
     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
     # M-step
     beta_prev <- unlist(beta[-1L])
-    # Multinomial regression
     for (r in 1:maxiter_m) {
       hessian <- matrix(0i, (k - 1L) * q, (k - 1L) * q)
       for (j in 2:k) {
         idx_row <- seq((j - 2) * q + 1, (j - 1) * q)
-        gradient[idx_row] <- crossprod(mm, posterior[, j] - prior[, j])
+        grad[idx_row] <- crossprod(mm, posterior[, j] - prior[, j])
         for (l in 2:j) {
           idx_col <- seq((l - 2) * q + 1, (l - 1) * q)
           # No need to export ifelse_ for this
@@ -484,9 +480,9 @@ em_covariates <- function(start, data, mm, k, labels, control) {
       hessian <- -1.0 * Re(hessian)
       # Regularization
       f <- norm(hessian, type = "F")
-      lambda <- diag(rep(max(1e-8, 1e-6 * f), q * (k - 1L)))
-      beta_vec <- beta_prev - step * solve(hessian - lambda) %*% gradient
-      beta_diff <- sum((beta_vec - beta_prev)^2)
+      lambda <- diag(rep(max(1e-10, 1e-8 * f), q * (k - 1L)))
+      beta_vec <- beta_prev - solve(hessian - lambda) %*% grad
+      grad_rel <- max(abs(grad)) / max(1.0, max(abs(beta_vec)))
       beta_prev <- beta_vec
       for (j in 2:k) {
         idx <- seq((j - 2) * q + 1, (j - 1) * q)
@@ -494,7 +490,7 @@ em_covariates <- function(start, data, mm, k, labels, control) {
         linpred[, j] <- mm %*% beta[[j]]
       }
       prior[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
-      if (beta_diff < tol) {
+      if (grad_rel < reltol_m) {
         break
       }
     }

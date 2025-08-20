@@ -13,14 +13,17 @@ compare_sequences(x, ...)
   group,
   sub = 2:5,
   min_freq = 5L,
-  correction = "bonferroni"
+  correction = "bonferroni",
+  ...
 )
 
-\method{compare_sequences}{group_tna}(x, sub = 2:5, min_freq = 5L, correction = "bonferroni")
+\method{compare_sequences}{group_tna}(x, sub = 2:5, min_freq = 5L, correction = "bonferroni", ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object or a \code{data.frame} containing sequence data in
 wide format.}
+
+\item{...}{Not used.}
 
 \item{group}{A \code{vector} indicating the group assignment of each
 row of the data/sequence. Must have the same length as the number of
