@@ -410,7 +410,8 @@ check_em_control <- function(control) {
     reltol = 1e-10,
     reltol_m = 1e-6,
     restarts = 10L,
-    seed = 1L
+    seed = 1L,
+    step = 1.0
   )
   if (missing(control)) {
     return(em_control_defaults)
@@ -426,5 +427,6 @@ check_em_control <- function(control) {
   check_values(control$reltol_m, type = "numeric", strict = TRUE)
   check_values(control$restarts, strict = TRUE)
   check_values(control$seed)
+  check_range(control$step, lower = 0.0, upper = 1.0)
   control
 }

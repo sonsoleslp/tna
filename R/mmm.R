@@ -50,6 +50,8 @@
 #'   * `seed`: An `integer` specifying the base random seed.
 #'     The initial values are generated for each restart using `seed + i` as
 #'     the seed where `i` is the index of the restart.
+#'   * `step`: An `integer` defining the step size for the Newton-Rhapson
+#'     iterations. The default is `1.0`.
 #'
 #' @details
 #' The function implements a mixture of first-order Markov models where each
@@ -134,17 +136,14 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     )
   }
   for (i in seq_along(k)) {
-    results[[i]] <- tryCatch({
-      fit_mmm(
-        data = data,
-        mm = mm,
-        k = k[i],
-        progressbar = progressbar && k_len == 1L,
-        parallel = parallel,
-        cl = cl,
-        control = control
-      )},
-      error = NULL
+    results[[i]] <- fit_mmm(
+      data = data,
+      mm = mm,
+      k = k[i],
+      progressbar = progressbar && k_len == 1L,
+      parallel = parallel,
+      cl = cl,
+      control = control
     )
     if (progressbar && k_len > 1L) {
       cli::cli_progress_update()
@@ -154,7 +153,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     cli::cli_progress_done()
   }
   if (k_len > 1L) {
-    #nulls <- vapply(results, is.null, logical(1L))
+    nulls <- vapply(results, is.null, logical(1L))
     # stopifnot_(
     #   !all(nulls),
     #   "Fitting the model failed with all values of {.arg k}."
@@ -220,12 +219,19 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
   # }
   results <- vector(mode = "list", length = control$restarts)
   for (i in seq_len(control$restarts)) {
-    res <- em_fun(i, data, mm, k, lab, control)
+    res <- tryCatch(
+      em_fun(i, data, mm, k, lab, control),
+      error = function(e) {
+        NULL
+      }
+    )
     if (progressbar) {
       cli::cli_progress_update()
     }
     results[[i]] <- res
   }
+  nulls <- vapply(results, is.null, logical(1L))
+  results <- results[!nulls]
   #converged <- vapply(results, "[[", logical(1L), "converged")
   # has_min <- vapply(
   #   results,
@@ -394,6 +400,7 @@ em_covariates <- function(start, data, mm, k, labels, control) {
   maxiter_m <- control$maxiter_m
   reltol <- control$reltol
   reltol_m <- control$reltol_m
+  step <- control$step
   s <- length(labels)
   state_names <- list(labels, labels)
   # For some reason export does not work for this function
@@ -484,7 +491,7 @@ em_covariates <- function(start, data, mm, k, labels, control) {
       # Regularization
       f <- norm(hessian, type = "F")
       lambda <- diag(rep(max(1e-10, 1e-8 * f), q * (k - 1L)))
-      beta_vec <- beta_prev - solve(hessian - lambda) %*% grad
+      beta_vec <- beta_prev - step * solve(hessian - lambda) %*% grad
       grad_rel <- max(abs(grad)) / max(1.0, max(abs(beta_vec)))
       beta_prev <- beta_vec
       for (j in 2:k) {
