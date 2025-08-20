@@ -153,7 +153,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     cli::cli_progress_done()
   }
   if (k_len > 1L) {
-    nulls <- vapply(results, is.null, logical(1L))
+    #nulls <- vapply(results, is.null, logical(1L))
     # stopifnot_(
     #   !all(nulls),
     #   "Fitting the model failed with all values of {.arg k}."
@@ -210,15 +210,7 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
   em_fun <- ifelse_(is.null(mm), em, em_covariates)
   # Avoid NSE Note with foreach index variable
   i <- NULL
-  # results <- foreach::foreach(i = seq_len(control$restarts)) %d% {
-  #   res <- em_fun(i, data, mm, k, lab, control)
-  #   if (progressbar) {
-  #     cli::cli_progress_update()
-  #   }
-  #   res
-  # }
-  results <- vector(mode = "list", length = control$restarts)
-  for (i in seq_len(control$restarts)) {
+  results <- foreach::foreach(i = seq_len(control$restarts)) %d% {
     res <- tryCatch(
       em_fun(i, data, mm, k, lab, control),
       error = function(e) {
@@ -228,28 +220,23 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
     if (progressbar) {
       cli::cli_progress_update()
     }
-    results[[i]] <- res
+    res
   }
+  # results <- vector(mode = "list", length = control$restarts)
+  # for (i in seq_len(control$restarts)) {
+  #   res <- tryCatch(
+  #     em_fun(i, data, mm, k, lab, control),
+  #     error = function(e) {
+  #       NULL
+  #     }
+  #   )
+  #   if (progressbar) {
+  #     cli::cli_progress_update()
+  #   }
+  #   results[[i]] <- res
+  # }
   nulls <- vapply(results, is.null, logical(1L))
   results <- results[!nulls]
-  #converged <- vapply(results, "[[", logical(1L), "converged")
-  # has_min <- vapply(
-  #   results,
-  #   function(x) {
-  #     min(x$sizes) >= min_size
-  #   },
-  #   logical(1L)
-  # )
-  # if (all(!converged)) {
-  #   warning_(
-  #     "All EM algorithm runs failed to converge."
-  #   )
-  # }
-  # if (all(!has_min)) {
-  #   warning_(
-  #     "Minimum cluster size constraint was not satisfied."
-  #   )
-  # }
   logliks <- vapply(results, "[[", numeric(1L), "loglik")
   best <- results[[which.max(logliks)]]
   q <- ifelse_(is.null(mm), 1L, ncol(mm))
@@ -276,6 +263,7 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
       n_parameters = n_param,
       converged = best$converged,
       iterations = best$iterations,
+      failed = sum(nulls),
       sizes = best$sizes,
       states = lab
     ),
