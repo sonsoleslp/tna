@@ -664,15 +664,31 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #'   legend. The default is `TRUE`.
 #' @param cells A `logical` value indicating whether to display the
 #'   numeric values in each cell. The default is `FALSE`.
+#' @param text_color A `character` string specifying the text color to use for
+#'   the cell values.
+#' @param digits An `integer` specifying the number of digits for the cell
+#'   values.
+#' @param ... Not used.
 #' @return A `ggplot` object.
 #' @examples
-#' # TODO
-plot.tna_sequence_comparison <- function(x, n = 10,
-                                         legend = TRUE, cells = FALSE, ...) {
+#' group <- c(rep("High", 1000), rep("Low", 1000))
+#' comp <- compare_sequences(group_regulation, group)
+#' plot(comp)
+#'
+plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
+                                         cells = FALSE, text_color = "black",
+                                         digits = 2L, ...) {
+  check_missing(x)
+  check_values(n, strict = TRUE)
+  check_flag(legend)
+  check_flag(cells)
+  check_string(text_color)
+  check_values(digits)
+  n <- min(n, length(x$pattern))
   pat <- x$pattern[seq_len(n)]
   resid <- attr(x, "residuals")[pat, ]
   m <- ncol(resid)
-  d <- data.frame(xmin = rep(0, n * m), xmax = 0, ymin = 0, ymax = 0)
+  d <- data.frame(xmin = rep(0.0, n * m), xmax = 0.0, ymin = 0.0, ymax = 0.0)
   for (i in seq_len(n)) {
     for (j in seq_len(m)) {
       row <- (i - 1) * m + j
@@ -681,11 +697,11 @@ plot.tna_sequence_comparison <- function(x, n = 10,
       d[row, "ymin"] <- -i
       d[row, "ymax"] <- -i - 1.0
       d[row, "resid"] <- resid[i, j]
-      d[row, "label"] <- round(resid[i, j], 2L)
+      d[row, "label"] <- round(resid[i, j], digits = digits)
     }
   }
-  d$xcent <- (d$xmin + d$xmax) / 2
-  d$ycent <- (d$ymin + d$ymax) / 2
+  d$xcent <- (d$xmin + d$xmax) / 2.0
+  d$ycent <- (d$ymin + d$ymax) / 2.0
   out <-
     ggplot2::ggplot(
       d,
@@ -697,14 +713,14 @@ plot.tna_sequence_comparison <- function(x, n = 10,
         fill = !!rlang::sym("resid")
       )
     ) +
-    ggplot2::geom_rect(color = "black", show.legend = legend) +
+    ggplot2::geom_rect(color = "white", show.legend = legend) +
     ggplot2::scale_fill_gradient2(
       name = "",
       oob = bound,
       low = "#D33F6A",
       high = "#4A6FE3",
-      limits = c(-1.96, 1.96),
-      breaks = c(-1.96, 0, 1.96)
+      limits = c(-4, 4),
+      breaks = c(-4, -2, 0, 2, 4)
     ) +
     ggplot2::scale_x_continuous(
       breaks = unique(d$xcent),
@@ -739,12 +755,11 @@ plot.tna_sequence_comparison <- function(x, n = 10,
           x = !!rlang::sym("xcent"),
           y = !!rlang::sym("ycent"),
           label = !!rlang::sym("label")
-        )
+        ),
+        color = text_color
       )
   }
   out
-  #d$row <- rep(dimnames(tab)[[1]], m)
-  #d$col <- rep(dimnames(tab)[[2]], each = n)
 }
 
 #' Plot Centrality Measures

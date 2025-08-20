@@ -4,7 +4,15 @@
 \alias{plot.tna_sequence_comparison}
 \title{Plot a Sequence Comparison}
 \usage{
-\method{plot}{tna_sequence_comparison}(x, n = 10, legend = TRUE, cells = FALSE, ...)
+\method{plot}{tna_sequence_comparison}(
+  x,
+  n = 10,
+  legend = TRUE,
+  cells = FALSE,
+  text_color = "black",
+  digits = 2L,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{tna_sequence_comparison} object.}
@@ -17,6 +25,14 @@ legend. The default is \code{TRUE}.}
 
 \item{cells}{A \code{logical} value indicating whether to display the
 numeric values in each cell. The default is \code{FALSE}.}
+
+\item{text_color}{A \code{character} string specifying the text color to use for
+the cell values.}
+
+\item{digits}{An \code{integer} specifying the number of digits for the cell
+values.}
+
+\item{...}{Not used.}
 }
 \value{
 A \code{ggplot} object.
@@ -25,7 +41,10 @@ A \code{ggplot} object.
 Plot a Sequence Comparison
 }
 \examples{
-# TODO
+group <- c(rep("High", 1000), rep("Low", 1000))
+comp <- compare_sequences(group_regulation, group)
+plot(comp)
+
 }
 \seealso{
 Model comparison functions
@@ -35,6 +54,7 @@ Model comparison functions
 \code{\link{plot.tna_comparison}()},
 \code{\link{plot_compare}()},
 \code{\link{plot_compare.group_tna}()},
-\code{\link{print.tna_comparison}()}
+\code{\link{print.tna_comparison}()},
+\code{\link{print.tna_sequence_comparison}()}
 }
 \concept{comparison}

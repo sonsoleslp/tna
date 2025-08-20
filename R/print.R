@@ -37,6 +37,8 @@ print.summary.tna_bootstrap <- function(x, ...) {
 #' @export
 #' @family groups
 #' @param x A `summary.tna_mmm` object.
+#' @param digits An `integer` giving the number of *significant* digits
+#'   to print.
 #' @param ... Arguments passed to the generic `print` method.
 #' @return A `summary.tna_mmm` object (invisibly) with details of the model fit.
 #' @examples
@@ -384,6 +386,8 @@ print.tna_permutation <- function(x, ...) {
 #' @export
 #' @family clusters
 #' @param x A `tna_mmm` object.
+#' @param digits An `integer` giving the number of *significant* digits
+#'   to print.
 #' @param ... Arguments passed to the generic `print` method
 #' @return `x` (invisibly)
 #' @examples
@@ -395,11 +399,11 @@ print.tna_mmm <- function(x, digits = 3L, ...) {
   cat("Number of sequences:", nrow(x$data), "\n")
   cat("Number of time points:", ncol(x$data), "\n")
   cat("Number of clusters:", x$k, "\n")
-  cat("States:", cs(x$states), "\nn")
+  cat("States:", cs(x$states), "\n")
   cat("Coefficients :\n")
-  print(coef(x), digits = digits)
+  print(coef.tna_mmm(x), digits = digits)
   cat("\n")
-  cat("Cluster sizes:\n")
+  cat("Cluster sizes:")
   print(x$sizes)
   cat("\n")
   cat("Intial probabilities :\n")
@@ -425,7 +429,15 @@ print.tna_clustering <- function(x, ...) {
 #' Print a Comparison of Sequences
 #'
 #' @export
-#' @rdname compare_sequences
+#' @family comparison
+#' @param x A `tna_sequence_comparison` object.
+#' @param ... Arguments passed to the generic `print` method.
+#' @return `x` (invisibly).
+#' @examples
+#' group <- c(rep("High", 1000), rep("Low", 1000))
+#' comp <- compare_sequences(group_regulation, group)
+#' print(comp)
+#'
 print.tna_sequence_comparison <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }

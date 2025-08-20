@@ -25,26 +25,33 @@
 #' @param criterion A `character` string specifying the information criterion
 #'   to use for model selection. Either `"bic"` (default) for Bayesian
 #'   information criterion or `"aic"` for Akaike information criterion.
-#' @param n_starts An `integer` specifying the number of random restarts to
-#'   perform. Multiple restarts help avoid local optima. Default is 10.
-#' @param min_size An `integer` specifying the minimum number of sequences
-#'   required per cluster for a solution to be considered valid. Default is 1.
 #' @param progressbar #' @param progressbar A `logical` value. If `TRUE`, a
 #'   progress bar is displayed. The default is `FALSE`. Disables when using
 #'   parallel processing.
-#' @param max_iter An `integer` specifying the maximum number of EM iterations
-#'   per restart. Default is 300.
-#' @param reltol A `numeric` value specifying the relative convergence
-#'   tolerance for the log-likelihood change between iterations.
-#'   Default is 1e-10.
-#' @param seed An `integer` value specifying the base random seed.
-#'   The initial values are generated for each restart using `seed + i` as
-#'   the seed where `i` is the index of the restart.
 #' @param parallel A `logical` value.
 #' @param n_cores An `integer` specifying the number of cores to use for
 #'   parallel processing. The default is 1 for no parallel processing.
 #' @param cl An optional prespecified cluster object with a registered
 #'   parallel backend. Ignores `parallel` if provided.
+#' @param control An optional `list` of arguments for the EM algorithm.
+#'   The possible arguments are:
+#'
+#'   * `maxiter`: An `integer` for the maximum number of EM iterations per
+#'     restart. The default is `500`.
+#'   * `maxiter_m`: An `integer` for the maximum number of Newton-Rhapson
+#'     iterations in the M-step (only with covariates). The default is `500`.
+#'   * `reltol`: A `numeric` value specifying the relative convergence
+#'     tolerance for the log-likelihood change between iterations.
+#'     The default is `1e-10`.
+#'   * `tol`: A `numeric` value specifying the tolerance for the Newton-Rhapson
+#'     optimization in the M-step (only with covariates).
+#'   * `step`: Step size for the line search in the M-step
+#'     (only with covariates). The default is `0.9`.
+#'   * `restarts`: An `integer` specifying the number of random restarts to
+#'     perform. Multiple restarts help avoid local optima. The default is `10`.
+#'   * `seed`: An `integer` specifying the base random seed.
+#'     The initial values are generated for each restart using `seed + i` as
+#'     the seed where `i` is the index of the restart.
 #'
 #' @details
 #' The function implements a mixture of first-order Markov models where each
@@ -69,10 +76,9 @@
 #' }
 #'
 cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
-                        k, cluster_names, criterion = "bic", n_starts = 10L,
-                        min_size = 1L, progressbar = TRUE, max_iter = 500L,
-                        reltol = 1e-10, seed = 1L, parallel = FALSE,
-                        n_cores, cl) {
+                        k, cluster_names, criterion = "bic",
+                        progressbar = TRUE, parallel = FALSE,
+                        n_cores, cl, control) {
   data_name <- deparse(substitute(data))
   mm <- ifelse_(
     missing(formula),
@@ -81,10 +87,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
   )
   data <- create_seqdata(x = data, cols = cols)
   criterion <- check_match(criterion, c("bic", "aic"))
-  check_values(n_starts, strict = TRUE)
-  check_values(min_size, strict = TRUE)
-  check_values(max_iter, strict = TRUE)
-  check_values(reltol, type = "numeric", strict = TRUE)
+  control <- check_em_control(control)
   check_flag(progressbar)
   check_flag(parallel)
   check_range(
@@ -133,37 +136,24 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     )
   }
   for (i in seq_along(k)) {
-    res <- tryCatch(
-      fit_mmm(
-        data = data,
-        mm = mm,
-        k = k[i],
-        n_starts = n_starts,
-        min_size = min_size,
-        progressbar = progressbar && k_len == 1L,
-        max_iter = max_iter,
-        reltol = reltol,
-        seed = seed,
-        parallel = parallel,
-        cl = cl
-      ),
-      error = function(e) {
-        # print(e)
-        NULL
-      }
+    results[[i]] <- fit_mmm(
+      data = data,
+      mm = mm,
+      k = k[i],
+      progressbar = progressbar && k_len == 1L,
+      parallel = parallel,
+      cl = cl,
+      control = control
     )
     if (progressbar && k_len > 1L) {
       cli::cli_progress_update()
-    }
-    if (!is.null(res)) {
-      results[[i]] <- res
     }
   }
   if (progressbar && k_len > 1L) {
     cli::cli_progress_done()
   }
   if (k_len > 1L) {
-    nulls <- vapply(results, is.null, logical(1L))
+    #nulls <- vapply(results, is.null, logical(1L))
     # stopifnot_(
     #   !all(nulls),
     #   "Fitting the model failed with all values of {.arg k}."
@@ -175,7 +165,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     #     "Fitting the model with k = {k_failed} failed."
     #   )
     # }
-    results <- results[!nulls]
+    #results <- results[!nulls]
     criteria <- vapply(results, "[[", numeric(1L), criterion)
     out <- results[[which.min(criteria)]]
   } else {
@@ -187,13 +177,13 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
   }
   cluster_names <- cluster_names[seq_len(out$k)]
   out$cluster_names <- cluster_names
-  names(out$inits) <- cluster_names
-  names(out$trans) <- cluster_names
-  names(out$beta) <- cluster_names
-  names(out$sizes) <- cluster_names
   out$data <- data
   out$data_name <- data_name
   out$assignments <- factor(max.col(out$posterior), labels = cluster_names)
+  out$sizes <- table(out$assignments)
+  names(out$inits) <- cluster_names
+  names(out$trans) <- cluster_names
+  names(out$beta) <- cluster_names
   if (!missing(formula)) {
     out$formula <- formula
   }
@@ -206,14 +196,13 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
 #' @param k An `integer` for the number of mixture components
 #' @inheritParams cluster_mmm
 #' @noRd
-fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
-                    max_iter, reltol, seed, parallel, cl) {
+fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
   `%d%` <- ifelse_(parallel, foreach::`%dopar%`, foreach::`%do%`)
   progressbar <- progressbar && !parallel
   if (progressbar) {
     cli::cli_progress_bar(
       name = "Running EM Algorithm",
-      total = n_starts
+      total = control$restarts
     )
   }
   lab <- attr(data, "labels")
@@ -221,21 +210,21 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
   em_fun <- ifelse_(is.null(mm), em, em_covariates)
   # Avoid NSE Note with foreach index variable
   i <- NULL
-  results <- foreach::foreach(i = seq_len(n_starts)) %d% {
-    res <- em_fun(i, seed, data, mm, k, lab, max_iter, reltol)
-    if (progressbar) {
-      cli::cli_progress_update()
-    }
-    res
-  }
-  # results <- vector(mode = "list", length = n_starts)
-  # for (i in seq_len(n_starts)) {
-  #   res <- em_fun(i, seed, data, mm, k, s, max_iter, reltol)
+  # results <- foreach::foreach(i = seq_len(control$restarts)) %d% {
+  #   res <- em_fun(i, data, mm, k, lab, control)
   #   if (progressbar) {
   #     cli::cli_progress_update()
   #   }
-  #   results[[i]] <- res
+  #   res
   # }
+  results <- vector(mode = "list", length = control$restarts)
+  for (i in seq_len(control$restarts)) {
+    res <- em_fun(i, data, mm, k, lab, control)
+    if (progressbar) {
+      cli::cli_progress_update()
+    }
+    results[[i]] <- res
+  }
   #converged <- vapply(results, "[[", logical(1L), "converged")
   # has_min <- vapply(
   #   results,
@@ -288,8 +277,11 @@ fit_mmm <- function(data, mm, k, n_starts, min_size, progressbar,
 }
 
 # The EM Algorithm for a mixture Markov Model
-em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
-  set.seed(seed + start)
+em <- function(start, data, mm, k, labels, control) {
+  set.seed(control$seed + start)
+  reltol <- control$reltol
+  tol <- control$tol
+  maxiter <- control$maxiter
   s <- length(labels)
   state_names <- list(labels, labels)
   # For some reason export does not work for this function
@@ -327,6 +319,7 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     trans_count[new_trans] <- trans_count[new_trans] + 1L
     from_na <- to_na
   }
+  trans_count_mat <- matrix(trans_count, nrow = n, byrow = FALSE)
   iter <- 0L
   loglik <- 0
   loglik_prev <- 0
@@ -335,14 +328,14 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
   log_sum_exp_vec <- numeric(n)
   posterior <- matrix(NA, n, k)
   post_clust_arr <- array(0, dim = c(n, s, s))
-  while (loglik_reldiff > reltol && iter < max_iter) {
+  while (loglik_reldiff > reltol && iter < maxiter) {
     iter <- iter + 1L
     # E-step
     for (j in 1:k) {
       log_prob <- log(inits[[j]][init_state]) + log(prior[j])
-      loglik_mat[, j] <- log_prob + apply(trans_count, 1L, function(x) {
-        sum(x * log(trans[[j]] + 1e-10))
-      })
+      log_trans_j <- log(trans[[j]] + 1e-10)
+      loglik_mat[, j] <- log_prob +
+        as.vector(trans_count_mat %*% c(log_trans_j))
     }
     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
@@ -359,7 +352,7 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
       )
       inits[[j]][] <- (inits_new + 1e-10) / sum(inits_new + s * 1e-10)
       post_clust_arr[] <- rep(post_clust, s^2)
-      trans_new <- apply(trans_count * post_clust_arr, c(2L, 3L), sum)
+      trans_new <- colSums(trans_count * post_clust_arr, dims = 1L)
       trans[[j]][] <- trans_new / .rowSums(trans_new, s, s)
     }
     loglik <- sum(log_sum_exp_vec)
@@ -388,15 +381,19 @@ em <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     trans = trans,
     beta = beta,
     hessian = hessian,
-    converged = iter < max_iter,
-    iterations = iter,
-    sizes = table(factor(max.col(posterior), levels = seq_len(k)))
+    converged = iter < maxiter,
+    iterations = iter
   )
 }
 
 # The EM Algorithm for a mixture Markov Model with Covariates
-em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
-  set.seed(seed + start)
+em_covariates <- function(start, data, mm, k, labels, control) {
+  set.seed(control$seed + start)
+  reltol <- control$reltol
+  tol <- control$tol
+  maxiter <- control$maxiter
+  maxiter_m <- control$maxiter_m
+  step <- control$step
   s <- length(labels)
   state_names <- list(labels, labels)
   # For some reason export does not work for this function
@@ -435,6 +432,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     trans_count[new_trans] <- trans_count[new_trans] + 1L
     from_na <- to_na
   }
+  trans_count_mat <- matrix(trans_count, nrow = n, byrow = FALSE)
   iter <- 0L
   loglik <- 0
   loglik_prev <- 0
@@ -450,21 +448,21 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
   gradient <- numeric((k - 1L) * q)
   posterior <- matrix(NA, n, k)
   post_clust_arr <- array(0, dim = c(n, s, s))
-  while (loglik_reldiff > reltol && iter < max_iter) {
+  while (loglik_reldiff > reltol && iter < maxiter) {
     iter <- iter + 1L
     # E-step
     for (j in 1:k) {
       log_prob <- log(inits[[j]][init_state]) + log(prior[, j])
-      loglik_mat[, j] <- log_prob + apply(trans_count, 1L, function(x) {
-        sum(x * log(trans[[j]] + 1e-10))
-      })
+      log_trans_j <- c(log(trans[[j]] + 1e-10))
+      loglik_mat[, j] <- log_prob +
+        as.vector(trans_count_mat %*% c(log_trans_j))
     }
     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
     # M-step
     beta_prev <- unlist(beta[-1L])
     # Multinomial regression
-    for (r in 1:max_iter) {
+    for (r in 1:maxiter_m) {
       hessian <- matrix(0i, (k - 1L) * q, (k - 1L) * q)
       for (j in 2:k) {
         idx_row <- seq((j - 2) * q + 1, (j - 1) * q)
@@ -487,8 +485,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
       # Regularization
       f <- norm(hessian, type = "F")
       lambda <- diag(rep(max(1e-8, 1e-6 * f), q * (k - 1L)))
-      # TODO step size argument
-      beta_vec <- beta_prev - 0.5 * solve(hessian - lambda) %*% gradient
+      beta_vec <- beta_prev - step * solve(hessian - lambda) %*% gradient
       beta_diff <- sum((beta_vec - beta_prev)^2)
       beta_prev <- beta_vec
       for (j in 2:k) {
@@ -497,8 +494,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
         linpred[, j] <- mm %*% beta[[j]]
       }
       prior[] <- exp(linpred - log_sum_exp_rows(linpred, m = n, n = k))
-      # TODO tol argument for beta
-      if (beta_diff < 1e-4) {
+      if (beta_diff < tol) {
         break
       }
     }
@@ -513,7 +509,7 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
       )
       inits[[j]][] <- (inits_new + 1e-10) / sum(inits_new + s * 1e-10)
       post_clust_arr[] <- rep(post_clust, s^2)
-      trans_new <- apply(trans_count * post_clust_arr, c(2L, 3L), sum)
+      trans_new <- colSums(trans_count * post_clust_arr, dims = 1L)
       trans[[j]][] <- trans_new / .rowSums(trans_new, s, s)
     }
     loglik <- sum(log_sum_exp_vec)
@@ -530,9 +526,8 @@ em_covariates <- function(start, seed, data, mm, k, labels, max_iter, reltol) {
     inits = inits,
     beta = beta,
     hessian = hessian,
-    converged = iter < max_iter,
-    iterations = iter,
-    sizes = table(factor(max.col(posterior), levels = seq_len(k)))
+    converged = iter < maxiter,
+    iterations = iter
   )
 }
 

@@ -33,6 +33,7 @@ Imports:
     RColorBrewer,
     rlang,
     stats,
+    stringdist,
     tibble,
     tidyr,
     tidyselect

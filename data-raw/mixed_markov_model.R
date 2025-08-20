@@ -38,14 +38,17 @@ usethis::use_data(
 
 # MMM using TNA
 
-# Seed selected to get the same cluster order as seqHMM
+# Seed is selected to get the same cluster order as seqHMM
 engagement_tna_mmm <- cluster_mmm(
   engagement,
   k = 3,
   progressbar = FALSE,
-  seed = 6000,
   parallel = TRUE,
-  n_starts = 100
+  control = list(
+    maxiter = 1000,
+    restarts = 100,
+    seed = 6000
+  )
 )
 
 usethis::use_data(

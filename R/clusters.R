@@ -164,7 +164,7 @@ weighted_hamming <- function(mat, lambda) {
       )
     }
   }
-  as.dist(d)
+  stats::as.dist(d)
 }
 
 available_clustering_dissimilarities <- c(

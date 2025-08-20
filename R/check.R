@@ -402,3 +402,30 @@ check_cols <- function(cols, data_names) {
     )
   )
 }
+
+check_em_control <- function(control) {
+  em_control_defaults <- list(
+    maxiter = 500L,
+    maxiter_m = 500L,
+    reltol = 1e-10,
+    restarts = 10L,
+    seed = 1L,
+    step = 0.9,
+    tol = 1e-6
+  )
+  if (missing(control)) {
+    return(em_control_defaults)
+  }
+  for (n in names(em_control_defaults)) {
+    if (is.null(control[[n]])) {
+      control[[n]] <- em_control_defaults[[n]]
+    }
+  }
+  check_values(control$restarts, strict = TRUE)
+  check_values(control$maxiter, strict = TRUE)
+  check_values(control$reltol, type = "numeric", strict = TRUE)
+  check_values(control$tol, type = "numeric", strict = TRUE)
+  check_values(control$seed)
+  check_values(control$step, type = "numeric", strict = TRUE)
+  control
+}

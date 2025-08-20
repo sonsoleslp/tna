@@ -135,7 +135,7 @@ summary.tna_mmm <- function(object, ...) {
   mean_prob <- do.call(
     "rbind",
     lapply(
-      seq_len(object$k),
+      object$cluster_names,
       function(i) {
         colMeans(object$posterior[object$assignments == i, ])
       }
@@ -147,8 +147,8 @@ summary.tna_mmm <- function(object, ...) {
       loglik = object$loglik,
       aic = object$aic,
       bic = object$bic,
-      coefficients = coef(object, ...),
-      vcov = vcov(object, ...),
+      coefficients = coef.tna_mmm(object, ...),
+      vcov = vcov.tna_mmm(object, ...),
       prior = object$prior,
       posterior = object$posterior,
       assignments = object$assignments,

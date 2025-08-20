@@ -9,6 +9,9 @@
 \arguments{
 \item{x}{A \code{tna_mmm} object.}
 
+\item{digits}{An \code{integer} giving the number of \emph{significant} digits
+to print.}
+
 \item{...}{Arguments passed to the generic \code{print} method}
 }
 \value{

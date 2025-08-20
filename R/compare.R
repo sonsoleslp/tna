@@ -388,6 +388,7 @@ rv_coefficient <- function(x, y) {
 #'   correction method (default: `"bonferroni"`). Supports all
 #'   [stats::p.adjust] methods: `"holm"`, `"hochberg"`, `"hommel"`,
 #'   `"bonferroni"`, `"BH"`, `"BY"`, `"fdr"`, `"none"`.
+#' @param ... Not used.
 #' @return A `tna_sequence_comparison` object, which is a `data.frame` with
 #'   columns giving the names of the pattern, pattern frequencies, pattern
 #'   proportions (within patterns of the same length), test statistic values
@@ -404,16 +405,33 @@ compare_sequences <- function(x, ...) {
 
 #' @export
 #' @rdname compare_sequences
-compare_sequences.default <- function(x, group, ...) {
+compare_sequences.default <- function(x, group, sub = 2:5, min_freq = 5L,
+                                      correction = "bonferroni", ...) {
   model <- group_tna(x, group = group)
-  compare_sequences.group_tna(x = model, ...)
-
+  compare_sequences.group_tna(
+    x = model,
+    sub = sub,
+    min_freq = min_freq,
+    correction = correction,
+    ...
+  )
 }
 
 #' @export
 #' @rdname compare_sequences
 compare_sequences.group_tna <- function(x, sub = 2:5, min_freq = 5L,
-                                        correction = "bonferroni") {
+                                        correction = "bonferroni", ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  check_range(
+    sub,
+    type = "integer",
+    scalar = FALSE,
+    lower = 2L,
+    upper = nrow(x[[1L]]$data)
+  )
+  check_values(min_freq)
+  correction <- check_match(correction, stats::p.adjust.methods)
   n_group <- length(x)
   groups <- names(x)
   patterns <- vector(mode = "list", length = n_group)
@@ -486,7 +504,7 @@ compare_sequences_ <- function(x, q, min_freq, correction) {
         #
         # }
         tab <- matrix(c(freq_mat[i, ], total), nrow = 2L, byrow = TRUE)
-        chisq <- suppressWarnings(chisq.test(tab))
+        chisq <- suppressWarnings(stats::chisq.test(tab))
         pat$statistic[i] <- chisq$statistic
         pat$p_value[i] <- stats::p.adjust(chisq$p.value, method = correction)
         resid[i, ] <- chisq$stdres[1L, ]

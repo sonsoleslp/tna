@@ -37,6 +37,7 @@ Model comparison functions
 \code{\link{plot.tna_comparison}()},
 \code{\link{plot.tna_sequence_comparison}()},
 \code{\link{plot_compare}()},
-\code{\link{print.tna_comparison}()}
+\code{\link{print.tna_comparison}()},
+\code{\link{print.tna_sequence_comparison}()}
 }
 \concept{comparison}
