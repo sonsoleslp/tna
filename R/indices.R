@@ -7,7 +7,7 @@ sequence_indices.default <- function(x, cols, favorable, min_length = 1L, ...) {
     is.matrix(x) || is.data.frame(x),
     "Argument {.arg x} must be a matrix or a data.frame"
   )
-  p <- ncol(m)
+  p <- ncol(x)
   cols <- cols %m% seq_len(p)
   data <- create_seqdata(x, cols = cols)
   model <- initialize_model(
@@ -42,6 +42,9 @@ sequence_indices.default <- function(x, cols, favorable, min_length = 1L, ...) {
   init_per <- numeric(n)
   init_decay <- numeric(n)
   cyclic_str <- cyclic_strength(m, n, k, last_obs)
+  attr_state <- character(n)
+  attr_str <- numeric(n)
+  comp <- numeric(n)
   for (i in seq_len(n)) {
     row <- m[i, ]
     p <- last_obs[i]
@@ -50,10 +53,12 @@ sequence_indices.default <- function(x, cols, favorable, min_length = 1L, ...) {
     last[i] <- lab[row[last_obs[i]]]
     freq <- tabulate(row)
     prop <- freq / valid[i]
+    pos <- freq > 0
     runs <- rle(row)
-    mean_spells[i] <- mean(runs$lengths[!is.na(runs$values)])
+    spells <- runs$lengths[!is.na(runs$values)]
+    mean_spells[i] <- mean(spells)
     u_states[i] <- length(freq)
-    long_ent[i] <- -sum(prop * log(prop))
+    long_ent[i] <- -sum(prop[pos] * log(prop[pos]))
     simpson[i] <- 1.0 - sum(prop^2)
     self <- sum(diag(trans[i,,]))
     total <- sum(trans[i,,])
@@ -74,6 +79,13 @@ sequence_indices.default <- function(x, cols, favorable, min_length = 1L, ...) {
     early <- sum(first_third == row[1L], na.rm = TRUE) / length(first_third)
     late <- sum(last_third == row[1L], na.rm = TRUE) / length(last_third)
     init_decay[i] <- early - late
+    attr_vec <- attractor_state(row, p, freq, runs)
+    attr_idx <- which.max(attr_vec)
+    attr_state[i] <- lab[attr_idx]
+    attr_str[i] <- prop[attr_idx]
+    comp[i] <- 0.4 * (long_ent[i] / log(s)) +
+      0.4 * (sum(tmp) / (p - 1)) +
+      0.2 * min(sd(spells) / mean(spells), 1.0)
     # cyclic_str[i] <- max(
     #   vapply(
     #     seq(2L, p - 1L),
@@ -98,7 +110,10 @@ sequence_indices.default <- function(x, cols, favorable, min_length = 1L, ...) {
     initial_state_influence_decay = init_decay,
     cyclic_feedback_strength = cyclic_str,
     first_state = first,
-    last_state = last
+    last_state = last,
+    attractor_state = attr_state,
+    attractor_strength = attr_str,
+    complexity_index = comp
   )
 }
 
@@ -117,6 +132,25 @@ cyclic_strength <- function(m, n, k, last_obs) {
     max_strength <- pmax(max_strength, strength)
   }
   max_strength
+}
+
+attractor_state <- function(x, p, freq, runs, weights = c(1.0, 0.5, 0.3)) {
+  s <- length(freq)
+  strength <- numeric(s)
+  for (i in seq_len(s)) {
+    if (freq[i] > 0) {
+      spells <- runs$lengths[which(runs$values == 1)]
+      per <- mean(spells) / p
+      gaps <- diff(which(x == i)) - 1
+      ret <- 1.0 / (1.0 + mean(gaps))
+      strength[i] <- sum(weights * c(freq[i], per, ret))
+    }
+  }
+  strength
+}
+
+integrative_potential <- function(x) {
+  0
 }
 
 # mean_spell_length <- function(x, n, p) {
