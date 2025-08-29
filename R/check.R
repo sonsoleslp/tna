@@ -285,6 +285,7 @@ check_weights <- function(x, type) {
 check_match <- function(x, choices, several.ok = FALSE) {
   arg <- deparse(substitute(x))
   x <- onlyif(is.character(x), tolower(x))
+  choices <- tolower(choices)
   x <- try_(match.arg(arg = x, choices = choices, several.ok = several.ok))
   n_choices <- length(choices)
   prefix <- ifelse_(

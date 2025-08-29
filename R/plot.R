@@ -141,7 +141,17 @@ plot.tna <- function(x, labels, colors, pie, cut,
     x$weights
   )
   n <- nodes(x)
-  if (!missing(scale_nodes)) {
+  scale_nodes <- ifelse_(
+    missing(scale_nodes) || isFALSE(scale_nodes),
+    character(0L),
+    scale_nodes
+  )
+  scale_nodes <- ifelse_(
+    isTRUE(scale_nodes),
+    "InStrength",
+    scale_nodes
+  )
+  if (length(scale_nodes) > 0) {
     check_string(scale_nodes)
     check_range(scaling_factor, lower = 0)
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
