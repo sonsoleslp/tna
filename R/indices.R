@@ -1,7 +1,14 @@
+#' Compute Sequence Indices
+#'
+#' @export
+#' @param x A `data.frame` or a `matrix`.
+#' @return A `data.frame` containing the index values.
 sequence_indices <- function(x, ...) {
   UseMethod("sequence_indices")
 }
 
+#' @export
+#' @rdname sequence_indices
 sequence_indices.default <- function(x, cols, favorable, min_length = 1L, ...) {
   stopifnot_(
     is.matrix(x) || is.data.frame(x),

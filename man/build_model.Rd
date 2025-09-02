@@ -8,6 +8,7 @@
 \alias{build_model.data.frame}
 \alias{build_model.tna_data}
 \alias{build_model.tsn}
+\alias{build_model.tsn_ews}
 \alias{tna}
 \alias{ftna}
 \alias{ctna}
@@ -49,6 +50,8 @@ build_model(x, type = "relative", scaling = character(0L), ...)
 \method{build_model}{tna_data}(x, type = "relative", scaling = character(0), params = list(), ...)
 
 \method{build_model}{tsn}(x, type = "relative", scaling = character(0), params = list(), ...)
+
+\method{build_model}{tsn_ews}(x, type = "relative", scaling = character(0), params = list(), ...)
 
 tna(x, ...)
 

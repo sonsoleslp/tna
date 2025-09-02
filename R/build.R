@@ -279,6 +279,38 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0),
   )
 }
 
+#' @export
+#' @rdname build_model
+build_model.tsn_ews <- function(x, type = "relative", scaling = character(0),
+                                params = list(), ...) {
+  check_missing(x)
+  check_class(x, "tsn_ews")
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
+  id <- attr(x, "id_col")
+  cls <- attr(x, "classification")
+  wide <- cls |>
+    dplyr::select(
+      c(!!rlang::sym("state"), !!rlang::sym("time"))
+    ) |>
+    tidyr::pivot_wider(
+      values_from = !!rlang::sym("state"),
+      names_from = !!rlang::sym("time"),
+      names_prefix = "T"
+    )
+  x <- create_seqdata(wide, cols = seq_len(ncol(wide)))
+  model <- initialize_model(x, type, scaling, params)
+  build_model_(
+    weights = model$weights,
+    inits = model$inits,
+    labels = model$labels,
+    type = type,
+    scaling = scaling,
+    data = x,
+    params = params
+  )
+}
+
 # Aliases -----------------------------------------------------------------
 
 #' @export

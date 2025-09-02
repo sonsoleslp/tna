@@ -73,6 +73,8 @@ perform. Multiple restarts help avoid local optima. The default is \code{10}.
 \item \code{seed}: An \code{integer} specifying the base random seed.
 The initial values are generated for each restart using \code{seed + i} as
 the seed where \code{i} is the index of the restart.
+\item \code{step}: An \code{integer} defining the step size for the Newton-Rhapson
+iterations. The default is \code{1.0}.
 }}
 }
 \description{
