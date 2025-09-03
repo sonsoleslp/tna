@@ -282,17 +282,15 @@ check_weights <- function(x, type) {
 #' @param x A `character` string.
 #' @inheritParams match.arg
 #' @noRd
-check_match <- function(x, choices, several.ok = FALSE) {
+check_match <- function(x, choices, several.ok = FALSE, match_case = FALSE) {
   arg <- deparse(substitute(x))
-  x <- onlyif(is.character(x), tolower(x))
-  choices <- tolower(choices)
+  if (!match_case) {
+    x <- onlyif(is.character(x), tolower(x))
+    choices <- tolower(choices)
+  }
   x <- try_(match.arg(arg = x, choices = choices, several.ok = several.ok))
   n_choices <- length(choices)
-  prefix <- ifelse_(
-    several.ok,
-    "Elements of",
-    "Argument"
-  )
+  prefix <- ifelse_(several.ok, "Elements of", "Argument")
   stopifnot_(
     !inherits(x, "try-error"),
     "{prefix} {.arg {arg}} must be either

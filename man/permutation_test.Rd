@@ -27,7 +27,8 @@ permutation_test(x, ...)
 
 \item{adjust}{A \code{character} string for the method to adjust p-values with
 for multiple comparisons. The default is \code{"none"} for no adjustment.
-See \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available adjustment methods.}
+See the \code{method} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available
+adjustment methods.}
 
 \item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}

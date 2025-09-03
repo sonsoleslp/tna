@@ -53,3 +53,14 @@ test_that("paired permutation fails when data are incomparable", {
     "The state labels of `x` and `y` must be the same and in the same order\\."
   )
 })
+
+test_that("permutation test p-values can be adjusted", {
+  model_x <- tna(group_regulation[1:200, ])
+  model_y <- tna(group_regulation[1001:1200, ])
+  for (method in stats::p.adjust.methods) {
+    expect_error(
+      permutation_test(model_x, model_y, adjust = method),
+      NA
+    )
+  }
+})

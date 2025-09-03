@@ -12,7 +12,8 @@
 #' @param y A `tna` object containing sequence data for the second `tna` model.
 #' @param adjust A `character` string for the method to adjust p-values with
 #' for multiple comparisons. The default is `"none"` for no adjustment.
-#' See [stats::p.adjust()] for details and available adjustment methods.
+#' See the `method` argument of [stats::p.adjust()] for details and available
+#' adjustment methods.
 #' @param iter An `integer` giving the number of permutations to perform.
 #' The default is 1000.
 #' @param paired A `logical` value. If `TRUE`, perform paired permutation tests;
@@ -54,6 +55,7 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
   check_values(iter, strict = TRUE)
   check_flag(paired)
   check_range(level, lower = 0, upper = 1)
+  adjust <- check_match(adjust, stats::p.adjust.methods, match_case = TRUE)
   permutation_test_(
     x = x,
     y = y,
@@ -97,6 +99,7 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
   check_values(iter, strict = TRUE)
   check_flag(paired)
   check_range(level, lower = 0, upper = 1)
+  adjust <- check_match(adjust, stats::p.adjust.methods, match_case = TRUE)
   x_names <- names(x)
   groups <- groups %m% seq_along(x)
   check_cluster(x, groups)
@@ -160,7 +163,6 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     "The state labels of {.arg x} and {.arg y} must be the same
      and in the same order."
   )
-  #combined_data <- dplyr::bind_rows(data_x, data_y)
   combined_data <- rbind(data_x, data_y)
   attr(combined_data, "alphabet") <- attr(data_x, "alphabet")
   attr(combined_data, "labels") <- attr(data_x, "labels")
