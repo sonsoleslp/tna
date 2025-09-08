@@ -179,7 +179,11 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
   out$cluster_names <- cluster_names
   out$data <- data
   out$data_name <- data_name
-  out$assignments <- factor(max.col(out$posterior), labels = cluster_names)
+  out$assignments <- factor(
+    max.col(out$posterior),
+    levels = seq_len(ncol(out$posterior)),
+    labels = cluster_names
+  )
   out$sizes <- table(out$assignments)
   names(out$inits) <- cluster_names
   names(out$trans) <- cluster_names
@@ -214,7 +218,7 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
     res <- tryCatch(
       em_fun(i, data, mm, k, lab, control),
       error = function(e) {
-        NULL
+        print(e)
       }
     )
     if (progressbar) {
@@ -224,18 +228,19 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
   }
   # results <- vector(mode = "list", length = control$restarts)
   # for (i in seq_len(control$restarts)) {
-  #   res <- tryCatch(
-  #     em_fun(i, data, mm, k, lab, control),
-  #     error = function(e) {
-  #       NULL
-  #     }
-  #   )
+  #   res <- em_fun(i, data, mm, k, lab, control)
+  #   results[[i]] <- res
+  # }
   #   if (progressbar) {
   #     cli::cli_progress_update()
   #   }
   #   results[[i]] <- res
   # }
   nulls <- vapply(results, is.null, logical(1L))
+  stopifnot_(
+    any(!nulls),
+    "All EM algorithm runs failed."
+  )
   results <- results[!nulls]
   logliks <- vapply(results, "[[", numeric(1L), "loglik")
   best <- results[[which.max(logliks)]]
@@ -348,7 +353,9 @@ em <- function(start, data, mm, k, labels, control) {
       inits[[j]][] <- (inits_new + 1e-10) / sum(inits_new + s * 1e-10)
       post_clust_arr[] <- rep(post_clust, s^2)
       trans_new <- colSums(trans_count * post_clust_arr, dims = 1L)
-      trans[[j]][] <- trans_new / .rowSums(trans_new, s, s)
+      rs <- .rowSums(trans_new, s, s)
+      pos <- which(rs > 0)
+      trans[[j]][pos] <- trans_new[pos] / rs[pos]
     }
     loglik <- sum(log_sum_exp_vec)
     if (iter > 1L) {
@@ -504,7 +511,9 @@ em_covariates <- function(start, data, mm, k, labels, control) {
       inits[[j]][] <- (inits_new + 1e-10) / sum(inits_new + s * 1e-10)
       post_clust_arr[] <- rep(post_clust, s^2)
       trans_new <- colSums(trans_count * post_clust_arr, dims = 1L)
-      trans[[j]][] <- trans_new / .rowSums(trans_new, s, s)
+      rs <- .rowSums(trans_new, s, s)
+      pos <- which(rs > 0)
+      trans[[j]][pos] <- trans_new[pos] / rs[pos]
     }
     loglik <- sum(log_sum_exp_vec)
     if (iter > 1L) {
