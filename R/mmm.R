@@ -218,7 +218,7 @@ fit_mmm <- function(data, mm, k, progressbar, parallel, cl, control) {
     res <- tryCatch(
       em_fun(i, data, mm, k, lab, control),
       error = function(e) {
-        print(e)
+        NULL
       }
     )
     if (progressbar) {
