@@ -10,10 +10,9 @@
 #'   columns represent time points. Missing values (`NA`) are handled
 #'   appropriately. The columns should be either `integer`, `character` or
 #'   `factor` variables.
-#' @param cols An `integer`/`character` vector giving the indices/names of the
-#'   columns that should be considered as sequence data.
-#'   Defaults to all columns, i.e., `seq(1, ncol(data))`. Column names not
-#'   found in `data` will be ignored without warning.
+#' @param cols An `expression` giving a tidy selection of column names
+#'   that should be considered as sequence data. The default is to use all
+#'   columns.
 #' @param formula An optional `formula` object that specifies the covariates
 #'   to use for the cluster membership probabilities.
 #' @param k An `integer` vector specifying the numbers of mixture components
@@ -75,7 +74,7 @@
 #' model2 <- cluster_mmm(engagement, k = 2:4, criterion = "bic")
 #' }
 #'
-cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
+cluster_mmm <- function(data, cols = tidyselect::everything(), formula,
                         k, cluster_names, criterion = "bic",
                         progressbar = TRUE, parallel = FALSE,
                         n_cores, cl, control) {
@@ -85,6 +84,7 @@ cluster_mmm <- function(data, cols = seq(1L, ncol(data)), formula,
     NULL,
     stats::model.matrix(formula, data = data)
   )
+  cols <- get_cols(rlang::enquo(cols), data)
   data <- create_seqdata(x = data, cols = cols)
   criterion <- check_match(criterion, c("bic", "aic"))
   control <- check_em_control(control)

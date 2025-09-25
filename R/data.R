@@ -8,21 +8,23 @@
 #' @export
 #' @family data
 #' @param data A `data.frame` or containing the action/event data.
-#' @param actor A `character` vector giving the names of the columns that
-#' represents a user/actor identifiers. If not provided and neither `time` nor
+#' @param actor A `character` vector or an `expression` represeting
+#' a tidy selection of the names of the columns that
+#' represent a user/actor identifiers. If not provided and neither `time` nor
 #' `order` is specified, the entire dataset is treated as a single session.
 #' In the case of multiple actors, a new `.actor` column is added that
 #' represents the interaction of the given columns.
-#' @param time A `character` string giving the name of the column representing
-#' timestamps of the action events.
-#' @param action A `character` string giving the name of the column holding
-#' the information about the action taken.
-#' @param order A `character` string giving the name of a column with sequence
-#' numbers or non-unique orderable values that indicate order within an `actor`
-#' group, if not present it will be ordered with all the data if no `actor` is
-#' available, used when widening the data. If both `actor` and `time` are
-#' specified, then the sequence order should be specified such that it
-#' determines the order of events within `actor` and each session.
+#' @param time A `character` string or an `expression` giving the name of
+#' the column representing timestamps of the action events.
+#' @param action A `character` string or an `expression` giving the name of
+#' the column holding the information about the action taken.
+#' @param order A `character` string or an `expression` giving the name of a
+#' column with sequence numbers or non-unique orderable values that indicate
+#' order within an `actor` group, if not present it will be ordered with all
+#' the data if no `actor` is available, used when widening the data.
+#' If both `actor` and `time` are specified, then the sequence order should
+#' be specified such that it determines the order of events within `actor`
+#' and each session.
 #' @param time_threshold An `integer` specifying the time threshold in seconds
 #' for creating new time-based sessions. Defaults to 900 seconds.
 #' @param custom_format A `character` string giving the format used to
@@ -100,11 +102,6 @@ prepare_data <- function(data, actor, time, action, order,
                          unused_fn = dplyr::first) {
   check_missing(data)
   check_class(data, "data.frame")
-  check_missing(action)
-  check_character(actor)
-  check_string(time)
-  check_string(action)
-  check_string(order)
   check_values(time_threshold, type = "numeric")
   check_flag(is_unix_time)
   unix_time_unit <- check_match(
@@ -125,14 +122,14 @@ prepare_data <- function(data, actor, time, action, order,
       {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
     )
   )
+  action <- get_cols(rlang::enquo(action), data)
+  actor <- get_cols(rlang::enquo(actor), data)
+  time <- get_cols(rlang::enquo(time), data)
+  order <- get_cols(rlang::enquo(order), data)
+  check_cols(action, missing_ok = FALSE)
+  check_cols(time)
+  check_cols(order)
   data <- tibble::as_tibble(data)
-  cols_req <- c(
-    action,
-    onlyif(!missing(actor), actor),
-    onlyif(!missing(time), time),
-    onlyif(!missing(order), order)
-  )
-  check_cols(cols_req, names(data))
   long_data <- data
   default_actor <- FALSE
   default_order <- FALSE
@@ -491,8 +488,8 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
 #' (without quotes) to include all columns from 'feature1' to 'feature6'
 #' in the order they appear in the data frame. For more information on
 #' tidy selections, see [dplyr::select()].
-#' @param id_cols A `character` vector of column names that uniquely identify
-#' each observation (IDs).
+#' @param id_cols An `expression` giving a tidy selection of column names that
+#' uniquely identify each observation (IDs).
 #' @param window_size An `integer` specifying the size of the window for
 #' sequence grouping. Default is 1 (each row is a separate window).
 #' @param replace_zeros A `logical` value indicating whether to replace 0s
@@ -532,18 +529,9 @@ import_data <- function(data, cols, id_cols,
   check_missing(data)
   check_class(data, "data.frame")
   check_flag(replace_zeros)
-  data_names <- colnames(data)
-  missing_ids <- id_cols[!id_cols %in% colnames(data)]
-  stopifnot_(
-    length(missing_ids) == 0L,
-    c(
-      "All ID columns specified by {.arg id_cols} must be present in the data.",
-      `x` = "The following column{?s} {?was/were} not found: {missing_ids}."
-    )
-  )
-  expr_cols <- rlang::enquo(cols)
-  pos <- tidyselect::eval_select(expr_cols, data = data)
-  cols <- names(pos)
+  cols <- get_cols(rlang::enquo(cols), data)
+  id_cols <- get_cols(rlang::enquo(id_cols), data) %m% character(0L)
+  check_cols(cols, single = FALSE, missing_ok = FALSE)
   out <- data
   n <- nrow(out)
   rownames(out) <- ifelse_(
@@ -637,9 +625,7 @@ import_onehot <- function(data, cols, window = 1L) {
     data$.window <- rep(seq(1L, n %/% window + 1L), each = window)[1:n]
     window <- ".window"
   }
-  expr_cols <- rlang::enquo(cols)
-  pos <- tidyselect::eval_select(expr_cols, data = data)
-  cols <- names(pos)
+  cols <- get_cols(rlang::enquo(cols), data)
   for (col in cols) {
     data_vals <- unique(data[[col]])
     invalid_vals <- data_vals[!is.na(data_vals) & !data_vals %in% c(0, 1)]
@@ -658,9 +644,7 @@ import_onehot <- function(data, cols, window = 1L) {
     dplyr::group_by(!!rlang::sym(window)) |>
     dplyr::summarize(
       dplyr::across(
-        dplyr::all_of(cols),
-        sum,
-        .names = "{col}"
+        dplyr::all_of(cols), sum, .names = "{col}"
       )
     ) |>
     dplyr::select(dplyr::all_of(cols)) |>

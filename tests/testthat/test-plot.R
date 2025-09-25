@@ -360,7 +360,7 @@ test_that("sequence distribution plots can be created", {
 
 test_that("sequences can be sorted in index plot", {
   expect_error(
-    plot_sequences(mock_tna_data, sort_by = "everything"),
+    plot_sequences(mock_tna_data, sort_by = tidyselect::everything()),
     NA
   )
   expect_error(

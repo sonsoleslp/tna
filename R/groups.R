@@ -20,9 +20,9 @@
 #'   format `data.frame` or a `tna_data` object. If not provided, each row of
 #'   the data forms a cluster. Not used when `x` is a mixture Markov model
 #'   or a clustering result.
-#' @param cols An `integer`/`character` vector giving the indices/names of the
+#' @param cols An `expression` giving a tidy selection of the
 #'   columns that should be considered as sequence data.
-#'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
+#'   The default is all columns. The columns are
 #'   automatically determined for `tna_data` objects. The `group` column
 #'   is automatically removed from these columns if provided.
 #' @param na.rm A `logical` value that determines if observations with `NA`
@@ -52,7 +52,8 @@ group_model <- function(x, ...) {
 #' @rdname group_model
 group_model.default <- function(x, group, type = "relative",
                                 scaling = character(0L), groupwise = FALSE,
-                                cols, params = list(), na.rm = TRUE, ...) {
+                                cols = tidyselect::everything(),
+                                params = list(), na.rm = TRUE, ...) {
   check_missing(x)
   check_flag(groupwise)
   check_flag(na.rm)
@@ -63,17 +64,10 @@ group_model.default <- function(x, group, type = "relative",
   )
   if (inherits(x, "tna_data")) {
     wide <- cbind(x$sequence_data, x$meta_data)
-    cols <- seq_len(ncol(x$sequence_data))
+    cols <- names(x$sequence_data)
     x <- wide
   } else {
-    cols <- cols %m% seq_len(ncol(x))
-    check_range(
-      cols,
-      type = "integer",
-      scalar = FALSE,
-      lower = 1L,
-      upper = ncol(x)
-    )
+    cols <- get_cols(rlang::enquo(cols), x)
   }
   group <- group %m% seq_len(nrow(x))
   type <- check_model_type(type)
@@ -95,7 +89,7 @@ group_model.default <- function(x, group, type = "relative",
        when of length one."
     )
     label <- group
-    cols <- setdiff(cols, which(x_names == group))
+    cols <- setdiff(cols, group)
     group <- as.factor(x[[group]])
     prefix <- "Column"
   }
@@ -127,7 +121,12 @@ group_model.default <- function(x, group, type = "relative",
   group_scaling <- ifelse_(groupwise, scaling, character(0L))
   groups <- vector(mode = "list", length = n_group)
   group <- as.integer(group)
-  vals <- sort(unique(unlist(x[, cols])))
+  # TODO remove workaround if TraMineR is fixed
+  vals <- ifelse_(
+    inherits(x, "stslist"),
+    sort(unique(unlist(x[, which(names(x) %in% cols)]))),
+    vals <- sort(unique(unlist(x[, cols])))
+  )
   alphabet <- ifelse_(
     inherits(x, "stslist"),
     attr(x, "alphabet"),

@@ -129,11 +129,23 @@ log_sum_exp <- function(x) {
   L
 }
 
-# Define the null coalescing operator for older R versions
+#' Null coalescing operator
+#'
+#' Define the null coalescing operator for older R versions
+#' @noRd
 if (base::getRversion() < "4.4.0") {
   `%||%` <- function(x, y) {
     if (is.null(x)) y else x
   }
+}
+
+#' Default value operator for a missing argument
+#'
+#' @param x An \R object
+#' @param y An \R object to assign if `x` is missing
+#' @noRd
+`%m%` <- function(x, y) {
+  if (missing(x)) y else x
 }
 
 #' Number of unique elements in a vector
@@ -171,6 +183,33 @@ bound <- function(x, range) {
   x
 }
 
+#' Get specific columns from data
+#'
+#' @param expr An `expression` for the columns to select
+#' @param data A `data.frame` to select the columns from
+#' @noRd
+get_cols <- function(expr, data) {
+  if (rlang::quo_is_missing(expr)) {
+    return(rlang::missing_arg())
+  }
+  if (rlang::quo_is_symbolic(expr) && !rlang::quo_is_call(expr, "!!")) {
+    pos <- tidyselect::eval_select(expr = expr, data = data)
+    names(pos)
+  } else {
+    cols <- rlang::eval_tidy(expr = expr)
+    if (is.character(cols)) {
+      intersect(cols, names(data))
+    } else if (is.numeric(cols)) {
+      names(data)[cols]
+    } else {
+      stop_(
+        "Columns must be selected using a tidy selection,
+         a {.cls character} vectos, or an {.cls integer} vector."
+      )
+    }
+  }
+}
+
 # Functions borrowed from the `dynamite` package --------------------------
 # https://github.com/ropensci/dynamite
 
@@ -186,15 +225,6 @@ ifelse_ <- function(test, yes, no) {
   } else {
     no
   }
-}
-
-#' Default value operator for a missing argument
-#'
-#' @param x An \R object
-#' @param y An \R object to assign if `x` is missing
-#' @noRd
-`%m%` <- function(x, y) {
-  if (missing(x)) y else x
 }
 
 #' Return `yes` if `test` is `TRUE`, otherwise return `NULL`

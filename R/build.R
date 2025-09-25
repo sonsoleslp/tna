@@ -176,16 +176,16 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-#' @param cols An `integer`/`character` vector giving the indices/names of the
-#' columns that should be considered as sequence data.
-#' Defaults to all columns, i.e., `seq(1, ncol(x))`. Column names not found
-#' in `x` will be ignored without warning.
+#' @param cols An `expression` giving a tidy selection of columns that should
+#' be considered as sequence data. By default, all columns are used.
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
-                                cols = seq(1, ncol(x)), params = list(), ...) {
+                                cols = tidyselect::everything(),
+                                params = list(), ...) {
   check_missing(x)
   check_class(x, "stslist")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
+  cols <- get_cols(rlang::enquo(cols), x)
   x <- create_seqdata(x, cols)
   model <- initialize_model(x, type, scaling, params)
   build_model_(
@@ -203,12 +203,13 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 #' @rdname build_model
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
-                                   cols = seq(1, ncol(x)),
+                                   cols = tidyselect::everything(),
                                    params = list(), ...) {
   check_missing(x)
   check_class(x, "data.frame")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
+  cols <- get_cols(rlang::enquo(cols), x)
   x <- create_seqdata(x, cols)
   model <- initialize_model(x, type, scaling, params)
   build_model_(
@@ -231,7 +232,7 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
-  x <- create_seqdata(wide, cols = seq_len(ncol(x$sequence_data)))
+  x <- create_seqdata(wide, cols = names(x$sequence_data))
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -266,7 +267,7 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0),
       names_prefix = "T"
     ) |>
     dplyr::select(!(!!rlang::sym(id)))
-  x <- create_seqdata(wide, cols = seq_len(ncol(wide)))
+  x <- create_seqdata(wide, cols = names(wide))
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -450,19 +451,14 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' Convert Sequence Data to an Internal Format
 #'
 #' @param x A `data.frame` or a `stslist` object.
-#' @param cols An `integer` vector of column indices or a `character` vector
-#' of column names.
+#' @param cols An `character` vector of column names.
 #' @param alphabet Optional `character` vector of the alphabet.
 #' @noRd
 create_seqdata <- function(x, cols, alphabet) {
   if (is.numeric(cols)) {
-    check_range(cols, scalar = FALSE, lower = 1L, upper = ncol(x))
+    stop("Numeric cols detected")
   }
-  cols <- ifelse_(
-    is.character(cols),
-    which(names(x) %in% cols),
-    cols
-  )
+  cols <- which(names(x) %in% cols)
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")

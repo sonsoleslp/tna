@@ -304,9 +304,6 @@ check_match <- function(x, choices, several.ok = FALSE, match_case = FALSE) {
 #' @param x An \R object.
 #' @noRd
 check_string <- function(x) {
-  if (missing(x)) {
-    return()
-  }
   arg <- deparse(substitute(x))
   stopifnot_(
     checkmate::test_string(x = x),
@@ -389,17 +386,21 @@ check_clusters <- function(x, i, j) {
   }
 }
 
-check_cols <- function(cols, data_names) {
-  cols_obs <- cols %in% data_names
-  cols_mis <- cols[!cols_obs]
-  stopifnot_(
-    all(cols_obs),
-    c(
-      "The columns {.val {cols}} must exist in the data.",
-      `x` = "The following columns were
-             not found in the data: {.val {cols_mis}}."
+check_cols <- function(cols, single = TRUE, missing_ok = TRUE) {
+  arg <- deparse(substitute(cols))
+  if (missing(cols)) {
+    stopifnot_(
+      missing_ok,
+      "Argument {.arg {arg}} is missing."
     )
-  )
+    return()
+  }
+  if (single) {
+    stopifnot_(
+      length(cols) == 1L,
+      "Argument {.arg {arg}} must provide a single column name."
+    )
+  }
 }
 
 check_em_control <- function(control) {

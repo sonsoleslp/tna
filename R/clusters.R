@@ -154,7 +154,7 @@ seq2str <- function(data, na_syms, na_include = FALSE, collapse = TRUE) {
 weighted_hamming <- function(mat, lambda) {
   n <- nrow(mat)
   k <- ncol(mat)
-  weights <- rev(cumsum(exp(-lambda * seq(0, k - 1))))
+  weights <- exp(-lambda * seq(0, k - 1))
   weights <- weights / max(weights)
   d <- matrix(0.0, n, n)
   for (i in seq_len(n - 1L)) {

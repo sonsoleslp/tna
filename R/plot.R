@@ -1242,8 +1242,8 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #' @rdname plot_sequences
 #' @param x A `tna`, `group_tna`, `tna_data` or a `data.frame` object with
 #'   sequence data in wide format.
-#' @param cols A `character` Vector of column names to be treated as
-#'   time points. If missing, all columns will be used.
+#' @param cols An `expression` giving a tidy selection of column names to be
+#'   treated as time points. By default, all columns will be used.
 #' @param group A vector indicating the group assignment of each
 #'   row of the data. Must have the same length as the
 #'   number of rows of `x`. Alternatively, a single `character` string giving
@@ -1265,9 +1265,8 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
 #'   unnamed `character` vector. If missing, a default palette is used.
 #' @param na_color A `character` string giving the color to use for missing
 #'   values. The default is `"white"`.
-#' @param sort_by Either a `character` vector of column names of `x` to sort
-#' by or `"everything"` to sort by every column.
-#' If missing, no sorting is done.
+#' @param sort_by An optional `expression` giving a tidy selection of column
+#' names of `x` to sort by or `"everything"`.
 #' @param show_n A `logical` value for whether to add the number of
 #'   observations (total or by group) to the plot title.
 #' @param border A `character` string giving the color for borders. For index
@@ -1329,7 +1328,7 @@ plot_sequences.tna <- function(x, group, type = "index",
   }
   plot_sequences_(
     d, lev, lab, cols, group, type, scale, geom, include_na, colors,
-    na_color, sort_by, show_n, border, title, legend_title,
+    na_color, rlang::enquo(sort_by), show_n, border, title, legend_title,
     xlab, ylab, tick, ncol
   )
 }
@@ -1346,16 +1345,33 @@ plot_sequences.tna_data <- function(x, group, type = "index",
   check_missing(x)
   check_class(x, "tna_data")
   wide <- cbind(x$sequence_data, x$meta_data)
-  cols <- names(x$sequence_data)
   plot_sequences.default(
-    wide, cols, group, type, scale, geom, include_na, colors, na_color,
-    sort_by, show_n, border, title, legend_title, xlab, ylab, tick, ncol
+    x = wide,
+    cols = dplyr::all_of(names(x$sequence_data)),
+    group = group,
+    type = type,
+    scale = scale,
+    geom = geom,
+    include_na = include_na,
+    colors = colors,
+    na_color = na_color,
+    sort_by = rlang::enquo(sort_by),
+    show_n = show_n,
+    border = border,
+    title = title,
+    legend_title = legend_title,
+    xlab = xlab,
+    ylab = ylab,
+    tick = tick,
+    ncol = ncol,
+    ...
   )
 }
 
 #' @export
 #' @rdname plot_sequences
-plot_sequences.default <- function(x, cols, group, type = "index",
+plot_sequences.default <- function(x, cols = tidyselect::everything(),
+                                   group, type = "index",
                                    scale = "proportion", geom = "bar",
                                    include_na = FALSE, colors,
                                    na_color = "white", sort_by,
@@ -1368,9 +1384,9 @@ plot_sequences.default <- function(x, cols, group, type = "index",
     "Argument {.arg x} must be {.cls stslist} (sequence data) or a
     {.cls data.frame} or object."
   )
-  x_names <- names(x)
-  cols <- cols %m% x_names
-  check_cols(cols, x_names)
+  # TODO can remove this if TraMineR is fixed
+  x <- as.data.frame(x)
+  cols <- get_cols(rlang::enquo(cols), x)
   if (!missing(group)) {
     n_group <- length(group)
     stopifnot_(
@@ -1380,7 +1396,7 @@ plot_sequences.default <- function(x, cols, group, type = "index",
     )
     if (n_group == 1L) {
       stopifnot_(
-        group %in% x_names,
+        group %in% names(x),
         "Argument {.arg group} must be a column name of {.arg x}
          when of length one."
       )
@@ -1397,6 +1413,8 @@ plot_sequences.default <- function(x, cols, group, type = "index",
   lev <- seq_along(lab)
   x[cols] <- lapply(x[cols], factor)
   x[cols] <- lapply(x[cols], as.integer)
+  sort_by <- sort_by %m% rlang::enquo(sort_by)
+  sort_by <- rlang::as_quosure(sort_by, rlang::caller_env())
   plot_sequences_(
     x, lev, lab, cols, group, type, scale, geom, include_na, colors,
     na_color, sort_by, show_n, border, title, legend_title,
@@ -1423,21 +1441,10 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
   x <- x |>
     dplyr::select(c(dplyr::all_of(cols), !!rlang::sym(group))) |>
     dplyr::group_by(!!rlang::sym(group))
+  sort_by <- get_cols(sort_by, x)
   if (!missing(sort_by)) {
-    if (is.numeric(sort_by)) {
-      x$.order <- sort_by
-      sort_cols <- ".order"
-    } else {
-      sort_cols <- ifelse_(
-        identical(sort_by, "everything"),
-        cols,
-        sort_by
-      )
-      check_cols(sort_cols, names(x))
-    }
     x <- x |>
-      dplyr::arrange(dplyr::across(dplyr::all_of(sort_cols)), .by_group = TRUE)
-    # TODO more sorting options
+      dplyr::arrange(dplyr::across(dplyr::all_of(sort_by)), .by_group = TRUE)
   }
   x$.seq_id <- seq_len(nrow(x))
   # Remove temporary grouping used in sorting
@@ -2084,7 +2091,7 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
   lev <- seq_along(lab)
   plot_sequences_(
     d, lev, lab, cols, group, type, scale, geom, include_na, colors,
-    na_color, sort_by, show_n, border, title, legend_title,
+    na_color, rlang::enquo(sort_by), show_n, border, title, legend_title,
     xlab, ylab, tick, ncol
   )
 }
