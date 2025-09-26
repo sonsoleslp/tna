@@ -96,25 +96,22 @@ print.summary.tna_mmm <- function(x, digits = 3L, ...) {
 #' @export
 #' @family basic
 #' @param x A `tna` object.
-#' @param digits An `integer` giving the number of *significant* digits
-#'   to print.
 #' @param generic A `logical` value. If `TRUE`, use generic print method
 #' instead. Defaults to `FALSE`.
-#' @param ... Ignored.
+#' @param ... Additional arguments passed to the generic `print` methods.
 #' @return The `tna` object passed as argument `x` (invisibly).
 #' @examples
 #' model <- tna(group_regulation)
 #' print(model)
 #'
-print.tna <- function(x, digits = 3, generic = FALSE, ...) {
+print.tna <- function(x, generic = FALSE, ...) {
   check_missing(x)
   check_class(x, "tna")
   check_flag(generic)
   if (generic) {
-    NextMethod(generic = "print", object = x, digits = digits, ...)
+    NextMethod(generic = "print", object = x, ...)
     return()
   }
-  check_values(digits)
   type <- attr(x, "type")
   mat_type <- switch(type,
     `relative` = "Transition Probability",
@@ -129,11 +126,11 @@ print.tna <- function(x, digits = 3, generic = FALSE, ...) {
   cat("State Labels : \n\n")
   cat("  ", paste(x$labels, collapse = ", "), "\n")
   cat("\n", mat_type, " Matrix :\n\n", sep = "")
-  print(x$weights, digits = digits)
+  print(x$weights, ...)
   inits <- stats::setNames(x$inits, x$labels)
   if (!is.null(x$inits)) {
     cat("\nInitial Probabilities : \n\n", sep = "")
-    print(inits, digits = digits)
+    print(inits, ...)
   }
   invisible(x)
 }

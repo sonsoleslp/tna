@@ -72,7 +72,23 @@
 #'      are weighted by the inverse of the sequence length. Can be used for
 #'      frequency, co-occurrence and reverse model types. The default is
 #'      `FALSE`.
+#'   * `direction`: A `character` string specifying the direction of attention
+#'      for models of `type = "attention"`. The available options are
+#'      `"backward"`, `"forward"`, and `"both"`, for backward attention,
+#'      forward attention, and bidirectional attention, respectively.
+#'      The default is `"forward"`.
+#'   * `decay`: A `function` that specifies the decay of the weights between
+#'      two time points at a specific distance. The function should take three
+#'      arguments: `i`, `j` and `lambda`, where `i` and `j` are `numeric`
+#'      vectors of time values, and `lambda` is  a `numeric` value for the
+#'      decay rate. The function should return a `numeric` vector of weights.
+#'      The default is `function(i, j, lambda) exp(-abs(i - j) / lambda)`.
 #'   * `lambda`: A `numeric` value for the decay rate. The default is 1.
+#'   * `time`: A `matrix` or a `data.frame` providing the time values
+#'      for each sequence and at time index.
+#'   * `duration`: A `matrix` or a `data.frame` providing the
+#'      time spent in each state for each sequence and time index.
+#'      This is an alternative to `time`.
 #'
 #' @param ... Ignored. For the `build_model` aliases (e.g., `tna`), this
 #' argument matches the actual arguments to `build_model` beside `x`.
@@ -503,7 +519,7 @@ create_seqdata <- function(x, cols, alphabet) {
 #' @param x A data object from `create_seqdata()`
 #' @param type The type of transition network model to build.
 #' @param scaling The scaling methods to apply to the weights.
-#' @param params A list of parameters for the transition model.
+#' @param params A `list` of parameters for the transition model.
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
@@ -538,7 +554,6 @@ compute_transitions <- function(m, a, type, params) {
   p <- ncol(m)
   idx <- seq_len(n)
   trans <- array(0L, dim = c(n, a, a))
-  #seq_lengths <- apply(m, 1L, function(x) sum(!is.na(x)))
   seq_lengths <- .rowSums(!is.na(m), m = n, n = p)
   weight <- ifelse_(isTRUE(params$weighted), 1.0 / seq_lengths, rep(1L, n))
   if (type %in% c("relative", "frequency")) {
@@ -609,13 +624,55 @@ compute_transitions <- function(m, a, type, params) {
     }
   } else if (type == "attention") {
     lambda <- params$lambda %||% 1.0
-    for (i in seq_len(p - 1L)) {
-      for (j in seq(i + 1L, p)) {
-        from <- m[, i]
-        to <- m[, j]
-        any_na <- is.na(from) | is.na(to)
-        new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-        trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
+    decay <- params$decay %||% function(i, j, lambda) exp(-abs(i - j) / lambda)
+    direction <- params$direction %||% "forward"
+    stopifnot_(
+      is.null(params$time) || is.null(params$duration),
+      "Both {.arg time} and {.arg duration} supplied via {.arg params}."
+    )
+    time <- matrix(rep(seq(1, p), each = n), nrow = n, ncol = p)
+    if (!is.null(params$time)) {
+      stopifnot_(
+        nrow(params$time) == n && ncol(params$time) == p,
+        "Argument {.arg params$time} must have the same dimensions as the
+         sequence data."
+      )
+      time <- params$time
+    }
+    if (!is.null(params$duration)) {
+      stopifnot_(
+        nrow(params$duration) == n && ncol(params$duration) == p,
+        "Argument {.arg params$duration} must have the same dimensions as the
+         sequence data."
+      )
+      time <- cbind(0, t(apply(params$duration, 1L, cumsum))[, -p])
+    }
+    for (i in seq_len(p)) {
+      if (direction %in% c("forward", "both")) {
+        if (i < p) {
+          for (j in seq(i + 1L, p)) {
+            from <- m[, i]
+            to <- m[, j]
+            any_na <- is.na(from) | is.na(to)
+            new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+            #trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
+            d <- decay(time[, i], time[, j], lambda)[!any_na]
+            trans[new_trans] <- trans[new_trans] + d
+          }
+        }
+      }
+      if (direction %in% c("backward", "both")) {
+        if (i > 1) {
+          for (j in seq(1L, i)) {
+            from <- m[, i]
+            to <- m[, j]
+            any_na <- is.na(from) | is.na(to)
+            new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+            #trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
+            d <- decay(time[, i], time[, j], lambda)[!any_na]
+            trans[new_trans] <- trans[new_trans] + d
+          }
+        }
       }
     }
   }
