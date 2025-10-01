@@ -405,7 +405,7 @@ compare_sequences <- function(x, ...) {
 
 #' @export
 #' @rdname compare_sequences
-compare_sequences.default <- function(x, group, sub = 2:5, min_freq = 5L,
+compare_sequences.default <- function(x, group, sub, min_freq = 5L,
                                       correction = "bonferroni", ...) {
   model <- group_tna(x, group = group)
   compare_sequences.group_tna(
@@ -419,16 +419,17 @@ compare_sequences.default <- function(x, group, sub = 2:5, min_freq = 5L,
 
 #' @export
 #' @rdname compare_sequences
-compare_sequences.group_tna <- function(x, sub = 2:5, min_freq = 5L,
+compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
                                         correction = "bonferroni", ...) {
   check_missing(x)
   check_class(x, "group_tna")
+  sub <- sub %m% seq(2, min(5, ncol(x[[1L]]$data)))
   check_range(
     sub,
     type = "integer",
     scalar = FALSE,
     lower = 2L,
-    upper = nrow(x[[1L]]$data)
+    upper = ncol(x[[1L]]$data)
   )
   check_values(min_freq)
   correction <- check_match(correction, stats::p.adjust.methods)
