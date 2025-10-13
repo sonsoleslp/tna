@@ -79,6 +79,10 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' @param groups An `integer` vector or a `character` vector of group indices
 #' or names, respectively, defining which groups to compare. When not provided,
 #' all pairs are compared (the default).
+#' @param consecutive A `logical` value. If `FALSE` (the default), all pairwise
+#' comparisons are performed in lexicographic order with respect to the order
+#' of the groups. If `TRUE`, only comparisons between consecutive pairs
+#' of groups are performed.
 #' @inheritParams permutation_test.tna
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -88,7 +92,7 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 permutation_test.group_tna <- function(x, groups, adjust = "none",
                                        iter = 1000, paired = FALSE,
                                        level = 0.05, measures = character(0),
-                                       ...) {
+                                       consecutive = FALSE, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   stopifnot_(
@@ -113,15 +117,12 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
     n_groups >= 2L,
     "Argument {.arg groups} must contain at least two groups to compare."
   )
-  n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
-  out <- vector(mode = "list", length = n_pairs)
-  idx <- 0L
-  for (i in seq_len(n_groups - 1L)) {
-    for (j in seq(i + 1L, n_groups)) {
-      idx <- idx + 1L
+  if (consecutive) {
+    out <- vector(mode = "list", length = n_groups - 1L)
+    for (i in seq_len(n_groups - 1L)) {
       group_i <- groups[i]
-      group_j <- groups[j]
-      out[[idx]] <- permutation_test_(
+      group_j <- groups[i + 1L]
+      out[[i]] <- permutation_test_(
         x = x[[group_i]],
         y = x[[group_j]],
         adjust = adjust,
@@ -131,7 +132,29 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
         measures = measures,
         ...
       )
-      names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+      names(out)[i] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+    }
+  } else {
+    n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
+    out <- vector(mode = "list", length = n_pairs)
+    idx <- 0L
+    for (i in seq_len(n_groups - 1L)) {
+      for (j in seq(i + 1L, n_groups)) {
+        idx <- idx + 1L
+        group_i <- groups[i]
+        group_j <- groups[j]
+        out[[idx]] <- permutation_test_(
+          x = x[[group_i]],
+          y = x[[group_j]],
+          adjust = adjust,
+          iter = iter,
+          paired = paired,
+          level = level,
+          measures = measures,
+          ...
+        )
+        names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+      }
     }
   }
   structure(
