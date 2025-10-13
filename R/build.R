@@ -56,9 +56,9 @@
 #'   * `"rank"` Computes the ranks of the weights using [base::rank()] with
 #'       `ties.method = "average"`.
 #'
-#' @param inits An optional `numeric` vector of initial state probabilities
-#'   for each state. Can be provided only if `x` is a `matrix`. The vector will
-#'   be scaled to unity.
+#' @param cols An `expression` giving a tidy selection of columns that should
+#'   be considered as sequence data. By default, all columns are used. Ignored
+#'   for `matrix`, `tna_data` and `tsn` type `x`.
 #' @param params A `list` of additional arguments for models of specific
 #'   `type`. The potential elements of this list are:
 #'
@@ -90,6 +90,15 @@
 #'      time spent in each state for each sequence and time index.
 #'      This is an alternative to `time`.
 #'
+#' @param inits An optional `numeric` vector of initial state probabilities
+#'   for each state. The vector will be scaled to unity.
+#'   Ignored if `x` is not a `matrix`.
+#' @param begin_state A `character` string for an additional begin state.
+#'   This state is added as the first observation for every sequence to
+#'   signify the beginning of the sequence
+#' @param end_state A `character` string for an additional end state.
+#'   This state is added as the last observation for every sequence to
+#'   siginify the end of the sequence.
 #' @param ... Ignored. For the `build_model` aliases (e.g., `tna`), this
 #' argument matches the actual arguments to `build_model` beside `x`.
 #' @return An object of class `tna` which is a `list` containing the
@@ -110,27 +119,37 @@
 #' print(model)
 #'
 build_model <- function(x, type = "relative", scaling = character(0L),
-                        ...) {
+                        cols = tidyselect::everything(), params = list(),
+                        inits, begin_state, end_state) {
   UseMethod("build_model")
 }
 
 #' @export
 #' @rdname build_model
 build_model.default <- function(x, type = "relative", scaling = character(0L),
-                                inits, params = list(), ...) {
+                                cols = tidyselect::everything(),
+                                params = list(), inits,
+                                begin_state, end_state) {
   check_missing(x)
   x <- try_(as.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  build_model.matrix(x, type, scaling, inits, params, ...)
+  build_model.matrix(
+    x = x,
+    type = type,
+    scaling = scaling,
+    params = params,
+    inits = inits
+  )
 }
 
 #' @export
 #' @rdname build_model
 build_model.matrix <- function(x, type = "relative", scaling = character(0L),
-                               inits, ...) {
+                               cols = tidyselect::everything(), params = list(),
+                               inits, begin_state, end_state) {
   check_missing(x)
   x <- try_(data.matrix(x))
   stopifnot_(
@@ -192,17 +211,22 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-#' @param cols An `expression` giving a tidy selection of columns that should
-#' be considered as sequence data. By default, all columns are used.
+
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = tidyselect::everything(),
-                                params = list(), ...) {
+                                params = list(), inits,
+                                begin_state, end_state) {
   check_missing(x)
   check_class(x, "stslist")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
-  x <- create_seqdata(x, cols)
+  x <- create_seqdata(
+    x = x,
+    cols = cols,
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -220,13 +244,19 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
                                    cols = tidyselect::everything(),
-                                   params = list(), ...) {
+                                   params = list(), inits,
+                                   begin_state, end_state) {
   check_missing(x)
   check_class(x, "data.frame")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
-  x <- create_seqdata(x, cols)
+  x <- create_seqdata(
+    x = x,
+    cols = cols,
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -241,14 +271,21 @@ build_model.data.frame <- function(x, type = "relative",
 
 #' @export
 #' @rdname build_model
-build_model.tna_data <- function(x, type = "relative", scaling = character(0),
-                                 params = list(), ...) {
+build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
+                                 cols = tidyselect::everything(),
+                                 params = list(), inits, begin_state,
+                                 end_state) {
   check_missing(x)
   check_class(x, "tna_data")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
-  x <- create_seqdata(wide, cols = names(x$sequence_data))
+  x <- create_seqdata(
+    x = wide,
+    cols = names(x$sequence_data),
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -263,8 +300,9 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
 
 #' @export
 #' @rdname build_model
-build_model.tsn <- function(x, type = "relative", scaling = character(0),
-                            params = list(), ...) {
+build_model.tsn <- function(x, type = "relative", scaling = character(0L),
+                            cols = tidyselect::everything(), params = list(),
+                            inits, begin_state, end_state) {
   check_missing(x)
   check_class(x, "tsn")
   type <- check_model_type(type)
@@ -283,7 +321,12 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0),
       names_prefix = "T"
     ) |>
     dplyr::select(!(!!rlang::sym(id)))
-  x <- create_seqdata(wide, cols = names(wide))
+  x <- create_seqdata(
+    x = wide,
+    cols = names(wide),
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -298,8 +341,10 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0),
 
 #' @export
 #' @rdname build_model
-build_model.tsn_ews <- function(x, type = "relative", scaling = character(0),
-                                params = list(), ...) {
+build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
+                                cols = tidyselect::everything(),
+                                params = list(), inits,
+                                begin_state, end_state) {
   check_missing(x)
   check_class(x, "tsn_ews")
   type <- check_model_type(type)
@@ -315,7 +360,12 @@ build_model.tsn_ews <- function(x, type = "relative", scaling = character(0),
       names_from = !!rlang::sym("time"),
       names_prefix = "T"
     )
-  x <- create_seqdata(wide, cols = seq_len(ncol(wide)))
+  x <- create_seqdata(
+    x = wide,
+    cols = seq_len(ncol(wide)),
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -469,8 +519,10 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param x A `data.frame` or a `stslist` object.
 #' @param cols An `character` vector of column names.
 #' @param alphabet Optional `character` vector of the alphabet.
+#' @param begin_state Optional `character` string giving the begin state.
+#' @param end_state Optional `character` string giving the end state.
 #' @noRd
-create_seqdata <- function(x, cols, alphabet) {
+create_seqdata <- function(x, cols, alphabet, begin_state, end_state) {
   if (is.numeric(cols)) {
     stop("Numeric cols detected")
   }
@@ -496,16 +548,36 @@ create_seqdata <- function(x, cols, alphabet) {
       lapply(x[, cols], function(y) factor(y, levels = alphabet))
     )
   }
-  x[, cols] <- as.data.frame(
-    lapply(
-      x[, cols],
-      function(y) {
-        as.integer(replace(y, which(!y %in% alphabet), NA))
-      }
+  x <- as.matrix(
+    as.data.frame(
+      lapply(
+        x[, cols],
+        function(y) {
+          as.integer(replace(y, which(!y %in% alphabet), NA))
+        }
+      )
     )
   )
+  if (!missing(begin_state)) {
+    x <- cbind(1L, x + 1L)
+    alphabet <- c(begin_state, alphabet)
+    labels <- c(begin_state, labels)
+    colors <- c("darkgray", colors)
+  }
+  if (!missing(end_state)) {
+    last_obs <- max.col(!is.na(x), ties.method = "last")
+    new_max <- max(x, na.rm = TRUE) + 1L
+    if (any(last_obs == ncol(x))) {
+      x <- cbind(x, NA_integer_)
+      idx <- cbind(seq_len(nrow(x)), last_obs + 1L)
+      x[idx] <- new_max
+    }
+    alphabet <- c(alphabet, end_state)
+    labels <- c(labels, end_state)
+    colors <- c(colors, "darkgray")
+  }
   structure(
-    as.matrix(x[, cols]),
+    x,
     class = c("tna_seq_data", "matrix", "array"),
     alphabet = alphabet,
     labels = labels,

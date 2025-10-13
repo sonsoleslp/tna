@@ -7,7 +7,7 @@
 \usage{
 sequence_indices(x, ...)
 
-\method{sequence_indices}{default}(x, cols, favorable, min_length = 1L, ...)
+\method{sequence_indices}{default}(x, cols, favorable, min_length = 1L, omega = 1, ...)
 }
 \arguments{
 \item{x}{A \code{data.frame} or a \code{matrix}.}

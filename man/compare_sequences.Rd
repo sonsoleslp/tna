@@ -8,16 +8,9 @@
 \usage{
 compare_sequences(x, ...)
 
-\method{compare_sequences}{default}(
-  x,
-  group,
-  sub = 2:5,
-  min_freq = 5L,
-  correction = "bonferroni",
-  ...
-)
+\method{compare_sequences}{default}(x, group, sub, min_freq = 5L, correction = "bonferroni", ...)
 
-\method{compare_sequences}{group_tna}(x, sub = 2:5, min_freq = 5L, correction = "bonferroni", ...)
+\method{compare_sequences}{group_tna}(x, sub, min_freq = 5L, correction = "bonferroni", ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object or a \code{data.frame} containing sequence data in

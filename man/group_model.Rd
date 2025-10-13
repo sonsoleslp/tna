@@ -20,7 +20,7 @@ group_model(x, ...)
   type = "relative",
   scaling = character(0L),
   groupwise = FALSE,
-  cols,
+  cols = tidyselect::everything(),
   params = list(),
   na.rm = TRUE,
   ...
@@ -125,9 +125,9 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \item{groupwise}{A \code{logical} value that indicates whether scaling methods
 should be applied by group (\code{TRUE}) or globally (\code{FALSE}, the default).}
 
-\item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
+\item{cols}{An \code{expression} giving a tidy selection of the
 columns that should be considered as sequence data.
-Defaults to all columns, i.e., \code{seq(1, ncol(x))}. The columns are
+The default is all columns. The columns are
 automatically determined for \code{tna_data} objects. The \code{group} column
 is automatically removed from these columns if provided.}
 
@@ -144,7 +144,23 @@ specifying the window size. The default is 2.
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
 \code{FALSE}.
+\item \code{direction}: A \code{character} string specifying the direction of attention
+for models of \code{type = "attention"}. The available options are
+\code{"backward"}, \code{"forward"}, and \code{"both"}, for backward attention,
+forward attention, and bidirectional attention, respectively.
+The default is \code{"forward"}.
+\item \code{decay}: A \code{function} that specifies the decay of the weights between
+two time points at a specific distance. The function should take three
+arguments: \code{i}, \code{j} and \code{lambda}, where \code{i} and \code{j} are \code{numeric}
+vectors of time values, and \code{lambda} is  a \code{numeric} value for the
+decay rate. The function should return a \code{numeric} vector of weights.
+The default is \code{function(i, j, lambda) exp(-abs(i - j) / lambda)}.
 \item \code{lambda}: A \code{numeric} value for the decay rate. The default is 1.
+\item \code{time}: A \code{matrix} or a \code{data.frame} providing the time values
+for each sequence and at time index.
+\item \code{duration}: A \code{matrix} or a \code{data.frame} providing the
+time spent in each state for each sequence and time index.
+This is an alternative to \code{time}.
 }}
 
 \item{na.rm}{A \code{logical} value that determines if observations with \code{NA}

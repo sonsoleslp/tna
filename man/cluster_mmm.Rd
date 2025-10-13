@@ -6,7 +6,7 @@
 \usage{
 cluster_mmm(
   data,
-  cols = seq(1L, ncol(data)),
+  cols = tidyselect::everything(),
   formula,
   k,
   cluster_names,
@@ -24,10 +24,9 @@ columns represent time points. Missing values (\code{NA}) are handled
 appropriately. The columns should be either \code{integer}, \code{character} or
 \code{factor} variables.}
 
-\item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
-columns that should be considered as sequence data.
-Defaults to all columns, i.e., \code{seq(1, ncol(data))}. Column names not
-found in \code{data} will be ignored without warning.}
+\item{cols}{An \code{expression} giving a tidy selection of column names
+that should be considered as sequence data. The default is to use all
+columns.}
 
 \item{formula}{An optional \code{formula} object that specifies the covariates
 to use for the cluster membership probabilities.}

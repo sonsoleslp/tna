@@ -20,24 +20,26 @@ prepare_data(
 \arguments{
 \item{data}{A \code{data.frame} or containing the action/event data.}
 
-\item{actor}{A \code{character} vector giving the names of the columns that
-represents a user/actor identifiers. If not provided and neither \code{time} nor
+\item{actor}{A \code{character} vector or an \code{expression} represeting
+a tidy selection of the names of the columns that
+represent a user/actor identifiers. If not provided and neither \code{time} nor
 \code{order} is specified, the entire dataset is treated as a single session.
 In the case of multiple actors, a new \code{.actor} column is added that
 represents the interaction of the given columns.}
 
-\item{time}{A \code{character} string giving the name of the column representing
-timestamps of the action events.}
+\item{time}{A \code{character} string or an \code{expression} giving the name of
+the column representing timestamps of the action events.}
 
-\item{action}{A \code{character} string giving the name of the column holding
-the information about the action taken.}
+\item{action}{A \code{character} string or an \code{expression} giving the name of
+the column holding the information about the action taken.}
 
-\item{order}{A \code{character} string giving the name of a column with sequence
-numbers or non-unique orderable values that indicate order within an \code{actor}
-group, if not present it will be ordered with all the data if no \code{actor} is
-available, used when widening the data. If both \code{actor} and \code{time} are
-specified, then the sequence order should be specified such that it
-determines the order of events within \code{actor} and each session.}
+\item{order}{A \code{character} string or an \code{expression} giving the name of a
+column with sequence numbers or non-unique orderable values that indicate
+order within an \code{actor} group, if not present it will be ordered with all
+the data if no \code{actor} is available, used when widening the data.
+If both \code{actor} and \code{time} are specified, then the sequence order should
+be specified such that it determines the order of events within \code{actor}
+and each session.}
 
 \item{time_threshold}{An \code{integer} specifying the time threshold in seconds
 for creating new time-based sessions. Defaults to 900 seconds.}
