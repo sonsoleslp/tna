@@ -221,3 +221,39 @@ test_that("one-hot data can be imported", {
     model2
   )
 })
+
+test_that("valid column selection works", {
+  expect_error(
+    cols_1 <- get_cols(rlang::quo(T1:T3), mock_sequence),
+    NA
+  )
+  expect_error(
+    cols_2 <- get_cols(rlang::quo(c("T1", "T2", "T3")), mock_sequence),
+    NA
+  )
+  expect_error(
+    cols_3 <- get_cols(rlang::quo(1:3), mock_sequence),
+    NA
+  )
+  expect_identical(cols_1, cols_2)
+  expect_identical(cols_2, cols_3)
+  expect_identical(
+    get_cols(rlang::quo(1), mock_sequence),
+    "T1"
+  )
+  expect_identical(
+    get_cols(rlang::quo("T1"), mock_sequence),
+    "T1"
+  )
+})
+
+test_that("invalid column selection fails", {
+  expect_error(
+    get_cols(rlang::quo(TRUE), mock_sequence),
+    "Columns must be selected using a tidy selection"
+  )
+  expect_error(
+    get_cols(rlang::quo(1i), mock_sequence),
+    "Columns must be selected using a tidy selection"
+  )
+})

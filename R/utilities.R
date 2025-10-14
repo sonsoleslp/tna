@@ -204,7 +204,7 @@ get_cols <- function(expr, data) {
     } else {
       stop_(
         "Columns must be selected using a tidy selection,
-         a {.cls character} vectos, or an {.cls integer} vector."
+         a {.cls character} vector, or an {.cls integer} vector."
       )
     }
   }

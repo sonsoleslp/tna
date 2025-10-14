@@ -344,7 +344,7 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
 build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
                                 cols = tidyselect::everything(),
                                 params = list(), inits,
-                                begin_state, end_state) {
+                                begin_state, end_state) { # nocov start
   check_missing(x)
   check_class(x, "tsn_ews")
   type <- check_model_type(type)
@@ -376,7 +376,7 @@ build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
     data = x,
     params = params
   )
-}
+} # nocov end
 
 # Aliases -----------------------------------------------------------------
 

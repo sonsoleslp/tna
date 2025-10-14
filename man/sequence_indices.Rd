@@ -7,10 +7,19 @@
 \usage{
 sequence_indices(x, ...)
 
-\method{sequence_indices}{default}(x, cols, favorable, min_length = 1L, omega = 1, ...)
+\method{sequence_indices}{default}(x, cols, favorable, omega = 1)
 }
 \arguments{
 \item{x}{A \code{data.frame} or a \code{matrix}.}
+
+\item{cols}{An \code{expression} giving a tidy selection of columns that should
+be considered as sequence data. By default, all columns are used.}
+
+\item{favorable}{A \code{character} vector of state names that should be
+considered as favorable states.}
+
+\item{omega}{A \code{numeric} value for the omega parameter used to compute
+the integrative potential.}
 }
 \value{
 A \code{data.frame} containing the index values.

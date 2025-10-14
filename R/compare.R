@@ -502,6 +502,11 @@ compare_sequences_ <- function(x, q, min_freq, correction) {
       residuals[[j]] <- resid
     }
   }
+  valid_patterns <- vapply(patterns, function(y) !is.null(y), logical(1L))
+  stopifnot_(
+    any(valid_patterns),
+    "No common patterns with frequency greater than {min_freq} were found."
+  )
   structure(
     dplyr::bind_rows(patterns) |>
       dplyr::arrange(!!rlang::sym("p_value")),

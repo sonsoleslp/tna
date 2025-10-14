@@ -1,7 +1,7 @@
 test_that("group_model returns correct type", {
   expect_true(
     inherits(
-      group_model(mock_sequence, group = c(1, 1, 2, 2)),
+      group_model(mock_sequence, group = c(1, 1, 2, 2, 2)),
       "group_tna"
     )
   )
@@ -9,7 +9,7 @@ test_that("group_model returns correct type", {
 
 test_that("group_ftna returns correct type", {
   expect_error(
-    ftna_model <- group_ftna(mock_sequence, group = c(1, 1, 2, 2)),
+    ftna_model <- group_ftna(mock_sequence, group = c(1, 1, 2, 2, 2)),
     NA
   )
   expect_equal(
@@ -20,7 +20,7 @@ test_that("group_ftna returns correct type", {
 
 test_that("group_ctna returns correct type", {
   expect_error(
-    ctna_model <- group_ctna(mock_sequence, group = c(1, 1, 2, 2)),
+    ctna_model <- group_ctna(mock_sequence, group = c(1, 1, 2, 2, 2)),
     NA
   )
   expect_equal(
@@ -31,7 +31,7 @@ test_that("group_ctna returns correct type", {
 
 test_that("group_atna returns correct type", {
   expect_error(
-    atna_model <- group_atna(mock_sequence, group = c(1, 1, 2, 2)),
+    atna_model <- group_atna(mock_sequence, group = c(1, 1, 2, 2, 2)),
     NA
   )
   expect_equal(
@@ -43,16 +43,15 @@ test_that("group_atna returns correct type", {
 test_that("group_model returns correct type", {
   expect_true(
     inherits(
-      group_model(mock_sequence, group = c(1, 1, 2, 2))[[1]],
+      group_model(mock_sequence, group = c(1, 1, 2, 2, 2))[[1]],
       "tna"
     )
   )
 })
 
 test_that("groups can be renamed", {
-  model <- group_model(mock_sequence, group = c(1, 1, 2, 2))
   expect_error(
-    model <- rename_groups(model, c("A", "B")),
+    model <- rename_groups(mock_group_tna, c("A", "B")),
     NA
   )
   expect_equal(model$A, model[[1]])

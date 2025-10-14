@@ -2,6 +2,12 @@
 #'
 #' @export
 #' @param x A `data.frame` or a `matrix`.
+#' @param cols An `expression` giving a tidy selection of columns that should
+#'   be considered as sequence data. By default, all columns are used.
+#' @param favorable A `character` vector of state names that should be
+#'   considered as favorable states.
+#' @param omega A `numeric` value for the omega parameter used to compute
+#'   the integrative potential.
 #' @return A `data.frame` containing the index values.
 sequence_indices <- function(x, ...) {
   UseMethod("sequence_indices")
@@ -9,14 +15,14 @@ sequence_indices <- function(x, ...) {
 
 #' @export
 #' @rdname sequence_indices
-sequence_indices.default <- function(x, cols, favorable,
-                                     min_length = 1L, omega = 1, ...) {
+sequence_indices.default <- function(x, cols, favorable, omega = 1) {
   stopifnot_(
     is.matrix(x) || is.data.frame(x),
     "Argument {.arg x} must be a matrix or a data.frame"
   )
   p <- ncol(x)
   cols <- cols %m% seq_len(p)
+  cols <- get_cols(rlang::enquo(cols), x)
   data <- create_seqdata(x, cols = cols)
   model <- initialize_model(
     x = data,

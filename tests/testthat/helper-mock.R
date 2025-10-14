@@ -15,11 +15,12 @@ mock_freq_matrix <- matrix(
 )
 
 mock_sequence <- data.frame(
-  T1 = c("A", "B", "C", "A"),
-  T2 = c("A", "C", "B", "B"),
-  T3 = c("B", "C", "A", "C"),
-  T4 = c("B", "A", "C", "A"),
-  T5 = c("C", "A", "B", "B")
+  T1 = c("A", "B", "C", "A", "A"),
+  T2 = c("A", "C", "B", "B", "B"),
+  T3 = c("B", "C", "A", "C", "A"),
+  T4 = c("B", "A", "C", "A", "B"),
+  T5 = c("C", "A", "B", "B", "A"),
+  T6 = c("C", "C", "A", "A", "C")
 )
 
 mock_sequence_wide <- data.frame(
@@ -38,11 +39,16 @@ mock_tna <- tna(
 
 mock_tna_seq <- tna(mock_sequence)
 
+mock_group_tna <- group_model(
+  mock_sequence,
+  group = c(1, 1, 2, 2, 2)
+)
+
 mmm_model <- group_tna(engagement_mmm)
 
 mock_long <- data.frame(
-  time = rep(1:5, 4),
-  group = rep(1:4, each = 5),
+  time = rep(1:6, 5),
+  group = rep(1:5, each = 6),
   event =  as.vector(t(as.matrix(mock_sequence)))
 )
 

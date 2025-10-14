@@ -234,8 +234,8 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
       # For unpaired data, perform complete randomization
       perm_idx <- sample(n_xy)
     }
-    trans_perm_x <- combined_trans[perm_idx[idx_x], , ]
-    trans_perm_y <- combined_trans[perm_idx[idx_y], , ]
+    trans_perm_x <- combined_trans[perm_idx[idx_x], , , drop = FALSE]
+    trans_perm_y <- combined_trans[perm_idx[idx_y], , , drop = FALSE]
     weights_perm_x <- compute_weights(trans_perm_x, type, scaling, a)
     weights_perm_y <- compute_weights(trans_perm_y, type, scaling, a)
     if (include_centralities) {

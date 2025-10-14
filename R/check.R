@@ -311,25 +311,25 @@ check_string <- function(x) {
   )
 }
 
-#' Check if argument is a character vector
-#'
-#' @param x An \R object.
-#' @noRd
-check_character <- function(x) {
-  if (missing(x)) {
-    return()
-  }
-  arg <- deparse(substitute(x))
-  stopifnot_(
-    checkmate::test_character(
-      x = x,
-      min.len = 1L,
-      any.missing = FALSE,
-      unique = TRUE,
-    ),
-    "Argument {.arg {arg}} must be a {.cls character} vector."
-  )
-}
+#' #' Check if argument is a character vector
+#' #'
+#' #' @param x An \R object.
+#' #' @noRd
+#' check_character <- function(x) {
+#'   if (missing(x)) {
+#'     return()
+#'   }
+#'   arg <- deparse(substitute(x))
+#'   stopifnot_(
+#'     checkmate::test_character(
+#'       x = x,
+#'       min.len = 1L,
+#'       any.missing = FALSE,
+#'       unique = TRUE,
+#'     ),
+#'     "Argument {.arg {arg}} must be a {.cls character} vector."
+#'   )
+#' }
 
 #' Check that argument is a valid cluster
 #'

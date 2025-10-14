@@ -223,3 +223,73 @@ test_that("tna from tsn works", {
     all(model$inits > 0)
   )
 })
+
+
+test_that("begin and end states can be included", {
+  expect_error(
+    tna(mock_sequence, begin_state = "begin"),
+    NA
+  )
+  expect_error(
+    tna(mock_sequence, end_state = "end"),
+    NA
+  )
+  expect_error(
+    tna(mock_sequence, begin_state = "begin", end_state = "end"),
+    NA
+  )
+})
+
+test_that("forward attention works with time measurements and durations", {
+  durations <- matrix(
+    1 + abs(rnorm(prod(dim(mock_sequence)))),
+    nrow = nrow(mock_sequence),
+  )
+  times <- cbind(0, t(apply(durations, 1, cumsum))[, -ncol(durations)])
+  expect_error(
+    model_t <- atna(mock_sequence, params = list(time = times)),
+    NA
+  )
+  expect_error(
+    model_d <- atna(mock_sequence, params = list(duration = durations)),
+    NA
+  )
+  expect_equal(
+    model_t$weights,
+    model_d$weights
+  )
+})
+
+test_that("directional attention works", {
+  expect_error(
+    model_b <- atna(mock_sequence, params = list(direction = "backward")),
+    NA
+  )
+  expect_error(
+    model_f <- atna(mock_sequence, params = list(direction = "forward")),
+    NA
+  )
+  expect_error(
+    model_bf <- atna(mock_sequence, params = list(direction = "both")),
+    NA
+  )
+  expect_equal(
+    model_b$weights + model_f$weights,
+    model_bf$weights
+  )
+})
+
+test_that("decay can be customized", {
+  durations <- matrix(
+    1 + abs(rnorm(prod(dim(mock_sequence)))),
+    nrow = nrow(mock_sequence),
+  )
+  my_decay <- function(i, j, lambda) (i - j)^-lambda
+  expect_error(
+    atna(
+      mock_sequence,
+      params = list(time = durations, decay = my_decay, lambda = 2)
+    ),
+    NA
+  )
+})
