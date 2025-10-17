@@ -308,6 +308,7 @@ test_that("time data from tna_data objects can be used for attention models", {
     data_ordered, actor = "user", time = "time", action = "action"
   )
   expect_error(
-    atna(data_timed, params = list(time = TRUE))
+    atna(data_timed, params = list(time = TRUE)),
+    NA
   )
 })
