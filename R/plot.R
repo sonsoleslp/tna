@@ -673,9 +673,9 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' @param legend  A `logical` value indicating whether to show the color scale
 #'   legend. The default is `TRUE`.
 #' @param cells A `logical` value indicating whether to display the
-#'   numeric values in each cell. The default is `FALSE`.
+#'   numeric values in each cell. The default is `TRUE`.
 #' @param text_color A `character` string specifying the text color to use for
-#'   the cell values.
+#'   the cell values. The default is `"white"`.
 #' @param digits An `integer` specifying the number of digits for the cell
 #'   values.
 #' @param ... Not used.
@@ -686,7 +686,7 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' plot(comp)
 #'
 plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
-                                         cells = FALSE, text_color = "black",
+                                         cells = TRUE, text_color = "white",
                                          digits = 2L, ...) {
   check_missing(x)
   check_values(n, strict = TRUE)
@@ -766,6 +766,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
           y = !!rlang::sym("ycent"),
           label = !!rlang::sym("label")
         ),
+        fontface = "bold",
         color = text_color
       )
   }
