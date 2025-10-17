@@ -788,6 +788,7 @@ get_transitions <- function(x) { # nocov start
   out <- dplyr::bind_rows(trans, .id = "time")
   out$source <- lab[out$source]
   out$target <- lab[out$target]
+  out$weight <- 1.0
   out
 } # nocov end
 
