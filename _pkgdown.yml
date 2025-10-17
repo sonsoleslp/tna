@@ -85,7 +85,6 @@ reference:
 
   - title: Clusters
     contents:
-    - cluster_mmm
     - cluster_sequences
     - mmm_stats
     - print.tna_clusters
