@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
         <dd>The <code>tna</code> Package.</dd>
       </dl><dl><dt>
 
-          <code><a href="build_model.html">build_model()</a></code> <code><a href="build_model.html">tna()</a></code> <code><a href="build_model.html">ftna()</a></code> <code><a href="build_model.html">ctna()</a></code> <code><a href="build_model.html">atna()</a></code>
+          <code><a href="build_model.html">build_model()</a></code> <code><a href="build_model.html">tna()</a></code> <code><a href="build_model.html">ftna()</a></code> <code><a href="build_model.html">ctna()</a></code> <code><a href="build_model.html">atna()</a></code> <code><a href="build_model.html">tsn()</a></code>
 
         </dt>
         <dd>Build a Transition Network Analysis Model</dd>
@@ -76,34 +76,16 @@
         <dd>Plot a Transition Network Analysis Model</dd>
       </dl><dl><dt>
 
-          <code><a href="prepare_data.html">prepare_data()</a></code>
-
-        </dt>
-        <dd>Compute User Sessions from Event Data</dd>
-      </dl><dl><dt>
-
-          <code><a href="import_data.html">import_data()</a></code>
-
-        </dt>
-        <dd>Import Wide Format Sequence Data as Long Format Sequence Data</dd>
-      </dl><dl><dt>
-
-          <code><a href="print.tna_data.html">print(<i>&lt;tna_data&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Print a TNA Data Object</dd>
-      </dl><dl><dt>
-
-          <code><a href="summary.tna.html">summary(<i>&lt;tna&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Calculate Summary of Network Metrics for a Transition Network</dd>
-      </dl><dl><dt>
-
           <code><a href="hist.tna.html">hist(<i>&lt;tna&gt;</i>)</a></code>
 
         </dt>
         <dd>Plot a Histogram of Edge Weights in the Network</dd>
+      </dl><dl><dt>
+
+          <code><a href="sna.html">sna()</a></code>
+
+        </dt>
+        <dd>Build a Social Network Analysis Model</dd>
       </dl><dl><dt>
 
           <code><a href="print.summary.tna.html">print(<i>&lt;summary.tna&gt;</i>)</a></code>
@@ -134,6 +116,12 @@
 
         </dt>
         <dd>Plot State Frequencies as a Mosaic Between Two Groups</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot_associations.html">plot_associations()</a></code>
+
+        </dt>
+        <dd>Plot an Association Network</dd>
       </dl><dl><dt>
 
           <code><a href="print.group_tna.html">print(<i>&lt;group_tna&gt;</i>)</a></code>
@@ -195,6 +183,12 @@
         <dd>Import Wide Format Sequence Data as Long Format Sequence Data</dd>
       </dl><dl><dt>
 
+          <code><a href="import_onehot.html">import_onehot()</a></code>
+
+        </dt>
+        <dd>Import One-Hot Data and Create a Co-Occurrence Network Model</dd>
+      </dl><dl><dt>
+
           <code><a href="prepare_data.html">prepare_data()</a></code>
 
         </dt>
@@ -211,6 +205,12 @@
 
         </dt>
         <dd>Simulate Data from a Transition Network Analysis Model</dd>
+      </dl><dl><dt>
+
+          <code><a href="summary.tna.html">summary(<i>&lt;tna&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Calculate Summary of Network Metrics for a Transition Network</dd>
       </dl></div><div class="section level2">
       <h2 id="centralities">Centralities<a class="anchor" aria-label="anchor" href="#centralities"></a></h2>
 
@@ -341,6 +341,29 @@
         </dt>
         <dd>Plot Found Cliques</dd>
       </dl></div><div class="section level2">
+      <h2 id="clusters">Clusters<a class="anchor" aria-label="anchor" href="#clusters"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="cluster_sequences.html">cluster_sequences()</a></code> <code><a href="cluster_sequences.html">print(<i>&lt;tna_clustering&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Cluster Sequences via Dissimilarity Matrix based on String Distances</dd>
+      </dl><dl><dt>
+
+          <code><a href="mmm_stats.html">mmm_stats()</a></code>
+
+        </dt>
+        <dd>Retrieve Statistics from a Mixture Markov Model (MMM)</dd>
+      </dl></div><div class="section level2">
       <h2 id="comparison">Comparison<a class="anchor" aria-label="anchor" href="#comparison"></a></h2>
 
 
@@ -362,13 +385,25 @@
           <code><a href="compare.group_tna.html">compare(<i>&lt;group_tna&gt;</i>)</a></code>
 
         </dt>
-        <dd>Compare TNA Clusters with Comprehensive Metrics</dd>
+        <dd>Compare Grouped TNA Models with Comprehensive Metrics</dd>
+      </dl><dl><dt>
+
+          <code><a href="compare_sequences.html">compare_sequences()</a></code>
+
+        </dt>
+        <dd>Compare Sequences Between Groups</dd>
       </dl><dl><dt>
 
           <code><a href="print.tna_comparison.html">print(<i>&lt;tna_comparison&gt;</i>)</a></code>
 
         </dt>
         <dd>Print Comparison Results</dd>
+      </dl><dl><dt>
+
+          <code><a href="print.tna_sequence_comparison.html">print(<i>&lt;tna_sequence_comparison&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print a Comparison of Sequences</dd>
       </dl><dl><dt>
 
           <code><a href="plot_compare.html">plot_compare()</a></code>
@@ -387,6 +422,12 @@
 
         </dt>
         <dd>Plot the Comparison of Two TNA Models or Matrices</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot.tna_sequence_comparison.html">plot(<i>&lt;tna_sequence_comparison&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Plot a Sequence Comparison</dd>
       </dl></div><div class="section level2">
       <h2 id="validation">Validation<a class="anchor" aria-label="anchor" href="#validation"></a></h2>
 
@@ -520,6 +561,12 @@
         <dd>Bootstrap Transition Networks from Sequence Data</dd>
       </dl><dl><dt>
 
+          <code><a href="bootstrap_cliques.html">bootstrap_cliques()</a></code>
+
+        </dt>
+        <dd>Bootstrap Cliques of Transition Networks from Sequence Data</dd>
+      </dl><dl><dt>
+
           <code><a href="plot.tna_bootstrap.html">plot(<i>&lt;tna_bootstrap&gt;</i>)</a></code>
 
         </dt>
@@ -543,7 +590,7 @@
         </dt>
         <dd>Summarize Bootstrap Results for a Grouped Transition Network</dd>
       </dl></div><div class="section level2">
-      <h2 id="clusters">Clusters<a class="anchor" aria-label="anchor" href="#clusters"></a></h2>
+      <h2 id="groups">Groups<a class="anchor" aria-label="anchor" href="#groups"></a></h2>
 
 
 
@@ -564,13 +611,7 @@
           <code><a href="rename_groups.html">rename_groups()</a></code>
 
         </dt>
-        <dd>Rename Clusters</dd>
-      </dl><dl><dt>
-
-          <code><a href="mmm_stats.html">mmm_stats()</a></code>
-
-        </dt>
-        <dd>Retrieve Statistics from a Mixture Markov Model (MMM)</dd>
+        <dd>Rename Groups</dd>
       </dl></div><div class="section level2">
       <h2 id="helpers">Helpers<a class="anchor" aria-label="anchor" href="#helpers"></a></h2>
 

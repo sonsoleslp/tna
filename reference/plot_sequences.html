@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,7 +95,7 @@
 <span><span class="co"># Default S3 method</span></span>
 <span><span class="fu">plot_sequences</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  <span class="va">cols</span>,</span>
+<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">group</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"index"</span>,</span>
 <span>  scale <span class="op">=</span> <span class="st">"proportion"</span>,</span>
@@ -187,9 +187,8 @@ values. The default is <code>"white"</code>.</p></dd>
 
 
 <dt id="arg-sort-by">sort_by<a class="anchor" aria-label="anchor" href="#arg-sort-by"></a></dt>
-<dd><p>Either a <code>character</code> vector of column names of <code>x</code> to sort
-by or <code>"everything"</code> to sort by every column.
-If missing, no sorting is done.</p></dd>
+<dd><p>An optional <code>expression</code> giving a tidy selection of column
+names of <code>x</code> to sort by or <code>"everything"</code>.</p></dd>
 
 
 <dt id="arg-show-n">show_n<a class="anchor" aria-label="anchor" href="#arg-show-n"></a></dt>
@@ -240,8 +239,8 @@ unnamed <code>character</code> vector. If missing, a default palette is used.</p
 
 
 <dt id="arg-cols">cols<a class="anchor" aria-label="anchor" href="#arg-cols"></a></dt>
-<dd><p>A <code>character</code> Vector of column names to be treated as
-time points. If missing, all columns will be used.</p></dd>
+<dd><p>An <code>expression</code> giving a tidy selection of column names to be
+treated as time points. By default, all columns will be used.</p></dd>
 
 </dl></div>
 

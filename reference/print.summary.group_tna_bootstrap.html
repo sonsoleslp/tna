@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,59 +102,57 @@
 <span class="r-in"><span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        group       from         to     weight    p_value   sig   cr_lower</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Cluster 1     Active     Active 0.70615034 0.09090909 FALSE 0.52961276</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Cluster 1    Average     Active 0.51339286 0.09090909 FALSE 0.38504464</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Cluster 1 Disengaged     Active 0.33333333 0.54545455 FALSE 0.25000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Cluster 1     Active    Average 0.29384966 0.09090909 FALSE 0.22038724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  Cluster 1    Average    Average 0.45982143 0.09090909 FALSE 0.34486607</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Cluster 1 Disengaged    Average 0.38095238 0.45454545 FALSE 0.28571429</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Cluster 1    Average Disengaged 0.02678571 0.45454545 FALSE 0.02008929</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Cluster 1 Disengaged Disengaged 0.28571429 0.18181818 FALSE 0.21428571</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Cluster 2     Active     Active 0.49242424 0.09090909 FALSE 0.36931818</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 Cluster 2    Average     Active 0.32495164 0.09090909 FALSE 0.24371373</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Cluster 2 Disengaged     Active 0.33333333 0.27272727 FALSE 0.25000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Cluster 2     Active    Average 0.44191919 0.09090909 FALSE 0.33143939</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Cluster 2    Average    Average 0.58607350 0.09090909 FALSE 0.43955513</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Cluster 2 Disengaged    Average 0.57333333 0.09090909 FALSE 0.43000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 Cluster 2     Active Disengaged 0.06565657 0.18181818 FALSE 0.04924242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 Cluster 2    Average Disengaged 0.08897485 0.18181818 FALSE 0.06673114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 Cluster 2 Disengaged Disengaged 0.09333333 0.45454545 FALSE 0.07000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 Cluster 3     Active     Active 0.30067568 0.09090909 FALSE 0.22550676</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 Cluster 3    Average     Active 0.15940767 0.09090909 FALSE 0.11955575</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 Cluster 3 Disengaged     Active 0.06578947 0.18181818 FALSE 0.04934211</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 Cluster 3     Active    Average 0.60810811 0.09090909 FALSE 0.45608108</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 Cluster 3    Average    Average 0.57317073 0.09090909 FALSE 0.42987805</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 Cluster 3 Disengaged    Average 0.47076023 0.09090909 FALSE 0.35307018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Cluster 3     Active Disengaged 0.09121622 0.36363636 FALSE 0.06841216</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 Cluster 3    Average Disengaged 0.26742160 0.09090909 FALSE 0.20056620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 Cluster 3 Disengaged Disengaged 0.46345029 0.09090909 FALSE 0.34758772</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  Cluster 1     Active     Active 0.85985688 0.09090909 FALSE 0.64489266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  Cluster 1    Average     Active 0.31210322 0.09090909 FALSE 0.23407741</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Cluster 1 Disengaged     Active 0.04791061 0.09090909 FALSE 0.03593296</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Cluster 1     Active    Average 0.08919748 0.09090909 FALSE 0.06689811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  Cluster 1    Average    Average 0.54208478 0.09090909 FALSE 0.40656359</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Cluster 1 Disengaged    Average 0.16179397 0.09090909 FALSE 0.12134548</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Cluster 1     Active Disengaged 0.05094565 0.09090909 FALSE 0.03820923</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Cluster 1    Average Disengaged 0.14581200 0.09090909 FALSE 0.10935900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Cluster 1 Disengaged Disengaged 0.79029542 0.09090909 FALSE 0.59272157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 Cluster 2     Active     Active 0.84090909 0.09090909 FALSE 0.63068182</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Cluster 2    Average     Active 0.09259259 0.45454545 FALSE 0.06944444</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Cluster 2 Disengaged     Active 0.15555556 0.36363636 FALSE 0.11666667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Cluster 2     Active    Average 0.15909091 0.09090909 FALSE 0.11931818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Cluster 2    Average    Average 0.62962963 0.09090909 FALSE 0.47222222</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 Cluster 2 Disengaged    Average 0.51111111 0.09090909 FALSE 0.38333333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 Cluster 2    Average Disengaged 0.27777778 0.09090909 FALSE 0.20833333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 Cluster 2 Disengaged Disengaged 0.33333333 0.18181818 FALSE 0.25000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 Cluster 3     Active     Active 0.58333333 0.18181818 FALSE 0.43750000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 Cluster 3    Average     Active 0.15277778 0.27272727 FALSE 0.11458333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 Cluster 3     Active    Average 0.12500000 0.54545455 FALSE 0.09375000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 Cluster 3    Average    Average 0.81944444 0.09090909 FALSE 0.61458333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 Cluster 3 Disengaged    Average 0.60000000 0.36363636 FALSE 0.45000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 Cluster 3     Active Disengaged 0.29166667 0.27272727 FALSE 0.21875000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 Cluster 3    Average Disengaged 0.02777778 0.63636364 FALSE 0.02083333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 Cluster 3 Disengaged Disengaged 0.40000000 0.54545455 FALSE 0.30000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      cr_upper   ci_lower   ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  0.88268793 0.65577284 0.73420892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.64174107 0.42957320 0.55608763</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.41666667 0.18133433 0.50873162</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.36731207 0.26579108 0.34422716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.57477679 0.42150810 0.53956460</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.47619048 0.25735294 0.48174663</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.03348214 0.01813063 0.03897993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.35714286 0.19825368 0.34456522</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.61553030 0.44618902 0.52303076</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.40618956 0.27545591 0.35544627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 0.41666667 0.25393169 0.41591667</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 0.55239899 0.41794924 0.48150953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 0.73259188 0.54806318 0.63707999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 0.71666667 0.47566667 0.62478580</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 0.08207071 0.04454751 0.07496891</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 0.11121857 0.06535462 0.10528242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 0.11666667 0.03731725 0.13274248</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 0.37584459 0.28188187 0.35207199</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 0.19925958 0.13539516 0.16512909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 0.08223684 0.05815949 0.08303318</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 0.76013514 0.55103057 0.64686907</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 0.71646341 0.54053247 0.60579403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 0.58845029 0.44400159 0.48418443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 0.11402027 0.06464436 0.13318410</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 0.33427700 0.24890285 0.29449793</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 0.57931287 0.44559029 0.48793016</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  1.07482109 0.85364644 0.86251933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.39012902 0.30325947 0.31750047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.05988826 0.04463035 0.05445306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.11149685 0.08420600 0.09213959</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.67760598 0.53731300 0.55045041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.20224246 0.15498207 0.16765862</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.06368206 0.04995641 0.05531253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.18226500 0.14439688 0.15056135</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.98786928 0.78507248 0.79841297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1.05113636 0.80974004 0.86878813</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 0.11574074 0.05709565 0.11901439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 0.19444444 0.07105090 0.17308048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 0.19886364 0.13121187 0.19025996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 0.78703704 0.58558559 0.69922149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 0.63888889 0.45638298 0.59307274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 0.34722222 0.23013727 0.30738046</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 0.41666667 0.29932932 0.41893818</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 0.72916667 0.48907323 0.75780303</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 0.19097222 0.10448718 0.17093407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 0.15625000 0.03561594 0.19660326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 1.02430556 0.80000000 0.84428274</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 0.75000000 0.50000000 0.85166667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 0.36458333 0.20613636 0.35752632</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 0.03472222 0.00625000 0.06104845</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 0.50000000 0.14833333 0.50000000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

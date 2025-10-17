@@ -13,7 +13,7 @@ centralities and those computed using sampled subsets."><meta property="og:image
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,9 +56,31 @@ centralities and those computed using sampled subsets.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimate_cs</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">estimate_cs</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">loops</span>,</span>
+<span>  <span class="va">normalize</span>,</span>
+<span>  <span class="va">measures</span>,</span>
+<span>  <span class="va">iter</span>,</span>
+<span>  <span class="va">method</span>,</span>
+<span>  <span class="va">drop_prop</span>,</span>
+<span>  <span class="va">threshold</span>,</span>
+<span>  <span class="va">certainty</span>,</span>
+<span>  <span class="va">progressbar</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">estimate_centrality_stability</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">estimate_centrality_stability</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">loops</span>,</span>
+<span>  <span class="va">normalize</span>,</span>
+<span>  <span class="va">measures</span>,</span>
+<span>  <span class="va">iter</span>,</span>
+<span>  <span class="va">method</span>,</span>
+<span>  <span class="va">drop_prop</span>,</span>
+<span>  <span class="va">threshold</span>,</span>
+<span>  <span class="va">certainty</span>,</span>
+<span>  <span class="va">progressbar</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
 <span><span class="fu">estimate_cs</span><span class="op">(</span></span>
@@ -71,8 +93,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
@@ -86,8 +107,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'group_tna'</span></span>
@@ -101,8 +121,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'group_tna'</span></span>
@@ -116,8 +135,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -128,10 +146,6 @@ centralities and those computed using sampled subsets.</p>
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A <code>tna</code> or a <code>group_tna</code> object representing the temporal network
 analysis data. The object should be created from a sequence data object.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Ignored.</p></dd>
 
 
 <dt id="arg-loops">loops<a class="anchor" aria-label="anchor" href="#arg-loops"></a></dt>

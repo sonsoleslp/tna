@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,11 +94,11 @@
 <span></span>
 <span><span class="co"># Print the output to inspect the model</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; State Labels</span></span>
+<span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis </span></span>
+<span><span class="co">#&gt;    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Transition Frequency Matrix</span></span>
+<span><span class="co">#&gt; Transition Frequency Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            adapt cohesion consensus coregulate discuss emotion monitor plan</span></span>
 <span><span class="co">#&gt; adapt          0      139       243         11      30      61      17    8</span></span>
@@ -110,7 +110,7 @@
 <span><span class="co">#&gt; consensus         48</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 6 rows ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Initial Probabilities</span></span>
+<span><span class="co">#&gt; Initial Probabilities : </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      adapt   cohesion  consensus coregulate    discuss    emotion    monitor </span></span>
 <span><span class="co">#&gt;      0.011      0.060      0.214      0.019      0.175      0.151      0.144 </span></span>
@@ -121,11 +121,11 @@
 <span><span class="co"># data with scaled weights between 0 and 1</span></span>
 <span><span class="va">model_scaled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">ftna</a></span><span class="op">(</span><span class="va">group_regulation</span>, scaling <span class="op">=</span> <span class="st">"minmax"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">model_scaled</span><span class="op">)</span> <span class="co"># Print the FTNA model with scaled weights</span></span>
-<span><span class="co">#&gt; State Labels</span></span>
+<span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis </span></span>
+<span><span class="co">#&gt;    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Transition Frequency Matrix</span></span>
+<span><span class="co">#&gt; Transition Frequency Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;             adapt cohesion consensus coregulate discuss emotion monitor   plan</span></span>
 <span><span class="co">#&gt; adapt      0.0000   0.0555     0.097     0.0044   0.012   0.024  0.0068 0.0032</span></span>
@@ -137,7 +137,7 @@
 <span><span class="co">#&gt; consensus     0.0192</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 6 rows ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Initial Probabilities</span></span>
+<span><span class="co">#&gt; Initial Probabilities : </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      adapt   cohesion  consensus coregulate    discuss    emotion    monitor </span></span>
 <span><span class="co">#&gt;      0.011      0.060      0.214      0.019      0.175      0.151      0.144 </span></span>

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,18 +80,25 @@ begin by loading the package and the example data set
 <code>group_regulation</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sonsoleslp/tna/" class="external-link">"tna"</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Package 'tna' version 1.0.0</span></span>
-<span><span class="co">#&gt; Please type 'citation("tna")' for citing this R package in publications</span></span>
+<span><span class="co">#&gt; 'tna' package version 1.1.0</span></span>
+<span><span class="co">#&gt; ------------------------------------------------------</span></span>
+<span><span class="co">#&gt;   Tikka, S., López-Pernas, S., and Saqr, M. (2025). </span></span>
+<span><span class="co">#&gt;   tna: An R Package for Transition Network Analysis.</span></span>
+<span><span class="co">#&gt;   Applied Psychological Measurement.</span></span>
+<span><span class="co">#&gt;   https://doi.org/10.1177/01466216251348840</span></span>
+<span><span class="co">#&gt; ------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Please type 'citation("tna")' for more citation information.</span></span>
+<span><span class="co">#&gt; See the package website at https://sonsoles.me/tna/</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"group_regulation"</span>, package <span class="op">=</span> <span class="st">"tna"</span><span class="op">)</span></span></code></pre></div>
 <p>We fit the TNA model to the data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tna_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tna_model</span><span class="op">)</span></span>
-<span><span class="co">#&gt; State Labels</span></span>
+<span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis </span></span>
+<span><span class="co">#&gt;    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Transition Probability Matrix</span></span>
+<span><span class="co">#&gt; Transition Probability Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                   adapt   cohesion  consensus coregulate    discuss    emotion</span></span>
 <span><span class="co">#&gt; adapt      0.0000000000 0.27308448 0.47740668 0.02161100 0.05893910 0.11984283</span></span>
@@ -114,7 +121,7 @@ begin by loading the package and the example data set
 <span><span class="co">#&gt; plan       0.07552379 0.37420822 0.001786584</span></span>
 <span><span class="co">#&gt; synthesis  0.01226994 0.07515337 0.000000000</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Initial Probabilities</span></span>
+<span><span class="co">#&gt; Initial Probabilities : </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      adapt   cohesion  consensus coregulate    discuss    emotion    monitor </span></span>
 <span><span class="co">#&gt;     0.0115     0.0605     0.2140     0.0190     0.1755     0.1515     0.1440 </span></span>

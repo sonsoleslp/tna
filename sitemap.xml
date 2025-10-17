@@ -17,12 +17,15 @@
 <url><loc>http://sonsoles.me/tna/reference/as.igraph.tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/betweenness_network.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/bootstrap.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/bootstrap_cliques.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/build_model.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/centralities.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/cliques.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/cluster_sequences.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/communities.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/compare.group_tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/compare.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/compare_sequences.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/deprune.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/engagement.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/engagement_mmm.html</loc></url>
@@ -33,6 +36,7 @@
 <url><loc>http://sonsoles.me/tna/reference/hist.group_tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/hist.tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/import_data.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/import_onehot.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/index.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/mmm_stats.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/permutation_test.group_tna.html</loc></url>
@@ -51,7 +55,9 @@
 <url><loc>http://sonsoles.me/tna/reference/plot.tna_communities.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/plot.tna_comparison.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/plot.tna_permutation.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/plot.tna_sequence_comparison.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/plot.tna_stability.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/plot_associations.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/plot_compare.group_tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/plot_compare.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/plot_frequencies.group_tna.html</loc></url>
@@ -81,6 +87,7 @@
 <url><loc>http://sonsoles.me/tna/reference/print.tna_comparison.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/print.tna_data.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/print.tna_permutation.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/print.tna_sequence_comparison.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/print.tna_stability.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/prune.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/pruning_details.html</loc></url>
@@ -88,6 +95,7 @@
 <url><loc>http://sonsoles.me/tna/reference/rename_groups.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/reprune.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/simulate.tna.html</loc></url>
+<url><loc>http://sonsoles.me/tna/reference/sna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/summary.group_tna.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.html</loc></url>
 <url><loc>http://sonsoles.me/tna/reference/summary.tna.html</loc></url>

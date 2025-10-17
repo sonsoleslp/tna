@@ -9,7 +9,7 @@ a group_tna object. See permutation_test.tna() for more details."><meta property
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +59,7 @@ a <code>group_tna</code> object. See <code><a href="permutation_test.html">permu
 <span>  paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  level <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>,</span>
+<span>  consecutive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -80,7 +81,8 @@ all pairs are compared (the default).</p></dd>
 <dt id="arg-adjust">adjust<a class="anchor" aria-label="anchor" href="#arg-adjust"></a></dt>
 <dd><p>A <code>character</code> string for the method to adjust p-values with
 for multiple comparisons. The default is <code>"none"</code> for no adjustment.
-See <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for details and available adjustment methods.</p></dd>
+See the <code>method</code> argument of <code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust()</a></code> for details and available
+adjustment methods.</p></dd>
 
 
 <dt id="arg-iter">iter<a class="anchor" aria-label="anchor" href="#arg-iter"></a></dt>
@@ -101,6 +103,13 @@ permutation tests. The default is 0.05.</p></dd>
 <dt id="arg-measures">measures<a class="anchor" aria-label="anchor" href="#arg-measures"></a></dt>
 <dd><p>A <code>character</code> vector of centrality measures to test.
 See <code><a href="centralities.html">centralities()</a></code> for a list of available centrality measures.</p></dd>
+
+
+<dt id="arg-consecutive">consecutive<a class="anchor" aria-label="anchor" href="#arg-consecutive"></a></dt>
+<dd><p>A <code>logical</code> value. If <code>FALSE</code> (the default), all pairwise
+comparisons are performed in lexicographic order with respect to the order
+of the groups. If <code>TRUE</code>, only comparisons between consecutive pairs
+of groups are performed.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -140,50 +149,48 @@ See <code><a href="centralities.html">centralities()</a></code> for a list of av
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Small number of iterations for CRAN</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="permutation_test.html">permutation_test</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 1 vs. Cluster 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 1 vs. Cluster 2 :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   edge_name                diff_true effect_size p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Active -&gt; Active            0.214         4.23  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Average -&gt; Active           0.188         4.18  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Disengaged -&gt; Active        0             0     1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Active -&gt; Average          -<span style="color: #BB0000;">0.148</span>        -<span style="color: #BB0000;">3.46</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Average -&gt; Average         -<span style="color: #BB0000;">0.126</span>        -<span style="color: #BB0000;">2.68</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Disengaged -&gt; Average      -<span style="color: #BB0000;">0.192</span>        -<span style="color: #BB0000;">2.70</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Active -&gt; Disengaged       -<span style="color: #BB0000;">0.065</span><span style="color: #BB0000; text-decoration: underline;">7</span>       -<span style="color: #BB0000;">5.36</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Average -&gt; Disengaged      -<span style="color: #BB0000;">0.062</span><span style="color: #BB0000; text-decoration: underline;">2</span>       -<span style="color: #BB0000;">3.16</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> Disengaged -&gt; Disengaged    0.192         3.40  0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Active -&gt; Active            0.018<span style="text-decoration: underline;">9</span>       0.740  0.429 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Average -&gt; Active           0.220        3.62   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Disengaged -&gt; Active       -<span style="color: #BB0000;">0.108</span>       -<span style="color: #BB0000;">3.61</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Active -&gt; Average          -<span style="color: #BB0000;">0.069</span><span style="color: #BB0000; text-decoration: underline;">9</span>      -<span style="color: #BB0000;">3.68</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Average -&gt; Average         -<span style="color: #BB0000;">0.087</span><span style="color: #BB0000; text-decoration: underline;">5</span>      -<span style="color: #BB0000;">1.44</span>   0.238 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Disengaged -&gt; Average      -<span style="color: #BB0000;">0.349</span>       -<span style="color: #BB0000;">7.99</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Active -&gt; Disengaged        0.050<span style="text-decoration: underline;">9</span>       2.33   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Average -&gt; Disengaged      -<span style="color: #BB0000;">0.132</span>       -<span style="color: #BB0000;">3.00</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> Disengaged -&gt; Disengaged    0.457        8.57   0.047<span style="text-decoration: underline;">6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 1 vs. Cluster 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 1 vs. Cluster 3 :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   edge_name                diff_true effect_size p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Active -&gt; Active            0.405         6.31  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Average -&gt; Active           0.354         8.08  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Disengaged -&gt; Active        0.268        10.1   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Active -&gt; Average          -<span style="color: #BB0000;">0.314</span>        -<span style="color: #BB0000;">5.57</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Average -&gt; Average         -<span style="color: #BB0000;">0.113</span>        -<span style="color: #BB0000;">4.29</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Disengaged -&gt; Average      -<span style="color: #BB0000;">0.089</span><span style="color: #BB0000; text-decoration: underline;">8</span>       -<span style="color: #BB0000;">2.48</span>  0.095<span style="text-decoration: underline;">2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Active -&gt; Disengaged       -<span style="color: #BB0000;">0.091</span><span style="color: #BB0000; text-decoration: underline;">2</span>       -<span style="color: #BB0000;">5.23</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Average -&gt; Disengaged      -<span style="color: #BB0000;">0.241</span>        -<span style="color: #BB0000;">5.63</span>  0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> Disengaged -&gt; Disengaged   -<span style="color: #BB0000;">0.178</span>        -<span style="color: #BB0000;">3.50</span>  0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Active -&gt; Active            0.277        6.40   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Average -&gt; Active           0.159        1.98   0.143 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Disengaged -&gt; Active        0.047<span style="text-decoration: underline;">9</span>       1.22   0.381 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Active -&gt; Average          -<span style="color: #BB0000;">0.035</span><span style="color: #BB0000; text-decoration: underline;">8</span>      -<span style="color: #BB0000;">0.830</span>  0.381 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Average -&gt; Average         -<span style="color: #BB0000;">0.277</span>       -<span style="color: #BB0000;">2.67</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Disengaged -&gt; Average      -<span style="color: #BB0000;">0.438</span>       -<span style="color: #BB0000;">6.08</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Active -&gt; Disengaged       -<span style="color: #BB0000;">0.241</span>       -<span style="color: #BB0000;">8.55</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Average -&gt; Disengaged       0.118        2.36   0.095<span style="text-decoration: underline;">2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> Disengaged -&gt; Disengaged    0.390        4.49   0.047<span style="text-decoration: underline;">6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 2 vs. Cluster 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster 2 vs. Cluster 3 :</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 4</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   edge_name                diff_true effect_size p_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Active -&gt; Active            0.192        5.00   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Average -&gt; Active           0.166        5.63   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Disengaged -&gt; Active        0.268       10.2    0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Active -&gt; Average          -<span style="color: #BB0000;">0.166</span>       -<span style="color: #BB0000;">3.77</span>   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Average -&gt; Average          0.012<span style="text-decoration: underline;">9</span>       0.365  0.762 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Disengaged -&gt; Average       0.103        3.02   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Active -&gt; Disengaged       -<span style="color: #BB0000;">0.025</span><span style="color: #BB0000; text-decoration: underline;">6</span>      -<span style="color: #BB0000;">1.16</span>   0.286 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Average -&gt; Disengaged      -<span style="color: #BB0000;">0.178</span>       -<span style="color: #BB0000;">7.56</span>   0.047<span style="text-decoration: underline;">6</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> Disengaged -&gt; Disengaged   -<span style="color: #BB0000;">0.370</span>       -<span style="color: #BB0000;">9.31</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> Active -&gt; Active            0.258        4.69   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> Average -&gt; Active          -<span style="color: #BB0000;">0.060</span><span style="color: #BB0000; text-decoration: underline;">2</span>      -<span style="color: #BB0000;">1.40</span>   0.190 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> Disengaged -&gt; Active        0.156        2.26   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> Active -&gt; Average           0.034<span style="text-decoration: underline;">1</span>       0.875  0.381 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> Average -&gt; Average         -<span style="color: #BB0000;">0.190</span>       -<span style="color: #BB0000;">2.56</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> Disengaged -&gt; Average      -<span style="color: #BB0000;">0.088</span><span style="color: #BB0000; text-decoration: underline;">9</span>      -<span style="color: #BB0000;">1.05</span>   0.333 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> Active -&gt; Disengaged       -<span style="color: #BB0000;">0.292</span>       -<span style="color: #BB0000;">8.40</span>   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> Average -&gt; Disengaged       0.25         3.90   0.047<span style="text-decoration: underline;">6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> Disengaged -&gt; Disengaged   -<span style="color: #BB0000;">0.066</span><span style="color: #BB0000; text-decoration: underline;">7</span>      -<span style="color: #BB0000;">0.843</span>  0.429 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
