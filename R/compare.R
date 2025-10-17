@@ -407,6 +407,7 @@ compare_sequences <- function(x, ...) {
 #' @rdname compare_sequences
 compare_sequences.default <- function(x, group, sub, min_freq = 5L,
                                       correction = "bonferroni", ...) {
+  check_missing(group)
   model <- group_tna(x, group = group)
   compare_sequences.group_tna(
     x = model,
