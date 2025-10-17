@@ -5,14 +5,15 @@
 \alias{betweenness_network.tna}
 \title{Build and Visualize a Network with Edge Betweenness}
 \usage{
-betweenness_network(x, ...)
+betweenness_network(x, directed)
 
-\method{betweenness_network}{tna}(x, ...)
+\method{betweenness_network}{tna}(x, directed)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
 
-\item{...}{Ignored.}
+\item{directed}{A \code{logical} value. If \code{TRUE}, the network is considered
+directed.}
 }
 \value{
 A \code{tna} object where the edge weights are edge betweenness values.

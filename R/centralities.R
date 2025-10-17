@@ -46,7 +46,6 @@
 #'   measures should be computed. If missing, all available measures are
 #'   returned. See 'Details' for available measures. The elements are partially
 #'   matched ignoring case.
-#' @param ... Ignored.
 #' @return A `tna_centralities` object which is a tibble (`tbl_df`).
 #'   containing centrality measures for each state.
 #' @examples
@@ -61,14 +60,13 @@
 #' # Centrality measures normalized
 #' centralities(model, normalize = TRUE)
 #'
-centralities <- function(x, loops = FALSE, normalize = FALSE, measures, ...) {
+centralities <- function(x, loops = FALSE, normalize = FALSE, measures) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, loops = FALSE,
-                             normalize = FALSE, measures, ...) {
+centralities.tna <- function(x, loops = FALSE, normalize = FALSE, measures) {
   check_missing(x)
   check_class(x, "tna")
   out <- centralities_(
@@ -85,8 +83,7 @@ centralities.tna <- function(x, loops = FALSE,
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = FALSE,
-                                normalize = FALSE, measures, ...) {
+centralities.matrix <- function(x, loops = FALSE, normalize = FALSE, measures) {
   check_missing(x)
   stopifnot_(
     is.matrix(x),
@@ -103,11 +100,7 @@ centralities.matrix <- function(x, loops = FALSE,
 centralities_ <- function(x, loops, normalize, measures) {
   check_flag(loops)
   check_flag(normalize)
-  measures <- ifelse_(
-    missing(measures),
-    names(centrality_funs),
-    measures
-  )
+  measures <- measures %m% names(centrality_funs)
   measures <- check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
   g <- as.igraph(x)
@@ -150,7 +143,8 @@ diffusion <- function(mat) {
 
 #' @export
 #' @rdname estimate_centrality_stability
-estimate_cs <- function(x, ...) {
+estimate_cs <- function(x, loops, normalize, measures, iter, method,
+                        drop_prop, threshold, certainty, progressbar) {
   UseMethod("estimate_cs")
 }
 
@@ -204,7 +198,6 @@ estimate_centrality_stability <- estimate_cs
 #' for the CS-coefficient. Default is 0.95.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
 #' Defaults to `FALSE`
-#' @param ... Ignored.
 #'
 #' @return A `tna_stability` object which is a `list` with an element for each
 #' `measure` with the following elements:
@@ -233,14 +226,14 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
                             ), iter = 1000, method = "pearson",
                             drop_prop = seq(0.1, 0.9, by = 0.1),
                             threshold = 0.7, certainty = 0.95,
-                            progressbar = FALSE, ...) {
+                            progressbar = FALSE) {
   check_tna_seq(x)
   check_flag(loops)
   check_flag(normalize)
   check_flag(progressbar)
   check_values(iter, strict = TRUE)
-  check_range(threshold)
-  check_range(certainty)
+  check_range(threshold, lower = 0, upper = 1)
+  check_range(certainty, lower = 0, upper = 1)
   check_measures(measures)
   d <- x$data
   type <- attr(x, "type")
@@ -248,7 +241,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   params <- attr(x, "params")
   model <- initialize_model(d, type, scaling, params, transitions = TRUE)
   trans <- model$trans
-  a <- dim(trans)[2]
+  a <- dim(trans)[2L]
   n <- nrow(d)
   n_seq <- seq_len(n)
   n_prop <- length(drop_prop)
@@ -350,7 +343,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
     )
   }
   if (progressbar) {
-    cli::cli_process_done()
+    cli::cli_progress_done()
   }
   structure(
     out,
@@ -419,20 +412,16 @@ wcc <- function(mat) {
 }
 
 
-# Clusters ----------------------------------------------------------------
+# Groups ----------------------------------------------------------------
 
 #' @export
 #' @rdname centralities
 centralities.group_tna <- function(x, loops = FALSE,
-                                   normalize = FALSE, measures, ...) {
+                                   normalize = FALSE, measures) {
   check_missing(x)
   check_class(x, "group_tna")
   # missing() does not work with lapply, need to evaluate measures here.
-  measures <- ifelse_(
-    missing(measures),
-    names(centrality_funs),
-    measures
-  )
+  measures <- measures %m% names(centrality_funs)
   out <- dplyr::bind_rows(
     lapply(
       x,
@@ -442,8 +431,7 @@ centralities.group_tna <- function(x, loops = FALSE,
             x = i,
             loops = loops,
             normalize = normalize,
-            measures = measures,
-            ...
+            measures = measures
           )
         )
       }
@@ -464,7 +452,7 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
                                   ), iter = 1000, method = "pearson",
                                   drop_prop = seq(0.1, 0.9, by = 0.1),
                                   threshold = 0.7, certainty = 0.95,
-                                  progressbar = FALSE, ...) {
+                                  progressbar = FALSE) {
   check_missing(x)
   check_class(x, "group_tna")
   structure(
@@ -481,8 +469,7 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
           drop_prop = drop_prop,
           threshold = threshold,
           certainty = certainty,
-          progressbar = progressbar,
-          ...
+          progressbar = progressbar
         )
       }
     ),

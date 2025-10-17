@@ -4,7 +4,7 @@
 \alias{plot.group_tna_communities}
 \title{Plot Detected Communities}
 \usage{
-\method{plot}{group_tna_communities}(x, title = names(x), colors, ...)
+\method{plot}{group_tna_communities}(x, title, colors, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna_communities} object.}

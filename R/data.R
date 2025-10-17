@@ -8,19 +8,23 @@
 #' @export
 #' @family data
 #' @param data A `data.frame` or containing the action/event data.
-#' @param actor A `character` string giving the name of the column that
-#' represents a user/actor identifier. If not provided and neither `time` nor
+#' @param actor A `character` vector or an `expression` that represents
+#' a tidy selection of the names of the columns that
+#' represent a user/actor identifiers. If not provided and neither `time` nor
 #' `order` is specified, the entire dataset is treated as a single session.
-#' @param time A `character` string giving the name of the column representing
-#' timestamps of the action events.
-#' @param action A `character` string giving the name of the column holding
-#' the information about the action taken.
-#' @param order A `character` string giving the name of a column with sequence
-#' numbers or non-unique orderable values that indicate order within an `actor`
-#' group, if not present it will be ordered with all the data if no `actor` is
-#' available, used when widening the data. If both `actor` and `time` are
-#' specified, then the sequence order should be specified such that it
-#' determines the order of events within `actor` and each session.
+#' In the case of multiple actors, a new `.actor` column is added that
+#' represents the interaction of the given columns.
+#' @param time A `character` string or an `expression` giving the name of
+#' the column representing timestamps of the action events.
+#' @param action A `character` string or an `expression` giving the name of
+#' the column holding the information about the action taken.
+#' @param order A `character` string or an `expression` giving the name of a
+#' column with sequence numbers or non-unique orderable values that indicate
+#' order within an `actor` group, if not present it will be ordered with all
+#' the data if no `actor` is available, used when widening the data.
+#' If both `actor` and `time` are specified, then the sequence order should
+#' be specified such that it determines the order of events within `actor`
+#' and each session.
 #' @param time_threshold An `integer` specifying the time threshold in seconds
 #' for creating new time-based sessions. Defaults to 900 seconds.
 #' @param custom_format A `character` string giving the format used to
@@ -51,6 +55,7 @@
 #' print(results$meta_data)
 #' print(results$statistics)
 #'
+#' # Custom order column
 #' data_ordered <- tibble::tibble(
 #'    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
 #'    order = c(1, 2, 3, 1, 2, 1, 2, 3),
@@ -66,6 +71,7 @@
 #' print(results_ordered$meta_data)
 #' print(results_ordered$statistics)
 #'
+#' # No actor scenario leading to a single session
 #' data_single_session <- tibble::tibble(
 #'   action = c(
 #'     "view", "click", "add_cart", "view",
@@ -77,28 +83,37 @@
 #' print(results_single$meta_data)
 #' print(results_single$statistics)
 #'
+#' # Multiple actors
+#' data_multi_actor <- tibble::tibble(
+#'   user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+#'   session = c(1, 1, 2, 2, 1, 1, 2, 2),
+#'   action = c(
+#'     "view", "click", "add_cart", "view",
+#'     "checkout", "view", "click", "share"
+#'   )
+#' )
+#' results_multi_actor <- prepare_data(
+#'   data_multi_actor, actor = c("user", "session"), action = "action"
+#' )
+#' print(results_multi_actor$sequence_data)
+#' print(results_multi_actor$meta_data)
+#' print(results_multi_actor$statistics)
+#'
 prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
                          is_unix_time = FALSE, unix_time_unit = "seconds",
                          unused_fn = dplyr::first) {
   check_missing(data)
   check_class(data, "data.frame")
-  check_missing(action)
-  check_string(actor)
-  check_string(time)
-  check_string(action)
-  check_string(order)
   check_values(time_threshold, type = "numeric")
   check_flag(is_unix_time)
   unix_time_unit <- check_match(
     unix_time_unit,
     c("seconds", "milliseconds", "microseconds")
   )
-
   # Create some NULLs for R CMD Check
   .session_id <- .session_nr <- .new_session <- .time_gap <-
     .standardized_time <- .sequence <- n_sessions <- n_actions <- NULL
-
   rlang_verbose <- getOption("rlib_message_verbosity")
   onlyif(
     is.null(rlang_verbose) || isTRUE(rlang_verbose == "verbose"),
@@ -110,22 +125,28 @@ prepare_data <- function(data, actor, time, action, order,
       {.val {nrow(data)}} rows, {.val {ncol(data)}} columns"
     )
   )
+  action <- get_cols(rlang::enquo(action), data)
+  actor <- get_cols(rlang::enquo(actor), data)
+  time <- get_cols(rlang::enquo(time), data)
+  order <- get_cols(rlang::enquo(order), data)
+  check_cols(action, missing_ok = FALSE)
+  check_cols(time)
+  check_cols(order)
   data <- tibble::as_tibble(data)
-  cols_req <- c(
-    action,
-    onlyif(!missing(actor), actor),
-    onlyif(!missing(time), time),
-    onlyif(!missing(order), order)
-  )
-  check_cols(cols_req, names(data))
   long_data <- data
   default_actor <- FALSE
   default_order <- FALSE
+  multi_actor <- FALSE
   if (missing(actor)) {
     # Placeholder actor column
     actor <- ".actor"
     long_data$.actor <- "session"
     default_actor <- TRUE
+  } else if (length(actor) > 1L) {
+    actor_cols <- lapply(actor, function(x) long_data[[x]])
+    long_data$.actor <- interaction(actor_cols, sep = "-")
+    actor <- ".actor"
+    multi_actor <- TRUE
   }
   if (missing(order)) {
     # Placeholder order column
@@ -220,19 +241,44 @@ prepare_data <- function(data, actor, time, action, order,
   if (default_order) {
     long_data$.order <- NULL
   }
-  wide_data <- long_data |>
-    tidyr::pivot_wider(
-      id_cols = .session_id,
-      names_prefix = "T",
-      names_from = .sequence,
-      values_from = !!rlang::sym(action),
-      unused_fn = unused_fn
-    ) |>
-    dplyr::arrange(.session_id)
-
-  time_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
-  sequence_data <- wide_data[, time_cols]
-  meta_data <- wide_data[, !time_cols]
+  if (!missing(time)) {
+    wide_data <- long_data |>
+      tidyr::pivot_wider(
+        id_cols = .session_id,
+        names_prefix = "T",
+        names_from = .sequence,
+        values_from = c(!!rlang::sym(action), .standardized_time),
+        unused_fn = unused_fn
+      ) |>
+      dplyr::arrange(.session_id)
+    sequence_cols <- grepl(
+      paste0("^", action, "_T[0-9]+$"),
+      names(wide_data),
+      perl = TRUE
+    )
+    time_cols <- grepl(
+      "^.standardized_time_T[0-9]+$",
+      names(wide_data),
+      perl = TRUE
+    )
+    sequence_data <- wide_data[, sequence_cols]
+    time_data <- wide_data[, time_cols]
+    meta_data <- wide_data[, !(sequence_cols | time_cols)]
+  } else {
+    wide_data <- long_data |>
+      tidyr::pivot_wider(
+        id_cols = .session_id,
+        names_prefix = "T",
+        names_from = .sequence,
+        values_from = !!rlang::sym(action),
+        unused_fn = unused_fn
+      ) |>
+      dplyr::arrange(.session_id)
+    sequence_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
+    sequence_data <- wide_data[, sequence_cols]
+    meta_data <- wide_data[, !sequence_cols]
+    time_data <- NULL
+  }
 
   # Calculate statistics
   stats <- list(
@@ -274,35 +320,14 @@ prepare_data <- function(data, actor, time, action, order,
       )
     )
   }
-  # if (!default_actor) {
-  #   message_(c(`i` = "Sessions per user:"))
-  #   for (i in seq_len(nrow(stats$sessions_per_user))) {
-  #     msg <- paste0(
-  #       stats$sessions_per_user[[actor]][i],
-  #       ": ",
-  #       "{.val {", stats$sessions_per_user$n_sessions[i], "}}"
-  #     )
-  #     message_(c(` ` = msg))
-  #   }
-  # }
-  # message_(c(`i` = "Top 5 longest sessions:"))
-  # max_rows <- min(nrow(stats$actions_per_session), 5L)
-  # for (i in seq_len(max_rows)) {
-  #   msg <- paste0(
-  #     stats$actions_per_session$.session_id[i],
-  #     ": ",
-  #     "{.val {", stats$actions_per_session$n_actions[i], "}}"
-  #   )
-  #   message_(c(` ` = msg))
-  # }
   structure(
     list(
       long_data = long_data,
       sequence_data = sequence_data,
       meta_data = meta_data,
+      time_data = time_data,
       statistics = stats
     ),
-    type = "eventdata",
     class = "tna_data"
   )
 }
@@ -492,8 +517,8 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
 #' (without quotes) to include all columns from 'feature1' to 'feature6'
 #' in the order they appear in the data frame. For more information on
 #' tidy selections, see [dplyr::select()].
-#' @param id_cols A `character` vector of column names that uniquely identify
-#' each observation (IDs).
+#' @param id_cols An `expression` giving a tidy selection of column names that
+#' uniquely identify each observation (IDs).
 #' @param window_size An `integer` specifying the size of the window for
 #' sequence grouping. Default is 1 (each row is a separate window).
 #' @param replace_zeros A `logical` value indicating whether to replace 0s
@@ -533,18 +558,9 @@ import_data <- function(data, cols, id_cols,
   check_missing(data)
   check_class(data, "data.frame")
   check_flag(replace_zeros)
-  data_names <- colnames(data)
-  missing_ids <- id_cols[!id_cols %in% colnames(data)]
-  stopifnot_(
-    length(missing_ids) == 0L,
-    c(
-      "All ID columns specified by {.arg id_cols} must be present in the data.",
-      `x` = "The following column{?s} {?was/were} not found: {missing_ids}."
-    )
-  )
-  expr_cols <- rlang::enquo(cols)
-  pos <- tidyselect::eval_select(expr_cols, data = data)
-  cols <- names(pos)
+  cols <- get_cols(rlang::enquo(cols), data)
+  id_cols <- get_cols(rlang::enquo(id_cols), data) %m% character(0L)
+  check_cols(cols, single = FALSE, missing_ok = FALSE)
   out <- data
   n <- nrow(out)
   rownames(out) <- ifelse_(
@@ -595,4 +611,95 @@ import_data <- function(data, cols, id_cols,
       value,
       order
     )
+}
+
+#' Import One-Hot Data and Create a Co-Occurrence Network Model
+#'
+#' @export
+#' @family data
+#' @param data A `data.frame` in wide format.
+#' @param cols An `expression` giving a tidy selection of column names to be
+#' transformed into long format (actions). This can be a vector of column names
+#' (e.g., `c(feature1, feature2)`) or a range  specified as `feature1:feature6`
+#' (without quotes) to include all columns from 'feature1' to 'feature6'
+#' in the order they appear in the data frame. For more information on
+#' tidy selections, see [dplyr::select()].
+#' @param window An `integer` specifying the size of the window for
+#' sequence grouping. Default is 1 (each row is a separate window). Can
+#' also be a `character` string giving a name of the column in `data` whose
+#' levels define the windows.
+#' @return A `tna` object for the co-occurrence model.
+#' @examples
+#' d <- data.frame(
+#'   window = gl(100, 5),
+#'   feature1 = rbinom(500, 1, prob = 0.33),
+#'   feature2 = rbinom(500, 1, prob = 0.25),
+#'   feature3 = rbinom(500, 1, prob = 0.50)
+#' )
+#' model <- import_onehot(d, feature1:feature3, window = "window")
+#'
+import_onehot <- function(data, cols, window = 1L) {
+  check_missing(data)
+  check_class(data, "data.frame")
+  data_names <- colnames(data)
+  n <- nrow(data)
+  if (is.character(window)) {
+    stopifnot_(
+      length(window) == 1L && window %in% data_names,
+      "Argument {.arg window} must be a column name of {.arg data} when of
+      {.cls character} type."
+    )
+  } else {
+    check_values(window, strict = TRUE)
+    data$.window <- rep(seq(1L, n %/% window + 1L), each = window)[1:n]
+    window <- ".window"
+  }
+  cols <- get_cols(rlang::enquo(cols), data)
+  for (col in cols) {
+    data_vals <- unique(data[[col]])
+    invalid_vals <- data_vals[!is.na(data_vals) & !data_vals %in% c(0, 1)]
+    stopifnot_(
+      length(invalid_vals) == 0L,
+      c(
+        "All data values of {.arg cols} must be either 0, 1, or NA.",
+        `x` = "Found invalid values in column
+               {.val {col}}: {.val {invalid_vals}}."
+      )
+    )
+  }
+  data <- data |>
+    dplyr::select(c(dplyr::all_of(cols), !!rlang::sym(window))) |>
+    dplyr::filter(!is.na(!!rlang::sym(window))) |>
+    dplyr::group_by(!!rlang::sym(window)) |>
+    dplyr::summarize(
+      dplyr::across(
+        dplyr::all_of(cols), sum, .names = "{col}"
+      )
+    ) |>
+    dplyr::select(dplyr::all_of(cols)) |>
+    as.matrix()
+  n <- nrow(data)
+  p <- length(cols)
+  out <- matrix(0, nrow = p, ncol = p, dimnames = list(cols, cols))
+  for (i in seq_len(n)) {
+    pos <- which(data[i, ] > 0)
+    if (length(pos) > 0) {
+      data_pos <- data[i, pos]
+      pairs <- create_pairs(data_pos, data_pos)
+      pairs_idx <- create_pairs(pos, pos)
+      inc <- pairs[, 1L] * pairs[, 2L]
+      same <- pairs_idx[, 1] == pairs_idx[, 2L]
+      data_same <- pairs[same, 1L]
+      inc[same] <- (data_same * (data_same - 1L)) %/% 2L
+      out[pairs_idx] <- out[pairs_idx] + inc
+    }
+  }
+  t_out <- t(out)
+  diag(t_out) <- 0
+  out <- out + t_out
+  build_model_(
+    weights = out,
+    type = "co-occurrence",
+    labels = cols
+  )
 }

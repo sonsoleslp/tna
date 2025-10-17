@@ -48,6 +48,7 @@ sim <- simulate(model, nsim = 10, max_len = 10)
 \seealso{
 Other data: 
 \code{\link{import_data}()},
+\code{\link{import_onehot}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()}
 }

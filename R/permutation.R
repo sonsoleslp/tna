@@ -12,7 +12,8 @@
 #' @param y A `tna` object containing sequence data for the second `tna` model.
 #' @param adjust A `character` string for the method to adjust p-values with
 #' for multiple comparisons. The default is `"none"` for no adjustment.
-#' See [stats::p.adjust()] for details and available adjustment methods.
+#' See the `method` argument of [stats::p.adjust()] for details and available
+#' adjustment methods.
 #' @param iter An `integer` giving the number of permutations to perform.
 #' The default is 1000.
 #' @param paired A `logical` value. If `TRUE`, perform paired permutation tests;
@@ -53,7 +54,8 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
   check_tna_seq(y)
   check_values(iter, strict = TRUE)
   check_flag(paired)
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
+  adjust <- check_match(adjust, stats::p.adjust.methods, match_case = TRUE)
   permutation_test_(
     x = x,
     y = y,
@@ -77,6 +79,10 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' @param groups An `integer` vector or a `character` vector of group indices
 #' or names, respectively, defining which groups to compare. When not provided,
 #' all pairs are compared (the default).
+#' @param consecutive A `logical` value. If `FALSE` (the default), all pairwise
+#' comparisons are performed in lexicographic order with respect to the order
+#' of the groups. If `TRUE`, only comparisons between consecutive pairs
+#' of groups are performed.
 #' @inheritParams permutation_test.tna
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -86,7 +92,7 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 permutation_test.group_tna <- function(x, groups, adjust = "none",
                                        iter = 1000, paired = FALSE,
                                        level = 0.05, measures = character(0),
-                                       ...) {
+                                       consecutive = FALSE, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   stopifnot_(
@@ -96,9 +102,10 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
   )
   check_values(iter, strict = TRUE)
   check_flag(paired)
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
+  adjust <- check_match(adjust, stats::p.adjust.methods, match_case = TRUE)
   x_names <- names(x)
-  groups <- ifelse_(missing(groups), seq_along(x), groups)
+  groups <- groups %m% seq_along(x)
   check_cluster(x, groups)
   groups <- ifelse_(
     is.character(groups),
@@ -110,15 +117,12 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
     n_groups >= 2L,
     "Argument {.arg groups} must contain at least two groups to compare."
   )
-  n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
-  out <- vector(mode = "list", length = n_pairs)
-  idx <- 0L
-  for (i in seq_len(n_groups - 1L)) {
-    for (j in seq(i + 1L, n_groups)) {
-      idx <- idx + 1L
+  if (consecutive) {
+    out <- vector(mode = "list", length = n_groups - 1L)
+    for (i in seq_len(n_groups - 1L)) {
       group_i <- groups[i]
-      group_j <- groups[j]
-      out[[idx]] <- permutation_test_(
+      group_j <- groups[i + 1L]
+      out[[i]] <- permutation_test_(
         x = x[[group_i]],
         y = x[[group_j]],
         adjust = adjust,
@@ -128,7 +132,29 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
         measures = measures,
         ...
       )
-      names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+      names(out)[i] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+    }
+  } else {
+    n_pairs <- (n_groups * (n_groups - 1L)) %/% 2L
+    out <- vector(mode = "list", length = n_pairs)
+    idx <- 0L
+    for (i in seq_len(n_groups - 1L)) {
+      for (j in seq(i + 1L, n_groups)) {
+        idx <- idx + 1L
+        group_i <- groups[i]
+        group_j <- groups[j]
+        out[[idx]] <- permutation_test_(
+          x = x[[group_i]],
+          y = x[[group_j]],
+          adjust = adjust,
+          iter = iter,
+          paired = paired,
+          level = level,
+          measures = measures,
+          ...
+        )
+        names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
+      }
     }
   }
   structure(
@@ -160,7 +186,6 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     "The state labels of {.arg x} and {.arg y} must be the same
      and in the same order."
   )
-  #combined_data <- dplyr::bind_rows(data_x, data_y)
   combined_data <- rbind(data_x, data_y)
   attr(combined_data, "alphabet") <- attr(data_x, "alphabet")
   attr(combined_data, "labels") <- attr(data_x, "labels")
@@ -209,8 +234,8 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
       # For unpaired data, perform complete randomization
       perm_idx <- sample(n_xy)
     }
-    trans_perm_x <- combined_trans[perm_idx[idx_x], , ]
-    trans_perm_y <- combined_trans[perm_idx[idx_y], , ]
+    trans_perm_x <- combined_trans[perm_idx[idx_x], , , drop = FALSE]
+    trans_perm_y <- combined_trans[perm_idx[idx_y], , , drop = FALSE]
     weights_perm_x <- compute_weights(trans_perm_x, type, scaling, a)
     weights_perm_y <- compute_weights(trans_perm_y, type, scaling, a)
     if (include_centralities) {

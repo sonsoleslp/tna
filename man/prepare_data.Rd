@@ -20,22 +20,26 @@ prepare_data(
 \arguments{
 \item{data}{A \code{data.frame} or containing the action/event data.}
 
-\item{actor}{A \code{character} string giving the name of the column that
-represents a user/actor identifier. If not provided and neither \code{time} nor
-\code{order} is specified, the entire dataset is treated as a single session.}
+\item{actor}{A \code{character} vector or an \code{expression} that represents
+a tidy selection of the names of the columns that
+represent a user/actor identifiers. If not provided and neither \code{time} nor
+\code{order} is specified, the entire dataset is treated as a single session.
+In the case of multiple actors, a new \code{.actor} column is added that
+represents the interaction of the given columns.}
 
-\item{time}{A \code{character} string giving the name of the column representing
-timestamps of the action events.}
+\item{time}{A \code{character} string or an \code{expression} giving the name of
+the column representing timestamps of the action events.}
 
-\item{action}{A \code{character} string giving the name of the column holding
-the information about the action taken.}
+\item{action}{A \code{character} string or an \code{expression} giving the name of
+the column holding the information about the action taken.}
 
-\item{order}{A \code{character} string giving the name of a column with sequence
-numbers or non-unique orderable values that indicate order within an \code{actor}
-group, if not present it will be ordered with all the data if no \code{actor} is
-available, used when widening the data. If both \code{actor} and \code{time} are
-specified, then the sequence order should be specified such that it
-determines the order of events within \code{actor} and each session.}
+\item{order}{A \code{character} string or an \code{expression} giving the name of a
+column with sequence numbers or non-unique orderable values that indicate
+order within an \code{actor} group, if not present it will be ordered with all
+the data if no \code{actor} is available, used when widening the data.
+If both \code{actor} and \code{time} are specified, then the sequence order should
+be specified such that it determines the order of events within \code{actor}
+and each session.}
 
 \item{time_threshold}{An \code{integer} specifying the time threshold in seconds
 for creating new time-based sessions. Defaults to 900 seconds.}
@@ -80,6 +84,7 @@ print(results$sequence_data)
 print(results$meta_data)
 print(results$statistics)
 
+# Custom order column
 data_ordered <- tibble::tibble(
    user = c("A", "A", "A", "B", "B", "C", "C", "C"),
    order = c(1, 2, 3, 1, 2, 1, 2, 3),
@@ -95,6 +100,7 @@ print(results_ordered$sequence_data)
 print(results_ordered$meta_data)
 print(results_ordered$statistics)
 
+# No actor scenario leading to a single session
 data_single_session <- tibble::tibble(
   action = c(
     "view", "click", "add_cart", "view",
@@ -106,10 +112,27 @@ print(results_single$sequence_data)
 print(results_single$meta_data)
 print(results_single$statistics)
 
+# Multiple actors
+data_multi_actor <- tibble::tibble(
+  user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+  session = c(1, 1, 2, 2, 1, 1, 2, 2),
+  action = c(
+    "view", "click", "add_cart", "view",
+    "checkout", "view", "click", "share"
+  )
+)
+results_multi_actor <- prepare_data(
+  data_multi_actor, actor = c("user", "session"), action = "action"
+)
+print(results_multi_actor$sequence_data)
+print(results_multi_actor$meta_data)
+print(results_multi_actor$statistics)
+
 }
 \seealso{
 Other data: 
 \code{\link{import_data}()},
+\code{\link{import_onehot}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()}
 }

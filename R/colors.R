@@ -37,17 +37,15 @@
 #' @noRd
 map_to_color <- function(x, palette) {
   if (n_unique(x) == 1) {
-    # Handle the case where all values are the same
-    return(rep(palette[1], length(x))) # Map to the first color in the palette
+    return(rep(palette[1L], length(x)))
   }
-  # Normalize the numeric values to a range from 1 to the length of the palette
   scaled_values <- as.integer(ranger(x) * (length(palette) - 1L)) + 1L
   palette[scaled_values]
 }
 
 #' Colors for Sequence Data
 #'
-#' This functions creates colors analogous to those used by `TraMineR`
+#' This function creates colors analogous to those used by `TraMineR`.
 #'
 #' @param n_states The number of states as an `integer`.
 #' @noRd
@@ -64,7 +62,7 @@ color_palette <- function(n_states) {
   )
 }
 
-# Default Community Colors ------------------------------------------------
+# Default Colors -------------------------------------------------------------
 
 default_colors <- c(
   "#d1ea2c",

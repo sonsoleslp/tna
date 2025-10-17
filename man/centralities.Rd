@@ -7,13 +7,13 @@
 \alias{centralities.group_tna}
 \title{Calculate Centrality Measures for a Transition Matrix}
 \usage{
-centralities(x, loops = FALSE, normalize = FALSE, measures, ...)
+centralities(x, loops = FALSE, normalize = FALSE, measures)
 
-\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
+\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures)
 
-\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures, ...)
+\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures)
 
-\method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, measures, ...)
+\method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, measures)
 }
 \arguments{
 \item{x}{A \code{tna} object, a \code{group_tna} object, or
@@ -29,8 +29,6 @@ should be normalized (default is \code{FALSE}).}
 measures should be computed. If missing, all available measures are
 returned. See 'Details' for available measures. The elements are partially
 matched ignoring case.}
-
-\item{...}{Ignored.}
 }
 \value{
 A \code{tna_centralities} object which is a tibble (\code{tbl_df}).

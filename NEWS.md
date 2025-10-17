@@ -1,6 +1,21 @@
+# tna 1.1.0
+
+* Added the function `cluster_sequences()` to cluster sequence data using string distance measures of the `stringdist` package.
+* Added the function `compare_sequences()` to compare the frequencies of patterns between groups for sequence data.
+* `prepare_data()` now accepts a character vector for the `actor` argument.
+
 # tna 1.0.0
+
 * CRAN release
+
+# tna 0.7.0
+
+* Added the function `import_onehot()` to read one-hot data.
 * The function `plot_sequences()` gains the argument `ncol` for selecting the number of columns of the facets.
+
+# tna 0.6.1
+
+* The `group` column is now automatically removed from `cols` in `group_model()`.
 
 # tna 0.6.0
 

@@ -72,9 +72,7 @@ test_that("data preparation works when actor and order are provided", {
       "checkout", "view", "click", "share"
     )
   )
-
   data_unarranged <- dplyr::arrange(data, action)
-
   rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
     prepare_data(
@@ -101,6 +99,23 @@ test_that("data preparation works when actor and order are provided", {
   )
 })
 
+test_that("data preparation for multiple actors is supported", {
+  data_multi_actor <- tibble::tibble(
+    user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+    session = c(1, 1, 2, 2, 1, 1, 2, 2),
+    action = c(
+     "view", "click", "add_cart", "view",
+     "checkout", "view", "click", "share"
+    )
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_error(
+    prepare_data(
+      data_multi_actor, actor = c("user", "session"), action = "action"
+    ),
+    NA
+  )
+})
 
 test_that("unix time from character column works", {
   mock_long_unix <- mock_long
@@ -198,5 +213,62 @@ test_that("wide format sequence data can be imported", {
   expect_equal(
     names(long_data),
     c("feature3", "other_col", "ID", "Time", "action", "value", "order")
+  )
+})
+
+test_that("one-hot data can be imported", {
+  d <- data.frame(
+    window = gl(100, 5),
+    feature1 = rbinom(500, 1, prob = 0.33),
+    feature2 = rbinom(500, 1, prob = 0.25),
+    feature3 = rbinom(500, 1, prob = 0.50)
+  )
+  expect_error(
+    model1 <- import_onehot(d, feature1:feature3, window = "window"),
+    NA
+  )
+  expect_error(
+    model2 <- import_onehot(d, feature1:feature3, window = 5),
+    NA
+  )
+  expect_equal(
+    model1,
+    model2
+  )
+})
+
+test_that("valid column selection works", {
+  expect_error(
+    cols_1 <- get_cols(rlang::quo(T1:T3), mock_sequence),
+    NA
+  )
+  expect_error(
+    cols_2 <- get_cols(rlang::quo(c("T1", "T2", "T3")), mock_sequence),
+    NA
+  )
+  expect_error(
+    cols_3 <- get_cols(rlang::quo(1:3), mock_sequence),
+    NA
+  )
+  expect_identical(cols_1, cols_2)
+  expect_identical(cols_2, cols_3)
+  expect_identical(
+    get_cols(rlang::quo(1), mock_sequence),
+    "T1"
+  )
+  expect_identical(
+    get_cols(rlang::quo("T1"), mock_sequence),
+    "T1"
+  )
+})
+
+test_that("invalid column selection fails", {
+  expect_error(
+    get_cols(rlang::quo(TRUE), mock_sequence),
+    "Columns must be selected using a tidy selection"
+  )
+  expect_error(
+    get_cols(rlang::quo(1i), mock_sequence),
+    "Columns must be selected using a tidy selection"
   )
 })

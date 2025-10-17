@@ -122,18 +122,30 @@ as.igraph.group_tna <- function(x, which, ...) {
 #' @noRd
 log_sum_exp <- function(x) {
   n <- length(x)
-  L <- x[1]
-  for (i in seq_len(n - 1)) {
-    L <- max(x[i + 1], L) + log1p(exp(-abs(x[i + 1] - L)))
+  L <- x[1L]
+  for (i in seq_len(n - 1L)) {
+    L <- max(x[i + 1L], L) + log1p(exp(-abs(x[i + 1L] - L)))
   }
   L
 }
 
-# Define the null coalescing operator for older R versions
+#' Null coalescing operator
+#'
+#' Define the null coalescing operator for older R versions
+#' @noRd
 if (base::getRversion() < "4.4.0") {
   `%||%` <- function(x, y) {
     if (is.null(x)) y else x
   }
+}
+
+#' Default value operator for a missing argument
+#'
+#' @param x An \R object
+#' @param y An \R object to assign if `x` is missing
+#' @noRd
+`%m%` <- function(x, y) {
+  if (missing(x)) y else x
 }
 
 #' Number of unique elements in a vector
@@ -142,6 +154,60 @@ if (base::getRversion() < "4.4.0") {
 #' @noRd
 n_unique <- function(x) {
   length(unique(x))
+}
+
+#' Create all pairs of two vectors
+#'
+#' @param x A `vector`.
+#' @param y A `vector`.
+#' @noRd
+create_pairs <- function(x, y) {
+  n_x <- length(x)
+  out <- matrix(0, nrow = n_x * length(y), ncol = 2L)
+  out[, 1L] <- x
+  out[, 2L] <- rep(y, each = n_x)
+  out
+}
+
+#' Force values into bounds
+#'
+#' @param x A `numeric` vector of values
+#' @param range A `numeric` vector of length 2 giving the bounds.
+#' @noRd
+bound <- function(x, range) {
+  force(range)
+  low <- range[1L]
+  high <- range[2L]
+  x[x < low] <- low
+  x[x > high] <- high
+  x
+}
+
+#' Get specific columns from data
+#'
+#' @param expr An `expression` for the columns to select
+#' @param data A `data.frame` to select the columns from
+#' @noRd
+get_cols <- function(expr, data) {
+  if (rlang::quo_is_missing(expr)) {
+    return(rlang::missing_arg())
+  }
+  if (rlang::quo_is_symbolic(expr) && !rlang::quo_is_call(expr, "!!")) {
+    pos <- tidyselect::eval_select(expr = expr, data = data)
+    names(pos)
+  } else {
+    cols <- rlang::eval_tidy(expr = expr)
+    if (is.character(cols)) {
+      intersect(cols, names(data))
+    } else if (is.numeric(cols)) {
+      names(data)[cols]
+    } else {
+      stop_(
+        "Columns must be selected using a tidy selection,
+         a {.cls character} vector, or an {.cls integer} vector."
+      )
+    }
+  }
 }
 
 # Functions borrowed from the `dynamite` package --------------------------

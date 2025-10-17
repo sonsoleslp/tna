@@ -32,22 +32,79 @@ print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }
 
+# #' Print a Summary of a Mixture Markov Model Fit
+# #'
+# #' @export
+# #' @family groups
+# #' @param x A `summary.tna_mmm` object.
+# #' @param digits An `integer` giving the number of *significant* digits
+# #'   to print.
+# #' @param ... Arguments passed to the generic `print` method.
+# #' @return A `summary.tna_mmm` object (invisibly) with details of the model fit.
+# #' @examples
+# #' sumr <- summary(engagement_tna_mmm)
+# #' print(sumr)
+# #'
+# print.summary.tna_mmm <- function(x, digits = 3L, ...) {
+#   cat("Covariate effects :\n")
+#   cat("Reference cluster:", x$cluster_names[1L], "\n\n")
+#   cf <- x$coefficients
+#   v <- diag(x$vcov)
+#   k <- ncol(x$prior)
+#   q <- nrow(cf)
+#   mean_prior <- colMeans(x$prior)
+#   names(mean_prior) <- x$cluster_names
+#   clust_tab <- table(x$assignments)
+#   tab <- matrix(
+#     c(
+#       as.character(clust_tab),
+#       as.character(round(prop.table(clust_tab), digits = digits))
+#     ),
+#     nrow = 2L,
+#     byrow = TRUE
+#   )
+#   colnames(tab) <- x$cluster_names
+#   rownames(tab) <- c("count", "proportion")
+#   for (i in seq(2L, k)) {
+#     idx <- seq((i - 2L) * q + 1L, (i - 1L) * q)
+#     cat(x$cluster_names[i], ":\n")
+#     d <- data.frame(
+#       `Estimate` = round(cf[, i], digits = digits),
+#       `Std. error` = round(sqrt(v[idx]), digits = digits),
+#       check.names = FALSE
+#     )
+#     rownames(d) <- rownames(cf)
+#     print(d, digits = digits, ...)
+#     cat("\n")
+#   }
+#   cat("Log-likelihood:", round(x$loglik, digits = digits), "\n")
+#   cat("AIC:", round(x$aic, digits = digits), "\n")
+#   cat("BIC:", round(x$bic, digits = digits), "\n\n")
+#   cat("Mean of prior cluster probabilities :\n")
+#   print(mean_prior, digits = digits, ...)
+#   cat("\nMost probable clusters :\n")
+#   print.default(tab, quote = FALSE, print.gap = 2L, right = TRUE)
+#   cat("\n")
+#   cat("Classification table :\n")
+#   cat("Mean cluster probabilities (columns) by the most probable cluster (rows)\n\n")
+#   print(x$classification, digits = digits, ...)
+#   invisible(x)
+# }
+
 #' Print a `tna` Object
 #'
 #' @export
 #' @family basic
 #' @param x A `tna` object.
-#' @param digits An `integer` giving the number of
-#' *significant* digits to print.
 #' @param generic A `logical` value. If `TRUE`, use generic print method
 #' instead. Defaults to `FALSE`.
-#' @param ... Ignored.
+#' @param ... Additional arguments passed to the generic `print` methods.
 #' @return The `tna` object passed as argument `x` (invisibly).
 #' @examples
 #' model <- tna(group_regulation)
 #' print(model)
 #'
-print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
+print.tna <- function(x, generic = FALSE, ...) {
   check_missing(x)
   check_class(x, "tna")
   check_flag(generic)
@@ -55,7 +112,6 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
     NextMethod(generic = "print", object = x, ...)
     return()
   }
-  check_values(digits)
   type <- attr(x, "type")
   mat_type <- switch(type,
     `relative` = "Transition Probability",
@@ -67,13 +123,14 @@ print.tna <- function(x, digits = getOption("digits"), generic = FALSE, ...) {
     `betweenness` = "Edge Betweenness",
     "Edge Weight"
   )
-  cat("State Labels\n\n")
-  cat(paste(x$labels, collapse = ", "), "\n")
-  cat("\n", mat_type, " Matrix\n\n", sep = "")
-  print(x$weights, digits)
+  cat("State Labels : \n\n")
+  cat("  ", paste(x$labels, collapse = ", "), "\n")
+  cat("\n", mat_type, " Matrix :\n\n", sep = "")
+  print(x$weights, ...)
+  inits <- stats::setNames(x$inits, x$labels)
   if (!is.null(x$inits)) {
-    cat("\nInitial Probabilities\n\n", sep = "")
-    print(x$inits, digits)
+    cat("\nInitial Probabilities : \n\n", sep = "")
+    print(inits, ...)
   }
   invisible(x)
 }
@@ -141,7 +198,7 @@ print.tna_centralities <- function(x, ...) {
 #' @export
 #' @family communities
 #' @param x A `tna_communities` object.
-#' @param ... Ignored.
+#' @param ... Additional arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
 #' @examples
 #' model <- tna(group_regulation)
@@ -152,9 +209,9 @@ print.tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_communities")
   cat("Number of communities found by each algorithm\n\n")
-  print(x$counts)
+  print(x$counts, ...)
   cat("\nCommunity assignments\n\n")
-  print(x$assignments)
+  print(x$assignments, ...)
   invisible(x)
 }
 
@@ -234,7 +291,7 @@ print.tna_cliques <- function(x, n = 6, first = 1,
   cat("\n")
   for (i in seq(first, max_cliques)) {
     cat("\nClique ", i, "\n", sep = "")
-    print(x$weights[[i]], digits)
+    print(x$weights[[i]], digits = digits)
   }
   invisible(x)
 }
@@ -270,7 +327,7 @@ print.tna_data <- function(x, data = "sequence", ...) {
 #' @export
 #' @family validation
 #' @param x A `tna_stability` object.
-#' @param ... Ignored.
+#' @param ... Additional arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
 #' @examples
 #' model <- tna(group_regulation)
@@ -289,7 +346,7 @@ print.tna_stability <- function(x, ...) {
   cs_coefs <- unlist(lapply(x, "[[", "cs_coefficient"))
   names(cs_coefs) <- names(x)
   cat("Centrality Stability Coefficients\n\n")
-  print(cs_coefs)
+  print(cs_coefs, ...)
   invisible(x)
 }
 
@@ -321,7 +378,68 @@ print.tna_permutation <- function(x, ...) {
   invisible(x)
 }
 
-# Clusters ----------------------------------------------------------------
+# #' Print a Mixture Markov Model Fit
+# #'
+# #' @export
+# #' @family clusters
+# #' @param x A `tna_mmm` object.
+# #' @param digits An `integer` giving the number of *significant* digits
+# #'   to print.
+# #' @param ... Arguments passed to the generic `print` method
+# #' @return `x` (invisibly)
+# #' @examples
+# #' print(engagement_tna_mmm)
+# #'
+# print.tna_mmm <- function(x, digits = 3L, ...) {
+#   cat("Mixture Markov Model\n\n")
+#   cat("Data:", x$data_name, "\n")
+#   cat("Number of sequences:", nrow(x$data), "\n")
+#   cat("Number of time points:", ncol(x$data), "\n")
+#   cat("Number of clusters:", x$k, "\n")
+#   cat("States:", cs(x$states), "\n")
+#   cat("Coefficients :\n")
+#   print(coef.tna_mmm(x), digits = digits)
+#   cat("\n")
+#   cat("Cluster sizes:")
+#   print(x$sizes)
+#   cat("\n")
+#   cat("Intial probabilities :\n")
+#   print.listof(x$inits, digits = digits)
+#   cat("Transition probabilities :\n")
+#   print.listof(x$trans, digits = digits)
+#   invisible(x)
+# }
+
+#' Print the Results of Clustering
+#'
+#' @export
+#' @rdname cluster_sequences
+print.tna_clustering <- function(x, ...) {
+  cat("Clustering method:", x$method, "\n")
+  cat("Number of clusters:", x$k, "\n")
+  cat("Silhouette score:", x$silhouette, "\n")
+  cat("Cluster sizes:\n")
+  print(x$sizes, ...)
+  invisible(x)
+}
+
+#' Print a Comparison of Sequences
+#'
+#' @export
+#' @family comparison
+#' @param x A `tna_sequence_comparison` object.
+#' @param ... Arguments passed to the generic `print` method.
+#' @return `x` (invisibly).
+#' @examples
+#' group <- c(rep("High", 1000), rep("Low", 1000))
+#' comp <- compare_sequences(group_regulation, group)
+#' print(comp)
+#'
+print.tna_sequence_comparison <- function(x, ...) {
+  NextMethod(generic = "print", object = x, ...)
+}
+
+# Groups ----------------------------------------------------------------
 
 #' Print a `group_tna` Object
 #'
@@ -337,14 +455,7 @@ print.tna_permutation <- function(x, ...) {
 print.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x, ...)
   invisible(x)
 }
 
@@ -364,14 +475,7 @@ print.group_tna <- function(x, ...) {
 print.group_tna_bootstrap <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_bootstrap")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x, ...)
   invisible(x)
 }
 
@@ -380,7 +484,7 @@ print.group_tna_bootstrap <- function(x, ...) {
 #' @export
 #' @family basic
 #' @param x A `summary.group_tna` object.
-#' @param ... Arguments passed to [print.summary.tna()].
+#' @param ... Arguments passed to the `tibble` print method
 #' @return `x` (invisibly).
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -389,15 +493,7 @@ print.group_tna_bootstrap <- function(x, ...) {
 print.summary.group_tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "summary.group_tna")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
-  invisible(x)
+  NextMethod(generic = "print", object = x, ...)
 }
 
 #' Print a Bootstrap Summary for a Grouped Transition Network Model
@@ -414,6 +510,8 @@ print.summary.group_tna <- function(x, ...) {
 #' print(summary(boot))
 #'
 print.summary.group_tna_bootstrap <- function(x, ...) {
+  check_missing(x)
+  check_class(x, "summary.group_tna_bootstrap")
   NextMethod(generic = "print", object = x, ...)
 }
 
@@ -450,14 +548,7 @@ print.group_tna_centralities <- function(x, ...) {
 print.group_tna_communities <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x, ...)
   invisible(x)
 }
 
@@ -476,14 +567,7 @@ print.group_tna_communities <- function(x, ...) {
 print.group_tna_cliques <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_cliques")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x, ...)
   invisible(x)
 }
 
@@ -507,14 +591,7 @@ print.group_tna_cliques <- function(x, ...) {
 print.group_tna_stability <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_stability")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x, ...)
   invisible(x)
 }
 
@@ -535,13 +612,6 @@ print.group_tna_stability <- function(x, ...) {
 print.group_tna_permutation <- function(x, ...) {
   check_missing(x)
   check_class(x, "group_tna_permutation")
-  prefix <- ""
-  nm <- names(x)
-  for (i in seq_along(x)) {
-    cat(prefix)
-    cat(nm[i], "\n\n", sep = "")
-    print(x[[i]])
-    prefix <- "\n"
-  }
+  print.listof(x, ...)
   invisible(x)
 }

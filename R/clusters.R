@@ -1,396 +1,191 @@
-#' Build a Grouped Transition Network Analysis Model
+#' Cluster Sequences via Dissimilarity Matrix based on String Distances
 #'
-#' This function constructs a transition network analysis (TNA) model for
-#' each cluster from a given sequence, wide-format dataframe,
-#' or a mixture Markov model.
+#' Performs clustering on sequence data using specified dissimilarity measures
+#' and clustering methods. The sequences are first converted to strings
+#' and compared using the `stringdist` package.
 #'
-#' @export
-#' @family clusters
-#' @rdname group_model
-#' @param x An `stslist` object describing a sequence of events or states to
-#'   be used for building the Markov model. The argument `x` also accepts
-#'   `data.frame` objects in wide format, and `tna_data` objects.
-#'   Alternatively, the function accepts a mixture Markov model from `seqHMM`.
-#' @param group A vector indicating the cluster assignment of each
-#'   row of the data / sequence. Must have the same length as the number of
-#'   rows/sequences of `x`. Alternatively, a single `character` string giving
-#'   the column name of the data that defines the group when `x` is a wide
-#'   format `data.frame` or a `tna_data` object. If not provided, each row of
-#'   the data forms a cluster.
-#' @param cols An `integer`/`character` vector giving the indices/names of the
-#'   columns that should be considered as sequence data.
-#'   Defaults to all columns, i.e., `seq(1, ncol(x))`. The columns are
-#'   automatically determined for `tna_data` objects.
-#' @param na.rm A `logical` value that determines if observations with `NA`
-#' value in `group` be removed. If `FALSE`, an additional category for `NA`
-#' values will be added. The default is `FALSE` and a warning is issued
-#' if `NA` values are detected.
-#' @param groupwise A `logical` value that indicates whether scaling methods
-#' should be applied by group (`TRUE`) or globally (`FALSE`, the default).
-#' @inheritParams build_model
-#' @param ... Ignored.
-#' @return An object of class `group_tna` which is a `list` containing one
-#'   element per cluster. Each element is a `tna` object.
+#' @param data A `data.frame` or a `matrix` where the rows are sequences and
+#'   the columns are time points.
+#' @param x A `tna_clustering` object.
+#' @param k An `integer` giving the number of clusters.
+#' @param dissimilarity A `character` string specifying the
+#'   dissimilarity measure. The available options are: `"osa"`, `"lv"`, `"dl"`,
+#'   `"hamming"`, `"qgram"`, `"cosine"`, `"jaccard"`, and `"jw"`. See
+#'   [stringdist::stringdist-metrics] for more information on these measures.
+#' @param method A `character` string specifying clustering method.
+#'   The available methods are `"pam"`, `"ward.D"`, `"ward.D2"`,
+#'   `"complete"`,`"average"`, `"single"`, `"mcquitty"`, `"median"`, and
+#'   `"centroid"`. See [cluster::pam()] and [stats::hclust()] for more
+#'   information on these methods.
+#' @param na_syms A `character` vector of symbols or factor levels to convert
+#'   to explicit missing values.
+#' @param weighted A `logical` value indicating whether the dissimilarity
+#'   measure should be weighted (the default is `FALSE` for no weighting).
+#'   If `TRUE`, earlier observations of the sequences receive a greater weight
+#'   in the distance calculation with an exponential decay. Currently only
+#'   supported for the Hamming distance.
+#' @param lambda A `numeric` value defining the strength of the decay when
+#'   `weighted = TRUE`. The default is `1.0`.
+#' @param ... Additional arguments passed to [stringdist::stringdist()].
+#' @return A `tna_clustering` object which is a  `list` containing:
+#'
+#'   * `data`: The original data.
+#'   * `k`: The number of clusters.
+#'   * `assignments`: An `integer` vector of cluster assignments.
+#'   * `silhouette`: Silhouette score measuring clustering quality.
+#'   * `sizes`: An `integer` vector of cluster sizes.
+#'   * `method`: The clustering method used.
+#'   * `distance`: The distance matrix.
 #'
 #' @examples
-#' # Manually specified groups
-#' group <- c(rep("High", 1000), rep("Low", 1000))
-#' model <- group_model(group_regulation, group = group)
+#' data <- data.frame(
+#'   T1 = c("A", "B", "A", "C", "A", "B"),
+#'   T2 = c("B", "A", "B", "A", "C", "A"),
+#'   T3 = c("C", "C", "A", "B", "B", "C")
+#' )
 #'
-#' # Groups defined by a mixed Markov model
-#' model <- group_model(engagement_mmm)
+#' # PAM clustering with optimal string alignment (default)
+#' result <- cluster_sequences(data, k = 2)
+#' print(result)
 #'
-group_model <- function(x, ...) {
-  UseMethod("group_model")
-}
-
 #' @export
-#' @rdname group_model
-group_model.default <- function(x, group, type = "relative",
-                                scaling = character(0L), groupwise = FALSE,
-                                cols, params = list(), na.rm = TRUE, ...) {
-  check_missing(x)
-  check_flag(groupwise)
-  check_flag(na.rm)
+cluster_sequences <- function(data, k, dissimilarity = "hamming",
+                              method = "pam", na_syms = c("*", "%"),
+                              weighted = FALSE, lambda = 1.0, ...) {
   stopifnot_(
-    inherits(x, c("stslist", "data.frame", "tna_data")),
-    "Argument {.arg x} must be {.cls stslist} (sequence object), a
-    {.cls data.frame} or a {.cls tna_data} object."
+    is.data.frame(data) || is.matrix(data),
+    "Argument {.arg data} must be a {.cls data.frame} or a {.cls matrix}."
   )
-  if (inherits(x, "tna_data")) {
-    wide <- cbind(x$sequence_data, x$meta_data)
-    cols <- seq_len(ncol(x$sequence_data))
-    x <- wide
+  check_range(k, type = "integer", lower = 2L, upper = nrow(data) - 1L)
+  dissimilarity <- check_match(
+    dissimilarity,
+    available_clustering_dissimilarities
+  )
+  method <- check_match(
+    method,
+    available_clustering_methods
+  )
+  stopifnot_(
+    !weighted || dissimilarity == "hamming",
+    "Weighting is only supported for the Hamming distance."
+  )
+  if (weighted && dissimilarity == "hamming") {
+    dist_mat <- weighted_hamming(
+      mat = seq2str(
+        data,
+        na_syms = na_syms,
+        na_include = TRUE,
+        collapse = FALSE
+      ),
+      lambda = lambda
+    )
   } else {
-    cols <- ifelse_(missing(cols), seq_len(ncol(x)), cols)
-    check_range(
-      cols,
-      type = "integer",
-      scalar = FALSE,
-      lower = 1L,
-      upper = ncol(x)
+    dist_mat <- stringdist::stringdistmatrix(
+      a = seq2str(data, na_syms),
+      method = dissimilarity,
+      ...
     )
   }
-  group <- ifelse_(
-    missing(group),
-    seq_len(nrow(x)),
-    group
-  )
-  type <- check_model_type(type)
-  scaling <- check_model_scaling(scaling)
-  group_len <- length(group)
-  data <- NULL
-  stopifnot_(
-    group_len == nrow(x) || group_len == 1L,
-    "Argument {.arg group} must be of length one or the same length as the
-     number of rows/sequences in {.arg x}."
-  )
-  label <- "Cluster"
-  prefix <- "Argument"
-  if (group_len == 1L) {
-    x_names <- names(x)
-    stopifnot_(
-      group %in% x_names,
-      "Argument {.arg group} must be a column name of {.arg x}
-       when of length one."
-    )
-    label <- group
-    cols <- setdiff(cols, which(x_names == group))
-    group <- as.factor(x[[group]])
-    prefix <- "Column"
+  if (method == "pam") {
+    clust_result <- cluster::pam(dist_mat, diss = TRUE, k = k)
+    assignments <- clust_result$clustering
+    silhouette_score <- clust_result$silinfo$avg.width
+  } else {
+    hc <- stats::hclust(dist_mat, method = method)
+    assignments <- stats::cutree(hc, k = k)
+    sil <- cluster::silhouette(assignments, dist = dist_mat)
+    silhouette_score <- mean(sil[, 3L])
   }
-  group_na <- any(is.na(group))
-  if (group_na && na.rm) {
-    warning_(
-      c(
-        "{prefix} {.arg group} contains missing values.",
-        `i` = "The corresponding observations will be excluded. You can
-               use {.code na.rm = FALSE} to keep missing values."
-      )
-    )
-  }
-  group <- ifelse_(
-    is.factor(group),
-    group,
-    factor(
-      group,
-      labels = paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
-    )
-  )
-  group <- ifelse_(group_na && !na.rm, addNA(group), group)
-  levs <- levels(group)
-  n_group <- length(levs)
-  clusters <- stats::setNames(
-    vector(mode = "list", length = n_group),
-    levs
-  )
-  group_scaling <- ifelse_(groupwise, scaling, character(0L))
-  groups <- vector(mode = "list", length = n_group)
-  group <- as.integer(group)
-  vals <- sort(unique(unlist(x[, cols])))
-  alphabet <- ifelse_(
-    inherits(x, "stslist"),
-    attr(x, "alphabet"),
-    vals[!is.na(vals)]
-  )
-  a <- length(alphabet)
-  seq_data <- create_seqdata(x, cols = cols, alphabet = alphabet)
-  trans <- compute_transitions(seq_data, a, type, params)
-  for (i in seq_along(levs)) {
-    groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))
-    rows <- which(group == i)
-    d <- seq_data[rows, , drop = FALSE]
-    attr(d, "alphabet") <- alphabet
-    attr(d, "labels") <- alphabet
-    attr(d, "colors") <- attr(seq_data, "colors")
-    inits <- factor(d[, 1L], levels = seq_len(a), labels = alphabet)
-    inits <- as.vector(table(inits))
-    weights <- compute_weights(
-      trans[rows, , , drop = FALSE],
-      type = type,
-      scaling = group_scaling,
-      a = a
-    )
-    dimnames(weights) <- list(alphabet, alphabet)
-    clusters[[i]] <- build_model_(
-      weights = weights,
-      inits = inits / sum(inits),
-      labels = alphabet,
-      type = type,
-      scaling = group_scaling,
-      data = d,
-      params = params
-    )
-  }
-  names(groups) <- names(clusters)
-  if (!groupwise && length(scaling > 0)) {
-    weights <- scale_weights_global(
-      weights = lapply(clusters, "[[", "weights"),
-      type = type,
-      scaling = scaling,
-      a = a
-    )
-    for (i in seq_along(clusters)) {
-      clusters[[i]]$weights <- weights[[i]]
-    }
-  }
+  sizes <- c(table(assignments))
   structure(
-    clusters,
-    groups = groups,
-    label = label,
-    levels = levs,
-    na.rm = na.rm,
-    cols = cols,
-    groupwise = groupwise,
-    type = type,
-    scaling = scaling,
-    class = "group_tna"
+    list(
+      data = data,
+      k = k,
+      assignments = assignments,
+      silhouette = silhouette_score,
+      sizes = sizes,
+      method = method,
+      distance = dist_mat
+    ),
+    class = "tna_clustering"
   )
 }
 
-#' @export
-#' @rdname group_model
-group_model.mhmm <- function(x, type = "relative",
-                             scaling = character(0L), groupwise = FALSE,
-                             cols, params = list(), na.rm = TRUE, ...) {
-  stopifnot_(
-    requireNamespace("seqHMM", quietly = TRUE),
-    "Please install the {.pkg seqHMM} package."
-  )
-  check_missing(x)
-  group <- summary(x)$most_probable_cluster
-  group_model.default(
-    x = x$observations,
-    group = group,
-    type = type,
-    scaling = scaling,
-    groupwise = groupwise,
-    cols = cols,
-    params = params,
-    na.rm = na.rm,
-    ...
-  )
-}
-
-#' @export
-#' @rdname group_model
-#' @examples
-#' model <- group_tna(group_regulation, group = gl(2, 1000))
+#' Convert a matrix of sequences to a vector of strings
 #'
-group_tna <- function(x, ...) {
-  check_missing(x)
-  group_model(x = x, type = "relative", ...)
-}
-
-#' @export
-#' @rdname group_model
-#' @examples
-#' model <- group_ftna(group_regulation, group = gl(2, 1000))
-#'
-group_ftna <- function(x, ...) {
-  group_model(x = x, type = "frequency", ...)
-}
-
-#' @export
-#' @rdname group_model
-#' @examples
-#' model <- group_ctna(group_regulation, group = gl(2, 1000))
-#'
-group_ctna <- function(x, ...) {
-  group_model(x = x, type = "co-occurrence", ...)
-}
-
-#' @export
-#' @rdname group_model
-#' @examples
-#' model <- group_atna(group_regulation, group = gl(2, 1000))
-#'
-group_atna <- function(x, ...) {
-  group_model(x = x, type = "attention", ...)
-}
-
-#' Retrieve Statistics from a Mixture Markov Model (MMM)
-#'
-#' @export
-#' @family clusters
-#' @param x A `mhmm` object.
-#' @param level A `numeric` value representing the significance level for
-#' hypothesis testing and confidence intervals. Defaults to `0.05`.
-#' @return A `data.frame` object.
-#' @examples
-#' mmm_stats(engagement_mmm)
-#'
-mmm_stats <- function(x, level = 0.05) {
-  stopifnot_(
-    requireNamespace("seqHMM", quietly = TRUE),
-    "Please install the {.pkg seqHMM} package."
-  )
-  check_missing(x)
-  check_range(level)
-  stopifnot_(
-    inherits(x, "mhmm"),
-    c(
-      "Argument {.arg x} must be a {.cls mhmm} object.",
-      `i` = "See the {.pkg seqHMM} package for more information."
+#' @param data A `data.frame` or a `matrix`
+#' @param na_syms An optional `vector` of values to convert to `NA` values.
+#' @param na_convert A `logical` value indicating whether to include missing
+#'   values as an explicit value.
+#' @param collapse A `logical` value indicating whether the character matrix
+#'   should be collapsed to a `vector` of strings.
+#' @noRd
+seq2str <- function(data, na_syms, na_include = FALSE, collapse = TRUE) {
+  data <- as.matrix(data)
+  chr_mat <- matrix(NA_character_, nrow = nrow(data), ncol = ncol(data))
+  data[data %in% na_syms] <- NA
+  obs <- !is.na(data)
+  u_vals <- unique(c(data))
+  base <- c(letters, LETTERS, as.character(0:9))
+  obs_vals <- data[obs]
+  idx <- match(obs_vals, u_vals)
+  chr_mat[obs] <- base[idx]
+  if (na_include) {
+    chr_mat[!obs] <- base[max(idx) + 1L]
+  }
+  if (collapse) {
+    apply(
+      chr_mat,
+      1L,
+      function(x) {
+        paste0(x[!is.na(x)], collapse = "")
+      }
     )
-  )
-  model_summary <- summary(x)
-  coef <- model_summary$coefficients
-  vcov <- model_summary$vcov
-  coef_flat <- c()
-  se_flat <- c()
-  cluster_list <- c()
-  variable_list <- c()
-  coef <- as.matrix(coef)[, -1L, drop = FALSE]
-  vcov_diag <- sqrt(diag(vcov))
-  num_vars <- nrow(coef)
-  num_clusters <- ncol(coef)
-  for (cluster in seq_len(num_clusters)) {
-    for (var in seq_len(num_vars)) {
-      coef_flat <- c(coef_flat, coef[var, cluster])
-      se_flat <- c(se_flat, vcov_diag[(cluster - 1) * num_vars + var])
-      cluster_list <- c(cluster_list, colnames(coef)[cluster])
-      variable_list <- c(variable_list, rownames(coef)[var])
-    }
+  } else {
+    chr_mat
   }
-  stopifnot_(
-    length(coef_flat) == length(se_flat),
-    "The lengths of the coefficients and standard errors do not match."
-  )
-  statistic <- coef_flat / se_flat
-  p_value <- 2 * (1 - stats::pnorm(abs(statistic)))
-  ci_margin <- stats::qnorm(1 - level / 2.0) * se_flat
-  ci_lower <- coef_flat - ci_margin
-  ci_upper <- coef_flat + ci_margin
-  results <- data.frame(
-    cluster = cluster_list,
-    variable = variable_list,
-    estimate = coef_flat,
-    p_value = p_value,
-    ci_lower = ci_lower,
-    ci_upper = ci_upper,
-    std_rrror = se_flat,
-    z_value = statistic
-  )
-  rownames(results) <- NULL
-  results
 }
 
-#' Rename Clusters
+#' Attention-Weighted Hamming Distance
 #'
-#' @export
-#' @family clusters
-#' @param x A `group_tna` object.
-#' @param new_names A `character` vector containing one name per cluster.
-#' @return A renamed `group_tna` object.
-#' @examples
-#' model <- group_model(engagement_mmm)
-#' model_renamed <- rename_groups(model, c("A", "B", "C"))
-#'
-rename_groups <- function(x, new_names) {
-  check_missing(x)
-  check_missing(new_names)
-  check_class(x, "group_tna")
-  stopifnot_(
-    is.character(new_names),
-    "Argument {.arg new_names} must be a {.cls character} vector."
-  )
-  stopifnot_(
-    length(new_names) == length(x),
-    "Argument {.arg new_names} must be the same length as {.arg x}"
-  )
-  names(x) <- new_names
-  x
-}
-
-#' Scale Transition Network Weights
-#'
-#' @param weights A `lsit` of edge weights matrices
-#' @param type Type of the transition network as a `character` string.
-#' @param scaling Scaling methods to apply as a `character` vector.
-#' @param a An `integer`, the number of states.
+#' @param mat A `character` matrix
+#' @param lambda A `numeric` value for the decay rate
 #' @noRd
-scale_weights_global <- function(weights, type, scaling, a) {
-  g <- length(weights)
-  if (type == "relative") {
-    for (i in seq_len(g)) {
-      w <- weights[[i]]
-      rs <- .rowSums(w, m = a, n = a)
-      pos <- which(rs > 0)
-      w[pos, ] <- w[pos, ] / rs[pos]
-      w[!pos, ] <- NA
-      weights[[i]] <- w
+weighted_hamming <- function(mat, lambda) {
+  n <- nrow(mat)
+  k <- ncol(mat)
+  weights <- exp(-lambda * seq(0, k - 1))
+  weights <- weights / max(weights)
+  d <- matrix(0.0, n, n)
+  for (i in seq_len(n - 1L)) {
+    for (j in seq(i + 1L, n)) {
+      d[i, j] <- d[j, i] <- sum(
+        (mat[i, ] != mat[j, ]) * weights
+      )
     }
   }
-  weights_vec <- unlist(weights)
-  for (i in seq_along(scaling)) {
-    if (scaling[i] == "minmax") {
-      weights_vec[] <- ranger(weights_vec)
-    } else if (scaling[i] == "max") {
-      weights_vec[] <- weights_vec / max(weights_vec, na.rm = TRUE)
-    } else if (scaling[i] == "rank") {
-      weights_vec[] <- rank(weights_vec, ties.method = "average")
-    }
-  }
-  idx <- seq_len(a^2)
-  for (i in seq_len(g)) {
-    weights[[i]] <- matrix(weights_vec[idx], nrow = a, ncol = a)
-    idx <- idx + a^2
-  }
-  weights
+  stats::as.dist(d)
 }
 
-#' Combine data from clusters into a single dataset
-#'
-#' @param x A `group_tna` object.
-#' @param pivot A `logical` value for whether to pivot data into long format.
-#' @noRd
-combine_data <- function(x) {
-  cols <- attr(x, "cols")
-  groups <- attr(x, "groups")
-  data <- dplyr::bind_rows(
-    lapply(x, function(y) as.data.frame(y$data))
-  )
-  data$.group <- unlist(groups)
-  data
-}
+available_clustering_dissimilarities <- c(
+  "osa",
+  "lv",
+  "dl",
+  "hamming",
+  "qgram",
+  "cosine",
+  "jaccard",
+  "jw"
+)
+
+available_clustering_methods <- c(
+  "pam",
+  "ward.D2",
+  "ward.D",
+  "complete",
+  "average",
+  "single",
+  "mcquitty",
+  "median",
+  "centroid"
+)

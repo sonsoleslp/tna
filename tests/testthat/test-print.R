@@ -196,3 +196,34 @@ test_that("permutation test results can be printed for clusters", {
     NA
   )
 })
+
+# test_that("mixture Markov model results can be printed", {
+#   expect_error(
+#     capture.output(print(engagement_tna_mmm)),
+#     NA
+#   )
+# })
+
+# test_that("mixture Markov model summary can be printed", {
+#   expect_error(
+#     capture.output(print(summary(engagement_tna_mmm))),
+#     NA
+#   )
+# })
+
+test_that("clustering output can be printed", {
+  clust <- cluster_sequences(mock_cluster_data, k = 2)
+  expect_error(
+    capture.output(print(clust)),
+    NA
+  )
+})
+
+test_that("sequence comparison output can be printed", {
+  group <- c(rep("High", 1000), rep("Low", 1000))
+  comp <- compare_sequences(group_regulation, group)
+  expect_error(
+    capture.output(print(comp)),
+    NA
+  )
+})

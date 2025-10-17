@@ -1,3 +1,5 @@
+# Model comparison --------------------------------------------------------
+
 #' Compare Two Matrices or TNA Models with Comprehensive Metrics
 #'
 #' Various distances, measures of dissimilarity and similarity, correlations
@@ -76,7 +78,7 @@ compare.matrix <- function(x, y, scaling = "none", ...) {
   compare_(x, y, scaling = scaling, ...)
 }
 
-#' Compare TNA Clusters with Comprehensive Metrics
+#' Compare Grouped TNA Models with Comprehensive Metrics
 #'
 #' @export
 #' @family comparison
@@ -353,4 +355,192 @@ rv_coefficient <- function(x, y) {
   tr_xx_xx <- sum(diag(xx %*% xx))
   tr_yy_yy <- sum(diag(yy %*% yy))
   tr_xx_yy / sqrt(tr_xx_xx * tr_yy_yy)
+}
+
+
+# Sequence comparison -----------------------------------------------------
+
+
+#' Compare Sequences Between Groups
+#'
+#' Performs comprehensive sequence comparison analysis between groups. All
+#' patterns of the sequences (subsequences of specific length) are extracted
+#' from all sequences in each group. For two groups, the proportions of the
+#' patterns between the groups are compared with a z-test for proportions.
+#' For more than two groups, the Chi-squared  test is applied. Both tests are
+#' applied within patterns of the same length.
+#'
+#' @export
+#' @family comparison
+#' @param x A `group_tna` object or a `data.frame` containing sequence data in
+#'   wide format.
+#' @param group A `vector` indicating the group assignment of each
+#'   row of the data/sequence. Must have the same length as the number of
+#'   rows/sequences of `x`. Alternatively, a single `character` string giving
+#'   the column name of the data that defines the group when `x` is a wide
+#'   format `data.frame` or a `tna_data` object.
+#' @param sub An `integer` vector of subsequence lengths to analyze.
+#'   The default is `2:5`.
+#' @param min_freq An `integer` giving the minimum number of times that a
+#'   specific pattern has to be observed to be included in the analysis.
+#'   The default is `5`.
+#' @param correction A `character` string naming the multiple comparison
+#'   correction method (default: `"bonferroni"`). Supports all
+#'   [stats::p.adjust] methods: `"holm"`, `"hochberg"`, `"hommel"`,
+#'   `"bonferroni"`, `"BH"`, `"BY"`, `"fdr"`, `"none"`.
+#' @param ... Not used.
+#' @return A `tna_sequence_comparison` object, which is a `data.frame` with
+#'   columns giving the names of the pattern, pattern frequencies, pattern
+#'   proportions (within patterns of the same length), test statistic values
+#'   and p-values of the tests.
+#'
+#' @examples
+#' group <- c(rep("High", 1000), rep("Low", 1000))
+#' comp <- compare_sequences(group_regulation, group)
+#'
+#' @export
+compare_sequences <- function(x, ...) {
+  UseMethod("compare_sequences")
+}
+
+#' @export
+#' @rdname compare_sequences
+compare_sequences.default <- function(x, group, sub, min_freq = 5L,
+                                      correction = "bonferroni", ...) {
+  check_missing(group)
+  model <- group_tna(x, group = group)
+  compare_sequences.group_tna(
+    x = model,
+    sub = sub,
+    min_freq = min_freq,
+    correction = correction,
+    ...
+  )
+}
+
+#' @export
+#' @rdname compare_sequences
+compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
+                                        correction = "bonferroni", ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  sub <- sub %m% seq(2, min(5, ncol(x[[1L]]$data)))
+  check_range(
+    sub,
+    type = "integer",
+    scalar = FALSE,
+    lower = 2L,
+    upper = ncol(x[[1L]]$data)
+  )
+  check_values(min_freq)
+  correction <- check_match(correction, stats::p.adjust.methods)
+  n_group <- length(x)
+  groups <- names(x)
+  patterns <- vector(mode = "list", length = n_group)
+  names(patterns) <- groups
+  for (g in groups) {
+    m <- matrix(x[[g]]$labels[x[[g]]$data], nrow = nrow(x[[g]]$data))
+    patterns[[g]] <- extract_subsequences(m = m, q = sub)
+  }
+  compare_sequences_(
+    x = patterns,
+    q = sub,
+    min_freq = min_freq,
+    correction = correction
+  )
+}
+
+# Internal sequence comparison
+compare_sequences_ <- function(x, q, min_freq, correction) {
+  groups <- names(x)
+  n_group <- length(groups)
+  p <- length(q)
+  patterns <- vector(mode = "list", length = p)
+  residuals <- vector(mode = "list", length = p)
+  for (j in q) {
+    pat <- lapply(x, "[[", j)
+    pat_u <- unique(unlist(pat))
+    pat <- data.frame(pattern = pat_u)
+    total <- numeric(n_group)
+    names(total) <- groups
+    for (g in groups) {
+      freq_col <- paste0("freq_", g)
+      prop_col <- paste0("prop_", g)
+      freq_tab <- table(x[[g]][[j]])
+      pat[[freq_col]] <- as.numeric(freq_tab[pat_u])
+      pat[[freq_col]][is.na(pat[[freq_col]])] <- 0
+      total[g] <- sum(pat[[freq_col]])
+      pat[[prop_col]] <- ifelse_(
+        total[g] > 0,
+        pat[[freq_col]] / total[g],
+        0.0
+      )
+    }
+    n <- nrow(pat)
+    freq_cols <- paste0("freq_", groups)
+    valid_patterns <- n_group == .rowSums(
+      pat[, freq_cols] >= min_freq,
+      m = n,
+      n = n_group
+    )
+    pat <- pat[valid_patterns, ]
+    n <- nrow(pat)
+    if (n > 0L) {
+      freq_mat <- as.matrix(pat[, freq_cols])
+      resid <- matrix(0.0, nrow = n, ncol = n_group)
+      rownames(resid) <- pat$pattern
+      colnames(resid) <- groups
+      pat$statistic <- NA
+      pat$p_value <- NA
+      for (i in seq_len(n)) {
+        tab <- matrix(c(freq_mat[i, ], total), nrow = 2L, byrow = TRUE)
+        chisq <- suppressWarnings(stats::chisq.test(tab))
+        pat$statistic[i] <- chisq$statistic
+        pat$p_value[i] <- stats::p.adjust(chisq$p.value, method = correction)
+        resid[i, ] <- chisq$stdres[1L, ]
+      }
+      patterns[[j]] <- pat
+      residuals[[j]] <- resid
+    }
+  }
+  valid_patterns <- vapply(patterns, function(y) !is.null(y), logical(1L))
+  stopifnot_(
+    any(valid_patterns),
+    "No common patterns with frequency greater than {min_freq} were found."
+  )
+  structure(
+    dplyr::bind_rows(patterns) |>
+      dplyr::arrange(!!rlang::sym("p_value")),
+    residuals = do.call("rbind", residuals),
+    class = c("tna_sequence_comparison", "data.frame")
+  )
+}
+
+extract_subsequences <- function(m, q) {
+  n <- nrow(m)
+  p <- ncol(m)
+  mis <- is.na(m)
+  out <- vector(mode = "list", length = max(q))
+  for (j in q) {
+    tmp <- character(n * (p - j + 1L))
+    idx <- seq(1L, n)
+    for (i in seq_len(p - 1L)) {
+      if (i + j - 1L > p) {
+        next
+      }
+      pattern_idx <- i:(i + j - 1L)
+      pattern <- m[, pattern_idx]
+      pattern_mis <- mis[, pattern_idx]
+      invalid <- .rowSums(pattern_mis, m = n, n = j) > 0
+      subseq <- do.call(
+        paste,
+        c(as.data.frame(pattern, stringsAsFactors = FALSE), sep = "-")
+      )
+      subseq[invalid] <- ""
+      tmp[idx] <- subseq
+      idx <- idx + n
+    }
+    out[[j]] <- tmp[nzchar(tmp)]
+  }
+  out
 }

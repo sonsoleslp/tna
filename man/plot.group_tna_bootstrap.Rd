@@ -4,7 +4,7 @@
 \alias{plot.group_tna_bootstrap}
 \title{Plot a Bootstrapped Grouped Transition Network Analysis Model}
 \usage{
-\method{plot}{group_tna_bootstrap}(x, title = names(x), ...)
+\method{plot}{group_tna_bootstrap}(x, title, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna_bootstrap} object.}
@@ -19,7 +19,7 @@ Plot a Bootstrapped Grouped Transition Network Analysis Model
 \examples{
 model <- group_model(engagement_mmm)
 # Small number of iterations for CRAN
-boot <- bootstrap(model, iter = 50)
+boot <- bootstrap(model, iter = 10)
 plot(boot)
 
 }

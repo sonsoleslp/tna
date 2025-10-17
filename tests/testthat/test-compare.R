@@ -27,3 +27,20 @@ test_that("clusters can be compared", {
   )
 })
 
+test_that("sequences can be compared", {
+  expect_error(
+    compare_sequences(mock_sequence, group = c(1, 1, 2, 2, 2), min_freq = 1L),
+    NA
+  )
+  expect_error(
+    compare_sequences(mock_group_tna, min_freq = 1L),
+    NA
+  )
+})
+
+test_that("comparison fails when minimum frequency is not met", {
+  expect_error(
+    compare_sequences(mock_group_tna),
+    "No common patterns with frequency greater than 5 were found\\."
+  )
+})

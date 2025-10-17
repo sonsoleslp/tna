@@ -10,6 +10,7 @@ n <- length(tna_model$labels)
 g <- 3
 
 trans_probs <- simulate_transition_probs(n, g)
+
 init_probs <- list(
   c(0.70, 0.20, 0.10),
   c(0.15, 0.70, 0.15),
@@ -24,10 +25,6 @@ mmm <- build_mmm(
 
 fit_mmm <- fit_model(
   mmm,
-  global_step = TRUE,
-  control_global = list(algorithm = "NLOPT_GD_STOGO_RAND"),
-  local_step = TRUE,
-  threads = 60,
   control_em = list(restart = list(times = 100, n_optimum = 101))
 )
 
@@ -38,3 +35,24 @@ usethis::use_data(
   overwrite = TRUE,
   compress = "xz"
 )
+
+# MMM using TNA
+
+# Seed is selected to get the same cluster order as seqHMM
+# engagement_tna_mmm <- cluster_mmm(
+#   engagement,
+#   k = 3,
+#   progressbar = FALSE,
+#   parallel = TRUE,
+#   control = list(
+#     maxiter = 1000,
+#     restarts = 100,
+#     seed = 6000
+#   )
+# )
+
+# usethis::use_data(
+#   engagement_tna_mmm,
+#   overwrite = TRUE,
+#   compress = "xz"
+# )

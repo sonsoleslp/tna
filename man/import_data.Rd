@@ -16,8 +16,8 @@ transformed into long format (actions). This can be a vector of column names
 in the order they appear in the data frame. For more information on
 tidy selections, see \code{\link[dplyr:select]{dplyr::select()}}.}
 
-\item{id_cols}{A \code{character} vector of column names that uniquely identify
-each observation (IDs).}
+\item{id_cols}{An \code{expression} giving a tidy selection of column names that
+uniquely identify each observation (IDs).}
 
 \item{window_size}{An \code{integer} specifying the size of the window for
 sequence grouping. Default is 1 (each row is a separate window).}
@@ -66,6 +66,7 @@ long_data2 <- import_data(
 }
 \seealso{
 Other data: 
+\code{\link{import_onehot}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
 \code{\link{simulate.tna}()}

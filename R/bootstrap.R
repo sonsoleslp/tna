@@ -42,7 +42,6 @@
 #' @param threshold A `numeric` value to compare edge weights against.
 #' The default is the 10th percentile of the edge weights. Used only when
 #' `method = "threshold"`.
-#' @param ... Ignored.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
 #
@@ -72,22 +71,20 @@
 #' # Small number of iterations for CRAN
 #' bootstrap(model, iter = 10)
 #'
-bootstrap <- function(x, ...) {
+bootstrap <- function(x, iter, level, method, threshold, consistency_range) {
   UseMethod("bootstrap")
 }
 
 #' @export
 #' @rdname bootstrap
 bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
-                          threshold, consistency_range = c(0.75, 1.25), ...) {
+                          threshold, consistency_range = c(0.75, 1.25)) {
   check_missing(x)
   check_tna_seq(x)
   check_values(iter, strict = TRUE)
-  check_range(level)
+  check_range(level, lower = 0, upper = 1)
   method <- check_match(method, c("stability", "threshold"))
-  if (missing(threshold)) {
-    threshold <- unname(stats::quantile(x$weights, probs = 0.1))
-  }
+  threshold <- threshold %m% unname(stats::quantile(x$weights, probs = 0.1))
   check_values(threshold, type = "numeric")
   stopifnot_(
     checkmate::test_numeric(
@@ -112,12 +109,12 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   a <- length(alphabet)
   weights <- compute_weights(trans, type, scaling, a)
   dimnames(weights) <- dim_names
-  weights_boot <- array(0L, dim = c(iter, a, a))
+  weights_boot <- array(0.0, dim = c(iter, a, a))
   p_values <- matrix(0, a, a)
   idx <- seq_len(n)
   if (method == "stability") {
     for (i in seq_len(iter)) {
-      trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
+      trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
       weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
       p_values[] <- p_values +
         1L * (weights_boot[i, , ] <= weights * consistency_range[1]) +
@@ -125,7 +122,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
     }
   } else {
     for (i in seq_len(iter)) {
-      trans_boot <- trans[sample(idx, n, replace = TRUE), , ]
+      trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
       weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
       p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
     }
@@ -200,7 +197,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
 #' @rdname bootstrap
 bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
                                 method = "stability", threshold,
-                                consistency_range = c(0.75, 1.25), ...) {
+                                consistency_range = c(0.75, 1.25)) {
   check_missing(x)
   check_class(x, "group_tna")
   stopifnot_(
@@ -217,11 +214,131 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
         level = level,
         method = method,
         threshold = threshold,
-        consistency_range = consistency_range,
-        ...
+        consistency_range = consistency_range
       ),
       names(x)
     ),
     class = "group_tna_bootstrap"
+  )
+}
+
+#' Bootstrap Cliques of Transition Networks from Sequence Data
+#'
+#' @export
+#' @inheritParams cliques
+#' @inheritParams bootstrap
+bootstrap_cliques <- function(x, size, threshold,
+                              iter, level, consistency_range) {
+  UseMethod("bootstrap_cliques")
+}
+
+#' @export
+#' @rdname bootstrap_cliques
+bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
+                                  iter = 1000, level = 0.05,
+                                  consistency_range = c(0.75, 1.25)) {
+  check_missing(x)
+  check_tna_seq(x)
+  check_values(threshold, type = "numeric")
+  stopifnot_(
+    checkmate::test_int(x = size, lower = 2),
+    "Argument {.arg size} must be a single {.cls integer}
+    between 2 and {nodes(x)}."
+  )
+  check_values(iter, strict = TRUE)
+  check_range(level, lower = 0, upper = 1)
+  check_values(threshold, type = "numeric")
+  stopifnot_(
+    checkmate::test_numeric(
+      x = consistency_range,
+      len = 2L,
+      min = 0,
+      any.missing = FALSE,
+      sorted = TRUE
+    ),
+    "Argument {.arg consistency_range} must be a sorted {.cls numeric}
+     vector of length 2 containing positive values."
+  )
+  cliq <- cliques(
+    x = x,
+    size = size,
+    threshold = threshold,
+    sum_weights = TRUE
+  )
+  n <- length(cliq$weights)
+  stopifnot_(
+    length(cliq$weights) > 0,
+    "No cliques of size {size} were found in the network."
+  )
+  d <- x$data
+  type <- attr(x, "type")
+  scaling <- attr(x, "scaling")
+  params <- attr(x, "params")
+  model <- initialize_model(d, type, scaling, params, transitions = TRUE)
+  trans <- model$trans
+  alphabet <- attr(d, "alphabet")
+  dim_names <- list(alphabet, alphabet)
+  a <- length(alphabet)
+  weights <- compute_weights(trans, type, scaling, a)
+  clique_weights <- vapply(
+    cliq$indices,
+    function(y) {
+      mean(weights[y, y])
+    },
+    numeric(1L)
+  )
+  dimnames(weights) <- dim_names
+  weights_boot <- array(0.0, dim = c(iter, a, a))
+  clique_weights_boot <- matrix(0.0, iter, n)
+  p_values <- numeric(n)
+  idx <- seq_len(n)
+  for (i in seq_len(iter)) {
+    trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
+    weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
+    clique_weights_boot[i, ] <- vapply(
+      cliq$indices,
+      function(y) {
+        mean(weights_boot[i, y, y])
+      },
+      numeric(1L)
+    )
+    p_values <- p_values +
+      1L * (clique_weights_boot[i, ] <= clique_weights * consistency_range[1]) +
+      1L * (clique_weights_boot[i, ] >= clique_weights * consistency_range[2])
+  }
+  p_values <- (p_values + 1) / (iter + 1)
+  ci_lower <- apply(
+    clique_weights_boot,
+    2L,
+    stats::quantile,
+    probs = level / 2,
+    na.rm = TRUE
+  )
+  ci_upper <-  apply(
+    clique_weights_boot,
+    2L,
+    stats::quantile,
+    probs = 1 - level / 2,
+    na.rm = TRUE
+  )
+  clique_names <- vapply(
+    cliq$indices,
+    function(y) {
+      paste0(alphabet[y], collapse = "-")
+    },
+    character(1L)
+  )
+  structure(
+    data.frame(
+      clique = clique_names,
+      mean_weight = clique_weights,
+      p_values = p_values,
+      sig = (p_values < level),
+      cr_lower = clique_weights * consistency_range[1L],
+      cr_upper = clique_weights * consistency_range[2L],
+      ci_lower = ci_lower,
+      ci_upper = ci_upper
+    ),
+    class = c("tna_bootstrap_cliques", "data.frame")
   )
 }

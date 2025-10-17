@@ -33,3 +33,11 @@ test_that("bootstrap results can be summarized for clusters", {
     NA
   )
 })
+
+test_that("cliques can be bootstrapped", {
+  model <- tna(engagement)
+  expect_error(
+    bootstrap_cliques(model, iter = 10),
+    NA
+  )
+})

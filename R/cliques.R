@@ -76,7 +76,8 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
       inits = lapply(
         cliq_idx,
         function(y) inits[y]
-      )
+      ),
+      indices = cliq_idx
     ),
     class = "tna_cliques",
     size = size,

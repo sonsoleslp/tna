@@ -53,7 +53,7 @@ plot_sequences(x, ...)
 
 \method{plot_sequences}{default}(
   x,
-  cols,
+  cols = tidyselect::everything(),
   group,
   type = "index",
   scale = "proportion",
@@ -123,9 +123,8 @@ values are converted to a new state and included in the plot.}
 \item{na_color}{A \code{character} string giving the color to use for missing
 values. The default is \code{"white"}.}
 
-\item{sort_by}{Either a \code{character} vector of column names of \code{x} to sort
-by or \code{"everything"} to sort by every column.
-If missing, no sorting is done.}
+\item{sort_by}{An optional \code{expression} giving a tidy selection of column
+names of \code{x} to sort by or \code{"everything"}.}
 
 \item{show_n}{A \code{logical} value for whether to add the number of
 observations (total or by group) to the plot title.}
@@ -156,8 +155,8 @@ every label.}
 \item{colors}{A named \code{character} vector mapping states to colors, or an
 unnamed \code{character} vector. If missing, a default palette is used.}
 
-\item{cols}{A \code{character} Vector of column names to be treated as
-time points. If missing, all columns will be used.}
+\item{cols}{An \code{expression} giving a tidy selection of column names to be
+treated as time points. By default, all columns will be used.}
 }
 \description{
 Create a Sequence Index Plot or a Distribution Plot

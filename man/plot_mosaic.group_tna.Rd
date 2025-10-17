@@ -4,7 +4,7 @@
 \alias{plot_mosaic.group_tna}
 \title{Plot State Frequencies as a Mosaic Between Two Groups}
 \usage{
-\method{plot_mosaic}{group_tna}(x, label, digits = 1, ...)
+\method{plot_mosaic}{group_tna}(x, label, digits = 1L, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}

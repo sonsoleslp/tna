@@ -12,6 +12,7 @@
   paired = FALSE,
   level = 0.05,
   measures = character(0),
+  consecutive = FALSE,
   ...
 )
 }
@@ -24,7 +25,8 @@ all pairs are compared (the default).}
 
 \item{adjust}{A \code{character} string for the method to adjust p-values with
 for multiple comparisons. The default is \code{"none"} for no adjustment.
-See \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available adjustment methods.}
+See the \code{method} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available
+adjustment methods.}
 
 \item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}
@@ -37,6 +39,11 @@ permutation tests. The default is 0.05.}
 
 \item{measures}{A \code{character} vector of centrality measures to test.
 See \code{\link[=centralities]{centralities()}} for a list of available centrality measures.}
+
+\item{consecutive}{A \code{logical} value. If \code{FALSE} (the default), all pairwise
+comparisons are performed in lexicographic order with respect to the order
+of the groups. If \code{TRUE}, only comparisons between consecutive pairs
+of groups are performed.}
 
 \item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 }

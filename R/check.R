@@ -209,7 +209,6 @@ check_flag <- function(x) {
 #' @param ... Additional arguments passed to `as.igraph`.
 #' @noRd
 check_layout <- function(x, layout, args = list(), ...) {
-
   if (is.character(layout)) {
     layout <- tolower(layout)
     layout_parsed <- try_(match.arg(layout, c("circle", "groups", "spring")))
@@ -283,16 +282,15 @@ check_weights <- function(x, type) {
 #' @param x A `character` string.
 #' @inheritParams match.arg
 #' @noRd
-check_match <- function(x, choices, several.ok = FALSE) {
+check_match <- function(x, choices, several.ok = FALSE, match_case = FALSE) {
   arg <- deparse(substitute(x))
-  x <- onlyif(is.character(x), tolower(x))
+  if (!match_case) {
+    x <- onlyif(is.character(x), tolower(x))
+    choices <- tolower(choices)
+  }
   x <- try_(match.arg(arg = x, choices = choices, several.ok = several.ok))
   n_choices <- length(choices)
-  prefix <- ifelse_(
-    several.ok,
-    "Elements of",
-    "Argument"
-  )
+  prefix <- ifelse_(several.ok, "Elements of", "Argument")
   stopifnot_(
     !inherits(x, "try-error"),
     "{prefix} {.arg {arg}} must be either
@@ -306,15 +304,32 @@ check_match <- function(x, choices, several.ok = FALSE) {
 #' @param x An \R object.
 #' @noRd
 check_string <- function(x) {
-  if (missing(x)) {
-    return()
-  }
   arg <- deparse(substitute(x))
   stopifnot_(
-    is.character(x) && length(x) == 1L,
+    checkmate::test_string(x = x),
     "Argument {.arg {arg}} must be a {.cls character} vector of length 1."
   )
 }
+
+#' #' Check if argument is a character vector
+#' #'
+#' #' @param x An \R object.
+#' #' @noRd
+#' check_character <- function(x) {
+#'   if (missing(x)) {
+#'     return()
+#'   }
+#'   arg <- deparse(substitute(x))
+#'   stopifnot_(
+#'     checkmate::test_character(
+#'       x = x,
+#'       min.len = 1L,
+#'       any.missing = FALSE,
+#'       unique = TRUE,
+#'     ),
+#'     "Argument {.arg {arg}} must be a {.cls character} vector."
+#'   )
+#' }
 
 #' Check that argument is a valid cluster
 #'
@@ -371,15 +386,47 @@ check_clusters <- function(x, i, j) {
   }
 }
 
-check_cols <- function(cols, data_names) {
-  cols_obs <- cols %in% data_names
-  cols_mis <- cols[!cols_obs]
-  stopifnot_(
-    all(cols_obs),
-    c(
-      "The columns {.val {cols}} must exist in the data.",
-      `x` = "The following columns were
-             not found in the data: {.val {cols_mis}}."
+check_cols <- function(cols, single = TRUE, missing_ok = TRUE) {
+  arg <- deparse(substitute(cols))
+  if (missing(cols)) {
+    stopifnot_(
+      missing_ok,
+      "Argument {.arg {arg}} is missing."
     )
-  )
+    return()
+  }
+  if (single) {
+    stopifnot_(
+      length(cols) == 1L,
+      "Argument {.arg {arg}} must provide a single column name."
+    )
+  }
 }
+
+# check_em_control <- function(control) {
+#   em_control_defaults <- list(
+#     maxiter = 500L,
+#     maxiter_m = 500L,
+#     reltol = 1e-10,
+#     reltol_m = 1e-6,
+#     restarts = 10L,
+#     seed = 1L,
+#     step = 1.0
+#   )
+#   if (missing(control)) {
+#     return(em_control_defaults)
+#   }
+#   for (n in names(em_control_defaults)) {
+#     if (is.null(control[[n]])) {
+#       control[[n]] <- em_control_defaults[[n]]
+#     }
+#   }
+#   check_values(control$maxiter, strict = TRUE)
+#   check_values(control$maxiter_m, strict = TRUE)
+#   check_values(control$reltol, type = "numeric", strict = TRUE)
+#   check_values(control$reltol_m, type = "numeric", strict = TRUE)
+#   check_values(control$restarts, strict = TRUE)
+#   check_values(control$seed)
+#   check_range(control$step, lower = 0.0, upper = 1.0)
+#   control
+# }

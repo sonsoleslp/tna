@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{A \code{tna_communities} object.}
 
-\item{...}{Ignored.}
+\item{...}{Additional arguments passed to the generic \code{print} method.}
 }
 \value{
 \code{x} (invisibly).

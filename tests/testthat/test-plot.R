@@ -16,8 +16,7 @@ test_that("histogram of edge weights can be plotted", {
 
 test_that("bootstrapped model can be plotted", {
   set.seed(0)
-  model <- tna(group_regulation)
-  boot <- bootstrap(model, iter = 50)
+  boot <- bootstrap(mock_tna_seq, iter = 50)
   expect_error(
     plot.tna_bootstrap(boot),
     NA
@@ -70,8 +69,8 @@ test_that("centrality stability can be plotted", {
 })
 
 test_that("permutation test significant edges can be plotted", {
-  model_x <- tna(group_regulation[1:100, ])
-  model_y <- tna(group_regulation[101:200, ])
+  model_x <- tna(mock_sequence[1:3, ])
+  model_y <- tna(mock_sequence[3:5, ])
   perm <- permutation_test(model_x, model_y, iter = 20)
   pdf(NULL)
   expect_error(
@@ -90,8 +89,8 @@ test_that("permutation test significant edges can be plotted with groups", {
 })
 
 test_that("model comparison can be plotted", {
-  model_x <- tna(engagement[engagement[, 1] == "Active", ])
-  model_y <- tna(engagement[engagement[, 1] != "Active", ])
+  model_x <- tna(mock_sequence[1:3, ])
+  model_y <- tna(mock_sequence[3:5, ])
   pdf(NULL)
   expect_error(
     plot_compare(model_x, model_y),
@@ -175,14 +174,14 @@ test_that("group model can be plotted", {
     NA
   )
   expect_error(
-    plot(mmm_model, title = "Clusters"),
+    plot(mmm_model, title = "Groups"),
     NA
   )
 })
 
 test_that("bootstrapped model can be plotted for clusters", {
   set.seed(0)
-  boot <- bootstrap(mmm_model, iter = 50)
+  boot <- bootstrap(mmm_model, iter = 20)
   expect_error(
     plot(boot),
     NA
@@ -216,7 +215,7 @@ test_that("cliques can be plotted clusters", {
     NA
   )
   expect_error(
-    plot(cliq, title = "Clusters"),
+    plot(cliq, title = "Groups"),
     NA
   )
 })
@@ -242,8 +241,9 @@ test_that("histogram of edge weights can be plotted", {
 })
 
 test_that("comparison results can be plotted", {
-  model_x <- tna(group_regulation[1:200, ])
-  model_y <- tna(group_regulation[1001:1200, ])
+  # Needs sufficiently large data for correlations
+  model_x <- tna(engagement[1:20, ])
+  model_y <- tna(engagement[21:40, ])
   # Comparing models
   comp <- compare(model_x, model_y)
   expect_error(
@@ -273,8 +273,8 @@ test_that("pruned models can be plotted", {
 })
 
 test_that("mosaic can be plotted", {
-  ftna_model <- ftna(engagement)
-  group_ftna_model <- group_ftna(engagement_mmm)
+  ftna_model <- ftna(mock_sequence)
+  group_ftna_model <- group_ftna(mock_sequence, group = c(1, 1, 2, 2, 2))
   expect_error(
     plot_mosaic(ftna_model),
     NA
@@ -290,16 +290,20 @@ test_that("mosaic can be plotted", {
 })
 
 test_that("permutation test results can be plotted for clusters", {
-  perm <- permutation_test(mmm_model, iter = 50)
+  perm <- permutation_test(mmm_model, iter = 20)
   expect_error(
     plot(perm),
     NA
   )
 })
 
-test_that("frequencies can be plotted for clusters", {
+test_that("frequencies can be plotted for groups", {
   expect_error(
     plot_frequencies(mmm_model),
+    NA
+  )
+  expect_error(
+    plot_frequencies(mmm_model, colors = c("red", "green", "blue")),
     NA
   )
 })
@@ -308,15 +312,15 @@ test_that("sequence index plots can be created", {
   model1 <- tna(engagement)
   model2 <- group_tna(engagement_mmm)
   expect_error(
-    plot_sequences(model1, group = rep(1:4, each = 50)),
+    plot_sequences(mock_tna_seq, group = c(1, 1, 2, 2, 2)),
     NA
   )
   expect_error(
-    plot_sequences(model2),
+    plot_sequences(mock_group_tna),
     NA
   )
   expect_error(
-    plot_sequences(group_regulation, group = rep(1:2, each = 1000)),
+    plot_sequences(mock_sequence, group = c(1, 1, 2, 2, 2)),
     NA
   )
   expect_error(
@@ -330,21 +334,19 @@ test_that("sequence index plots can be created", {
 })
 
 test_that("sequence distribution plots can be created", {
-  model1 <- tna(engagement)
-  model2 <- group_tna(engagement_mmm)
   expect_error(
-    plot_sequences(model1, type = "distr", group = rep(1:4, each = 50)),
+    plot_sequences(mock_tna_seq, type = "distr", group = c(1, 1, 2, 2, 2)),
     NA
   )
   expect_error(
-    plot_sequences(model2, type = "distr"),
+    plot_sequences(mock_group_tna, type = "distr"),
     NA
   )
   expect_error(
     plot_sequences(
-      group_regulation,
+      mock_sequence,
       type = "distr",
-      group = rep(1:2, each = 1000)
+      group = c(1, 1, 2, 2, 2)
     ),
     NA
   )
@@ -356,7 +358,7 @@ test_that("sequence distribution plots can be created", {
 
 test_that("sequences can be sorted in index plot", {
   expect_error(
-    plot_sequences(mock_tna_data, sort_by = "everything"),
+    plot_sequences(mock_tna_data, sort_by = tidyselect::everything()),
     NA
   )
   expect_error(
@@ -376,3 +378,36 @@ test_that("border can be added for sequence index plot", {
   )
 })
 
+test_that("association plots can be created", {
+  model <- ftna(mock_sequence)
+  expect_error(
+    plot_associations(model),
+    NA
+  )
+})
+
+test_that("node size can be scaled based on centrality measures", {
+  expect_error(
+    plot(mock_tna, scale_nodes = "OutStrength"),
+    NA
+  )
+})
+
+test_that("sequence comparison can be plotted", {
+  comp <- compare_sequences(
+    mock_sequence,
+    group = c(1, 1, 2, 2, 2),
+    min_freq = 1L
+  )
+  expect_error(
+    plot(comp, cells = TRUE),
+    NA
+  )
+})
+
+test_that("observations can be bounded", {
+  x <- rnorm(100, sd = 10)
+  y <- bound(x, c(-2, 2))
+  expect_equal(max(y), 2)
+  expect_equal(min(y), -2)
+})

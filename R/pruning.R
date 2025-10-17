@@ -59,8 +59,8 @@ prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
     c("threshold", "lowest", "bootstrap", "disparity")
   )
   check_values(threshold, type = "numeric")
-  check_range(lowest)
-  check_range(level)
+  check_range(lowest, lower = 0, upper = 1)
+  check_range(level, lower = 0, upper = 1)
   stopifnot_(
     is.null(attr(x, "pruning")),
     "The model has already been pruned."
@@ -301,7 +301,7 @@ disparity_filter <- function(mat, level) {
 }
 
 
-# Clusters ----------------------------------------------------------------
+# Groups ----------------------------------------------------------------
 
 
 #' @export

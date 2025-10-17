@@ -3,7 +3,7 @@
 #' Construct a transition network analysis (TNA) model from sequence data.
 #' The function takes a data set of sequence of events or states as input and
 #' builds a TNA model. It extracts the edge weights and initial probabilities
-#' from the data along with the state labels. THe function also accepts weight
+#' from the data along with the state labels. The function also accepts weight
 #' matrices and initial state probabilities directly.
 #'
 #' @export
@@ -56,9 +56,9 @@
 #'   * `"rank"` Computes the ranks of the weights using [base::rank()] with
 #'       `ties.method = "average"`.
 #'
-#' @param inits An optional `numeric` vector of initial state probabilities
-#'   for each state. Can be provided only if `x` is a `matrix`. The vector will
-#'   be scaled to unity.
+#' @param cols An `expression` giving a tidy selection of columns that should
+#'   be considered as sequence data. By default, all columns are used. Ignored
+#'   for `matrix`, `tna_data` and `tsn` type `x`.
 #' @param params A `list` of additional arguments for models of specific
 #'   `type`. The potential elements of this list are:
 #'
@@ -72,8 +72,35 @@
 #'      are weighted by the inverse of the sequence length. Can be used for
 #'      frequency, co-occurrence and reverse model types. The default is
 #'      `FALSE`.
+#'   * `direction`: A `character` string specifying the direction of attention
+#'      for models of `type = "attention"`. The available options are
+#'      `"backward"`, `"forward"`, and `"both"`, for backward attention,
+#'      forward attention, and bidirectional attention, respectively.
+#'      The default is `"forward"`.
+#'   * `decay`: A `function` that specifies the decay of the weights between
+#'      two time points at a specific distance. The function should take three
+#'      arguments: `i`, `j` and `lambda`, where `i` and `j` are `numeric`
+#'      vectors of time values, and `lambda` is  a `numeric` value for the
+#'      decay rate. The function should return a `numeric` vector of weights.
+#'      The default is `function(i, j, lambda) exp(-abs(i - j) / lambda)`.
 #'   * `lambda`: A `numeric` value for the decay rate. The default is 1.
+#'   * `time`: A `matrix` or a `data.frame` providing the time values
+#'      for each sequence and at time index. For `tna_data` objects, this can
+#'      also be a logical value, where `TRUE` will use the `time_data` element
+#'      of `x` for the time values. `Date` values are converted to `numeric`.
+#'   * `duration`: A `matrix` or a `data.frame` providing the
+#'      time spent in each state for each sequence and time index.
+#'      This is an alternative to `time`.
 #'
+#' @param inits An optional `numeric` vector of initial state probabilities
+#'   for each state. The vector will be scaled to unity.
+#'   Ignored if `x` is not a `matrix`.
+#' @param begin_state A `character` string for an additional begin state.
+#'   This state is added as the first observation for every sequence to
+#'   signify the beginning of the sequence
+#' @param end_state A `character` string for an additional end state.
+#'   This state is added as the last observation for every sequence to
+#'   siginify the end of the sequence.
 #' @param ... Ignored. For the `build_model` aliases (e.g., `tna`), this
 #' argument matches the actual arguments to `build_model` beside `x`.
 #' @return An object of class `tna` which is a `list` containing the
@@ -94,27 +121,37 @@
 #' print(model)
 #'
 build_model <- function(x, type = "relative", scaling = character(0L),
-                        ...) {
+                        cols = tidyselect::everything(), params = list(),
+                        inits, begin_state, end_state) {
   UseMethod("build_model")
 }
 
 #' @export
 #' @rdname build_model
 build_model.default <- function(x, type = "relative", scaling = character(0L),
-                                inits, params = list(), ...) {
+                                cols = tidyselect::everything(),
+                                params = list(), inits,
+                                begin_state, end_state) {
   check_missing(x)
   x <- try_(as.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
     "Argument {.arg x} must be coercible to a {.cls matrix}."
   )
-  build_model.matrix(x, type, scaling, inits, params, ...)
+  build_model.matrix(
+    x = x,
+    type = type,
+    scaling = scaling,
+    params = params,
+    inits = inits
+  )
 }
 
 #' @export
 #' @rdname build_model
 build_model.matrix <- function(x, type = "relative", scaling = character(0L),
-                               inits, ...) {
+                               cols = tidyselect::everything(), params = list(),
+                               inits, begin_state, end_state) {
   check_missing(x)
   x <- try_(data.matrix(x))
   stopifnot_(
@@ -176,17 +213,22 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-#' @param cols An `integer`/`character` vector giving the indices/names of the
-#' columns that should be considered as sequence data.
-#' Defaults to all columns, i.e., `seq(1, ncol(x))`. Column names not found
-#' in `x` will be ignored without warning.
+
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
-                                cols = seq(1, ncol(x)), params = list(), ...) {
+                                cols = tidyselect::everything(),
+                                params = list(), inits,
+                                begin_state, end_state) {
   check_missing(x)
   check_class(x, "stslist")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, cols)
+  cols <- get_cols(rlang::enquo(cols), x)
+  x <- create_seqdata(
+    x = x,
+    cols = cols,
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -203,13 +245,20 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 #' @rdname build_model
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
-                                   cols = seq(1, ncol(x)),
-                                   params = list(), ...) {
+                                   cols = tidyselect::everything(),
+                                   params = list(), inits,
+                                   begin_state, end_state) {
   check_missing(x)
   check_class(x, "data.frame")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  x <- create_seqdata(x, cols)
+  cols <- get_cols(rlang::enquo(cols), x)
+  x <- create_seqdata(
+    x = x,
+    cols = cols,
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -224,14 +273,35 @@ build_model.data.frame <- function(x, type = "relative",
 
 #' @export
 #' @rdname build_model
-build_model.tna_data <- function(x, type = "relative", scaling = character(0),
-                                 params = list(), ...) {
+build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
+                                 cols = tidyselect::everything(),
+                                 params = list(), inits, begin_state,
+                                 end_state) {
   check_missing(x)
   check_class(x, "tna_data")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
-  x <- create_seqdata(wide, cols = seq_len(ncol(x$sequence_data)))
+  if (isTRUE(params$time)) {
+    stopifnot_(
+      !is.null(x$time_data),
+      "No time data available in argument {.arg x}."
+    )
+    params$time <- as.matrix(
+      as.data.frame(
+        lapply(
+          x$time_data,
+          as.numeric
+        )
+      )
+    )
+  }
+  x <- create_seqdata(
+    x = wide,
+    cols = names(x$sequence_data),
+    begin_state = begin_state,
+    end_state = end_state
+  )
   model <- initialize_model(x, type, scaling, params)
   build_model_(
     weights = model$weights,
@@ -243,6 +313,86 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0),
     params = params
   )
 }
+
+#' @export
+#' @rdname build_model
+build_model.tsn <- function(x, type = "relative", scaling = character(0L),
+                            cols = tidyselect::everything(), params = list(),
+                            inits, begin_state, end_state) {
+  check_missing(x)
+  check_class(x, "tsn")
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
+  id <- attr(x, "id_col")
+  state <- attr(x, "state_col")
+  time <- attr(x, "time_col")
+  wide <- x |>
+    dplyr::select(
+      c(!!rlang::sym(id), !!rlang::sym(state), !!rlang::sym(time))
+    ) |>
+    tidyr::pivot_wider(
+      id_cols = attr(x, "id_col"),
+      values_from = !!rlang::sym(state),
+      names_from = !!rlang::sym(time),
+      names_prefix = "T"
+    ) |>
+    dplyr::select(!(!!rlang::sym(id)))
+  x <- create_seqdata(
+    x = wide,
+    cols = names(wide),
+    begin_state = begin_state,
+    end_state = end_state
+  )
+  model <- initialize_model(x, type, scaling, params)
+  build_model_(
+    weights = model$weights,
+    inits = model$inits,
+    labels = model$labels,
+    type = type,
+    scaling = scaling,
+    data = x,
+    params = params
+  )
+}
+
+#' @export
+#' @rdname build_model
+build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
+                                cols = tidyselect::everything(),
+                                params = list(), inits,
+                                begin_state, end_state) { # nocov start
+  check_missing(x)
+  check_class(x, "tsn_ews")
+  type <- check_model_type(type)
+  scaling <- check_model_scaling(scaling)
+  id <- attr(x, "id_col")
+  cls <- attr(x, "classification")
+  wide <- cls |>
+    dplyr::select(
+      c(!!rlang::sym("state"), !!rlang::sym("time"))
+    ) |>
+    tidyr::pivot_wider(
+      values_from = !!rlang::sym("state"),
+      names_from = !!rlang::sym("time"),
+      names_prefix = "T"
+    )
+  x <- create_seqdata(
+    x = wide,
+    cols = seq_len(ncol(wide)),
+    begin_state = begin_state,
+    end_state = end_state
+  )
+  model <- initialize_model(x, type, scaling, params)
+  build_model_(
+    weights = model$weights,
+    inits = model$inits,
+    labels = model$labels,
+    type = type,
+    scaling = scaling,
+    data = x,
+    params = params
+  )
+} # nocov end
 
 # Aliases -----------------------------------------------------------------
 
@@ -283,6 +433,71 @@ atna <- function(x, ...) {
   build_model(x = x, type = "attention", ...)
 }
 
+#' @export
+#' @rdname build_model
+tsn <- function(x, ...) {
+  build_model.tsn(x = x, ...)
+}
+
+#' Build a Social Network Analysis Model
+#'
+#' @export
+#' @param x A `data.frame` or a `matrix` with three columns: the first two
+#' representing the states and the third giving the weights.
+#' @param aggregate A `function` to use for aggregating the weights. The
+#' default is [sum()].
+#' @param ... Additional arguments passed to `aggregate`.
+#' @return A `tna` object representing the model.
+#' @examples
+#' set.seed(123)
+#' d <- data.frame(
+#'   from = sample(LETTERS[1:4], 100, replace = TRUE),
+#'   to = sample(LETTERS[1:4], 100, replace = TRUE),
+#'   weight = rexp(100)
+#' )
+#' model <- sna(d)
+#'
+sna <- function(x, aggregate = sum, ...) {
+  check_missing(x)
+  x <- try_(as.data.frame(x))
+  stopifnot_(
+    !inherits(x, "try-error"),
+    "Argument {.arg x} must be coercible to a {.cls data.frame}."
+  )
+  check_na(x)
+  nc <- ncol(x)
+  stopifnot_(
+    nc == 3L,
+    "Argument {.arg x} must have three columns (from, to, weight)."
+  )
+  colnames(x) <- c("from", "to", "weight")
+  stopifnot_(
+    is.function(aggregate),
+    "Argument {.arg aggregate} must be a function."
+  )
+  test_aggregate <- try_(aggregate(stats::runif(3L), ...))
+  stopifnot_(
+    !inherits(test_aggregate, "try-error") &&
+      length(test_aggregate) == 1L &&
+      is.numeric(test_aggregate),
+    "Argument {.arg aggregate} must be a function that takes a {.cls numeric}
+    vector and returns a single {.cls numeric} value."
+  )
+  x <- x |>
+    dplyr::group_by(!!rlang::sym("from"), !!rlang::sym("to")) |>
+    dplyr::summarize(weight = aggregate(!!rlang::sym("weight"), ...))
+  lab <- unique(unlist(x[, c("from", "to")]))
+  n <- length(lab)
+  out <- matrix(0.0, n, n, dimnames = list(lab, lab))
+  idx <- cbind(match(x$from, lab), match(x$to, lab))
+  out[idx] <- x$weight
+  build_model_(
+    weights = out,
+    labels = lab,
+    type = "",
+    scaling = character(0L)
+  )
+}
 
 # Internal ----------------------------------------------------------------
 
@@ -318,19 +533,16 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' Convert Sequence Data to an Internal Format
 #'
 #' @param x A `data.frame` or a `stslist` object.
-#' @param cols An `integer` vector of column indices or a `character` vector
-#' of column names.
+#' @param cols An `character` vector of column names.
 #' @param alphabet Optional `character` vector of the alphabet.
+#' @param begin_state Optional `character` string giving the begin state.
+#' @param end_state Optional `character` string giving the end state.
 #' @noRd
-create_seqdata <- function(x, cols, alphabet) {
-  if (is.numeric(cols)) {
-    check_range(cols, scalar = FALSE, lower = 1L, upper = ncol(x))
-  }
-  cols <- ifelse_(
-    is.character(cols),
-    which(names(x) %in% cols),
-    cols
-  )
+create_seqdata <- function(x, cols, alphabet, begin_state, end_state) {
+  # if (is.numeric(cols)) {
+  #   stop("Numeric cols detected")
+  # }
+  cols <- which(names(x) %in% cols)
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
     labels <- attr(x, "labels")
@@ -352,16 +564,36 @@ create_seqdata <- function(x, cols, alphabet) {
       lapply(x[, cols], function(y) factor(y, levels = alphabet))
     )
   }
-  x[, cols] <- as.data.frame(
-    lapply(
-      x[, cols],
-      function(y) {
-        as.integer(replace(y, which(!y %in% alphabet), NA))
-      }
+  x <- as.matrix(
+    as.data.frame(
+      lapply(
+        x[, cols],
+        function(y) {
+          as.integer(replace(y, which(!y %in% alphabet), NA))
+        }
+      )
     )
   )
+  if (!missing(begin_state)) {
+    x <- cbind(1L, x + 1L)
+    alphabet <- c(begin_state, alphabet)
+    labels <- c(begin_state, labels)
+    colors <- c("darkgray", colors)
+  }
+  if (!missing(end_state)) {
+    last_obs <- max.col(!is.na(x), ties.method = "last")
+    new_max <- max(x, na.rm = TRUE) + 1L
+    if (any(last_obs == ncol(x))) {
+      x <- cbind(x, NA_integer_)
+      idx <- cbind(seq_len(nrow(x)), last_obs + 1L)
+      x[idx] <- new_max
+    }
+    alphabet <- c(alphabet, end_state)
+    labels <- c(labels, end_state)
+    colors <- c(colors, "darkgray")
+  }
   structure(
-    as.matrix(x[, cols]),
+    x,
     class = c("tna_seq_data", "matrix", "array"),
     alphabet = alphabet,
     labels = labels,
@@ -375,15 +607,13 @@ create_seqdata <- function(x, cols, alphabet) {
 #' @param x A data object from `create_seqdata()`
 #' @param type The type of transition network model to build.
 #' @param scaling The scaling methods to apply to the weights.
-#' @param params A list of parameters for the transition model.
+#' @param params A `list` of parameters for the transition model.
 #' @param transitions Should the individual-level transitions also be returned?
 #' Defaults to `FALSE`.
 #' @noRd
 initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   alphabet <- attr(x, "alphabet")
   labels <- attr(x, "labels")
-  #cols <- attr(x, "cols")
-  #m <- as.matrix(x[, cols])
   a <- length(alphabet)
   inits <- factor(x[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
@@ -412,7 +642,7 @@ compute_transitions <- function(m, a, type, params) {
   p <- ncol(m)
   idx <- seq_len(n)
   trans <- array(0L, dim = c(n, a, a))
-  seq_lengths <- apply(m, 1L, function(x) sum(!is.na(x)))
+  seq_lengths <- .rowSums(!is.na(m), m = n, n = p)
   weight <- ifelse_(isTRUE(params$weighted), 1.0 / seq_lengths, rep(1L, n))
   if (type %in% c("relative", "frequency")) {
     weight <- ifelse_(type == "frequency", weight, rep(1L, n))
@@ -482,18 +712,85 @@ compute_transitions <- function(m, a, type, params) {
     }
   } else if (type == "attention") {
     lambda <- params$lambda %||% 1.0
-    for (i in seq_len(p - 1L)) {
-      for (j in seq(i + 1L, p)) {
-        from <- m[, i]
-        to <- m[, j]
-        any_na <- is.na(from) | is.na(to)
-        new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-        trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
+    decay <- params$decay %||% function(i, j, lambda) exp(-abs(i - j) / lambda)
+    direction <- params$direction %||% "forward"
+    stopifnot_(
+      is.null(params$time) || is.null(params$duration),
+      "Both {.arg time} and {.arg duration} supplied via {.arg params}."
+    )
+    time <- matrix(rep(seq(1, p), each = n), nrow = n, ncol = p)
+    if (!is.null(params$time)) {
+      stopifnot_(
+        nrow(params$time) == n && ncol(params$time) == p,
+        "Argument {.arg params$time} must have the same dimensions as the
+         sequence data."
+      )
+      time <- params$time
+    }
+    if (!is.null(params$duration)) {
+      stopifnot_(
+        nrow(params$duration) == n && ncol(params$duration) == p,
+        "Argument {.arg params$duration} must have the same dimensions as the
+         sequence data."
+      )
+      time <- cbind(0, t(apply(params$duration, 1L, cumsum))[, -p])
+    }
+    for (i in seq_len(p)) {
+      if (direction %in% c("forward", "both")) {
+        if (i < p) {
+          for (j in seq(i + 1L, p)) {
+            from <- m[, i]
+            to <- m[, j]
+            any_na <- is.na(from) | is.na(to)
+            new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+            #trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
+            d <- decay(time[, i], time[, j], lambda)[!any_na]
+            trans[new_trans] <- trans[new_trans] + d
+          }
+        }
+      }
+      if (direction %in% c("backward", "both")) {
+        if (i > 1) {
+          for (j in seq(1L, i)) {
+            from <- m[, i]
+            to <- m[, j]
+            any_na <- is.na(from) | is.na(to)
+            new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+            #trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
+            d <- decay(time[, i], time[, j], lambda)[!any_na]
+            trans[new_trans] <- trans[new_trans] + d
+          }
+        }
       }
     }
   }
   trans
 }
+
+# Internal function to get all transitions
+get_transitions <- function(x) { # nocov start
+  m <- x$data
+  lab <- x$labels
+  n <- nrow(m)
+  p <- ncol(m)
+  idx <- seq_len(n)
+  trans <- vector(mode = "list", length = p - 1L)
+  seq_lengths <- .rowSums(!is.na(m), m = n, n = p)
+  for (i in seq_len(p - 1L)) {
+    from <- m[, i]
+    to <- m[, i + 1L]
+    any_na <- is.na(from) | is.na(to)
+    trans[[i]] <- as.data.frame(
+      cbind(idx, from, to)[!any_na, , drop = FALSE]
+    )
+    names(trans[[i]]) <- c("id", "source", "target")
+  }
+  out <- dplyr::bind_rows(trans, .id = "time")
+  out$source <- lab[out$source]
+  out$target <- lab[out$target]
+  out$weight <- 1.0
+  out
+} # nocov end
 
 #' Compute Network Weights Based On TNA Type
 #'

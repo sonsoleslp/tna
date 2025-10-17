@@ -9,9 +9,31 @@
 \alias{estimate_centrality_stability.group_tna}
 \title{Estimate Centrality Stability}
 \usage{
-estimate_cs(x, ...)
+estimate_cs(
+  x,
+  loops,
+  normalize,
+  measures,
+  iter,
+  method,
+  drop_prop,
+  threshold,
+  certainty,
+  progressbar
+)
 
-estimate_centrality_stability(x, ...)
+estimate_centrality_stability(
+  x,
+  loops,
+  normalize,
+  measures,
+  iter,
+  method,
+  drop_prop,
+  threshold,
+  certainty,
+  progressbar
+)
 
 \method{estimate_cs}{tna}(
   x,
@@ -23,8 +45,7 @@ estimate_centrality_stability(x, ...)
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE,
-  ...
+  progressbar = FALSE
 )
 
 \method{estimate_centrality_stability}{tna}(
@@ -37,8 +58,7 @@ estimate_centrality_stability(x, ...)
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE,
-  ...
+  progressbar = FALSE
 )
 
 \method{estimate_cs}{group_tna}(
@@ -51,8 +71,7 @@ estimate_centrality_stability(x, ...)
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE,
-  ...
+  progressbar = FALSE
 )
 
 \method{estimate_centrality_stability}{group_tna}(
@@ -65,15 +84,12 @@ estimate_centrality_stability(x, ...)
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE,
-  ...
+  progressbar = FALSE
 )
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object representing the temporal network
 analysis data. The object should be created from a sequence data object.}
-
-\item{...}{Ignored.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures (default is \code{FALSE}).}

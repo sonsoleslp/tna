@@ -7,44 +7,102 @@
 \alias{build_model.stslist}
 \alias{build_model.data.frame}
 \alias{build_model.tna_data}
+\alias{build_model.tsn}
+\alias{build_model.tsn_ews}
 \alias{tna}
 \alias{ftna}
 \alias{ctna}
 \alias{atna}
+\alias{tsn}
 \title{Build a Transition Network Analysis Model}
 \usage{
-build_model(x, type = "relative", scaling = character(0L), ...)
+build_model(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  cols = tidyselect::everything(),
+  params = list(),
+  inits,
+  begin_state,
+  end_state
+)
 
 \method{build_model}{default}(
   x,
   type = "relative",
   scaling = character(0L),
-  inits,
+  cols = tidyselect::everything(),
   params = list(),
-  ...
+  inits,
+  begin_state,
+  end_state
 )
 
-\method{build_model}{matrix}(x, type = "relative", scaling = character(0L), inits, ...)
+\method{build_model}{matrix}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  cols = tidyselect::everything(),
+  params = list(),
+  inits,
+  begin_state,
+  end_state
+)
 
 \method{build_model}{stslist}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = seq(1, ncol(x)),
+  cols = tidyselect::everything(),
   params = list(),
-  ...
+  inits,
+  begin_state,
+  end_state
 )
 
 \method{build_model}{data.frame}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = seq(1, ncol(x)),
+  cols = tidyselect::everything(),
   params = list(),
-  ...
+  inits,
+  begin_state,
+  end_state
 )
 
-\method{build_model}{tna_data}(x, type = "relative", scaling = character(0), params = list(), ...)
+\method{build_model}{tna_data}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  cols = tidyselect::everything(),
+  params = list(),
+  inits,
+  begin_state,
+  end_state
+)
+
+\method{build_model}{tsn}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  cols = tidyselect::everything(),
+  params = list(),
+  inits,
+  begin_state,
+  end_state
+)
+
+\method{build_model}{tsn_ews}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  cols = tidyselect::everything(),
+  params = list(),
+  inits,
+  begin_state,
+  end_state
+)
 
 tna(x, ...)
 
@@ -53,6 +111,8 @@ ftna(x, ...)
 ctna(x, ...)
 
 atna(x, ...)
+
+tsn(x, ...)
 }
 \arguments{
 \item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, a \code{matrix}, or
@@ -105,12 +165,9 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \code{ties.method = "average"}.
 }}
 
-\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
-argument matches the actual arguments to \code{build_model} beside \code{x}.}
-
-\item{inits}{An optional \code{numeric} vector of initial state probabilities
-for each state. Can be provided only if \code{x} is a \code{matrix}. The vector will
-be scaled to unity.}
+\item{cols}{An \code{expression} giving a tidy selection of columns that should
+be considered as sequence data. By default, all columns are used. Ignored
+for \code{matrix}, \code{tna_data} and \code{tsn} type \code{x}.}
 
 \item{params}{A \code{list} of additional arguments for models of specific
 \code{type}. The potential elements of this list are:
@@ -125,13 +182,41 @@ specifying the window size. The default is 2.
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
 \code{FALSE}.
+\item \code{direction}: A \code{character} string specifying the direction of attention
+for models of \code{type = "attention"}. The available options are
+\code{"backward"}, \code{"forward"}, and \code{"both"}, for backward attention,
+forward attention, and bidirectional attention, respectively.
+The default is \code{"forward"}.
+\item \code{decay}: A \code{function} that specifies the decay of the weights between
+two time points at a specific distance. The function should take three
+arguments: \code{i}, \code{j} and \code{lambda}, where \code{i} and \code{j} are \code{numeric}
+vectors of time values, and \code{lambda} is  a \code{numeric} value for the
+decay rate. The function should return a \code{numeric} vector of weights.
+The default is \code{function(i, j, lambda) exp(-abs(i - j) / lambda)}.
 \item \code{lambda}: A \code{numeric} value for the decay rate. The default is 1.
+\item \code{time}: A \code{matrix} or a \code{data.frame} providing the time values
+for each sequence and at time index. For \code{tna_data} objects, this can
+also be a logical value, where \code{TRUE} will use the \code{time_data} element
+of \code{x} for the time values. \code{Date} values are converted to \code{numeric}.
+\item \code{duration}: A \code{matrix} or a \code{data.frame} providing the
+time spent in each state for each sequence and time index.
+This is an alternative to \code{time}.
 }}
 
-\item{cols}{An \code{integer}/\code{character} vector giving the indices/names of the
-columns that should be considered as sequence data.
-Defaults to all columns, i.e., \code{seq(1, ncol(x))}. Column names not found
-in \code{x} will be ignored without warning.}
+\item{inits}{An optional \code{numeric} vector of initial state probabilities
+for each state. The vector will be scaled to unity.
+Ignored if \code{x} is not a \code{matrix}.}
+
+\item{begin_state}{A \code{character} string for an additional begin state.
+This state is added as the first observation for every sequence to
+signify the beginning of the sequence}
+
+\item{end_state}{A \code{character} string for an additional end state.
+This state is added as the last observation for every sequence to
+siginify the end of the sequence.}
+
+\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
+argument matches the actual arguments to \code{build_model} beside \code{x}.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
@@ -152,7 +237,7 @@ internal format used by the package when \code{x} is a \code{stslist} or a
 Construct a transition network analysis (TNA) model from sequence data.
 The function takes a data set of sequence of events or states as input and
 builds a TNA model. It extracts the edge weights and initial probabilities
-from the data along with the state labels. THe function also accepts weight
+from the data along with the state labels. The function also accepts weight
 matrices and initial state probabilities directly.
 }
 \examples{

@@ -4,18 +4,15 @@
 \alias{print.tna}
 \title{Print a \code{tna} Object}
 \usage{
-\method{print}{tna}(x, digits = getOption("digits"), generic = FALSE, ...)
+\method{print}{tna}(x, generic = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
 
-\item{digits}{An \code{integer} giving the number of
-\emph{significant} digits to print.}
-
 \item{generic}{A \code{logical} value. If \code{TRUE}, use generic print method
 instead. Defaults to \code{FALSE}.}
 
-\item{...}{Ignored.}
+\item{...}{Additional arguments passed to the generic \code{print} methods.}
 }
 \value{
 The \code{tna} object passed as argument \code{x} (invisibly).

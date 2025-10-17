@@ -172,3 +172,143 @@ test_that("number of nodes is correct", {
   expect_equal(nodes(mmm_model), 3)
   expect_equal(nodes(mock_matrix), 4)
 })
+
+test_that("sna works", {
+  set.seed(123)
+  d <- data.frame(
+    from = sample(LETTERS[1:4], 10, replace = TRUE),
+    to = sample(LETTERS[1:4], 10, replace = TRUE),
+    weight = rexp(10)
+  )
+  expect_error(
+    sna(d),
+    NA
+  )
+  expect_error(
+    sna(d, aggregate = mean),
+    NA
+  )
+})
+
+test_that("sna fails with incorrect aggregate", {
+  set.seed(123)
+  d <- data.frame(
+    from = sample(LETTERS[1:4], 10, replace = TRUE),
+    to = sample(LETTERS[1:4], 10, replace = TRUE),
+    weight = rexp(10)
+  )
+  expect_error(
+    sna(d, aggregate = "not function"),
+    "Argument `aggregate` must be a function\\."
+  )
+  expect_error(
+    sna(d, aggregate = matrix),
+    "Argument `aggregate` must be a function that takes a <numeric> vector and returns a single <numeric> value\\."
+  )
+})
+
+test_that("tna from tsn works", {
+  expect_error(
+    tsn(mock_tsn),
+    NA
+  )
+  expect_error(
+    model <- build_model(mock_tsn),
+    NA
+  )
+  expect_true(
+    all(model$weights > 0)
+  )
+  expect_true(
+    all(model$inits > 0)
+  )
+})
+
+
+test_that("begin and end states can be included", {
+  expect_error(
+    tna(mock_sequence, begin_state = "begin"),
+    NA
+  )
+  expect_error(
+    tna(mock_sequence, end_state = "end"),
+    NA
+  )
+  expect_error(
+    tna(mock_sequence, begin_state = "begin", end_state = "end"),
+    NA
+  )
+})
+
+test_that("forward attention works with time measurements and durations", {
+  durations <- matrix(
+    1 + abs(rnorm(prod(dim(mock_sequence)))),
+    nrow = nrow(mock_sequence),
+  )
+  times <- cbind(0, t(apply(durations, 1, cumsum))[, -ncol(durations)])
+  expect_error(
+    model_t <- atna(mock_sequence, params = list(time = times)),
+    NA
+  )
+  expect_error(
+    model_d <- atna(mock_sequence, params = list(duration = durations)),
+    NA
+  )
+  expect_equal(
+    model_t$weights,
+    model_d$weights
+  )
+})
+
+test_that("directional attention works", {
+  expect_error(
+    model_b <- atna(mock_sequence, params = list(direction = "backward")),
+    NA
+  )
+  expect_error(
+    model_f <- atna(mock_sequence, params = list(direction = "forward")),
+    NA
+  )
+  expect_error(
+    model_bf <- atna(mock_sequence, params = list(direction = "both")),
+    NA
+  )
+  expect_equal(
+    model_b$weights + model_f$weights,
+    model_bf$weights
+  )
+})
+
+test_that("decay can be customized", {
+  durations <- matrix(
+    1 + abs(rnorm(prod(dim(mock_sequence)))),
+    nrow = nrow(mock_sequence),
+  )
+  my_decay <- function(i, j, lambda) (i - j)^-lambda
+  expect_error(
+    atna(
+      mock_sequence,
+      params = list(time = durations, decay = my_decay, lambda = 2)
+    ),
+    NA
+  )
+})
+
+test_that("time data from tna_data objects can be used for attention models", {
+  data_ordered <- tibble::tibble(
+     user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+     time = c(1, 2, 3, 6, 2, 7, 10, 14),
+     action = c(
+       "view", "click", "add_cart", "view",
+       "checkout", "view", "click", "share"
+     )
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  data_timed <- prepare_data(
+    data_ordered, actor = "user", time = "time", action = "action"
+  )
+  expect_error(
+    atna(data_timed, params = list(time = TRUE)),
+    NA
+  )
+})

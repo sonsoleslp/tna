@@ -1,6 +1,6 @@
 Package: tna
 Title: Transition Network Analysis (TNA)
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person("Mohammed", "Saqr", role = "aut"),
     person("Santtu", "Tikka", role = "aut"),
@@ -22,6 +22,7 @@ Depends:
 Imports:
     checkmate,
     cli,
+    cluster,
     colorspace,
     dplyr,
     ggplot2,
@@ -31,13 +32,13 @@ Imports:
     RColorBrewer,
     rlang,
     stats,
+    stringdist,
     tibble,
     tidyr,
     tidyselect
 Suggests:
     gt,
     knitr,
-    mclust,
     pracma,
     rmarkdown,
     seqHMM,
@@ -47,6 +48,6 @@ VignetteBuilder:
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 LazyData: true
 Config/Needs/website: rmarkdown

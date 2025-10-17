@@ -33,16 +33,14 @@ reference:
     - build_model
     - print.tna
     - plot.tna
-    - prepare_data
-    - import_data
-    - print.tna_data
-    - summary.tna
     - hist.tna
+    - sna
     - print.summary.tna
     - plot_frequencies
     - plot_frequencies.group_tna
     - plot_mosaic
     - plot_mosaic.tna_data
+    - plot_associations
     - print.group_tna
     - plot.group_tna
     - summary.group_tna
@@ -54,9 +52,11 @@ reference:
   - title: Importing/generating data
     contents:
     - import_data
+    - import_onehot
     - prepare_data
     - print.tna_data
     - simulate.tna
+    - summary.tna
 
   - title: Centralities
     contents:
@@ -83,14 +83,23 @@ reference:
     - print.group_tna_cliques
     - plot.group_tna_cliques
 
+  - title: Clusters
+    contents:
+    - cluster_sequences
+    - mmm_stats
+    - print.tna_clustering
+
   - title: Comparison
     contents:
     - compare
     - compare.group_tna
+    - compare_sequences
     - print.tna_comparison
+    - print.tna_sequence_comparison
     - plot_compare
     - plot_compare.group_tna
     - plot.tna_comparison
+    - plot.tna_sequence_comparison
 
   - title: Validation
     contents:
@@ -114,16 +123,16 @@ reference:
     - reprune
     - pruning_details
     - bootstrap
+    - bootstrap_cliques
     - plot.tna_bootstrap
     - plot.group_tna_bootstrap
     - summary.tna_bootstrap
     - summary.group_tna_bootstrap
 
-  - title: Clusters
+  - title: Groups
     contents:
     - group_model
     - rename_groups
-    - mmm_stats
 
   - title: Helpers
     contents:
