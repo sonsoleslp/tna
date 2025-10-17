@@ -87,7 +87,7 @@ reference:
     contents:
     - cluster_sequences
     - mmm_stats
-    - print.tna_clusters
+    - print.tna_clustering
 
   - title: Comparison
     contents:

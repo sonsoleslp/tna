@@ -293,3 +293,21 @@ test_that("decay can be customized", {
     NA
   )
 })
+
+test_that("time data from tna_data objects can be used for attention models", {
+  data_ordered <- tibble::tibble(
+     user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+     time = c(1, 2, 3, 6, 2, 7, 10, 14),
+     action = c(
+       "view", "click", "add_cart", "view",
+       "checkout", "view", "click", "share"
+     )
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  data_timed <- prepare_data(
+    data_ordered, actor = "user", time = "time", action = "action"
+  )
+  expect_error(
+    atna(data_timed, params = list(time = TRUE))
+  )
+})

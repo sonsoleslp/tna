@@ -539,9 +539,9 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param end_state Optional `character` string giving the end state.
 #' @noRd
 create_seqdata <- function(x, cols, alphabet, begin_state, end_state) {
-  if (is.numeric(cols)) {
-    stop("Numeric cols detected")
-  }
+  # if (is.numeric(cols)) {
+  #   stop("Numeric cols detected")
+  # }
   cols <- which(names(x) %in% cols)
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
