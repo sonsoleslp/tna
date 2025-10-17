@@ -20,7 +20,7 @@ prepare_data(
 \arguments{
 \item{data}{A \code{data.frame} or containing the action/event data.}
 
-\item{actor}{A \code{character} vector or an \code{expression} represeting
+\item{actor}{A \code{character} vector or an \code{expression} that represents
 a tidy selection of the names of the columns that
 represent a user/actor identifiers. If not provided and neither \code{time} nor
 \code{order} is specified, the entire dataset is treated as a single session.

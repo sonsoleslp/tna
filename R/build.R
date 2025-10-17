@@ -85,7 +85,9 @@
 #'      The default is `function(i, j, lambda) exp(-abs(i - j) / lambda)`.
 #'   * `lambda`: A `numeric` value for the decay rate. The default is 1.
 #'   * `time`: A `matrix` or a `data.frame` providing the time values
-#'      for each sequence and at time index.
+#'      for each sequence and at time index. For `tna_data` objects, this can
+#'      also be a logical value, where `TRUE` will use the `time_data` element
+#'      of `x` for the time values. `Date` values are converted to `numeric`.
 #'   * `duration`: A `matrix` or a `data.frame` providing the
 #'      time spent in each state for each sequence and time index.
 #'      This is an alternative to `time`.
@@ -280,6 +282,20 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
+  if (isTRUE(params$time)) {
+    stopifnot_(
+      !is.null(x$time_data),
+      "No time data available in argument {.arg x}."
+    )
+    params$time <- as.matrix(
+      as.data.frame(
+        lapply(
+          x$time_data,
+          as.numeric
+        )
+      )
+    )
+  }
   x <- create_seqdata(
     x = wide,
     cols = names(x$sequence_data),
@@ -750,6 +766,30 @@ compute_transitions <- function(m, a, type, params) {
   }
   trans
 }
+
+# Internal function to get all transitions
+get_transitions <- function(x) { # nocov start
+  m <- x$data
+  lab <- x$labels
+  n <- nrow(m)
+  p <- ncol(m)
+  idx <- seq_len(n)
+  trans <- vector(mode = "list", length = p - 1L)
+  seq_lengths <- .rowSums(!is.na(m), m = n, n = p)
+  for (i in seq_len(p - 1L)) {
+    from <- m[, i]
+    to <- m[, i + 1L]
+    any_na <- is.na(from) | is.na(to)
+    trans[[i]] <- as.data.frame(
+      cbind(idx, from, to)[!any_na, , drop = FALSE]
+    )
+    names(trans[[i]]) <- c("id", "source", "target")
+  }
+  out <- dplyr::bind_rows(trans, .id = "time")
+  out$source <- lab[out$source]
+  out$target <- lab[out$target]
+  out
+} # nocov end
 
 #' Compute Network Weights Based On TNA Type
 #'

@@ -403,30 +403,30 @@ check_cols <- function(cols, single = TRUE, missing_ok = TRUE) {
   }
 }
 
-check_em_control <- function(control) {
-  em_control_defaults <- list(
-    maxiter = 500L,
-    maxiter_m = 500L,
-    reltol = 1e-10,
-    reltol_m = 1e-6,
-    restarts = 10L,
-    seed = 1L,
-    step = 1.0
-  )
-  if (missing(control)) {
-    return(em_control_defaults)
-  }
-  for (n in names(em_control_defaults)) {
-    if (is.null(control[[n]])) {
-      control[[n]] <- em_control_defaults[[n]]
-    }
-  }
-  check_values(control$maxiter, strict = TRUE)
-  check_values(control$maxiter_m, strict = TRUE)
-  check_values(control$reltol, type = "numeric", strict = TRUE)
-  check_values(control$reltol_m, type = "numeric", strict = TRUE)
-  check_values(control$restarts, strict = TRUE)
-  check_values(control$seed)
-  check_range(control$step, lower = 0.0, upper = 1.0)
-  control
-}
+# check_em_control <- function(control) {
+#   em_control_defaults <- list(
+#     maxiter = 500L,
+#     maxiter_m = 500L,
+#     reltol = 1e-10,
+#     reltol_m = 1e-6,
+#     restarts = 10L,
+#     seed = 1L,
+#     step = 1.0
+#   )
+#   if (missing(control)) {
+#     return(em_control_defaults)
+#   }
+#   for (n in names(em_control_defaults)) {
+#     if (is.null(control[[n]])) {
+#       control[[n]] <- em_control_defaults[[n]]
+#     }
+#   }
+#   check_values(control$maxiter, strict = TRUE)
+#   check_values(control$maxiter_m, strict = TRUE)
+#   check_values(control$reltol, type = "numeric", strict = TRUE)
+#   check_values(control$reltol_m, type = "numeric", strict = TRUE)
+#   check_values(control$restarts, strict = TRUE)
+#   check_values(control$seed)
+#   check_range(control$step, lower = 0.0, upper = 1.0)
+#   control
+# }

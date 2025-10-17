@@ -25,7 +25,6 @@ Imports:
     cluster,
     colorspace,
     dplyr,
-    foreach,
     ggplot2,
     graphics,
     igraph,
@@ -38,10 +37,8 @@ Imports:
     tidyr,
     tidyselect
 Suggests:
-    doParallel,
     gt,
     knitr,
-    parallel,
     pracma,
     rmarkdown,
     seqHMM,

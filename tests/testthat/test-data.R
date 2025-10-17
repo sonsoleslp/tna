@@ -72,9 +72,7 @@ test_that("data preparation works when actor and order are provided", {
       "checkout", "view", "click", "share"
     )
   )
-
   data_unarranged <- dplyr::arrange(data, action)
-
   rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
     prepare_data(
@@ -101,6 +99,23 @@ test_that("data preparation works when actor and order are provided", {
   )
 })
 
+test_that("data preparation for multiple actors is supported", {
+  data_multiactor <- tibble::tibble(
+    user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+    session = c(1, 1, 2, 2, 1, 1, 2, 2),
+    action = c(
+     "view", "click", "add_cart", "view",
+     "checkout", "view", "click", "share"
+    )
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_error(
+    prepare_data(
+      data_multiactor, actor = c("user", "session"), action = "action"
+    ),
+    NA
+  )
+})
 
 test_that("unix time from character column works", {
   mock_long_unix <- mock_long

@@ -20,7 +20,6 @@ Example Mixed Markov Model Fitted to the \code{engagement} Data
 \seealso{
 Datasets
 \code{\link{engagement}},
-\code{\link{engagement_tna_mmm}},
 \code{\link{group_regulation}},
 \code{\link{group_regulation_long}}
 }

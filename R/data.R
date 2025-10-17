@@ -8,7 +8,7 @@
 #' @export
 #' @family data
 #' @param data A `data.frame` or containing the action/event data.
-#' @param actor A `character` vector or an `expression` represeting
+#' @param actor A `character` vector or an `expression` that represents
 #' a tidy selection of the names of the columns that
 #' represent a user/actor identifiers. If not provided and neither `time` nor
 #' `order` is specified, the entire dataset is treated as a single session.
@@ -238,19 +238,44 @@ prepare_data <- function(data, actor, time, action, order,
   if (default_order) {
     long_data$.order <- NULL
   }
-  wide_data <- long_data |>
-    tidyr::pivot_wider(
-      id_cols = .session_id,
-      names_prefix = "T",
-      names_from = .sequence,
-      values_from = !!rlang::sym(action),
-      unused_fn = unused_fn
-    ) |>
-    dplyr::arrange(.session_id)
-
-  time_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
-  sequence_data <- wide_data[, time_cols]
-  meta_data <- wide_data[, !time_cols]
+  if (!missing(time)) {
+    wide_data <- long_data |>
+      tidyr::pivot_wider(
+        id_cols = .session_id,
+        names_prefix = "T",
+        names_from = .sequence,
+        values_from = c(!!rlang::sym(action), .standardized_time),
+        unused_fn = unused_fn
+      ) |>
+      dplyr::arrange(.session_id)
+    sequence_cols <- grepl(
+      paste0("^", action, "_T[0-9]+$"),
+      names(wide_data),
+      perl = TRUE
+    )
+    time_cols <- grepl(
+      "^.standardized_time_T[0-9]+$",
+      names(wide_data),
+      perl = TRUE
+    )
+    sequence_data <- wide_data[, sequence_cols]
+    time_data <- wide_data[, time_cols]
+    meta_data <- wide_data[, !(sequence_cols | time_cols)]
+  } else {
+    wide_data <- long_data |>
+      tidyr::pivot_wider(
+        id_cols = .session_id,
+        names_prefix = "T",
+        names_from = .sequence,
+        values_from = !!rlang::sym(action),
+        unused_fn = unused_fn
+      ) |>
+      dplyr::arrange(.session_id)
+    sequence_cols <- grepl("^T[0-9]+$", names(wide_data), perl = TRUE)
+    sequence_data <- wide_data[, sequence_cols]
+    meta_data <- wide_data[, !sequence_cols]
+    time_data <- NULL
+  }
 
   # Calculate statistics
   stats <- list(
@@ -297,6 +322,7 @@ prepare_data <- function(data, actor, time, action, order,
       long_data = long_data,
       sequence_data = sequence_data,
       meta_data = meta_data,
+      time_data = time_data,
       statistics = stats
     ),
     class = "tna_data"

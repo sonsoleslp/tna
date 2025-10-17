@@ -4,7 +4,6 @@
 \alias{group_model}
 \alias{group_model.default}
 \alias{group_model.mhmm}
-\alias{group_model.tna_mmm}
 \alias{group_model.tna_clustering}
 \alias{group_tna}
 \alias{group_ftna}
@@ -36,16 +35,6 @@ group_model(x, ...)
   ...
 )
 
-\method{group_model}{tna_mmm}(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  groupwise = FALSE,
-  params = list(),
-  na.rm = TRUE,
-  ...
-)
-
 \method{group_model}{tna_clustering}(
   x,
   type = "relative",
@@ -68,8 +57,7 @@ group_atna(x, ...)
 \item{x}{An \code{stslist} object describing a sequence of events or states to
 be used for building the Markov model. The argument \code{x} also accepts
 \code{data.frame} objects in wide format, and \code{tna_data} objects.
-Alternatively, the function accepts a mixture Markov model from \code{seqHMM}
-or from \code{\link[=cluster_mmm]{cluster_mmm()}}. This can also be the output of clustering from
+This can also be the output of clustering from
 \code{\link[=cluster_sequences]{cluster_sequences()}}.}
 
 \item{...}{Ignored.}
@@ -157,7 +145,9 @@ decay rate. The function should return a \code{numeric} vector of weights.
 The default is \code{function(i, j, lambda) exp(-abs(i - j) / lambda)}.
 \item \code{lambda}: A \code{numeric} value for the decay rate. The default is 1.
 \item \code{time}: A \code{matrix} or a \code{data.frame} providing the time values
-for each sequence and at time index.
+for each sequence and at time index. For \code{tna_data} objects, this can
+also be a logical value, where \code{TRUE} will use the \code{time_data} element
+of \code{x} for the time values. \code{Date} values are converted to \code{numeric}.
 \item \code{duration}: A \code{matrix} or a \code{data.frame} providing the
 time spent in each state for each sequence and time index.
 This is an alternative to \code{time}.
@@ -196,10 +186,8 @@ model <- group_atna(group_regulation, group = gl(2, 1000))
 }
 \seealso{
 Cluster-related functions
-\code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{mmm_stats}()},
-\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

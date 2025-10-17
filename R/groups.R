@@ -10,8 +10,7 @@
 #' @param x An `stslist` object describing a sequence of events or states to
 #'   be used for building the Markov model. The argument `x` also accepts
 #'   `data.frame` objects in wide format, and `tna_data` objects.
-#'   Alternatively, the function accepts a mixture Markov model from `seqHMM`
-#'   or from [cluster_mmm()]. This can also be the output of clustering from
+#'   This can also be the output of clustering from
 #'   [cluster_sequences()].
 #' @param group A `vector` indicating the group assignment of each
 #'   row of the data/sequence. Must have the same length as the number of
@@ -210,29 +209,29 @@ group_model.mhmm <- function(x, type = "relative", scaling = character(0L),
   )
 }
 
-#' @export
-#' @rdname group_model
-group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
-                                groupwise = FALSE, params = list(),
-                                na.rm = TRUE, ...) {
-  check_missing(x)
-  check_class(x, "tna_mmm")
-  lab <- attr(x$data, "labels")
-  data <- as.data.frame(
-    lapply(as.data.frame(x$data), function(y) factor(y, labels = lab))
-  )
-  assignment <- factor(max.col(x$posterior), labels = x$cluster_names)
-  group_model.default(
-    x = data,
-    group = assignment,
-    type = type,
-    scaling = scaling,
-    groupwise = groupwise,
-    params = params,
-    na.rm = na.rm,
-    ...
-  )
-}
+# #' @export
+# #' @rdname group_model
+# group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
+#                                 groupwise = FALSE, params = list(),
+#                                 na.rm = TRUE, ...) {
+#   check_missing(x)
+#   check_class(x, "tna_mmm")
+#   lab <- attr(x$data, "labels")
+#   data <- as.data.frame(
+#     lapply(as.data.frame(x$data), function(y) factor(y, labels = lab))
+#   )
+#   assignment <- factor(max.col(x$posterior), labels = x$cluster_names)
+#   group_model.default(
+#     x = data,
+#     group = assignment,
+#     type = type,
+#     scaling = scaling,
+#     groupwise = groupwise,
+#     params = params,
+#     na.rm = na.rm,
+#     ...
+#   )
+# }
 
 #' @export
 #' @rdname group_model

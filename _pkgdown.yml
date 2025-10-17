@@ -48,7 +48,6 @@ reference:
     - plot_mosaic.group_tna
     - print.summary.group_tna
     - plot_sequences
-    - print.tna_mmm
 
   - title: Importing/generating data
     contents:
@@ -86,15 +85,10 @@ reference:
 
   - title: Clusters
     contents:
-    - coef.tna_mmm
     - cluster_mmm
     - cluster_sequences
     - mmm_stats
     - print.tna_clusters
-    - print.tna_mmm
-    - print.summary.tna_mmm
-    - summary.tna_mmm
-    - vcov.tna_mmm
 
   - title: Comparison
     contents:
@@ -148,6 +142,5 @@ reference:
     contents:
     - engagement
     - engagement_mmm
-    - engagement_tna_mmm
     - group_regulation
     - group_regulation_long

@@ -2,13 +2,10 @@
 % Please edit documentation in R/mmm.R
 \name{mmm_stats}
 \alias{mmm_stats}
-\alias{mmm_stats.tna_mmm}
 \alias{mmm_stats.mhmm}
 \title{Retrieve Statistics from a Mixture Markov Model (MMM)}
 \usage{
 mmm_stats(x, level = 0.05)
-
-\method{mmm_stats}{tna_mmm}(x, level = 0.05)
 
 \method{mmm_stats}{mhmm}(x, level = 0.05)
 }
@@ -30,10 +27,8 @@ mmm_stats(engagement_mmm)
 }
 \seealso{
 Cluster-related functions
-\code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{group_model}()},
-\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

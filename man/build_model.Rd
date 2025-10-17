@@ -195,7 +195,9 @@ decay rate. The function should return a \code{numeric} vector of weights.
 The default is \code{function(i, j, lambda) exp(-abs(i - j) / lambda)}.
 \item \code{lambda}: A \code{numeric} value for the decay rate. The default is 1.
 \item \code{time}: A \code{matrix} or a \code{data.frame} providing the time values
-for each sequence and at time index.
+for each sequence and at time index. For \code{tna_data} objects, this can
+also be a logical value, where \code{TRUE} will use the \code{time_data} element
+of \code{x} for the time values. \code{Date} values are converted to \code{numeric}.
 \item \code{duration}: A \code{matrix} or a \code{data.frame} providing the
 time spent in each state for each sequence and time index.
 This is an alternative to \code{time}.
