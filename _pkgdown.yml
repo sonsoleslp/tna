@@ -99,7 +99,7 @@ reference:
     - plot_compare
     - plot_compare.group_tna
     - plot.tna_comparison
-    - plot_tna_sequence_comparison
+    - plot.tna_sequence_comparison
 
   - title: Validation
     contents:
