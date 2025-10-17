@@ -1676,7 +1676,7 @@ hist.group_tna <- function(x, ...) {
 #' @inheritDotParams plot.tna
 #' @examples
 #' model <- group_model(engagement_mmm)
-#' plot(model)
+#' plot(model, which = 1)
 #'
 plot.group_tna <- function(x, title, which, ...) {
   check_missing(x)

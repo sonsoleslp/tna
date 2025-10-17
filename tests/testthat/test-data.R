@@ -100,7 +100,7 @@ test_that("data preparation works when actor and order are provided", {
 })
 
 test_that("data preparation for multiple actors is supported", {
-  data_multiactor <- tibble::tibble(
+  data_multi_actor <- tibble::tibble(
     user = c("A", "A", "A", "A", "B", "B", "B", "B"),
     session = c(1, 1, 2, 2, 1, 1, 2, 2),
     action = c(
@@ -111,7 +111,7 @@ test_that("data preparation for multiple actors is supported", {
   rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
     prepare_data(
-      data_multiactor, actor = c("user", "session"), action = "action"
+      data_multi_actor, actor = c("user", "session"), action = "action"
     ),
     NA
   )

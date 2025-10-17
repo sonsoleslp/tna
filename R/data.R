@@ -83,14 +83,17 @@
 #' print(results_single$meta_data)
 #' print(results_single$statistics)
 #'
-#' # Multiple actors (synthetic example)
-#' grl <- group_regulation_long
-#' grl$Class <- rep(LETTERS[1:3], length.out = nrow(grl))
+#' # Multiple actors
+#' data_multi_actor <- tibble::tibble(
+#'   user = c("A", "A", "A", "A", "B", "B", "B", "B"),
+#'   session = c(1, 1, 2, 2, 1, 1, 2, 2),
+#'   action = c(
+#'     "view", "click", "add_cart", "view",
+#'     "checkout", "view", "click", "share"
+#'   )
+#' )
 #' results_multi_actor <- prepare_data(
-#'   grl,
-#'   actor = c("Actor", "Class"),
-#'   time = "Time",
-#'   action = "Action"
+#'   data_multi_actor, actor = c("user", "session"), action = "action"
 #' )
 #' print(results_multi_actor$sequence_data)
 #' print(results_multi_actor$meta_data)
