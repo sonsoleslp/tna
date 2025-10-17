@@ -73,8 +73,10 @@ Community detection functions
 \code{\link{print.tna_communities}()}
 
 Cluster-related functions
+\code{\link{cluster_mmm}()},
 \code{\link{group_model}()},
 \code{\link{mmm_stats}()},
+\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}
