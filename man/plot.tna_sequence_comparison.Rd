@@ -8,8 +8,8 @@
   x,
   n = 10,
   legend = TRUE,
-  cells = FALSE,
-  text_color = "black",
+  cells = TRUE,
+  text_color = "white",
   digits = 2L,
   ...
 )
@@ -24,10 +24,10 @@ The default is \code{10}.}
 legend. The default is \code{TRUE}.}
 
 \item{cells}{A \code{logical} value indicating whether to display the
-numeric values in each cell. The default is \code{FALSE}.}
+numeric values in each cell. The default is \code{TRUE}.}
 
 \item{text_color}{A \code{character} string specifying the text color to use for
-the cell values.}
+the cell values. The default is \code{"white"}.}
 
 \item{digits}{An \code{integer} specifying the number of digits for the cell
 values.}

@@ -153,26 +153,9 @@ cluster_mmm <- function(data, cols = tidyselect::everything(), formula,
     cli::cli_progress_done()
   }
   if (k_len > 1L) {
-    #nulls <- vapply(results, is.null, logical(1L))
-    # stopifnot_(
-    #   !all(nulls),
-    #   "Fitting the model failed with all values of {.arg k}."
-    # )
-    # if (any(nulls)) {
-    #   failed <- k[which(nulls)]
-    #   k_failed <- cs(failed)
-    #   warning_(
-    #     "Fitting the model with k = {k_failed} failed."
-    #   )
-    # }
-    #results <- results[!nulls]
     criteria <- vapply(results, "[[", numeric(1L), criterion)
     out <- results[[which.min(criteria)]]
   } else {
-    # stopifnot_(
-    #   !is.null(results[[1L]]),
-    #   "Fitting the model with k = {k} failed."
-    # )
     out <- results[[1L]]
   }
   cluster_names <- cluster_names[seq_len(out$k)]
@@ -190,6 +173,9 @@ cluster_mmm <- function(data, cols = tidyselect::everything(), formula,
   names(out$beta) <- cluster_names
   if (!missing(formula)) {
     out$formula <- formula
+  }
+  if (!out$converged) {
+    warning_("The algorithm did not converge.")
   }
   structure(
     out,

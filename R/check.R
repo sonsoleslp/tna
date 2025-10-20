@@ -430,3 +430,22 @@ check_em_control <- function(control) {
   check_range(control$step, lower = 0.0, upper = 1.0)
   control
 }
+
+#' Check `build_model` dots arguments
+#'
+#' @noRd
+check_dots <- function(...) {
+  dots <- list(...)
+  dots_names <- names(dots)
+  valid_args <- c(
+    "cols",
+    "inits",
+    "begin_state",
+    "end_state"
+  )
+  invalid_dots <- dots_names[!dots_names %in% valid_args]
+  stopifnot_(
+    length(invalid_dots) == 0L,
+    "Argument{?/s} {.arg {invalid_dots}} {?is/are} not recognized."
+  )
+}

@@ -3,12 +3,15 @@
 \name{sequence_indices}
 \alias{sequence_indices}
 \alias{sequence_indices.tna}
+\alias{sequence_indices.group_tna}
 \alias{sequence_indices.default}
 \title{Compute Sequence Indices}
 \usage{
 sequence_indices(x, ...)
 
 \method{sequence_indices}{tna}(x, favorable, omega = 1, ...)
+
+\method{sequence_indices}{group_tna}(x, favorable, omega = 1, ...)
 
 \method{sequence_indices}{default}(x, cols, favorable, omega = 1, ...)
 }

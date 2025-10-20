@@ -24,29 +24,26 @@ build_model(
   params = list(),
   inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{default}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
   inits,
-  begin_state,
-  end_state
+  ...
 )
 
 \method{build_model}{matrix}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
   inits,
-  begin_state,
-  end_state
+  ...
 )
 
 \method{build_model}{stslist}(
@@ -55,9 +52,9 @@ build_model(
   scaling = character(0L),
   cols = tidyselect::everything(),
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{data.frame}(
@@ -66,42 +63,39 @@ build_model(
   scaling = character(0L),
   cols = tidyselect::everything(),
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{tna_data}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{tsn}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{tsn_ews}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 tna(x, ...)
@@ -166,8 +160,7 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 }}
 
 \item{cols}{An \code{expression} giving a tidy selection of columns that should
-be considered as sequence data. By default, all columns are used. Ignored
-for \code{matrix}, \code{tna_data} and \code{tsn} type \code{x}.}
+be considered as sequence data. By default, all columns are used.}
 
 \item{params}{A \code{list} of additional arguments for models of specific
 \code{type}. The potential elements of this list are:
@@ -204,8 +197,7 @@ This is an alternative to \code{time}.
 }}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
-for each state. The vector will be scaled to unity.
-Ignored if \code{x} is not a \code{matrix}.}
+for each state. The vector will be scaled to unity.}
 
 \item{begin_state}{A \code{character} string for an additional begin state.
 This state is added as the first observation for every sequence to

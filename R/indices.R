@@ -30,6 +30,18 @@ sequence_indices.tna <- function(x, favorable, omega = 1, ...) {
 
 #' @export
 #' @rdname sequence_indices
+sequence_indices.group_tna <- function(x, favorable, omega = 1, ...) {
+  check_missing(x)
+  check_class(x, "group_tna")
+  data <- combine_data(x)
+  group <- data$.group
+  data$.group <- NULL
+  data <- create_seqdata(data, cols = names(data))
+  sequence_indices_(data, favorable, omega, group)
+}
+
+#' @export
+#' @rdname sequence_indices
 sequence_indices.default <- function(x, cols, favorable, omega = 1, ...) {
   check_missing(x)
   stopifnot_(
@@ -43,7 +55,7 @@ sequence_indices.default <- function(x, cols, favorable, omega = 1, ...) {
   sequence_indices_(data, favorable, omega)
 }
 
-sequence_indices_ <- function(data, favorable, omega) {
+sequence_indices_ <- function(data, favorable, omega, group) {
   model <- initialize_model(
     x = data,
     type = "relative",
@@ -177,7 +189,8 @@ sequence_indices_ <- function(data, favorable, omega) {
     #   )
     # )
   }
-  data.frame(
+  out <- data.frame(
+    group = seq_len(n),
     valid_n = valid,
     valid_prop = valid / last_obs,
     unique_states = u_states,
@@ -200,6 +213,8 @@ sequence_indices_ <- function(data, favorable, omega) {
     integrative_potential = int_pot,
     complexity_index = comp
   )
+  out$group <- group %m% NULL
+  out
 }
 
 cyclic_strength <- function(m, n, k, last_obs) {

@@ -172,10 +172,8 @@ compare_ <- function(x, y, scaling = "none", ...) {
   edges <- expand.grid(source = rn, target = rn)
   edges_x <- edges
   edges_y <- edges
-  # edges_diff <- edges
   edges_x$weight <- as.vector(x)
   edges_y$weight <- as.vector(y)
-  # edges_diff$difference <- diff
   edges_combined <- edges
   edges_combined$weight_x <- edges_x$weight
   edges_combined$weight_y <- edges_y$weight

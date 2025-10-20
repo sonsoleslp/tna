@@ -54,12 +54,13 @@ group_model.default <- function(x, group, type = "relative",
                                 cols = tidyselect::everything(),
                                 params = list(), na.rm = TRUE, ...) {
   check_missing(x)
+  check_missing(group)
   check_flag(groupwise)
   check_flag(na.rm)
   stopifnot_(
-    inherits(x, c("stslist", "data.frame", "tna_data")),
+    inherits(x, c("stslist", "data.frame", "tna_data", "tna_mmm")),
     "Argument {.arg x} must be {.cls stslist} (sequence object), a
-    {.cls data.frame} or a {.cls tna_data} object."
+    {.cls data.frame}, a {.cls tna_data} object."
   )
   if (inherits(x, "tna_data")) {
     wide <- cbind(x$sequence_data, x$meta_data)
@@ -68,7 +69,6 @@ group_model.default <- function(x, group, type = "relative",
   } else {
     cols <- get_cols(rlang::enquo(cols), x)
   }
-  group <- group %m% seq_len(nrow(x))
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   n_group <- length(group)
@@ -209,29 +209,24 @@ group_model.mhmm <- function(x, type = "relative", scaling = character(0L),
   )
 }
 
-# #' @export
-# #' @rdname group_model
-# group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
-#                                 groupwise = FALSE, params = list(),
-#                                 na.rm = TRUE, ...) {
-#   check_missing(x)
-#   check_class(x, "tna_mmm")
-#   lab <- attr(x$data, "labels")
-#   data <- as.data.frame(
-#     lapply(as.data.frame(x$data), function(y) factor(y, labels = lab))
-#   )
-#   assignment <- factor(max.col(x$posterior), labels = x$cluster_names)
-#   group_model.default(
-#     x = data,
-#     group = assignment,
-#     type = type,
-#     scaling = scaling,
-#     groupwise = groupwise,
-#     params = params,
-#     na.rm = na.rm,
-#     ...
-#   )
-# }
+#' @export
+#' @rdname group_model
+group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
+                                groupwise = FALSE, params = list(),
+                                na.rm = TRUE, ...) {
+  check_missing(x)
+  check_class(x, "tna_mmm")
+  group_model.default(
+    x = x$data,
+    group = x$assignments,
+    type = type,
+    scaling = scaling,
+    groupwise = groupwise,
+    params = params,
+    na.rm = na.rm,
+    ...
+  )
+}
 
 #' @export
 #' @rdname group_model
@@ -357,7 +352,6 @@ scale_weights_global <- function(weights, type, scaling, a) {
 #' Combine data from clusters into a single dataset
 #'
 #' @param x A `group_tna` object.
-#' @param pivot A `logical` value for whether to pivot data into long format.
 #' @noRd
 combine_data <- function(x) {
   cols <- attr(x, "cols")

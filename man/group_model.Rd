@@ -4,6 +4,7 @@
 \alias{group_model}
 \alias{group_model.default}
 \alias{group_model.mhmm}
+\alias{group_model.tna_mmm}
 \alias{group_model.tna_clustering}
 \alias{group_tna}
 \alias{group_ftna}
@@ -26,6 +27,16 @@ group_model(x, ...)
 )
 
 \method{group_model}{mhmm}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  groupwise = FALSE,
+  params = list(),
+  na.rm = TRUE,
+  ...
+)
+
+\method{group_model}{tna_mmm}(
   x,
   type = "relative",
   scaling = character(0L),

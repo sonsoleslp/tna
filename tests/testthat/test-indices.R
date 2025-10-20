@@ -12,6 +12,13 @@ test_that("sequence indices can be computed for tna models", {
   )
 })
 
+test_that("sequence indices can be computed for group tna models", {
+  expect_error(
+    sequence_indices(mock_group_tna),
+    NA
+  )
+})
+
 test_that("favorable states can be specified", {
   expect_error(
     sequence_indices(mock_sequence, favorable = "A"),

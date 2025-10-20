@@ -57,8 +57,7 @@
 #'       `ties.method = "average"`.
 #'
 #' @param cols An `expression` giving a tidy selection of columns that should
-#'   be considered as sequence data. By default, all columns are used. Ignored
-#'   for `matrix`, `tna_data` and `tsn` type `x`.
+#'   be considered as sequence data. By default, all columns are used.
 #' @param params A `list` of additional arguments for models of specific
 #'   `type`. The potential elements of this list are:
 #'
@@ -94,7 +93,6 @@
 #'
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. The vector will be scaled to unity.
-#'   Ignored if `x` is not a `matrix`.
 #' @param begin_state A `character` string for an additional begin state.
 #'   This state is added as the first observation for every sequence to
 #'   signify the beginning of the sequence
@@ -102,7 +100,7 @@
 #'   This state is added as the last observation for every sequence to
 #'   siginify the end of the sequence.
 #' @param ... Ignored. For the `build_model` aliases (e.g., `tna`), this
-#' argument matches the actual arguments to `build_model` beside `x`.
+#'   argument matches the actual arguments to `build_model` beside `x`.
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
@@ -122,17 +120,16 @@
 #'
 build_model <- function(x, type = "relative", scaling = character(0L),
                         cols = tidyselect::everything(), params = list(),
-                        inits, begin_state, end_state) {
+                        inits, begin_state, end_state, ...) {
   UseMethod("build_model")
 }
 
 #' @export
 #' @rdname build_model
 build_model.default <- function(x, type = "relative", scaling = character(0L),
-                                cols = tidyselect::everything(),
-                                params = list(), inits,
-                                begin_state, end_state) {
+                                params = list(), inits, ...) {
   check_missing(x)
+  check_dots(...)
   x <- try_(as.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
@@ -150,9 +147,9 @@ build_model.default <- function(x, type = "relative", scaling = character(0L),
 #' @export
 #' @rdname build_model
 build_model.matrix <- function(x, type = "relative", scaling = character(0L),
-                               cols = tidyselect::everything(), params = list(),
-                               inits, begin_state, end_state) {
+                               params = list(), inits, ...) {
   check_missing(x)
+  check_dots(...)
   x <- try_(data.matrix(x))
   stopifnot_(
     !inherits(x, "try-error"),
@@ -216,9 +213,9 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = tidyselect::everything(),
-                                params = list(), inits,
-                                begin_state, end_state) {
+                                params = list(), begin_state, end_state, ...) {
   check_missing(x)
+  check_dots(...)
   check_class(x, "stslist")
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
@@ -246,10 +243,11 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
                                    cols = tidyselect::everything(),
-                                   params = list(), inits,
-                                   begin_state, end_state) {
+                                   params = list(), begin_state,
+                                   end_state, ...) {
   check_missing(x)
   check_class(x, "data.frame")
+  check_dots(...)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
@@ -274,11 +272,10 @@ build_model.data.frame <- function(x, type = "relative",
 #' @export
 #' @rdname build_model
 build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
-                                 cols = tidyselect::everything(),
-                                 params = list(), inits, begin_state,
-                                 end_state) {
+                                 params = list(), begin_state, end_state, ...) {
   check_missing(x)
   check_class(x, "tna_data")
+  check_dots(...)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   wide <- cbind(x$sequence_data, x$meta_data)
@@ -317,10 +314,10 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
 #' @export
 #' @rdname build_model
 build_model.tsn <- function(x, type = "relative", scaling = character(0L),
-                            cols = tidyselect::everything(), params = list(),
-                            inits, begin_state, end_state) {
+                            params = list(), begin_state, end_state, ...) {
   check_missing(x)
   check_class(x, "tsn")
+  check_dots(...)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   id <- attr(x, "id_col")
@@ -358,11 +355,10 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
 #' @export
 #' @rdname build_model
 build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
-                                cols = tidyselect::everything(),
-                                params = list(), inits,
-                                begin_state, end_state) { # nocov start
+                                params = list(), begin_state, end_state, ...) { # nocov start
   check_missing(x)
   check_class(x, "tsn_ews")
+  check_dots(...)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   id <- attr(x, "id_col")
@@ -539,9 +535,6 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param end_state Optional `character` string giving the end state.
 #' @noRd
 create_seqdata <- function(x, cols, alphabet, begin_state, end_state) {
-  # if (is.numeric(cols)) {
-  #   stop("Numeric cols detected")
-  # }
   cols <- which(names(x) %in% cols)
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
@@ -743,7 +736,6 @@ compute_transitions <- function(m, a, type, params) {
             to <- m[, j]
             any_na <- is.na(from) | is.na(to)
             new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-            #trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
             d <- decay(time[, i], time[, j], lambda)[!any_na]
             trans[new_trans] <- trans[new_trans] + d
           }
@@ -756,7 +748,6 @@ compute_transitions <- function(m, a, type, params) {
             to <- m[, j]
             any_na <- is.na(from) | is.na(to)
             new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-            #trans[new_trans] <- trans[new_trans] + exp((i - j) / lambda)
             d <- decay(time[, i], time[, j], lambda)[!any_na]
             trans[new_trans] <- trans[new_trans] + d
           }
