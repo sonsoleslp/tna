@@ -22,6 +22,7 @@ build_model(
   scaling = character(0L),
   cols = tidyselect::everything(),
   params = list(),
+  concat = 1L,
   inits,
   begin_state,
   end_state,
@@ -52,6 +53,7 @@ build_model(
   scaling = character(0L),
   cols = tidyselect::everything(),
   params = list(),
+  concat = 1L,
   begin_state,
   end_state,
   ...
@@ -62,6 +64,7 @@ build_model(
   type = "relative",
   scaling = character(0L),
   cols = tidyselect::everything(),
+  concat = 1L,
   params = list(),
   begin_state,
   end_state,
@@ -73,6 +76,7 @@ build_model(
   type = "relative",
   scaling = character(0L),
   params = list(),
+  concat = 1L,
   begin_state,
   end_state,
   ...
@@ -83,6 +87,7 @@ build_model(
   type = "relative",
   scaling = character(0L),
   params = list(),
+  concat = 1L,
   begin_state,
   end_state,
   ...
@@ -93,6 +98,7 @@ build_model(
   type = "relative",
   scaling = character(0L),
   params = list(),
+  concat = 1L,
   begin_state,
   end_state,
   ...
@@ -195,6 +201,9 @@ of \code{x} for the time values. \code{Date} values are converted to \code{numer
 time spent in each state for each sequence and time index.
 This is an alternative to \code{time}.
 }}
+
+\item{concat}{An \code{integer} for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. The vector will be scaled to unity.}

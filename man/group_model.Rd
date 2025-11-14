@@ -22,6 +22,7 @@ group_model(x, ...)
   groupwise = FALSE,
   cols = tidyselect::everything(),
   params = list(),
+  concat = 1L,
   na.rm = TRUE,
   ...
 )
@@ -163,6 +164,9 @@ of \code{x} for the time values. \code{Date} values are converted to \code{numer
 time spent in each state for each sequence and time index.
 This is an alternative to \code{time}.
 }}
+
+\item{concat}{An \code{integer} for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).}
 
 \item{na.rm}{A \code{logical} value that determines if observations with \code{NA}
 value in \code{group} be removed. If \code{FALSE}, an additional category for \code{NA}

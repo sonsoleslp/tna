@@ -52,7 +52,8 @@ group_model <- function(x, ...) {
 group_model.default <- function(x, group, type = "relative",
                                 scaling = character(0L), groupwise = FALSE,
                                 cols = tidyselect::everything(),
-                                params = list(), na.rm = TRUE, ...) {
+                                params = list(), concat = 1L,
+                                na.rm = TRUE, ...) {
   check_missing(x)
   check_missing(group)
   check_flag(groupwise)
@@ -132,7 +133,12 @@ group_model.default <- function(x, group, type = "relative",
     vals[!is.na(vals)]
   )
   a <- length(alphabet)
-  seq_data <- create_seqdata(x, cols = cols, alphabet = alphabet)
+  seq_data <- create_seqdata(
+    x = x,
+    cols = cols,
+    alphabet = alphabet,
+    concat = concat
+  )
   trans <- compute_transitions(seq_data, a, type, params)
   for (i in seq_along(levs)) {
     groups[[i]] <- rep(i, sum(group == i, na.rm = TRUE))

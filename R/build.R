@@ -91,6 +91,8 @@
 #'      time spent in each state for each sequence and time index.
 #'      This is an alternative to `time`.
 #'
+#' @param concat An `integer` for the number of consecutive sequences
+#'   to concatenate. The default is 1 (no concatenation).
 #' @param inits An optional `numeric` vector of initial state probabilities
 #'   for each state. The vector will be scaled to unity.
 #' @param begin_state A `character` string for an additional begin state.
@@ -120,7 +122,7 @@
 #'
 build_model <- function(x, type = "relative", scaling = character(0L),
                         cols = tidyselect::everything(), params = list(),
-                        inits, begin_state, end_state, ...) {
+                        concat = 1L, inits, begin_state, end_state, ...) {
   UseMethod("build_model")
 }
 
@@ -213,7 +215,8 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = tidyselect::everything(),
-                                params = list(), begin_state, end_state, ...) {
+                                params = list(), concat = 1L,
+                                begin_state, end_state, ...) {
   check_missing(x)
   check_dots(...)
   check_class(x, "stslist")
@@ -223,6 +226,7 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
   x <- create_seqdata(
     x = x,
     cols = cols,
+    concat = concat,
     begin_state = begin_state,
     end_state = end_state
   )
@@ -243,8 +247,8 @@ build_model.stslist <- function(x, type = "relative", scaling = character(0L),
 build_model.data.frame <- function(x, type = "relative",
                                    scaling = character(0L),
                                    cols = tidyselect::everything(),
-                                   params = list(), begin_state,
-                                   end_state, ...) {
+                                   concat = 1L, params = list(),
+                                   begin_state, end_state, ...) {
   check_missing(x)
   check_class(x, "data.frame")
   check_dots(...)
@@ -254,6 +258,7 @@ build_model.data.frame <- function(x, type = "relative",
   x <- create_seqdata(
     x = x,
     cols = cols,
+    concat = concat,
     begin_state = begin_state,
     end_state = end_state
   )
@@ -272,7 +277,8 @@ build_model.data.frame <- function(x, type = "relative",
 #' @export
 #' @rdname build_model
 build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
-                                 params = list(), begin_state, end_state, ...) {
+                                 params = list(), concat = 1L,
+                                 begin_state, end_state, ...) {
   check_missing(x)
   check_class(x, "tna_data")
   check_dots(...)
@@ -296,6 +302,7 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
   x <- create_seqdata(
     x = wide,
     cols = names(x$sequence_data),
+    concat = concat,
     begin_state = begin_state,
     end_state = end_state
   )
@@ -314,7 +321,8 @@ build_model.tna_data <- function(x, type = "relative", scaling = character(0L),
 #' @export
 #' @rdname build_model
 build_model.tsn <- function(x, type = "relative", scaling = character(0L),
-                            params = list(), begin_state, end_state, ...) {
+                            params = list(), concat = 1L,
+                            begin_state, end_state, ...) {
   check_missing(x)
   check_class(x, "tsn")
   check_dots(...)
@@ -337,6 +345,7 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
   x <- create_seqdata(
     x = wide,
     cols = names(wide),
+    concat = concat,
     begin_state = begin_state,
     end_state = end_state
   )
@@ -355,7 +364,8 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
 #' @export
 #' @rdname build_model
 build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
-                                params = list(), begin_state, end_state, ...) { # nocov start
+                                params = list(), concat = 1L,
+                                begin_state, end_state, ...) { # nocov start
   check_missing(x)
   check_class(x, "tsn_ews")
   check_dots(...)
@@ -375,6 +385,7 @@ build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
   x <- create_seqdata(
     x = wide,
     cols = seq_len(ncol(wide)),
+    concat = concat,
     begin_state = begin_state,
     end_state = end_state
   )
@@ -531,10 +542,12 @@ build_model_ <- function(weights, inits = NULL, labels = NULL,
 #' @param x A `data.frame` or a `stslist` object.
 #' @param cols An `character` vector of column names.
 #' @param alphabet Optional `character` vector of the alphabet.
+#' @param concat How many consecutive sequences should be concatenated?
 #' @param begin_state Optional `character` string giving the begin state.
 #' @param end_state Optional `character` string giving the end state.
 #' @noRd
-create_seqdata <- function(x, cols, alphabet, begin_state, end_state) {
+create_seqdata <- function(x, cols, alphabet, concat = 1L,
+                           begin_state, end_state) {
   cols <- which(names(x) %in% cols)
   if (inherits(x, "stslist")) {
     alphabet <- attr(x, "alphabet")
@@ -567,6 +580,26 @@ create_seqdata <- function(x, cols, alphabet, begin_state, end_state) {
       )
     )
   )
+  if (concat > 1L) {
+    n <- nrow(x)
+    k <- ncol(x)
+    m <- n %/% concat
+    modulus <- n %% concat
+    extra <- modulus > 0L
+    x_cc <- matrix(NA_integer_, nrow = m + extra, ncol = concat * ncol(x))
+    for (i in seq_len(m)) {
+      idx <- seq((i - 1L) * concat + 1L, i * concat)
+      x_cc[i, ] <- c(t(x[idx, , drop = FALSE]))
+    }
+    if (extra) {
+      idx <- seq(1L, k)
+      for (i in seq_len(modulus)) {
+        x_cc[m + 1L, idx] <- x[m * concat + i, , drop = FALSE]
+        idx <- idx + k
+      }
+    }
+    x <- x_cc
+  }
   if (!missing(begin_state)) {
     x <- cbind(1L, x + 1L)
     alphabet <- c(begin_state, alphabet)
