@@ -176,8 +176,6 @@ sequence_indices_ <- function(data, favorable, omega, group) {
       w <- (idx)^omega
       pos <- row[idx] %in% fav
       int_pot[i] <- sum(pos * w) / sum(w)
-    } else {
-      int_pot <- 1
     }
     # cyclic_str[i] <- max(
     #   vapply(
@@ -213,6 +211,9 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     integrative_potential = int_pot,
     complexity_index = comp
   )
+  if (length(fav) == 0L) {
+    out$integrative_potential <- NULL
+  }
   out$group <- group %m% NULL
   out
 }
