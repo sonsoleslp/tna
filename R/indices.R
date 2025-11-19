@@ -85,6 +85,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
   loops <- numeric(n)
   rate <- numeric(n)
   mean_spells <- numeric(n)
+  max_spells <- numeric(n)
   trans_comp <- numeric(n)
   init_per <- numeric(n)
   init_decay <- numeric(n)
@@ -110,6 +111,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     values <- runs$values[runs_obs]
     spells <- runs$lengths[runs_obs]
     mean_spells[i] <- mean(spells)
+    max_spells[i] <- max(spells)
     u_states[i] <- length(freq)
     long_ent[i] <- -sum(prop[pos] * log(prop[pos]))
     simpson[i] <- 1.0 - sum(prop^2)
@@ -193,6 +195,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     valid_prop = valid / last_obs,
     unique_states = u_states,
     mean_spell_duration = mean_spells,
+    max_spell_duration = max_spells,
     longitudinal_entropy = long_ent,
     simpson_diversity = simpson,
     self_loop_tendency = loops,
@@ -205,6 +208,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     last_state = last,
     dominant_state = dom_state,
     dominant_prop = dom_prop,
+    dominant_max_spell = dom_spell,
     emergent_state = emergent_state,
     emergent_state_persistence = emergent_per,
     emergent_state_prop = emergent_prop,
