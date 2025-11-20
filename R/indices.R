@@ -89,6 +89,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
   max_spells <- numeric(n)
   trans_comp <- numeric(n)
   init_per <- numeric(n)
+  init_prop <- numeric(n)
   init_decay <- numeric(n)
   cyclic_str <- cyclic_strength(m, n, k, last_obs)
   dom_state <- character(n)
@@ -135,6 +136,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     early <- sum(first_third == row[1L], na.rm = TRUE) / length(first_third)
     late <- sum(last_third == row[1L], na.rm = TRUE) / length(last_third)
     init_decay[i] <- early - late
+    init_prop[i] <- prop[row[1L]]
     dom_idx <- which.max(freq)
     dom_state[i] <- lab[dom_idx]
     dom_prop[i] <- prop[dom_idx]
@@ -193,7 +195,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
   out <- data.frame(
     group = seq_len(n),
     valid_n = valid,
-    valid_prop = valid / last_obs,
+    valid_proportion = valid / last_obs,
     unique_states = u_states,
     mean_spell_duration = mean_spells,
     max_spell_duration = max_spells,
@@ -203,16 +205,17 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     transition_rate = rate,
     transition_complexity = trans_comp,
     initial_state_persistence = init_per,
+    initial_state_proportion = init_prop,
     initial_state_influence_decay = init_decay,
     cyclic_feedback_strength = cyclic_str,
     first_state = first,
     last_state = last,
     dominant_state = dom_state,
-    dominant_prop = dom_prop,
+    dominant_proportion = dom_prop,
     dominant_max_spell = dom_spell,
     emergent_state = emergent_state,
     emergent_state_persistence = emergent_per,
-    emergent_state_prop = emergent_prop,
+    emergent_state_proportion = emergent_prop,
     integrative_potential = int_pot,
     complexity_index = comp
   )
