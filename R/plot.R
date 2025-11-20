@@ -1412,7 +1412,7 @@ plot_sequences.default <- function(x, cols = tidyselect::everything(),
     sort(unique(unlist(x[, cols])))
   )
   lev <- seq_along(lab)
-  x[cols] <- lapply(x[cols], factor)
+  x[cols] <- lapply(x[cols], factor, labels = lab, levels = lab)
   x[cols] <- lapply(x[cols], as.integer)
   sort_by <- sort_by %m% rlang::enquo(sort_by)
   sort_by <- rlang::as_quosure(sort_by, rlang::caller_env())
@@ -1447,7 +1447,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
     x <- x |>
       dplyr::arrange(dplyr::across(dplyr::all_of(sort_by)), .by_group = TRUE)
   }
-  x$.seq_id <- seq_len(nrow(x))
+  x$.seq_id <- rev(seq_len(nrow(x)))
   # Remove temporary grouping used in sorting
   group <- ifelse_(has_group, group, rlang::missing_arg())
   x <- x |> dplyr::ungroup()

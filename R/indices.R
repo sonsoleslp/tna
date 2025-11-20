@@ -72,6 +72,7 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     unfav <- setdiff(seq_along(lab), fav)
   }
   m <- as.matrix(data)
+  u_vals <- length(unique(c(m)))
   nas <- is.na(m)
   last_obs <- max.col(!nas, ties.method = "last")
   n <- nrow(m)
@@ -113,10 +114,10 @@ sequence_indices_ <- function(data, favorable, omega, group) {
     mean_spells[i] <- mean(spells)
     max_spells[i] <- max(spells)
     u_states[i] <- length(freq)
-    long_ent[i] <- -sum(prop[pos] * log(prop[pos]))
+    long_ent[i] <- -sum(prop[pos] * log(prop[pos])) / log(u_vals)
     simpson[i] <- 1.0 - sum(prop^2)
-    self <- sum(diag(trans[i,,]))
-    total <- sum(trans[i,,])
+    self <- sum(diag(trans[i, , ]))
+    total <- sum(trans[i, , ])
     loops[i] <- self / total
     rate[i] <- (total - self) / (valid[i] - 1)
     tmp <- trans[i,,]
