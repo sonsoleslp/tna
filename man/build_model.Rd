@@ -8,7 +8,6 @@
 \alias{build_model.data.frame}
 \alias{build_model.tna_data}
 \alias{build_model.tsn}
-\alias{build_model.tsn_ews}
 \alias{tna}
 \alias{ftna}
 \alias{ctna}
@@ -83,17 +82,6 @@ build_model(
 )
 
 \method{build_model}{tsn}(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  params = list(),
-  concat = 1L,
-  begin_state,
-  end_state,
-  ...
-)
-
-\method{build_model}{tsn_ews}(
   x,
   type = "relative",
   scaling = character(0L),

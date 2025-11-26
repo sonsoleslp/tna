@@ -328,20 +328,17 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
   check_dots(...)
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
-  id <- attr(x, "id_col")
-  state <- attr(x, "state_col")
-  time <- attr(x, "time_col")
   wide <- x |>
     dplyr::select(
-      c(!!rlang::sym(id), !!rlang::sym(state), !!rlang::sym(time))
+      c(!!rlang::sym("id"), !!rlang::sym("state"), !!rlang::sym("time"))
     ) |>
     tidyr::pivot_wider(
-      id_cols = attr(x, "id_col"),
-      values_from = !!rlang::sym(state),
-      names_from = !!rlang::sym(time),
+      id_cols = "id",
+      values_from = !!rlang::sym("state"),
+      names_from = !!rlang::sym("time"),
       names_prefix = "T"
     ) |>
-    dplyr::select(!(!!rlang::sym(id)))
+    dplyr::select(!(!!rlang::sym("id")))
   x <- create_seqdata(
     x = wide,
     cols = names(wide),
@@ -361,45 +358,45 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
   )
 }
 
-#' @export
-#' @rdname build_model
-build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
-                                params = list(), concat = 1L,
-                                begin_state, end_state, ...) { # nocov start
-  check_missing(x)
-  check_class(x, "tsn_ews")
-  check_dots(...)
-  type <- check_model_type(type)
-  scaling <- check_model_scaling(scaling)
-  id <- attr(x, "id_col")
-  cls <- attr(x, "classification")
-  wide <- cls |>
-    dplyr::select(
-      c(!!rlang::sym("state"), !!rlang::sym("time"))
-    ) |>
-    tidyr::pivot_wider(
-      values_from = !!rlang::sym("state"),
-      names_from = !!rlang::sym("time"),
-      names_prefix = "T"
-    )
-  x <- create_seqdata(
-    x = wide,
-    cols = seq_len(ncol(wide)),
-    concat = concat,
-    begin_state = begin_state,
-    end_state = end_state
-  )
-  model <- initialize_model(x, type, scaling, params)
-  build_model_(
-    weights = model$weights,
-    inits = model$inits,
-    labels = model$labels,
-    type = type,
-    scaling = scaling,
-    data = x,
-    params = params
-  )
-} # nocov end
+#' #' @export
+#' #' @rdname build_model
+#' build_model.tsn_ews <- function(x, type = "relative", scaling = character(0L),
+#'                                 params = list(), concat = 1L,
+#'                                 begin_state, end_state, ...) { # nocov start
+#'   check_missing(x)
+#'   check_class(x, "tsn_ews")
+#'   check_dots(...)
+#'   type <- check_model_type(type)
+#'   scaling <- check_model_scaling(scaling)
+#'   id <- attr(x, "id_col")
+#'   cls <- attr(x, "classification")
+#'   wide <- cls |>
+#'     dplyr::select(
+#'       c(!!rlang::sym("state"), !!rlang::sym("time"))
+#'     ) |>
+#'     tidyr::pivot_wider(
+#'       values_from = !!rlang::sym("state"),
+#'       names_from = !!rlang::sym("time"),
+#'       names_prefix = "T"
+#'     )
+#'   x <- create_seqdata(
+#'     x = wide,
+#'     cols = seq_len(ncol(wide)),
+#'     concat = concat,
+#'     begin_state = begin_state,
+#'     end_state = end_state
+#'   )
+#'   model <- initialize_model(x, type, scaling, params)
+#'   build_model_(
+#'     weights = model$weights,
+#'     inits = model$inits,
+#'     labels = model$labels,
+#'     type = type,
+#'     scaling = scaling,
+#'     data = x,
+#'     params = params
+#'   )
+#' } # nocov end
 
 # Aliases -----------------------------------------------------------------
 
