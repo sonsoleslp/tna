@@ -64,6 +64,15 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @export
 #' @family basic
 #' @param x A `tna` object from [tna()].
+#' @param node_list An optional `list` of two `character` vectors that define
+#'   two mutually exclusive groups of node labels.
+#' @param use_list_order A `logical` value. If `node_list` is provided,
+#'   defines how the order of the nodes in the plot is defined. A `TRUE` value
+#'   uses the order in `node_list`. Otherwise, the nodes are ranked based on
+#'   edge weights and ordered according to the rank.
+#' @param x_offset An optional `numeric` vector with the same number of
+#'   elements as there are states. Defines a horizontal offset for each node
+#'   in the plot when `node_list` is provided.
 #' @param labels See [qgraph::qgraph()].
 #' @param colors See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].

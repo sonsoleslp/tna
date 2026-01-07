@@ -6,6 +6,9 @@
 \usage{
 \method{plot}{tna}(
   x,
+  node_list,
+  use_list_order = TRUE,
+  x_offset,
   labels,
   colors,
   pie,
@@ -26,6 +29,18 @@
 }
 \arguments{
 \item{x}{A \code{tna} object from \code{\link[=tna]{tna()}}.}
+
+\item{node_list}{An optional \code{list} of two \code{character} vectors that define
+two mutually exclusive groups of node labels.}
+
+\item{use_list_order}{A \code{logical} value. If \code{node_list} is provided,
+defines how the order of the nodes in the plot is defined. A \code{TRUE} value
+uses the order in \code{node_list}. Otherwise, the nodes are ranked based on
+edge weights and ordered according to the rank.}
+
+\item{x_offset}{An optional \code{numeric} vector with the same number of
+elements as there are states. Defines a horizontal offset for each node
+in the plot when \code{node_list} is provided.}
 
 \item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
