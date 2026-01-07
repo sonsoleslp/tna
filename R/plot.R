@@ -102,7 +102,8 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' model <- tna(group_regulation)
 #' plot(model)
 #'
-plot.tna <- function(x, labels, colors, pie, cut,
+plot.tna <- function(x, node_list, use_list_order = TRUE, x_offset,
+                     labels, colors, pie, cut,
                      show_pruned = TRUE, pruned_edge_color = "pink",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
@@ -110,6 +111,131 @@ plot.tna <- function(x, labels, colors, pie, cut,
                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_missing(x)
   check_class(x, "tna")
+  if (missing(node_list)) {
+    out <- plot_tna_(
+      x, labels, colors, pie, cut, show_pruned, pruned_edge_color,
+      edge.color, edge.labels, edge.label.position, layout,
+      layout_args, scale_nodes, scaling_factor, mar, theme, ...
+    )
+  } else {
+    out <- plot_htna_(
+      x = x,
+      node_list = node_list,
+      use_list_order = use_list_order,
+      x_offset = x_offset,
+      layout = NULL,
+      colors = NULL,
+      shape = NULL,
+      labels = labels,
+      pie = pie,
+      cut = cut,
+      show_pruned = show_pruned,
+      pruned_edge_color = pruned_edge_color,
+      edge.color = edge.color,
+      edge.labels = edge.labels,
+      edge.label.position = edge.label.position,
+      layout_args = list(),
+      scale_nodes = scale_nodes,
+      scaling_factor = scaling_factor,
+      mar = mar,
+      theme = theme,
+      ...
+    )
+  }
+  invisible(out)
+}
+
+plot_htna_ <- function(x, node_list, use_list_order = TRUE, x_offset,
+                       layout, colors, shape, ...) {
+  stopifnot_(
+    length(node_list) == 2L,
+    "Argument {.arg node_list} must be a {.cls list} of length 2."
+  )
+  stopifnot_(
+    is.character(node_list[[1L]]) && is.character(node_list[[2L]]),
+    "Elements of {.arg node_list} must be {.cls character} vectors."
+  )
+  check_flag(use_list_order)
+  lab <- x$labels
+  lhs <- node_list[[1L]]
+  rhs <- node_list[[2L]]
+  common <- intersect(rhs, lhs)
+  stopifnot_(
+    length(common) == 0,
+    "The groups defined by {.arg node_list} must not contain common states."
+  )
+  lhs_idx <- match(lhs, lab)
+  rhs_idx <- match(rhs, lab)
+  missing <- lhs[is.na(lhs_idx)]
+  stopifnot_(
+    length(missing) == 0,
+    "Nodes {.val {missing}} are not present in the model."
+  )
+  missing <- rhs[is.na(rhs_idx)]
+  stopifnot_(
+    length(missing) == 0,
+    "Nodes {.val {missing}} are not present in the model."
+  )
+  n_lhs <- length(lhs_idx)
+  n_rhs <- length(rhs_idx)
+  n <- length(lab)
+  missing <- lab[!lab %in% union(lhs, rhs)]
+  stopifnot_(
+    n_lhs + n_rhs == n,
+    c(
+      "Every state must belong to one of the
+      groups defined by {.arg node_list}.",
+      `x` = "No group has been specified for node{?s} {.val {missing}}."
+    )
+  )
+  colors <- rep("lightgray", n)
+  shape <- rep("circle", n)
+  colors[lhs_idx] <- "#ffd89d"
+  colors[rhs_idx] <- "#a68ba5"
+  shape[lhs_idx] <- "circle"
+  shape[rhs_idx] <- "square"
+  x_pos <- rep(0, n)
+  x_pos[lhs_idx] <- -0.5
+  x_pos[rhs_idx] <- 0.5
+  if (!missing(x_offset)) {
+    stopifnot_(
+      length(x_offset) == n,
+      "Argument {.arg x_offset} must be of length {n} (the number of nodes)."
+    )
+    x_pos[lhs_idx] <- x_offset[1:n_lhs]
+    x_pos[rhs_idx] <- x_offset[(n_lhs + 1):n]
+  }
+  y_pos <- rep(0, n)
+  y_pos[lhs_idx] <- seq(1, -1, length.out = n_lhs)
+  y_pos[rhs_idx] <- seq(1, -1, length.out = n_rhs)
+  if (!use_list_order) {
+    w <- x$weights
+    edges <- w[lhs_idx, rhs_idx, drop = FALSE]
+    out_str <- rowSums(edges)
+    in_str <- colSums(edges)
+    rank_in <- rank(-in_str)
+    rank_out <- rank(-out_str)
+    pos_lhs <- rowSums(edges * rank_in[col(edges)]) / out_str
+    pos_rhs <- colSums(edges * rank_out) / in_str
+    y_pos[lhs_idx] <- y_pos[lhs_idx][rank(pos_lhs, ties.method = "first")]
+    y_pos[rhs_idx] <- y_pos[rhs_idx][rank(pos_rhs, ties.method = "first")]
+  }
+  layout_mat <- cbind(x = x_pos, y = y_pos)
+  plot_tna_(
+    x = x,
+    layout = layout_mat,
+    colors = colors,
+    shape = shape,
+    ...
+  )
+}
+
+plot_tna_ <- function(x, labels, colors, pie, cut,
+                      show_pruned = TRUE, pruned_edge_color = "pink",
+                      edge.color = NA, edge.labels = TRUE,
+                      edge.label.position = 0.65, layout = "circle",
+                      layout_args = list(), scale_nodes, scaling_factor = 0.5,
+                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_flag(show_pruned)
   check_flag(edge.labels)
   check_range(edge.label.position, scalar = FALSE)
@@ -176,7 +302,6 @@ plot.tna <- function(x, labels, colors, pie, cut,
     ...
   )
 }
-
 
 #' Plot a Bootstrapped Transition Network Analysis Model
 #'
