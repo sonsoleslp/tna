@@ -907,6 +907,174 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
   out
 }
 
+#' Plot Reliability Analysis Results
+#'
+#' @export
+#' @family comparison
+#' @param x A `tna_reliability` object.
+#' @param type A `character` string specifying the plot type. The options are:
+#'   `"histogram"` (default), `"density"`, or `"boxplot"`.
+#' @param plot_metric A `character` string specifying the metric to plot.
+#'   The default is the median absolute difference (`"Median Abs. Diff."`).
+#' @param ... Ignored
+#' @examples
+#' # Small number of iterations for CRAN
+#' rel <- reliability(engagement, iter = 20)
+#' plot(rel)
+#'
+plot.tna_reliability <- function(x, type = "histogram",
+                                 metric = "Median Abs. Diff.") {
+  check_missing(x)
+  check_class(x, "tna_reliability")
+  check_string(metric)
+  type <- check_match(type, c("histogram", "density", "boxplot"))
+  stopifnot_(
+    !metric %in% unique(x$metrics),
+    "Metric {.val {metric}} was not found in {.arg x}"
+  )
+  met <- metric
+  d <- x$metrics |>
+    dplyr::filter(metric == met)
+  has_model <- "model_type" %in% names(x$metrics)
+  if (has_model) {
+    stats <- d %>%
+      dplyr::group_by(!!rlang::sym("model_type")) |>
+      dplyr::summarize(
+        mean = mean(!!rlang::sym("value"), na.rm = TRUE),
+        sd = stats::sd(!!rlang::sym("value"), na.rm = TRUE),
+        .groups = "drop"
+      ) |>
+      dplyr::mutate(
+        label = paste0(
+          !!rlang::sym("model_type"),
+          " (Mean: ",
+          round(!!rlang::sym("mean"), 3),
+          ", SD: ",
+          round(!!rlang::sym("sd"), 3),
+          ")"
+        )
+      )
+    d <- d |> dplyr::left_join(stats, by = "model_type")
+    group_var <- "label"
+  } else {
+    stats <- d |>
+      dplyr::summarize(
+        mean = mean(!!rlang::sym("value"), na.rm = TRUE),
+        sd = stats::sd(!!rlang::sym("value"), na.rm = TRUE)
+      )
+    group_var <- NULL
+  }
+  sub <- paste0(
+    "Mean: ", round(stats$mean, 3),
+    " | SD: ", round(stats$sd, 3)
+  )
+  p <- ggplot2::ggplot(d, ggplot2::aes(x = !!rlang::sym("value"))) +
+    ggplot2::labs(
+      title = paste("Reliability Distribution:", metric),
+      x = metric,
+      y = "Frequency"
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(face = "bold"),
+      legend.position = "top",
+      legend.title = ggplot2::element_blank()
+    )
+  if (type == "histogram") {
+    if (has_model) {
+      p <- p +
+        ggplot2::geom_histogram(
+          ggplot2::aes(
+            fill = !!rlang::sym(group_var)
+          ),
+          position = "identity",
+          alpha = 0.5,
+          bins = 30,
+          color = "white"
+        ) +
+        ggplot2::geom_vline(
+          data = stats,
+          ggplot2::aes(
+            xintercept = !!rlang::sym("mean"),
+            color = !!rlang::sym("label"),
+          ),
+          linetype = "dashed",
+          linewidth = 1,
+          show.legend = FALSE
+        )
+    } else {
+      p <- p +
+        ggplot2::geom_histogram(
+          fill = "cadetblue",
+          color = "white",
+          alpha = 0.7,
+          bins = 30
+        ) +
+        ggplot2::geom_vline(
+          ggplot2::aes(xintercept = stats$mean),
+          linetype = "dashed",
+          color = "firebrick",
+          linewidth = 1
+        ) +
+        ggplot2::labs(y = "Frequency", subtitle = sub)
+    }
+  } else if (type == "density") {
+    if (has_model) {
+      p <- p +
+        ggplot2::geom_density(
+          ggplot2::aes(fill = !!rlang::sym(group_var)),
+          alpha = 0.4
+        ) +
+        ggplot2::geom_vline(
+          data = stats,
+          ggplot2::aes(
+            xintercept = !!rlang::sym("mean"),
+            color = !!rlang::sym("label")
+          ),
+          linetype = "dashed",
+          linewidth = 1,
+          show.legend = FALSE
+        ) +
+        ggplot2::labs(y = "Density")
+    } else {
+      p <- p +
+        ggplot2::geom_density(fill = "cadetblue", alpha = 0.5) +
+        ggplot2::geom_vline(
+          ggplot2::aes(xintercept = stats$mean),
+          linetype = "dashed",
+          color = "firebrick",
+          linewidth = 1
+        ) +
+        ggplot2::labs(y = "Density", subtitle = sub)
+    }
+
+  } else if (type == "boxplot") {
+    if (has_model) {
+      p <- ggplot2::ggplot(
+        d,
+        ggplot2::aes(
+          x = !!rlang::sym(group_var),
+          y = !!rlang::sym("value"),
+          fill = !!rlang::sym(group_var))
+      ) +
+        ggplot2::geom_boxplot(alpha = 0.7) +
+        ggplot2::labs(x = "", title = metric) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(legend.position = "none")
+    } else {
+      p <- ggplot2::ggplot(
+        d,
+        ggplot2::aes(y = !!rlang::sym("value"))
+      ) +
+        ggplot2::geom_boxplot(fill = "cadetblue", alpha = 0.7) +
+        ggplot2::labs(title = metric, subtitle = sub) +
+        ggplot2::theme_minimal()
+    }
+  }
+  p
+}
+
+
 #' Plot Centrality Measures
 #'
 #' @inheritParams plot.tna_centralities

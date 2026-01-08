@@ -4,7 +4,15 @@
 \alias{compare.group_tna}
 \title{Compare Grouped TNA Models with Comprehensive Metrics}
 \usage{
-\method{compare}{group_tna}(x, i = 1L, j = 2L, scaling = "none", ...)
+\method{compare}{group_tna}(
+  x,
+  i = 1L,
+  j = 2L,
+  scaling = "none",
+  measures = character(0),
+  network = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}
@@ -35,10 +43,12 @@ Model comparison functions
 \code{\link{compare}()},
 \code{\link{compare_sequences}()},
 \code{\link{plot.tna_comparison}()},
+\code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_sequence_comparison}()},
 \code{\link{plot_compare}()},
 \code{\link{plot_compare.group_tna}()},
 \code{\link{print.tna_comparison}()},
+\code{\link{print.tna_reliability}()},
 \code{\link{print.tna_sequence_comparison}()}
 }
 \concept{comparison}

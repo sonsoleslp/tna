@@ -10,6 +10,7 @@
 #'
 #' @export
 #' @family comparison
+#' @inheritParams centralities
 #' @param x A `tna` object or a `matrix` of weights.
 #' @param y A `tna` object or a `matrix` of weights.
 #' @param scaling A  `character` string naming a scaling method to
@@ -18,6 +19,7 @@
 #' * `"none"`: No scaling is performed. The weights are used as is.
 #' * `"minmax"`: Performs min-max normalization, i.e., the minimum value is
 #'   subtracted and the differences are scaled by the range.
+#' * `"max"`: Max-normalization: the values are divided by the maximum value.
 #' * `"rank"`: Applies min-max normalization to the ranks of the weights
 #'   (computed with `ties.method = "average"`).
 #' * `"zscore"`: Computes the standard score, i.e. the mean weight is
@@ -32,6 +34,8 @@
 #' * `"quantile"`: Uses the empirical quantiles of the weights
 #'   via [stats::ecdf].
 #'
+#' @param network A `logical` value indicating whether network metrics should
+#'   be included in the comparison. The default is `TRUE`.
 #' @param ... Ignored.
 #' @return A `tna_comparison` object, which is a `list` containing the
 #' following elements:
@@ -68,14 +72,16 @@ compare <- function(x, ...) {
 
 #' @export
 #' @rdname compare
-compare.tna <- function(x, y, scaling = "none", ...) {
-  compare_(x, y, scaling = scaling, ...)
+compare.tna <- function(x, y, scaling = "none", measures = character(0),
+                        network = TRUE, ...) {
+  compare_(x, y, scaling = scaling, measures = measures, network = network, ...)
 }
 
 #' @export
 #' @rdname compare
-compare.matrix <- function(x, y, scaling = "none", ...) {
-  compare_(x, y, scaling = scaling, ...)
+compare.matrix <- function(x, y, scaling = "none", measures = character(0),
+                           network = TRUE, ...) {
+  compare_(x, y, scaling = scaling, measures = measures, network = network, ...)
 }
 
 #' Compare Grouped TNA Models with Comprehensive Metrics
@@ -94,18 +100,26 @@ compare.matrix <- function(x, y, scaling = "none", ...) {
 #' model <- group_model(engagement_mmm)
 #' compare(model, i = 1, j = 2)
 #'
-compare.group_tna <- function(x, i = 1L, j = 2L, scaling = "none", ...) {
+compare.group_tna <- function(x, i = 1L, j = 2L, scaling = "none",
+                              measures = character(0), network = TRUE, ...) {
   check_missing(x)
   check_class(x, "group_tna")
   check_clusters(x, i, j)
-  compare_(x = x[[i]], y = x[[j]], scaling = scaling, ...)
+  compare_(
+    x = x[[i]],
+    y = x[[j]],
+    scaling = scaling,
+    measures = measures,
+    network = network,
+    ...
+  )
 }
 
 #' Internal compare function
 #'
 #' @inheritParams compare
 #' @noRd
-compare_ <- function(x, y, scaling = "none", ...) {
+compare_ <- function(x, y, scaling = "none", measures, network, ...) {
   stopifnot_(
     is_tna(x) || is.matrix(x),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
@@ -113,16 +127,6 @@ compare_ <- function(x, y, scaling = "none", ...) {
   stopifnot_(
     is_tna(y) || is.matrix(y),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
-  )
-  metrics_x <- ifelse_(
-    is.matrix(x),
-    summary(build_model_(x)),
-    summary(x)
-  )
-  metrics_y <- ifelse_(
-    is.matrix(y),
-    summary(build_model_(y)),
-    summary(y)
   )
   x <- ifelse_(is_tna(x), x$weights, x)
   y <- ifelse_(is_tna(y), y$weights, y)
@@ -149,6 +153,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
   scaling_methods <- list(
     none = identity,
     minmax = ranger,
+    max = function(w) w / max(w, na.rm = TRUE),
     rank = function(w) ranger(rank(w, ties.method = "average")),
     zscore = function(w) (w - mean(w)) / stats::sd(w),
     log = log,
@@ -194,7 +199,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
     edges_combined$standardized_weight_x / edges_combined$standardized_weight_y
 
   # Summary metrics
-  weight_dev <- data.frame(
+  weight_dev <- list(
     category = "Weight Deviations",
     metric = c(
       "Mean Abs. Diff.",
@@ -213,7 +218,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
       stats::sd(x_vec) * mean(y_vec) / (mean(x_vec) * stats::sd(y_vec))
     )
   )
-  correlations <- data.frame(
+  correlations <- list(
     category = "Correlations",
     metric = c("Pearson", "Spearman", "Kendall", "Distance"),
     value = c(
@@ -223,7 +228,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
       distance_correlation(x_vec, y_vec)
     )
   )
-  dissimilarities <- data.frame(
+  dissimilarities <- list(
     category = "Dissimilarities",
     metric = c(
       "Euclidean",
@@ -240,7 +245,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
       sqrt(sum(abs_diff^2)) / sqrt(n / 2)
     )
   )
-  similarities <- data.frame(
+  similarities <- list(
     category = "Similarities",
     metric = c("Cosine", "Jaccard", "Dice", "Overlap", "RV"),
     value = c(
@@ -251,7 +256,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
       rv_coefficient(x, y)
     )
   )
-  pattern_metrics <- data.frame(
+  pattern_metrics <- list(
     category = "Pattern Similarities",
     metric = c("Rank Agreement", "Sign Agreement"),
     value = c(
@@ -259,7 +264,7 @@ compare_ <- function(x, y, scaling = "none", ...) {
       mean(sign(x) == sign(y))
     )
   )
-  summary_metrics <- rbind(
+  summary_metrics <- dplyr::bind_rows(
     weight_dev,
     correlations,
     dissimilarities,
@@ -268,50 +273,74 @@ compare_ <- function(x, y, scaling = "none", ...) {
   )
 
   # Network metrics
-  network_metrics <- cbind(metrics_x, metrics_y[, -1L])
-  names(network_metrics) <- c("metric", "x", "y")
+  if (network) {
+    metrics_x <- ifelse_(
+      is.matrix(x),
+      summary(build_model_(x)),
+      summary(x)
+    )
+    metrics_y <- ifelse_(
+      is.matrix(y),
+      summary(build_model_(y)),
+      summary(y)
+    )
+    network_metrics <- cbind(metrics_x, metrics_y[, -1L])
+    names(network_metrics) <- c("metric", "x", "y")
+  }
 
   # Centralities
-  cents_x <- centralities(x) |>
-    tidyr::pivot_longer(
-      cols = !(!!rlang::sym("state")), names_to = "centrality", values_to = "x"
-    )
-  cents_y <- centralities(y) |>
-    tidyr::pivot_longer(
-      cols = !(!!rlang::sym("state")), names_to = "centrality", values_to = "y"
-    )
-  cents_xy <- cents_x
-  cents_xy$y <- cents_y$y
-  cents_xy$difference <- cents_xy$x - cents_xy$y
-  corr_fun <- function(x, y) {
-    out <- try(
-      stats::cor(x, y, use = "complete.obs"),
-      silent = TRUE
-    )
-    # Return NA in case of not insufficient pairs
-    ifelse_(
-      inherits(out, "try-error"),
-      NA_real_,
-      out
-    )
+  n_measures <- length(measures)
+  include_centralities <- n_measures > 0L
+  if (include_centralities) {
+    cents_x <- centralities(x, measures = measures) |>
+      tidyr::pivot_longer(
+        cols = !(!!rlang::sym("state")),
+        names_to = "centrality",
+        values_to = "x"
+      )
+    cents_y <- centralities(y, measures = measures) |>
+      tidyr::pivot_longer(
+        cols = !(!!rlang::sym("state")),
+        names_to = "centrality",
+        values_to = "y"
+      )
+    cents_xy <- cents_x
+    cents_xy$y <- cents_y$y
+    cents_xy$difference <- cents_xy$x - cents_xy$y
+    corr_fun <- function(x, y) {
+      out <- try(
+        stats::cor(x, y, use = "complete.obs"),
+        silent = TRUE
+      )
+      # Return NA in case of not insufficient pairs
+      ifelse_(
+        inherits(out, "try-error"),
+        NA_real_,
+        out
+      )
+    }
+    cents_corr <- cents_xy |>
+      dplyr::group_by(!!rlang::sym("centrality")) |>
+      dplyr::summarize(
+        Centrality = dplyr::first(!!rlang::sym("centrality")),
+        correlation = corr_fun(!!rlang::sym("x"), !!rlang::sym("y"))
+      )
   }
-  cents_corr <- cents_xy |>
-    dplyr::group_by(!!rlang::sym("centrality")) |>
-    dplyr::summarize(
-      Centrality = dplyr::first(!!rlang::sym("centrality")),
-      correlation = corr_fun(!!rlang::sym("x"), !!rlang::sym("y"))
-    )
-
+  out <- list(
+    matrices = list(x = x, y = y),
+    difference_matrix = d,
+    edge_metrics = edges_combined,
+    summary_metrics = summary_metrics
+  )
+  if (network) {
+    out$network_metrics <- network_metrics
+  }
+  if (include_centralities) {
+    out$centrality_differences = cents_xy
+    out$centrality_correlations = cents_corr
+  }
   structure(
-    list(
-      matrices = list(x = x, y = y),
-      difference_matrix = d,
-      edge_metrics = tibble::tibble(edges_combined),
-      summary_metrics = tibble::tibble(summary_metrics),
-      network_metrics = tibble::tibble(network_metrics),
-      centrality_differences = cents_xy,
-      centrality_correlations = cents_corr
-    ),
+    out,
     class = "tna_comparison"
   )
 }
