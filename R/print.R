@@ -464,7 +464,7 @@ print.tna_reliability <- function(x, summary_metrics, ...) {
     "Bray-Curtis"
   )
   cat("Reliability summary\n")
-  sumr <- x$summary %>%
+  sumr <- x$summary |>
     dplyr::filter(!!rlang::sym("metric") %in% summary_metrics) |>
     dplyr::arrange(
       factor(!!rlang::sym("metric"), levels = summary_metrics)

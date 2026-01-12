@@ -10,7 +10,6 @@
 #'
 #' @export
 #' @family comparison
-#' @inheritParams centralities
 #' @param x A `tna` object or a `matrix` of weights.
 #' @param y A `tna` object or a `matrix` of weights.
 #' @param scaling A  `character` string naming a scaling method to
@@ -34,6 +33,9 @@
 #' * `"quantile"`: Uses the empirical quantiles of the weights
 #'   via [stats::ecdf].
 #'
+#' @param measures A `character` vector indicating which centrality
+#'   measures should be computed. See [centralities()] for the
+#'   available measures. No measures are included by default.
 #' @param network A `logical` value indicating whether network metrics should
 #'   be included in the comparison. The default is `TRUE`.
 #' @param ... Ignored.
@@ -93,7 +95,7 @@ compare.matrix <- function(x, y, scaling = "none", measures = character(0),
 #' `character` string.
 #' @param j An `integer` index or the name of the secondary cluster as a
 #' `character` string.
-#' @param scaling See [compare.tna()].
+#' @inheritParams compare
 #' @param ... Additional arguments passed to [compare.tna()].
 #' @return A `tna_comparison` object. See [compare.tna()] for details.
 #' @examples

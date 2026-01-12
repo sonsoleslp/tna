@@ -42,9 +42,8 @@ via \link[stats:ecdf]{stats::ecdf}.
 }}
 
 \item{measures}{A \code{character} vector indicating which centrality
-measures should be computed. If missing, all available measures are
-returned. See 'Details' for available measures. The elements are partially
-matched ignoring case.}
+measures should be computed. See \code{\link[=centralities]{centralities()}} for the
+available measures. No measures are included by default.}
 
 \item{network}{A \code{logical} value indicating whether network metrics should
 be included in the comparison. The default is \code{TRUE}.}

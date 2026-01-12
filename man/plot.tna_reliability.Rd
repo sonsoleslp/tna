@@ -4,7 +4,7 @@
 \alias{plot.tna_reliability}
 \title{Plot Reliability Analysis Results}
 \usage{
-\method{plot}{tna_reliability}(x, type = "histogram", metric = "Median Abs. Diff.")
+\method{plot}{tna_reliability}(x, type = "histogram", metric = "Median Abs. Diff.", ...)
 }
 \arguments{
 \item{x}{A \code{tna_reliability} object.}
@@ -12,7 +12,7 @@
 \item{type}{A \code{character} string specifying the plot type. The options are:
 \code{"histogram"} (default), \code{"density"}, or \code{"boxplot"}.}
 
-\item{plot_metric}{A \code{character} string specifying the metric to plot.
+\item{metric}{A \code{character} string specifying the metric to plot.
 The default is the median absolute difference (\code{"Median Abs. Diff."}).}
 
 \item{...}{Ignored}

@@ -15,18 +15,7 @@
 \alias{tsn}
 \title{Build a Transition Network Analysis Model}
 \usage{
-build_model(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  cols = tidyselect::everything(),
-  params = list(),
-  concat = 1L,
-  inits,
-  begin_state,
-  end_state,
-  ...
-)
+build_model(x, ...)
 
 \method{build_model}{default}(
   x,
@@ -113,6 +102,9 @@ from state \code{i} to state \code{j}. If \code{x} is a \code{data.frame}, then
 it must be in wide format (see \code{cols} on how to define columns for the
 time points).}
 
+\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
+argument matches the actual arguments to \code{build_model} beside \code{x}.}
+
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:
 \itemize{
@@ -153,9 +145,6 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \code{ties.method = "average"}.
 }}
 
-\item{cols}{An \code{expression} giving a tidy selection of columns that should
-be considered as sequence data. By default, all columns are used.}
-
 \item{params}{A \code{list} of additional arguments for models of specific
 \code{type}. The potential elements of this list are:
 \itemize{
@@ -190,11 +179,14 @@ time spent in each state for each sequence and time index.
 This is an alternative to \code{time}.
 }}
 
-\item{concat}{An \code{integer} for the number of consecutive sequences
-to concatenate. The default is 1 (no concatenation).}
-
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
 for each state. The vector will be scaled to unity.}
+
+\item{cols}{An \code{expression} giving a tidy selection of columns that should
+be considered as sequence data. By default, all columns are used.}
+
+\item{concat}{An \code{integer} for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).}
 
 \item{begin_state}{A \code{character} string for an additional begin state.
 This state is added as the first observation for every sequence to
@@ -203,9 +195,6 @@ signify the beginning of the sequence}
 \item{end_state}{A \code{character} string for an additional end state.
 This state is added as the last observation for every sequence to
 siginify the end of the sequence.}
-
-\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
-argument matches the actual arguments to \code{build_model} beside \code{x}.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

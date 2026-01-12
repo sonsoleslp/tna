@@ -120,9 +120,7 @@
 #' model <- build_model(group_regulation)
 #' print(model)
 #'
-build_model <- function(x, type = "relative", scaling = character(0L),
-                        cols = tidyselect::everything(), params = list(),
-                        concat = 1L, inits, begin_state, end_state, ...) {
+build_model <- function(x, ...) {
   UseMethod("build_model")
 }
 

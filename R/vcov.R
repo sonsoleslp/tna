@@ -4,7 +4,10 @@
 #' @rdname vcov
 #' @param object A `tna_mmm` or a `summary.tna_mmm` object.
 #' @param ... Not used.
-#' @return A `matrix` containing the variance-covariance matrix.
+#' @return A `matrix` representing the variance-covariance matrix.
+#' @examples
+#' vcov(engagement_tna_mmm)
+#'
 vcov.tna_mmm <- function(object, ...) {
   out <- -1.0 * solve(object$hessian)
   cf <- names(object$beta[[1L]])

@@ -914,7 +914,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
 #' @param x A `tna_reliability` object.
 #' @param type A `character` string specifying the plot type. The options are:
 #'   `"histogram"` (default), `"density"`, or `"boxplot"`.
-#' @param plot_metric A `character` string specifying the metric to plot.
+#' @param metric A `character` string specifying the metric to plot.
 #'   The default is the median absolute difference (`"Median Abs. Diff."`).
 #' @param ... Ignored
 #' @examples
@@ -923,7 +923,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
 #' plot(rel)
 #'
 plot.tna_reliability <- function(x, type = "histogram",
-                                 metric = "Median Abs. Diff.") {
+                                 metric = "Median Abs. Diff.", ...) {
   check_missing(x)
   check_class(x, "tna_reliability")
   check_string(metric)
@@ -937,7 +937,7 @@ plot.tna_reliability <- function(x, type = "histogram",
     dplyr::filter(metric == met)
   has_model <- "model_type" %in% names(x$metrics)
   if (has_model) {
-    stats <- d %>%
+    stats <- d |>
       dplyr::group_by(!!rlang::sym("model_type")) |>
       dplyr::summarize(
         mean = mean(!!rlang::sym("value"), na.rm = TRUE),

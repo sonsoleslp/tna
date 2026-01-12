@@ -12,10 +12,10 @@
 #' @param iter An `integer` specifying number of iterations (splits). The
 #'   default is `1000`.
 #' @param scaling See [compare()].
-#'
+#' @param ... Ignored.
 #' @return A `tna_reliability` object.
 #' @examples
-#' Small number of iterations for CRAN
+#' # Small number of iterations for CRAN
 #' rel <- reliability(engagement, iter = 20)
 #'
 reliability <- function(x, ...) {
@@ -37,7 +37,7 @@ reliability.default <- function(x, types = "relative", ...) {
 #' @export
 #' @rdname reliability
 reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
-                            scaling = "none") {
+                            scaling = "none", ...) {
   check_tna_seq(x)
   check_values(iter, strict = TRUE)
   check_range(split, lower = 0.0, upper = 1.0)
@@ -80,7 +80,7 @@ reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
   }
   metrics <- dplyr::bind_rows(res)
   metrics_summary <- metrics |>
-    dplyr::group_by(!!rlang::sym("model_type"), !!rlang::sym("metric")) %>%
+    dplyr::group_by(!!rlang::sym("model_type"), !!rlang::sym("metric")) |>
     dplyr::summarize(
       mean = mean(!!rlang::sym("value"), na.rm = TRUE),
       sd = stats::sd(!!rlang::sym("value"), na.rm = TRUE),

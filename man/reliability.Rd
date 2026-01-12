@@ -10,10 +10,19 @@ reliability(x, ...)
 
 \method{reliability}{default}(x, types = "relative", ...)
 
-\method{reliability}{tna}(x, types = "relative", split = 0.5, iter = 1000, scaling = "none")
+\method{reliability}{tna}(
+  x,
+  types = "relative",
+  split = 0.5,
+  iter = 1000,
+  scaling = "none",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
+
+\item{...}{Ignored.}
 
 \item{types}{A \code{character} vector giving the model types to fit.
 See \code{\link[=build_model]{build_model()}} for available options.}
@@ -34,7 +43,7 @@ Performs reliability analysis and outputs a concise summary of key
 metrics. The results can also be visualized.
 }
 \examples{
-Small number of iterations for CRAN
+# Small number of iterations for CRAN
 rel <- reliability(engagement, iter = 20)
 
 }
