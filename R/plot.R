@@ -98,7 +98,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param scale_nodes A `character` string giving the name of a centrality
 #'   measure to scale the node size by. See [centralities()] for valid names.
 #'   If missing (the default), uses default [qgraph::qgraph()] scaling.
-#'   Overrides `vsize` provided via `...`.
+#'   The value of `vsize` provided via `...` is used as baseline size.
 #' @param scaling_factor A `numeric` value specifying how strongly to scale
 #'   the nodes when `scale_nodes` is provided. Values
 #'   between 0 and 1 will result in smaller differences and values larger
@@ -286,14 +286,14 @@ plot_tna_ <- function(x, labels, colors, pie, cut,
     "InStrength",
     scale_nodes
   )
+  vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
   if (length(scale_nodes) > 0) {
     check_string(scale_nodes)
     check_range(scaling_factor, lower = 0)
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
-    vsize <- rep(8 * exp(-n / 80)) * (1 + cent)^scaling_factor
-  } else {
-    vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
+    vsize <- vsize * (1 + cent)^scaling_factor
   }
+
   qgraph::qgraph(
     input = weights,
     color = colors,
