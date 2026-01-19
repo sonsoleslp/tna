@@ -8,9 +8,26 @@
 \usage{
 compare_sequences(x, ...)
 
-\method{compare_sequences}{default}(x, group, sub, min_freq = 5L, correction = "bonferroni", ...)
+\method{compare_sequences}{default}(
+  x,
+  group,
+  sub,
+  min_freq = 5L,
+  test = FALSE,
+  iter = 1000L,
+  adjust = "bonferroni",
+  ...
+)
 
-\method{compare_sequences}{group_tna}(x, sub, min_freq = 5L, correction = "bonferroni", ...)
+\method{compare_sequences}{group_tna}(
+  x,
+  sub,
+  min_freq = 5L,
+  test = FALSE,
+  iter = 1000L,
+  adjust = "bonferroni",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{group_tna} object or a \code{data.frame} containing sequence data in
@@ -24,35 +41,53 @@ rows/sequences of \code{x}. Alternatively, a single \code{character} string givi
 the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object.}
 
-\item{sub}{An \code{integer} vector of subsequence lengths to analyze.
+\item{sub}{An \code{integer} vector of pattern lengths to analyze.
 The default is \code{2:5}.}
 
 \item{min_freq}{An \code{integer} giving the minimum number of times that a
-specific pattern has to be observed to be included in the analysis.
-The default is \code{5}.}
+specific pattern has to be observed in each group to be included in the
+analysis. The default is \code{5}.}
 
-\item{correction}{A \code{character} string naming the multiple comparison
+\item{test}{A \code{logical} value indicating whether to test the differences
+of pattern counts between the groups using a permutation test.
+The default is \code{FALSE}.}
+
+\item{iter}{An \code{integer} giving the number of iterations for the permutation
+test. The default is \code{1000}.}
+
+\item{adjust}{A \code{character} string naming the multiple comparison
 correction method (default: \code{"bonferroni"}). Supports all
 \link[stats:p.adjust]{stats::p.adjust} methods: \code{"holm"}, \code{"hochberg"}, \code{"hommel"},
-\code{"bonferroni"}, \code{"BH"}, \code{"BY"}, \code{"fdr"}, \code{"none"}.}
+\code{"bonferroni"}, \code{"BH"}, \code{"BY"}, \code{"fdr"}, \code{"none"}. The adjustment
+is carried out within sequences of the same length.}
 }
 \value{
 A \code{tna_sequence_comparison} object, which is a \code{data.frame} with
-columns giving the names of the pattern, pattern frequencies, pattern
-proportions (within patterns of the same length), test statistic values
+columns giving the names of the patterns, pattern frequencies, pattern
+proportions (within patterns of the same length), effect sizes,
 and p-values of the tests.
 }
 \description{
 Performs comprehensive sequence comparison analysis between groups. All
 patterns of the sequences (subsequences of specific length) are extracted
-from all sequences in each group. For two groups, the proportions of the
-patterns between the groups are compared with a z-test for proportions.
-For more than two groups, the Chi-squared  test is applied. Both tests are
-applied within patterns of the same length.
+from all sequences in each group. The pattern frequencies are compared
+between the groups using a permutation test. The reported effect size is the
+difference between the observed test statistic (sum of squared differences
+between the observed and expected counts) and the mean value over the
+permutation samples divided by their standard deviation times square root of
+the number of observations.
 }
 \examples{
 group <- c(rep("High", 1000), rep("Low", 1000))
 comp <- compare_sequences(group_regulation, group)
+
+# With permutation test (small number of iterations for CRAN)
+comp_test <- compare_sequences(
+  group_regulation,
+  group,
+  test = TRUE,
+  iter = 10
+)
 
 }
 \seealso{

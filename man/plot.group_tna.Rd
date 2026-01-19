@@ -54,7 +54,7 @@ a function name.}
     \item{\code{scale_nodes}}{A \code{character} string giving the name of a centrality
 measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
 If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling.
-Overrides \code{vsize} provided via \code{...}.}
+The value of \code{vsize} provided via \code{...} is used as baseline size.}
     \item{\code{scaling_factor}}{A \code{numeric} value specifying how strongly to scale
 the nodes when \code{scale_nodes} is provided. Values
 between 0 and 1 will result in smaller differences and values larger

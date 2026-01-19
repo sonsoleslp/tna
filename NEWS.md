@@ -1,3 +1,12 @@
+# tna 1.2.0
+
+* Added the function `reliability()` for reliability analysis of `tna` models.
+* Added the function `sequence_indices()` for computing various sequence indices.
+* Replaced the Z tests and chi-squared tests in `compare_sequences()` with a permutation test.
+* Removed the chi-squared test from `plot_mosaic()`.
+* The `correct` argument of `compare_sequences()` has been renamed to `adjust` to align with other similar arguments.
+* Added several new arguments to the `plot` method of `tna` objects for plotting heterogeneous networks.
+
 # tna 1.1.0
 
 * Added the function `cluster_sequences()` to cluster sequence data using string distance measures of the `stringdist` package.

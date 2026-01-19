@@ -7,15 +7,12 @@
 \usage{
 plot_mosaic(x, ...)
 
-\method{plot_mosaic}{tna}(x, digits = 1, ...)
+\method{plot_mosaic}{tna}(x, ...)
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object.}
 
 \item{...}{Ignored.}
-
-\item{digits}{An \code{integer} that determines the number of digits to use
-for the chi-square test statistic and the p-value in the plot.}
 }
 \value{
 A \code{ggplot} object.

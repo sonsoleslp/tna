@@ -20,6 +20,20 @@ test_that("models can be compared", {
   )
 })
 
+test_that("centralities can be compared", {
+  model_x <- tna(group_regulation[1:200, ])
+  model_y <- tna(group_regulation[1001:1200, ])
+  # Comparing models
+  expect_error(
+    comp <- compare(
+      model_x,
+      model_y,
+      measures = c("InStrength", "OutStrength")
+    ),
+    NA
+  )
+})
+
 test_that("clusters can be compared", {
   expect_error(
     comp <- compare(mmm_model, i = 1, j = 3),
@@ -41,6 +55,13 @@ test_that("sequences can be compared", {
 test_that("comparison fails when minimum frequency is not met", {
   expect_error(
     compare_sequences(mock_group_tna),
-    "No common patterns with frequency greater than 5 were found\\."
+    "No common patterns with a frequency greater than 5 were found\\."
+  )
+})
+
+test_that("patterns can be tested", {
+  expect_error(
+    compare_sequences(mock_group_tna, min_freq = 1L, test = TRUE, iter = 10),
+    NA
   )
 })

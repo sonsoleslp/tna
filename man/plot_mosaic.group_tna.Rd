@@ -4,7 +4,7 @@
 \alias{plot_mosaic.group_tna}
 \title{Plot State Frequencies as a Mosaic Between Two Groups}
 \usage{
-\method{plot_mosaic}{group_tna}(x, label, digits = 1L, ...)
+\method{plot_mosaic}{group_tna}(x, label, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}
@@ -12,9 +12,6 @@
 \item{label}{An optional \code{character} string that can be provided to specify
 the grouping factor name if \code{x} was not constructed using a column name of
 the original data.}
-
-\item{digits}{An \code{integer} that determines the number of digits to use
-for the chi-square test statistic and the p-value in the plot.}
 
 \item{...}{Ignored.}
 }
@@ -25,7 +22,7 @@ A \code{ggplot} object.
 Plot State Frequencies as a Mosaic Between Two Groups
 }
 \examples{
-model <- group_model(engagement_mmm)
+model <- group_model(engagement, group = rep(1:3, length.out = 1000))
 plot_mosaic(model)
 
 }

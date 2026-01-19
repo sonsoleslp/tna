@@ -4,7 +4,7 @@
 \alias{plot_mosaic.tna_data}
 \title{Plot State Frequencies as a Mosaic Between Two Groups}
 \usage{
-\method{plot_mosaic}{tna_data}(x, group, label = "Group", digits = 1, ...)
+\method{plot_mosaic}{tna_data}(x, group, label = "Group", ...)
 }
 \arguments{
 \item{x}{A \code{tna_data} object.}
@@ -15,9 +15,6 @@ the same length as the number of rows in the sequence data.}
 
 \item{label}{An optional \code{character} string that specifies a label for the
 grouping variable when \code{group} is not a column name of the data.}
-
-\item{digits}{An \code{integer} that determines the number of digits to use
-for the chi-square test statistic and the p-value in the plot.}
 
 \item{...}{Ignored.}
 }

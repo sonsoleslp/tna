@@ -38,7 +38,8 @@ values.}
 A \code{ggplot} object.
 }
 \description{
-Plot a Sequence Comparison
+Visualize the differences in pattern counts by plotting the standardized
+residuals by pattern and group.
 }
 \examples{
 group <- c(rep("High", 1000), rep("Low", 1000))
