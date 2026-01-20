@@ -574,7 +574,7 @@ extract_patterns <- function(m, len, labels) {
       }
     }
     out[[l]] <- list(
-      patterns = tmp,
+      patterns = t(tmp),
       unique = sort(unique(tmp[nzchar(tmp)]))
     )
   }
@@ -591,12 +591,12 @@ factorize_patterns <- function(patterns, group) {
     group_idx[[j]] <- which(group == groups[j])
   }
   for (i in seq_len(p)) {
-    pat <- patterns[[i]]$patterns
+    pat <- patterns[[i]]$pat
     pat_u <- patterns[[i]]$unique
     n <- length(pat_u)
     tmp <- matrix(0L, nrow = n, ncol = g)
     for (j in seq_len(g)) {
-      y <- pat[group_idx[[j]], ]
+      y <- pat[, group_idx[[j]]]
       idx <- match(y, pat_u, nomatch = 0)
       tmp[, j] <- tabulate(idx, nbins = n)
     }

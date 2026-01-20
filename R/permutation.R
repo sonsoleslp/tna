@@ -344,8 +344,7 @@ permutation_test_patterns <- function(x, len, iter, adjust) {
     stat_perm_mean <- apply(stat_perm[[j]], 1, mean)
     stat_perm_sd <- apply(stat_perm[[j]], 1, sd)
     out[[j]] <- data.frame(
-      effect_size = (stat_true[[j]] - stat_perm_mean) /
-        (stat_perm_sd * sqrt(n)),
+      effect_size = (stat_true[[j]] - stat_perm_mean) / stat_perm_sd,
       p_value = stats::p.adjust(
         (stat_p_value[[j]] + 1) / (iter + 1),
         method = adjust
@@ -362,5 +361,5 @@ pattern_statistic <- function(x) {
   rs <- .rowSums(x, m = nr, n = nc)
   cs <- .colSums(x, m = nr, n = nc)
   expected <- outer(rs, cs) / n
-  .rowSums((x - expected)^2, m = nr, n = nc)
+  sqrt(.rowSums((x - expected)^2, m = nr, n = nc))
 }
