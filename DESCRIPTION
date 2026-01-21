@@ -33,7 +33,6 @@ Imports:
     RColorBrewer,
     rlang,
     stats,
-    stringdist,
     tibble,
     tidyr,
     tidyselect
@@ -45,6 +44,7 @@ Suggests:
     pracma,
     rmarkdown,
     seqHMM,
+    stringdist,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr

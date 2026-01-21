@@ -20,3 +20,24 @@ test_that("clustering with weighted hamming distance can be applied", {
     NA
   )
 })
+
+test_that("all dissimilarity measures are supported", {
+  strings <- seq2chr(mock_cluster_data, na_syms = character(0))
+  methods <- c(
+    "osa",
+    "lv",
+    "dl",
+    "hamming",
+    "lcs",
+    "qgram",
+    "cosine",
+    "jaccard",
+    "jw"
+  )
+  for (d in methods) {
+    expect_error(
+      dissimilarity_matrix(strings, d, lambda = 0),
+      NA
+    )
+  }
+})
