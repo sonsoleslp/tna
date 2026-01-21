@@ -35,6 +35,7 @@ Other data:
 \code{\link{import_data}()},
 \code{\link{import_onehot}()},
 \code{\link{prepare_data}()},
+\code{\link{simulate.group_tna}()},
 \code{\link{simulate.tna}()}
 }
 \concept{data}

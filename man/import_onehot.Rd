@@ -42,6 +42,7 @@ Other data:
 \code{\link{import_data}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
+\code{\link{simulate.group_tna}()},
 \code{\link{simulate.tna}()}
 }
 \concept{data}

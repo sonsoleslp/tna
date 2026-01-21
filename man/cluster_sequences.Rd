@@ -26,8 +26,9 @@ the columns are time points.}
 
 \item{dissimilarity}{A \code{character} string specifying the
 dissimilarity measure. The available options are: \code{"osa"}, \code{"lv"}, \code{"dl"},
-\code{"hamming"}, \code{"qgram"}, \code{"cosine"}, \code{"jaccard"}, and \code{"jw"}. See
-\link[stringdist:stringdist-metrics]{stringdist::stringdist-metrics} for more information on these measures.}
+\code{"hamming"}, \code{"lcs"}, \code{"qgram"}, \code{"cosine"}, \code{"jaccard"}, and \code{"jw"}.
+See \link[stringdist:stringdist-metrics]{stringdist::stringdist-metrics} for more information on
+these measures.}
 
 \item{method}{A \code{character} string specifying clustering method.
 The available methods are \code{"pam"}, \code{"ward.D"}, \code{"ward.D2"},
