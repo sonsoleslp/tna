@@ -473,12 +473,12 @@ compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
                                         adjust = "bonferroni", ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  sub <- sub %m% seq(2, min(5, ncol(x[[1L]]$data)))
+  sub <- sub %m% seq(1, min(5, ncol(x[[1L]]$data)))
   check_range(
     sub,
     type = "integer",
     scalar = FALSE,
-    lower = 2L,
+    lower = 1L,
     upper = ncol(x[[1L]]$data)
   )
   check_values(min_freq)
