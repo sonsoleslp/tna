@@ -4,31 +4,10 @@
 \alias{plot.tna}
 \title{Plot a Transition Network Analysis Model}
 \usage{
-\method{plot}{tna}(
-  x,
-  node_list,
-  use_list_order = TRUE,
-  x_offset,
-  labels,
-  colors,
-  pie,
-  cut,
-  show_pruned = TRUE,
-  pruned_edge_color = "pink",
-  edge.color = NA,
-  edge.labels = TRUE,
-  edge.label.position = 0.65,
-  layout = "circle",
-  layout_args = list(),
-  scale_nodes,
-  scaling_factor = 0.5,
-  mar = rep(5, 4),
-  theme = "colorblind",
-  ...
-)
+\method{plot}{tna}(x, node_list, use_list_order = TRUE, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object from \code{\link[=tna]{tna()}}.}
+\item{x}{A \code{tna} object from \code{\link[=build_model]{build_model()}}.}
 
 \item{node_list}{An optional \code{list} of two \code{character} vectors that define
 two mutually exclusive groups of node labels.}
@@ -38,67 +17,15 @@ defines how the order of the nodes in the plot is defined. A \code{TRUE} value
 uses the order in \code{node_list}. Otherwise, the nodes are ranked based on
 edge weights and ordered according to the rank.}
 
-\item{x_offset}{An optional \code{numeric} vector with the same number of
-elements as there are states. Defines a horizontal offset for each node
-in the plot when \code{node_list} is provided.}
-
-\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{pie}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{cut}{Edge color and width emphasis cutoff value. The default is
-the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
-
-\item{show_pruned}{A \code{logical} value indicating if pruned edges removed by
-\code{\link[=prune]{prune()}} should be shown in the plot.  The default is \code{TRUE}, and the
-edges are drawn as dashed with a different color to distinguish them.}
-
-\item{pruned_edge_color}{A \code{character} string for the color to use for
-pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
-
-\item{edge.color}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{layout}{One of the following:
-\itemize{
-\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
-or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
-\item A \code{matrix} of node positions to use, with a row for each node and
-\code{x} and \code{y} columns for the node positions.
-\item A layout function from \code{igraph}.
-}}
-
-\item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function or a character string that specifies
-a function name.}
-
-\item{scale_nodes}{A \code{character} string giving the name of a centrality
-measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
-If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling.
-The value of \code{vsize} provided via \code{...} is used as baseline size.}
-
-\item{scaling_factor}{A \code{numeric} value specifying how strongly to scale
-the nodes when \code{scale_nodes} is provided. Values
-between 0 and 1 will result in smaller differences and values larger
-than 1 will result in greater differences. The default is \code{0.5}.}
-
-\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{...}{Additional arguments passed to \code{\link[Sonnet:plot_tna]{Sonnet::plot_tna()}} or
+\code{\link[Sonnet:plot_htna]{Sonnet::plot_htna()}}.}
 }
 \value{
-A \code{qgraph} plot of the transition network.
+TODO
 }
 \description{
-This function plots a transition network analysis (TNA) model using
-the \code{qgraph} package. The nodes in the graph represent states, with node
+This function plots a transition network analysis (TNA) model.
+The nodes in the graph represent states, with node
 sizes corresponding to initial state probabilities. Edge labels represent
 the edge weights of the network.
 }

@@ -21,35 +21,8 @@ plot_model(
 \arguments{
 \item{x}{A square \code{matrix} of edge weights.}
 
-\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{cut}{Edge color and width emphasis cutoff value. The default is
-the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
-
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{layout}{One of the following:
-\itemize{
-\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
-or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
-\item A \code{matrix} of node positions to use, with a row for each node and
-\code{x} and \code{y} columns for the node positions.
-\item A layout function from \code{igraph}.
-}}
-
-\item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function or a character string that specifies
-a function name.}
-
-\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{...}{Additional arguments passed to \code{\link[Sonnet:plot_tna]{Sonnet::plot_tna()}} or
+\code{\link[Sonnet:plot_htna]{Sonnet::plot_htna()}}.}
 }
 \value{
 See \code{\link[=plot.tna]{plot.tna()}}.

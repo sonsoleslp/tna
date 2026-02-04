@@ -29,7 +29,6 @@ Imports:
     ggplot2,
     graphics,
     igraph,
-    qgraph,
     RColorBrewer,
     rlang,
     stats,

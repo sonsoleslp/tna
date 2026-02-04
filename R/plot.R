@@ -56,8 +56,8 @@ hist.tna <- function(x, breaks, col = "lightblue",
 
 #' Plot a Transition Network Analysis Model
 #'
-#' This function plots a transition network analysis (TNA) model using
-#' the `qgraph` package. The nodes in the graph represent states, with node
+#' This function plots a transition network analysis (TNA) model. 
+#' The nodes in the graph represent states, with node
 #' sizes corresponding to initial state probabilities. Edge labels represent
 #' the edge weights of the network. 
 #'
@@ -310,11 +310,8 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @family cliques
 #' @inheritParams print.tna_cliques
 #' @inheritParams plot.tna
-#' @param cut See [qgraph::qgraph()].
-#' @param normalize See [qgraph::qgraph()].
 #' @param show_loops A `logical` value indicating whether to include loops
 #'   in the plots or not.
-#' @param minimum See [qgraph::qgraph()].
 #' @param ask A `logical` value. When `TRUE`, show plots one by one and asks
 #'   to plot the next plot in interactive mode.
 #' @return `NULL` (invisibly).
@@ -324,11 +321,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' plot(cliq, n = 1, ask = FALSE)
 #'
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
-                             edge.labels = TRUE, edge.label.position = 0.65,
-                             minimum = 0.00001, mar = rep(5, 4),
-                             layout = "circle", layout_args = list(),
-                             cut = 0.01, normalize = TRUE,
-                             ask = TRUE, colors, theme = "colorblind", ...) {
+                             colors, ask = TRUE, ...) {
   check_class(x, "tna_cliques")
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
@@ -351,29 +344,28 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
       diag(clique_weights),
       0
     )
-    layout <- check_layout(
-      x = clique_weights,
-      layout = layout,
-      args = layout_args,
-      directed = directed
-    )
+    # layout <- check_layout(
+    #   x = clique_weights,
+    #   layout = layout,
+    #   args = layout_args,
+    #   directed = directed
+    # )
     plot_args <- list(
-      input = clique_weights,
+      x = clique_weights,
       labels = colnames(clique_weights),
-      edge.labels = edge.labels,
-      edge.label.position = edge.label.position,
+      #edge.labels = edge.labels,
+      #edge.label.position = edge.label.position,
       directed = directed,
-      mar = mar,
-      minimum = minimum,
-      theme = theme,
-      cut = cut,
-      normalize = normalize,
-      layout = layout,
-      color = colors[match(rownames(clique_weights), labels)],
-      pie = x$inits[[i]]
+      #mar = mar,
+      #theme = theme,
+      #normalize = normalize,
+      #layout = layout,
+      node_fill = colors[match(rownames(clique_weights), labels)],
+      donut_fill = x$inits[[i]]
     )
     plot_args <- utils::modifyList(plot_args, list(...))
-    do.call(qgraph::qgraph, args = plot_args)
+    #do.call(qgraph::qgraph, args = plot_args)
+    do.call(Sonnet::splot, args = plot_args)
   }
   invisible(NULL)
 }
@@ -1893,7 +1885,7 @@ hist.group_tna <- function(x, ...) {
 
 #' Plot a Grouped Transition Network Analysis Model
 #'
-#' Plots a transition network of each cluster using `qgraph`.
+#' Plots the transition network of each cluster.
 #'
 #' @export
 #' @family basic

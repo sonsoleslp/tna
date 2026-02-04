@@ -24,50 +24,13 @@ two mutually exclusive groups of node labels.}
 defines how the order of the nodes in the plot is defined. A \code{TRUE} value
 uses the order in \code{node_list}. Otherwise, the nodes are ranked based on
 edge weights and ordered according to the rank.}
-    \item{\code{x_offset}}{An optional \code{numeric} vector with the same number of
-elements as there are states. Defines a horizontal offset for each node
-in the plot when \code{node_list} is provided.}
-    \item{\code{labels}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{colors}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{pie}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{cut}}{Edge color and width emphasis cutoff value. The default is
-the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
-    \item{\code{show_pruned}}{A \code{logical} value indicating if pruned edges removed by
-\code{\link[=prune]{prune()}} should be shown in the plot.  The default is \code{TRUE}, and the
-edges are drawn as dashed with a different color to distinguish them.}
-    \item{\code{pruned_edge_color}}{A \code{character} string for the color to use for
-pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
-    \item{\code{edge.color}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{edge.labels}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{edge.label.position}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{layout}}{One of the following:
-\itemize{
-\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
-or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
-\item A \code{matrix} of node positions to use, with a row for each node and
-\code{x} and \code{y} columns for the node positions.
-\item A layout function from \code{igraph}.
-}}
-    \item{\code{layout_args}}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function or a character string that specifies
-a function name.}
-    \item{\code{scale_nodes}}{A \code{character} string giving the name of a centrality
-measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
-If missing (the default), uses default \code{\link[qgraph:qgraph]{qgraph::qgraph()}} scaling.
-The value of \code{vsize} provided via \code{...} is used as baseline size.}
-    \item{\code{scaling_factor}}{A \code{numeric} value specifying how strongly to scale
-the nodes when \code{scale_nodes} is provided. Values
-between 0 and 1 will result in smaller differences and values larger
-than 1 will result in greater differences. The default is \code{0.5}.}
-    \item{\code{mar}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-    \item{\code{theme}}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
   }}
 }
 \value{
 \code{NULL} (invisibly).
 }
 \description{
-Plots a transition network of each cluster using \code{qgraph}.
+Plots the transition network of each cluster.
 }
 \examples{
 model <- group_model(engagement_mmm)

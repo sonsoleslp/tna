@@ -4,24 +4,7 @@
 \alias{plot.tna_cliques}
 \title{Plot Cliques of a TNA Network}
 \usage{
-\method{plot}{tna_cliques}(
-  x,
-  n = 6,
-  first = 1,
-  show_loops = FALSE,
-  edge.labels = TRUE,
-  edge.label.position = 0.65,
-  minimum = 1e-05,
-  mar = rep(5, 4),
-  layout = "circle",
-  layout_args = list(),
-  cut = 0.01,
-  normalize = TRUE,
-  ask = TRUE,
-  colors,
-  theme = "colorblind",
-  ...
-)
+\method{plot}{tna_cliques}(x, n = 6, first = 1, show_loops = FALSE, colors, ask = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{tna_cliques} object.}
@@ -35,37 +18,8 @@ The default index is \code{1}.}
 \item{show_loops}{A \code{logical} value indicating whether to include loops
 in the plots or not.}
 
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{minimum}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{layout}{One of the following:
-\itemize{
-\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
-or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
-\item A \code{matrix} of node positions to use, with a row for each node and
-\code{x} and \code{y} columns for the node positions.
-\item A layout function from \code{igraph}.
-}}
-
-\item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function or a character string that specifies
-a function name.}
-
-\item{cut}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{normalize}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
 \item{ask}{A \code{logical} value. When \code{TRUE}, show plots one by one and asks
 to plot the next plot in interactive mode.}
-
-\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
 
 \item{...}{Ignored.}
 }
