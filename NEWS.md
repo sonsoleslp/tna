@@ -7,6 +7,7 @@
 * The `correct` argument of `compare_sequences()` has been renamed to `adjust` to align with other similar arguments.
 * Added several new arguments to the `plot` method of `tna` objects for plotting heterogeneous networks.
 * The `plot` method for `communities` now uses the first available method by default.
+* The `stringdist` package has been moved to Suggests.
 
 # tna 1.1.0
 

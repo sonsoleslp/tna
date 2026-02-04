@@ -310,10 +310,7 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     cents_xy$y <- cents_y$y
     cents_xy$difference <- cents_xy$x - cents_xy$y
     corr_fun <- function(x, y) {
-      out <- try(
-        stats::cor(x, y, use = "complete.obs"),
-        silent = TRUE
-      )
+      out <- try_(stats::cor(x, y, use = "complete.obs"))
       # Return NA in case of not insufficient pairs
       ifelse_(
         inherits(out, "try-error"),
@@ -524,7 +521,7 @@ compare_sequences_ <- function(x, len, min_freq, test, iter, adjust) {
       as.data.frame(tmp)
     )
   }
-  out <- do.call("rbind", out)
+  out <- do.call(base::rbind, out)
   if (test) {
     out <- cbind(out, perm) |>
       dplyr::arrange(!!rlang::sym("p_value"))
@@ -561,7 +558,7 @@ extract_patterns <- function(m, len, labels) {
       valid <- .rowSums(pattern_mis, m = n, n = j) == 0L
       if (any(valid)) {
         subseq <- do.call(
-          paste,
+          base::paste,
           c(
             as.data.frame(
               pattern[valid, , drop = FALSE],

@@ -8,7 +8,7 @@
 #' coef(engagement_tna_mmm)
 #'
 coef.tna_mmm <- function(object, ...) {
-  d <- do.call("cbind", object$beta)
+  d <- do.call(base::cbind, object$beta)
   rownames(d) <- names(object$beta[[1L]])
   colnames(d) <- object$cluster_names
   d

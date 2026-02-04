@@ -25,8 +25,7 @@ reliability <- function(x, ...) {
 #' @export
 #' @rdname reliability
 reliability.default <- function(x, types = "relative", ...) {
-  model <- try(build_model(x, type = types[1]), silent = TRUE)
-  # TODO handle sequence data directly
+  model <- try_(build_model(x, type = types[1]))
   stopifnot_(
     !inherits(model, "try-error"),
     "Argument `x` has invalid type."

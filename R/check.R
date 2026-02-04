@@ -216,7 +216,7 @@ check_layout <- function(x, layout, args = list(), ...) {
       layout_fun <- str2lang(paste0("igraph::", layout))
       args$graph <- as.igraph(x, ...)
       layout_parsed <- try_(
-        do.call(what = eval(layout_fun), args = args)
+        do.call(eval(layout_fun), args)
       )
     }
     stopifnot_(

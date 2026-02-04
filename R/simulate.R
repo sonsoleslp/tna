@@ -217,7 +217,7 @@ simulate.group_tna <- function(object,
   if (format == "wide") {
     do.call(dplyr::bind_rows, out_list)
   } else {
-    out <- do.call(rbind, out_list)
+    out <- do.call(base::rbind, out_list)
     rownames(out) <- NULL
     out
   }

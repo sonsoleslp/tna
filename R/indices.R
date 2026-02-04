@@ -46,7 +46,7 @@ sequence_indices.default <- function(x, cols, favorable, omega = 1, ...) {
   check_missing(x)
   stopifnot_(
     is.matrix(x) || is.data.frame(x),
-    "Argument {.arg x} must be a matrix or a data.frame"
+    "Argument {.arg x} must be a {.cls matrix} or a {.cls data.frame}."
   )
   p <- ncol(x)
   cols <- cols %m% seq_len(p)

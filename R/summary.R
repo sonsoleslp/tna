@@ -133,7 +133,7 @@ summary.tna_mmm <- function(object, ...) {
   check_missing(object)
   check_class(object, "tna_mmm")
   mean_prob <- do.call(
-    "rbind",
+    base::rbind,
     lapply(
       object$cluster_names,
       function(i) {
