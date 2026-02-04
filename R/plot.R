@@ -453,7 +453,8 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' @param colors A `character` vector of color values used for visualizing
 #'   community assignments.
 #' @param method A `character` string naming a community detection method to
-#'   use for coloring the plot. See [communities()] for details.
+#'   use for coloring the plot. The default is to use the first available 
+#'   method in `x`. See [communities()] for details.
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object in which the nodes are colored by community.
 #' @examples
@@ -461,12 +462,14 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' comm <- communities(model)
 #' plot(comm, method = "leading_eigen")
 #'
-plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
+plot.tna_communities <- function(x, colors, method, ...) {
   check_class(x, "tna_communities")
   available_methods <- intersect(
     names(x$assignment),
     names(supported_communities)
   )
+  method <- method %m% available_methods[1L]
+  check_string(method)
   stopifnot_(
     method %in% available_methods,
     "The {.val {method}} method is not available in {.arg x}."

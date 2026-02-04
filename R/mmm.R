@@ -102,10 +102,8 @@ cluster_mmm <- function(data, cols = tidyselect::everything(), formula,
   )
   if (parallel && missing(cl)) {
     stopifnot_(
-      requireNamespace("parallel", quietly = TRUE) &&
-        requireNamespace("doParallel", quietly = TRUE),
-      "Please install the {.pkg parallel}, {.pkg doParallel}
-       packages for parallel computation."
+      requireNamespace("doParallel", quietly = TRUE),
+      "Please install the {.pkg doParallel} package for parallel computation."
     )
     n_cores <- n_cores %m% parallel::detectCores()
     n_cores <- min(n_cores, parallel::detectCores())
