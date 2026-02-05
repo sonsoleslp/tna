@@ -198,15 +198,33 @@ get_cols <- function(expr, data) {
   } else {
     cols <- rlang::eval_tidy(expr = expr)
     if (is.character(cols)) {
-      intersect(cols, names(data))
-    } else if (is.numeric(cols)) {
-      names(data)[cols]
-    } else {
-      stop_(
-        "Columns must be selected using a tidy selection,
-         a {.cls character} vector, or an {.cls integer} vector."
+      cols_mis <- setdiff(cols, names(data))
+      stopifnot_(
+        length(cols_mis) == 0L,
+        c(
+          "Can't select columns that don't exist.",
+          `x` = "Column {.var {cols_mis[1L]}} doesn't exist."
+        )
       )
+      return(cols)
     }
+    if (is.numeric(cols)) {
+      nm <- names(data)
+      k <- length(nm)
+      cols_mis <- setdiff(cols, seq_len(k))
+      stopifnot_(
+        length(cols_mis) == 0L,
+        c(
+          "Can't select columns that don't exist.",
+          `x` = "Attempted to select column {cols_mis[1]} from {k} columns."
+        )
+      )
+      return(nm[cols])
+    }
+    stop_(
+      "Columns must be selected using a tidy selection,
+       a {.cls character} vector, or an {.cls integer} vector."
+    )
   }
 }
 

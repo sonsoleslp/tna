@@ -218,22 +218,35 @@ test_that("wide format sequence data can be imported", {
 
 test_that("one-hot data can be imported", {
   d <- data.frame(
-    window = gl(100, 5),
+    actor = gl(100, 5),
+    session = gl(10, 50),
     feature1 = rbinom(500, 1, prob = 0.33),
     feature2 = rbinom(500, 1, prob = 0.25),
     feature3 = rbinom(500, 1, prob = 0.50)
   )
   expect_error(
-    model1 <- import_onehot(d, feature1:feature3, window = "window"),
+    import_onehot(d, feature1:feature3),
     NA
   )
   expect_error(
-    model2 <- import_onehot(d, feature1:feature3, window = 5),
+    import_onehot(d, feature1:feature3, window = 5),
     NA
   )
-  expect_equal(
-    model1,
-    model2
+  expect_error(
+    import_onehot(d, feature1:feature2, keep = "actor"),
+    NA
+  )
+  expect_error(
+    import_onehot(d, feature1:feature2, actor = "actor"),
+    NA
+  )
+  expect_error(
+    import_onehot(d, feature1:feature2, session = "session"),
+    NA
+  )
+  expect_error(
+    import_onehot(d, feature1:feature2, actor = "actor", session = "session"),
+    NA
   )
 })
 
@@ -270,5 +283,13 @@ test_that("invalid column selection fails", {
   expect_error(
     get_cols(rlang::quo(1i), mock_sequence),
     "Columns must be selected using a tidy selection"
+  )
+  expect_error(
+    get_cols(rlang::quo("T7"), mock_sequence),
+    "Can't select columns that don't exist"
+  )
+  expect_error(
+    get_cols(rlang::quo(7), mock_sequence),
+    "Can't select columns that don't exist"
   )
 })

@@ -512,19 +512,19 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
 #' @family data
 #' @param data A `data.frame` in wide format.
 #' @param cols An `expression` giving a tidy selection of column names to be
-#' transformed into long format (actions). This can be a vector of column names
-#' (e.g., `c(feature1, feature2)`) or a range  specified as `feature1:feature6`
-#' (without quotes) to include all columns from 'feature1' to 'feature6'
-#' in the order they appear in the data frame. For more information on
-#' tidy selections, see [dplyr::select()].
+#'   transformed into long format (actions). This can be a vector of column
+#'   names (e.g., `c(feature1, feature2)`) or a range  specified as
+#'   `feature1:feature6` (without quotes) to include all columns from
+#'   'feature1' to 'feature6' in the order they appear in the data frame.
+#'   For more information on tidy selections, see [dplyr::select()].
 #' @param id_cols An `expression` giving a tidy selection of column names that
-#' uniquely identify each observation (IDs).
-#' @param window_size An `integer` specifying the size of the window for
-#' sequence grouping. Default is 1 (each row is a separate window).
+#'   uniquely identify each observation (IDs).
+#' @param window An `integer` specifying the size of the window for
+#'   sequence grouping. Default is 1 (each row is a separate window).
 #' @param replace_zeros A `logical` value indicating whether to replace 0s
-#' in `cols` with `NA`. The default is `TRUE`.
+#'   in `cols` with `NA`. The default is `TRUE`.
 #' @return A `data.frame` in long format with added columns for window and
-#' sequence order.
+#'   sequence order.
 #' @examples
 #' data <- data.frame(
 #'   ID = c("A", "A", "B", "B"),
@@ -613,93 +613,70 @@ import_data <- function(data, cols, id_cols,
     )
 }
 
-#' Import One-Hot Data and Create a Co-Occurrence Network Model
+#' Import One-Hot Data
 #'
 #' @export
 #' @family data
 #' @param data A `data.frame` in wide format.
-#' @param cols An `expression` giving a tidy selection of column names to be
-#' transformed into long format (actions). This can be a vector of column names
-#' (e.g., `c(feature1, feature2)`) or a range  specified as `feature1:feature6`
-#' (without quotes) to include all columns from 'feature1' to 'feature6'
-#' in the order they appear in the data frame. For more information on
-#' tidy selections, see [dplyr::select()].
-#' @param window An `integer` specifying the size of the window for
-#' sequence grouping. Default is 1 (each row is a separate window). Can
-#' also be a `character` string giving a name of the column in `data` whose
-#' levels define the windows.
-#' @return A `tna` object for the co-occurrence model.
+#' @param actor An optional `character` string giving the column name of
+#'   `data` containing the actor identifiers.
+#' @param session An optional `character` string giving the column name of
+#'   `data` containing the session identifiers.
+#' @param cols An `expression` giving a tidy selection of columns to be
+#'   considered as one-hot data.
+#' @param keep An optional `expression` giving a tidy selection of columns
+#'   that should be retained in the aggregated data besides `cols`.
+#' @param window An `integer` specifying the window size for grouping.
+#' @return The processed data as a `data.frame`.
 #' @examples
-#' d <- data.frame(
-#'   window = gl(100, 5),
-#'   feature1 = rbinom(500, 1, prob = 0.33),
-#'   feature2 = rbinom(500, 1, prob = 0.25),
-#'   feature3 = rbinom(500, 1, prob = 0.50)
-#' )
-#' model <- import_onehot(d, feature1:feature3, window = "window")
 #'
-import_onehot <- function(data, cols, window = 1L) {
+#'
+import_onehot <- function(data, cols, actor, session, keep, window = 1L) {
   check_missing(data)
   check_class(data, "data.frame")
-  data_names <- colnames(data)
-  n <- nrow(data)
-  if (is.character(window)) {
-    stopifnot_(
-      length(window) == 1L && window %in% data_names,
-      "Argument {.arg window} must be a column name of {.arg data} when of
-      {.cls character} type."
-    )
-  } else {
-    check_values(window, strict = TRUE)
-    data$.window <- rep(seq(1L, n %/% window + 1L), each = window)[1:n]
-    window <- ".window"
-  }
+  check_values(window, strict = TRUE)
   cols <- get_cols(rlang::enquo(cols), data)
-  for (col in cols) {
-    data_vals <- unique(data[[col]])
-    invalid_vals <- data_vals[!is.na(data_vals) & !data_vals %in% c(0, 1)]
-    stopifnot_(
-      length(invalid_vals) == 0L,
-      c(
-        "All data values of {.arg cols} must be either 0, 1, or NA.",
-        `x` = "Found invalid values in column
-               {.val {col}}: {.val {invalid_vals}}."
+  keep <- get_cols(rlang::enquo(keep), data)
+  keep <- keep %m% character(0L)
+  actor <- get_cols(rlang::enquo(actor), data)
+  session <- get_cols(rlang::enquo(actor), data)
+  check_cols(actor, missing_ok = TRUE)
+  check_cols(session, missing_ok = TRUE)
+  out <- data |>
+    dplyr::select(tidyselect::all_of(c(cols, keep))) |>
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::all_of(cols),
+        ~ ifelse(.x == 1, dplyr::cur_column(), NA_character_)
       )
     )
+  if (!missing(actor) && !missing(session)) {
+    .session_nr <- as.integer(factor(data[[session]]))
+    .group <- paste(
+      data[[actor]],
+      floor((.session_nr - 1) / window),
+      sep = "_"
+    )
+  } else if (!missing(actor)) {
+    .group <- paste(
+      data[[actor]],
+      floor((seq_len(nrow(data)) - 1) / window),
+      sep = "_"
+    )
+  } else if (!missing(session)) {
+    .session_nr <- as.integer(factor(data[[session]]))
+    .group <- floor((.session_nr - 1) / window)
+  } else {
+    .group <- floor((seq_len(nrow(data)) - 1) / window)
   }
-  data <- data |>
-    dplyr::select(c(dplyr::all_of(cols), !!rlang::sym(window))) |>
-    dplyr::filter(!is.na(!!rlang::sym(window))) |>
-    dplyr::group_by(!!rlang::sym(window)) |>
-    dplyr::summarize(
-      dplyr::across(
-        dplyr::all_of(cols), sum, .names = "{col}"
-      )
+  out$.group <- .group
+  # Take the first non-NA occurrence for each code within the window
+  out <- out |>
+    dplyr::group_by(!!rlang::sym(".group")) |>
+    dplyr::summarise(
+      dplyr::across(tidyselect::all_of(cols), ~ stats::na.omit(.x)[1L]),
+      dplyr::across(tidyselect::all_of(keep), ~ .x[1L]),
+      .groups = "drop"
     ) |>
-    dplyr::select(dplyr::all_of(cols)) |>
-    as.matrix()
-  n <- nrow(data)
-  p <- length(cols)
-  out <- matrix(0, nrow = p, ncol = p, dimnames = list(cols, cols))
-  for (i in seq_len(n)) {
-    pos <- which(data[i, ] > 0)
-    if (length(pos) > 0) {
-      data_pos <- data[i, pos]
-      pairs <- create_pairs(data_pos, data_pos)
-      pairs_idx <- create_pairs(pos, pos)
-      inc <- pairs[, 1L] * pairs[, 2L]
-      same <- pairs_idx[, 1] == pairs_idx[, 2L]
-      data_same <- pairs[same, 1L]
-      inc[same] <- (data_same * (data_same - 1L)) %/% 2L
-      out[pairs_idx] <- out[pairs_idx] + inc
-    }
-  }
-  t_out <- t(out)
-  diag(t_out) <- 0
-  out <- out + t_out
-  build_model_(
-    weights = out,
-    type = "co-occurrence",
-    labels = cols
-  )
+    dplyr::select(!(!!rlang::sym(".group")))
 }

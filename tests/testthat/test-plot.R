@@ -362,7 +362,7 @@ test_that("sequences can be sorted in index plot", {
     NA
   )
   expect_error(
-    plot_sequences(mock_tna_data, sort_by = "T1"),
+    plot_sequences(mock_tna_data, sort_by = "event_T1"),
     NA
   )
   expect_error(
