@@ -39,7 +39,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/communities_and_cliques.html">Finding cliques and communities with tna</a></li>
+<li><a class="dropdown-item" href="../articles/atna.html">Attention TNA</a></li>
+    <li><a class="dropdown-item" href="../articles/communities_and_cliques.html">Finding cliques and communities with tna</a></li>
     <li><a class="dropdown-item" href="../articles/complete_tutorial.html">A showcase of the main tna functions</a></li>
     <li><a class="dropdown-item" href="../articles/ftna.html">Frequency-based tna</a></li>
     <li><a class="dropdown-item" href="../articles/grouped_sequences.html">Using grouped sequence data with tna</a></li>
@@ -68,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Frequency-based tna</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/1.1.0/vignettes/articles/ftna.Rmd" class="external-link"><code>vignettes/articles/ftna.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/vignettes/articles/ftna.Rmd" class="external-link"><code>vignettes/articles/ftna.Rmd</code></a></small>
       <div class="d-none name"><code>ftna.Rmd</code></div>
     </div>
 
@@ -171,7 +172,7 @@
 <span></span>
 <span><span class="co"># Display the scatter plot</span></span>
 <span><span class="va">plot_abs_scaled</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate the Transition Network Analysis (TNA) on the `group_regulation` </span></span>
 <span><span class="co"># data with ranked weights</span></span>
@@ -197,7 +198,7 @@
 <span></span>
 <span><span class="co"># Display the scatter plot</span></span>
 <span><span class="va">plot_abs_ranked</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="pruning">Pruning<a class="anchor" aria-label="anchor" href="#pruning"></a>
@@ -214,7 +215,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_lowest</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_disparity</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_scaled</span>, minimum <span class="op">=</span> <span class="fl">0.05</span>, cut <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-7-1.png" width="100%"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="patterns">Patterns<a class="anchor" aria-label="anchor" href="#patterns"></a>
@@ -266,7 +267,7 @@
 <span><span class="co">#&gt; monitor    0.01 0.12</span></span>
 <span><span class="co">#&gt; plan       0.19 0.92</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_two</span>, ask <span class="op">=</span> <span class="cn">F</span>, vsize <span class="op">=</span> <span class="fl">20</span><span class="op">)</span>   <span class="co"># Visualize 2-cliques in the network</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Identify 3-cliques (triads) from the FTNA model.</span></span>
@@ -314,7 +315,7 @@
 <span><span class="co">#&gt; emotion     0.368   0.087 0.113</span></span>
 <span><span class="co">#&gt; plan        0.062   0.361 0.920</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_three</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>  <span class="co"># Visualize 3-cliques in the network</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># Identify 4-cliques (quadruples) from the FTNA model.</span></span>
@@ -375,7 +376,7 @@
 <span><span class="co">#&gt; monitor         0.033   0.052   0.010 0.12</span></span>
 <span><span class="co">#&gt; plan            0.042   0.361   0.186 0.92</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_four</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>   <span class="co"># Visualize 4-cliques in the network</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Identify 5-cliques (quintuples) from the FTNA model, summing edge weights.</span></span>
 <span><span class="co"># Here, the sum of edge weights in both directions must meet the specified </span></span>
@@ -401,7 +402,7 @@
 <span><span class="co">#&gt; emotion         0.36      0.039    0.12   0.087 0.113</span></span>
 <span><span class="co">#&gt; plan            0.71      0.042    0.17   0.361 0.920</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliques_of_five</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>   <span class="co"># Visualize 5-cliques in the network</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-11-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="graph-level-measures">Graph level measures<a class="anchor" aria-label="anchor" href="#graph-level-measures"></a>
@@ -466,7 +467,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> synthesis        0.260      0.275       12.0          5.72     16.9           21</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;, Clustering &lt;dbl&gt;</span></span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">centrality_measures</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-14-1.png" width="100%"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="100%"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert the FTNA model to an igraph object and </span></span>
 <span><span class="co"># calculate HITS (Hub and Authority) scores</span></span>
@@ -494,7 +495,7 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">edge_between</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/betweenness_network.html">betweenness_network</a></span><span class="op">(</span><span class="va">model_scaled</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">edge_between</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="community-detection">Community detection<a class="anchor" aria-label="anchor" href="#community-detection"></a>
@@ -502,7 +503,7 @@
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">detected_communities</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/communities.html">communities</a></span><span class="op">(</span><span class="va">model_scaled</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">detected_communities</span>, minimum <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-18-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">detected_communities</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Number of communities found by each algorithm</span></span>
@@ -563,7 +564,7 @@
 <span><span class="co"># Plot a comparison of the "Hi" and "Lo" models</span></span>
 <span><span class="co"># The 'minimum' parameter is set to 0.001, so edges with weights &gt;= 0.001 are shown</span></span>
 <span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span><span class="va">Hi</span>, <span class="va">Lo</span>, minimum <span class="op">=</span> <span class="fl">0.0001</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-20-1.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Run a permutation test to determine statistical significance of </span></span>
@@ -573,7 +574,7 @@
 <span></span>
 <span><span class="co"># Plot the significant differences identified in the permutation test</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Permutation</span>, minimum <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-20-2.png" width="100%" style="display: block; margin: auto;"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-20-2.png" class="r-plt" alt="" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="centrality-stability">Centrality stability<a class="anchor" aria-label="anchor" href="#centrality-stability"></a>
@@ -581,7 +582,7 @@
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Centrality_stability</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_centrality_stability.html">estimate_centrality_stability</a></span><span class="op">(</span><span class="va">model_scaled</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Centrality_stability</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ftna_files/figure-html/unnamed-chunk-21-1.png" width="100%"></p>
+<p><img src="ftna_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -595,7 +596,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

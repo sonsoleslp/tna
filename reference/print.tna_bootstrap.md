@@ -1,0 +1,232 @@
+# Print Bootstrap Results
+
+Print Bootstrap Results
+
+## Usage
+
+``` r
+# S3 method for class 'tna_bootstrap'
+print(x, digits = getOption("digits"), type = "both", ...)
+```
+
+## Arguments
+
+- x:
+
+  A `tna_bootstrap` object.
+
+- digits:
+
+  An `integer` giving the minimal number of *significant* digits to
+  print.
+
+- type:
+
+  A `character` vector giving the type of edges to print. The default
+  option `"both"` prints both statistically significant and
+  non-significant edges, `"sig"` prints only significant edges, and
+  `"nonsig"` prints only the non-significant edges.
+
+- ...:
+
+  Ignored.
+
+## Value
+
+`x` (invisibly).
+
+## See also
+
+Validation functions
+[`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md),
+[`deprune()`](http://sonsoles.me/tna/reference/deprune.md),
+[`estimate_cs()`](http://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md),
+[`permutation_test.group_tna()`](http://sonsoles.me/tna/reference/permutation_test.group_tna.md),
+[`plot.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
+[`plot.group_tna_permutation()`](http://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
+[`plot.group_tna_stability()`](http://sonsoles.me/tna/reference/plot.group_tna_stability.md),
+[`plot.tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_permutation()`](http://sonsoles.me/tna/reference/plot.tna_permutation.md),
+[`plot.tna_stability()`](http://sonsoles.me/tna/reference/plot.tna_stability.md),
+[`print.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
+[`print.group_tna_permutation()`](http://sonsoles.me/tna/reference/print.group_tna_permutation.md),
+[`print.group_tna_stability()`](http://sonsoles.me/tna/reference/print.group_tna_stability.md),
+[`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
+[`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
+[`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),
+[`prune()`](http://sonsoles.me/tna/reference/prune.md),
+[`pruning_details()`](http://sonsoles.me/tna/reference/pruning_details.md),
+[`reprune()`](http://sonsoles.me/tna/reference/reprune.md),
+[`summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
+[`summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+
+## Examples
+
+``` r
+model <- tna(group_regulation)
+# Small number of iterations for CRAN
+boot <- bootstrap(model, iter = 10)
+print(boot)
+#> Non-significant Edges
+#> 
+#>          from         to       weight    p_value     cr_lower    cr_upper
+#> 2    cohesion      adapt 0.0029498525 0.63636364 0.0022123894 0.003687316
+#> 3   consensus      adapt 0.0047400853 0.09090909 0.0035550640 0.005925107
+#> 4  coregulate      adapt 0.0162436548 0.45454545 0.0121827411 0.020304569
+#> 5     discuss      adapt 0.0713743356 0.09090909 0.0535307517 0.089217920
+#> 6     emotion      adapt 0.0024673951 0.54545455 0.0018505464 0.003084244
+#> 7     monitor      adapt 0.0111653873 0.27272727 0.0083740405 0.013956734
+#> 8        plan      adapt 0.0009745006 0.63636364 0.0007308754 0.001218126
+#> 9   synthesis      adapt 0.2346625767 0.09090909 0.1759969325 0.293328221
+#> 10      adapt   cohesion 0.2730844794 0.09090909 0.2048133595 0.341355599
+#> 11   cohesion   cohesion 0.0271386431 0.09090909 0.0203539823 0.033923304
+#> 12  consensus   cohesion 0.0148522673 0.09090909 0.0111392005 0.018565334
+#> 13 coregulate   cohesion 0.0360406091 0.09090909 0.0270304569 0.045050761
+#> 14    discuss   cohesion 0.0475828904 0.09090909 0.0356871678 0.059478613
+#> 15    emotion   cohesion 0.3253436729 0.09090909 0.2440077547 0.406679591
+#> 16    monitor   cohesion 0.0558269365 0.18181818 0.0418702024 0.069783671
+#> 17       plan   cohesion 0.0251745980 0.09090909 0.0188809485 0.031468248
+#> 18  synthesis   cohesion 0.0337423313 0.27272727 0.0253067485 0.042177914
+#> 19      adapt  consensus 0.4774066798 0.09090909 0.3580550098 0.596758350
+#> 20   cohesion  consensus 0.4979351032 0.09090909 0.3734513274 0.622418879
+#> 21  consensus  consensus 0.0820034761 0.09090909 0.0615026070 0.102504345
+#> 22 coregulate  consensus 0.1345177665 0.09090909 0.1008883249 0.168147208
+#> 23    discuss  consensus 0.3211845103 0.09090909 0.2408883827 0.401480638
+#> 24    emotion  consensus 0.3204088826 0.09090909 0.2403066620 0.400511103
+#> 25    monitor  consensus 0.1591067690 0.09090909 0.1193300768 0.198883461
+#> 26       plan  consensus 0.2904011694 0.09090909 0.2178008771 0.363001462
+#> 27  synthesis  consensus 0.4662576687 0.09090909 0.3496932515 0.582822086
+#> 28      adapt coregulate 0.0216110020 0.45454545 0.0162082515 0.027013752
+#> 29   cohesion coregulate 0.1191740413 0.09090909 0.0893805310 0.148967552
+#> 30  consensus coregulate 0.1877073787 0.09090909 0.1407805340 0.234634223
+#> 31 coregulate coregulate 0.0233502538 0.27272727 0.0175126904 0.029187817
+#> 32    discuss coregulate 0.0842824601 0.09090909 0.0632118451 0.105353075
+#> 33    emotion coregulate 0.0341910469 0.09090909 0.0256432852 0.042738809
+#> 34    monitor coregulate 0.0579204466 0.09090909 0.0434403350 0.072400558
+#> 35       plan coregulate 0.0172161767 0.09090909 0.0129121325 0.021520221
+#> 36  synthesis coregulate 0.0444785276 0.18181818 0.0333588957 0.055598160
+#> 37      adapt    discuss 0.0589390963 0.18181818 0.0442043222 0.073673870
+#> 38   cohesion    discuss 0.0595870206 0.09090909 0.0446902655 0.074483776
+#> 39  consensus    discuss 0.1880233844 0.09090909 0.1410175383 0.235029231
+#> 40 coregulate    discuss 0.2736040609 0.09090909 0.2052030457 0.342005076
+#> 41    discuss    discuss 0.1948873703 0.09090909 0.1461655277 0.243609213
+#> 42    emotion    discuss 0.1018681706 0.09090909 0.0764011280 0.127335213
+#> 43    monitor    discuss 0.3754361479 0.09090909 0.2815771110 0.469295185
+#> 44       plan    discuss 0.0678902063 0.09090909 0.0509176547 0.084862758
+#> 45  synthesis    discuss 0.0628834356 0.18181818 0.0471625767 0.078604294
+#> 46      adapt    emotion 0.1198428291 0.18181818 0.0898821218 0.149803536
+#> 47   cohesion    emotion 0.1156342183 0.09090909 0.0867256637 0.144542773
+#> 48  consensus    emotion 0.0726813083 0.09090909 0.0545109812 0.090851635
+#> 49 coregulate    emotion 0.1720812183 0.09090909 0.1290609137 0.215101523
+#> 50    discuss    emotion 0.1057960010 0.09090909 0.0793470008 0.132245001
+#> 51    emotion    emotion 0.0768417342 0.09090909 0.0576313007 0.096052168
+#> 52    monitor    emotion 0.0907187718 0.09090909 0.0680390789 0.113398465
+#> 53       plan    emotion 0.1468247523 0.09090909 0.1101185642 0.183530940
+#> 54  synthesis    emotion 0.0705521472 0.09090909 0.0529141104 0.088190184
+#> 55      adapt    monitor 0.0333988212 0.18181818 0.0250491159 0.041748527
+#> 56   cohesion    monitor 0.0330383481 0.09090909 0.0247787611 0.041297935
+#> 57  consensus    monitor 0.0466108390 0.09090909 0.0349581292 0.058263549
+#> 58 coregulate    monitor 0.0862944162 0.09090909 0.0647208122 0.107868020
+#> 59    discuss    monitor 0.0222728423 0.09090909 0.0167046317 0.027841053
+#> 60    emotion    monitor 0.0363059570 0.09090909 0.0272294677 0.045382446
+#> 61    monitor    monitor 0.0181437544 0.18181818 0.0136078158 0.022679693
+#> 62       plan    monitor 0.0755237941 0.09090909 0.0566428455 0.094404743
+#> 63  synthesis    monitor 0.0122699387 0.54545455 0.0092024540 0.015337423
+#> 64      adapt       plan 0.0157170923 0.63636364 0.0117878193 0.019646365
+#> 65   cohesion       plan 0.1410029499 0.09090909 0.1057522124 0.176253687
+#> 66  consensus       plan 0.3957971243 0.09090909 0.2968478433 0.494746405
+#> 67 coregulate       plan 0.2390862944 0.09090909 0.1793147208 0.298857868
+#> 68    discuss       plan 0.0116426221 0.18181818 0.0087319666 0.014553278
+#> 69    emotion       plan 0.0997532605 0.09090909 0.0748149454 0.124691576
+#> 70    monitor       plan 0.2156315422 0.09090909 0.1617236567 0.269539428
+#> 71       plan       plan 0.3742082183 0.09090909 0.2806561637 0.467760273
+#> 72  synthesis       plan 0.0751533742 0.27272727 0.0563650307 0.093941718
+#> 74   cohesion  synthesis 0.0035398230 0.54545455 0.0026548673 0.004424779
+#> 75  consensus  synthesis 0.0075841365 0.18181818 0.0056881024 0.009480171
+#> 76 coregulate  synthesis 0.0187817259 0.27272727 0.0140862944 0.023477157
+#> 77    discuss  synthesis 0.1409769679 0.09090909 0.1057327259 0.176221210
+#> 78    emotion  synthesis 0.0028198802 0.45454545 0.0021149101 0.003524850
+#> 79    monitor  synthesis 0.0160502442 0.18181818 0.0120376832 0.020062805
+#> 80       plan  synthesis 0.0017865844 0.45454545 0.0013399383 0.002233230
+#>        ci_lower    ci_upper
+#> 2  0.0007173440 0.003744877
+#> 3  0.0040418563 0.005812372
+#> 4  0.0145160099 0.022757978
+#> 5  0.0642346945 0.076911102
+#> 6  0.0007861425 0.004593798
+#> 7  0.0086152916 0.014040406
+#> 8  0.0006342186 0.001323212
+#> 9  0.2064675926 0.250730850
+#> 10 0.2493286763 0.324421037
+#> 11 0.0235175676 0.030211620
+#> 12 0.0121659921 0.016999851
+#> 13 0.0301305112 0.043034840
+#> 14 0.0413145981 0.049563699
+#> 15 0.3115478514 0.339532899
+#> 16 0.0483073199 0.068991700
+#> 17 0.0218071150 0.028885567
+#> 18 0.0230565891 0.042650246
+#> 19 0.4438220157 0.511736305
+#> 20 0.4734443071 0.518444902
+#> 21 0.0771067935 0.088581578
+#> 22 0.1244374436 0.148153986
+#> 23 0.3209382176 0.334032310
+#> 24 0.3121089114 0.346050498
+#> 25 0.1489900780 0.175262003
+#> 26 0.2820291200 0.298141674
+#> 27 0.4468231198 0.499905254
+#> 28 0.0128923184 0.031863860
+#> 29 0.1076666089 0.134056849
+#> 30 0.1798789517 0.195573164
+#> 31 0.0201435262 0.031891104
+#> 32 0.0791911715 0.091595275
+#> 33 0.0312554486 0.037408321
+#> 34 0.0495393338 0.065780993
+#> 35 0.0157092930 0.020563441
+#> 36 0.0331665404 0.052800558
+#> 37 0.0503477548 0.073035738
+#> 38 0.0522171334 0.065690903
+#> 39 0.1802132895 0.195130318
+#> 40 0.2598969645 0.290322905
+#> 41 0.1809853316 0.204465090
+#> 42 0.0879067893 0.102767103
+#> 43 0.3558517047 0.404199150
+#> 44 0.0632145290 0.074161716
+#> 45 0.0451732283 0.073430900
+#> 46 0.0964748704 0.148722768
+#> 47 0.1061352218 0.124786094
+#> 48 0.0698462891 0.077487860
+#> 49 0.1462541201 0.181661004
+#> 50 0.0989290150 0.111324316
+#> 51 0.0671442599 0.082881547
+#> 52 0.0788471458 0.098495043
+#> 53 0.1354723980 0.151000413
+#> 54 0.0605770887 0.084075772
+#> 55 0.0247150526 0.038415824
+#> 56 0.0296353624 0.037403157
+#> 57 0.0445399632 0.052063568
+#> 58 0.0760731260 0.095429498
+#> 59 0.0182629268 0.023564588
+#> 60 0.0287256678 0.038693719
+#> 61 0.0129310228 0.020507795
+#> 62 0.0722653419 0.080082961
+#> 63 0.0055858516 0.020333713
+#> 64 0.0098697556 0.029801740
+#> 65 0.1268967461 0.156639071
+#> 66 0.3779664156 0.403485549
+#> 67 0.2327211863 0.252593717
+#> 68 0.0105815041 0.014923971
+#> 69 0.0940832207 0.104523840
+#> 70 0.2041517504 0.236642139
+#> 71 0.3630419209 0.383266885
+#> 72 0.0573718949 0.095727838
+#> 74 0.0021163987 0.005712873
+#> 75 0.0060221805 0.009410459
+#> 76 0.0133873835 0.020047230
+#> 77 0.1336952149 0.146967522
+#> 78 0.0010590783 0.003794408
+#> 79 0.0113936716 0.018574032
+#> 80 0.0013356626 0.002731615
+```

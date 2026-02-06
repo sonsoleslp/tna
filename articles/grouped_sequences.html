@@ -39,7 +39,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/communities_and_cliques.html">Finding cliques and communities with tna</a></li>
+<li><a class="dropdown-item" href="../articles/atna.html">Attention TNA</a></li>
+    <li><a class="dropdown-item" href="../articles/communities_and_cliques.html">Finding cliques and communities with tna</a></li>
     <li><a class="dropdown-item" href="../articles/complete_tutorial.html">A showcase of the main tna functions</a></li>
     <li><a class="dropdown-item" href="../articles/ftna.html">Frequency-based tna</a></li>
     <li><a class="dropdown-item" href="../articles/grouped_sequences.html">Using grouped sequence data with tna</a></li>
@@ -68,7 +69,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Using grouped sequence data with tna</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/1.1.0/vignettes/grouped_sequences.Rmd" class="external-link"><code>vignettes/grouped_sequences.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/vignettes/grouped_sequences.Rmd" class="external-link"><code>vignettes/grouped_sequences.Rmd</code></a></small>
       <div class="d-none name"><code>grouped_sequences.Rmd</code></div>
     </div>
 
@@ -2614,7 +2615,7 @@ the <code>group</code> argument.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tna_model_clus</span>, vsize <span class="op">=</span> <span class="fl">20</span>, edge.label.cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="grouped_sequences_files/figure-html/unnamed-chunk-10-1.png" width="100%"></p>
+<p><img src="grouped_sequences_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Just like ordinary TNA models, we can prune the rare transitions</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pruned_clus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">tna_model_clus</span>, threshold <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
@@ -2622,7 +2623,7 @@ the <code>group</code> argument.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_clus</span>, vsize <span class="op">=</span> <span class="fl">20</span>, edge.label.cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="grouped_sequences_files/figure-html/unnamed-chunk-12-1.png" width="100%"></p>
+<p><img src="grouped_sequences_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Centrality measures can also be computed for each cluster
 directly.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -2640,7 +2641,7 @@ directly.</p>
 <span>  <span class="va">centralities_per_cluster</span>, ncol <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"purple"</span>, <span class="st">"orange"</span>, <span class="st">"pink"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="grouped_sequences_files/figure-html/unnamed-chunk-13-1.png" width="100%"></p>
+<p><img src="grouped_sequences_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="100%"></p>
   </main>
 </div>
 
@@ -2651,7 +2652,7 @@ directly.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
