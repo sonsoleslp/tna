@@ -3,6 +3,10 @@ test_that("sequence indices can be computed", {
     sequence_indices(mock_sequence),
     NA
   )
+  expect_error(
+    sequence_indices(engagement),
+    NA
+  )
 })
 
 test_that("sequence indices can be computed for tna models", {

@@ -618,18 +618,26 @@ import_data <- function(data, cols, id_cols,
 #' @export
 #' @family data
 #' @param data A `data.frame` in wide format.
+#' @param cols An `expression` giving a tidy selection of columns to be
+#'   considered as one-hot data.
 #' @param actor An optional `character` string giving the column name of
 #'   `data` containing the actor identifiers.
 #' @param session An optional `character` string giving the column name of
 #'   `data` containing the session identifiers.
-#' @param cols An `expression` giving a tidy selection of columns to be
-#'   considered as one-hot data.
 #' @param keep An optional `expression` giving a tidy selection of columns
 #'   that should be retained in the aggregated data besides `cols`.
 #' @param window An `integer` specifying the window size for grouping.
 #' @return The processed data as a `data.frame`.
 #' @examples
-#'
+#' d <- data.frame(
+#'   actor = gl(100, 5),
+#'   session = gl(10, 50),
+#'   feature1 = rbinom(500, 1, prob = 0.33),
+#'   feature2 = rbinom(500, 1, prob = 0.25),
+#'   feature3 = rbinom(500, 1, prob = 0.50)
+#' )
+#' onehot1 <- import_onehot(d, feature1:feature3)
+#' onehot2 <- import_onehot(d, feature1:feature3, "actor", "session")
 #'
 import_onehot <- function(data, cols, actor, session, keep, window = 1L) {
   check_missing(data)
@@ -639,7 +647,7 @@ import_onehot <- function(data, cols, actor, session, keep, window = 1L) {
   keep <- get_cols(rlang::enquo(keep), data)
   keep <- keep %m% character(0L)
   actor <- get_cols(rlang::enquo(actor), data)
-  session <- get_cols(rlang::enquo(actor), data)
+  session <- get_cols(rlang::enquo(session), data)
   check_cols(actor, missing_ok = TRUE)
   check_cols(session, missing_ok = TRUE)
   out <- data |>
@@ -671,7 +679,7 @@ import_onehot <- function(data, cols, actor, session, keep, window = 1L) {
   }
   out$.group <- .group
   # Take the first non-NA occurrence for each code within the window
-  out <- out |>
+  out |>
     dplyr::group_by(!!rlang::sym(".group")) |>
     dplyr::summarise(
       dplyr::across(tidyselect::all_of(cols), ~ stats::na.omit(.x)[1L]),

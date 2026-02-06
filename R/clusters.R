@@ -1,12 +1,11 @@
-#' Cluster Sequences via Dissimilarity Matrix based on String Distances
+#' Clustering via Dissimilarity Matrix based on String Distances
 #'
-#' Performs clustering on sequence data using specified dissimilarity measures
-#' and clustering methods. The sequences are first converted to strings
-#' and compared using the `stringdist` package.
+#' Performs clustering using specified dissimilarity measures
+#' and clustering methods. The rows of the data are first converted to strings
+#' and compared using the dissimilarity measures available in the 
+#' `stringdist` package.
 #'
-#' @param data A `data.frame` or a `matrix` where the rows are sequences and
-#'   the columns are time points.
-#' @param x A `tna_clustering` object.
+#' @param data A `data.frame` or a `matrix` in wide format.
 #' @param k An `integer` giving the number of clusters.
 #' @param dissimilarity A `character` string specifying the
 #'   dissimilarity measure. The available options are: `"osa"`, `"lv"`, `"dl"`,
@@ -50,9 +49,9 @@
 #' print(result)
 #'
 #' @export
-cluster_sequences <- function(data, k, dissimilarity = "hamming",
-                              method = "pam", na_syms = c("*", "%"),
-                              weighted = FALSE, lambda = 1.0, ...) {
+cluster_data <- function(data, k, dissimilarity = "hamming",
+                         method = "pam", na_syms = c("*", "%"),
+                         weighted = FALSE, lambda = 1.0, ...) {
   stopifnot_(
     is.data.frame(data) || is.matrix(data),
     "Argument {.arg data} must be a {.cls data.frame} or a {.cls matrix}."
@@ -91,6 +90,10 @@ cluster_sequences <- function(data, k, dissimilarity = "hamming",
     class = "tna_clustering"
   )
 }
+
+#' @export
+#' @rdname cluster_data
+cluster_sequences <- cluster_data
 
 #' Convert a matrix of sequences to a character matrix of symbols
 #'

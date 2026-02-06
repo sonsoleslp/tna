@@ -227,3 +227,11 @@ test_that("sequence comparison output can be printed", {
     NA
   )
 })
+
+test_that("reliability analysis can be printed", {
+  rel <- reliability(mock_tna_seq, iter = 50)
+  expect_error(
+    capture.output(print(rel)),
+    NA
+  )
+})

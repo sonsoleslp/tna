@@ -10,20 +10,20 @@ import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)
 \item{data}{A \code{data.frame} in wide format.}
 
 \item{cols}{An \code{expression} giving a tidy selection of column names to be
-transformed into long format (actions). This can be a vector of column names
-(e.g., \code{c(feature1, feature2)}) or a range  specified as \code{feature1:feature6}
-(without quotes) to include all columns from 'feature1' to 'feature6'
-in the order they appear in the data frame. For more information on
-tidy selections, see \code{\link[dplyr:select]{dplyr::select()}}.}
+transformed into long format (actions). This can be a vector of column
+names (e.g., \code{c(feature1, feature2)}) or a range  specified as
+\code{feature1:feature6} (without quotes) to include all columns from
+'feature1' to 'feature6' in the order they appear in the data frame.
+For more information on tidy selections, see \code{\link[dplyr:select]{dplyr::select()}}.}
 
 \item{id_cols}{An \code{expression} giving a tidy selection of column names that
 uniquely identify each observation (IDs).}
 
-\item{window_size}{An \code{integer} specifying the size of the window for
-sequence grouping. Default is 1 (each row is a separate window).}
-
 \item{replace_zeros}{A \code{logical} value indicating whether to replace 0s
 in \code{cols} with \code{NA}. The default is \code{TRUE}.}
+
+\item{window}{An \code{integer} specifying the size of the window for
+sequence grouping. Default is 1 (each row is a separate window).}
 }
 \value{
 A \code{data.frame} in long format with added columns for window and

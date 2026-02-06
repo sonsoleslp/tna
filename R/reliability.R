@@ -24,17 +24,6 @@ reliability <- function(x, ...) {
 
 #' @export
 #' @rdname reliability
-reliability.default <- function(x, types = "relative", ...) {
-  model <- try_(build_model(x, type = types[1]))
-  stopifnot_(
-    !inherits(model, "try-error"),
-    "Argument `x` has invalid type."
-  )
-  reliability.tna(x = model, types = types, ...)
-}
-
-#' @export
-#' @rdname reliability
 reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
                             scaling = "none", ...) {
   check_tna_seq(x)

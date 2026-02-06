@@ -2,13 +2,10 @@
 % Please edit documentation in R/reliability.R
 \name{reliability}
 \alias{reliability}
-\alias{reliability.default}
 \alias{reliability.tna}
 \title{Assess Model Reliability}
 \usage{
 reliability(x, ...)
-
-\method{reliability}{default}(x, types = "relative", ...)
 
 \method{reliability}{tna}(
   x,

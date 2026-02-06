@@ -453,3 +453,36 @@ test_that("invalid node lists fail", {
     "Every state must belong to one of the groups defined by `node_list`"
   )
 })
+
+test_that("reliability analysis can be plotted", {
+  rel <- reliability(mock_tna_seq, iter = 50)
+  expect_error(
+    plot(rel, type = "histogram"),
+    NA
+  )
+  expect_error(
+    plot(rel, type = "density"),
+    NA
+  )
+  expect_error(
+    plot(rel, type = "boxplot"),
+    NA
+  )
+  rel2 <- reliability(
+    mock_tna_seq, 
+    types = c("relative", "frequency"), 
+    iter = 50
+  )
+  expect_error(
+    plot(rel2, type = "histogram"),
+    NA
+  )
+  expect_error(
+    plot(rel2, type = "density"),
+    NA
+  )
+  expect_error(
+    plot(rel2, type = "boxplot"),
+    NA
+  )
+})
