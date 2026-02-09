@@ -18,13 +18,13 @@ more details on TNA.
 We have also released comprehensive new tutorials for the main TNA
 features:
 
-| Tutorial                                                               | Link                                       |
-|------------------------------------------------------------------------|--------------------------------------------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | <https://sonsoles.me/posts/tna-tutorial>   |
-| TNA Group Analysis: Comparing Groups and Discovering Clusters          | <https://sonsoles.me/posts/tna-group>      |
-| TNA Clustering: Discovering Latent Subgroups from Sequence Data        | <https://sonsoles.me/posts/tna-clustering> |
-| TNA Model Comparison: A Complete Guide to compare() Metrics            | <https://sonsoles.me/posts/tna-compare>    |
-| Full reference guide on `tna` functions                                | <https://sonsoles.me/tna/tna.html>         |
+| Tutorial                                                                               | Link                                       |
+|----------------------------------------------------------------------------------------|--------------------------------------------|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)                 | <https://sonsoles.me/posts/tna-tutorial>   |
+| TNA Group Analysis: Analysis and Comparison of Groups                                  | <https://sonsoles.me/posts/tna-group>      |
+| TNA Clustering: Discovering and Analysis of Clusters                                   | <https://sonsoles.me/posts/tna-clustering> |
+| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | <https://sonsoles.me/posts/tna-compare>    |
+| Full reference guide on `tna` functions                                                | <https://sonsoles.me/tna/tna.html>         |
 
 ### Vignettes
 
@@ -212,15 +212,15 @@ print(comparison$centralities$stats)
 
 |   state    | centrality |   diff_true | effect_size |     p_value |
 |:----------:|:----------:|------------:|------------:|------------:|
-|   adapt    | InStrength | -0.23693341 |  -6.5193982 | 0.000999001 |
-|  cohesion  | InStrength |  0.01634987 |   0.3301392 | 0.748251748 |
-| consensus  | InStrength |  0.53680793 |   7.4993638 | 0.000999001 |
-| coregulate | InStrength | -0.25275371 |  -7.3043979 | 0.000999001 |
-|  discuss   | InStrength | -0.09009651 |  -1.8499898 | 0.062937063 |
-|  emotion   | InStrength |  0.19288376 |   4.0044398 | 0.000999001 |
-|  monitor   | InStrength | -0.09192991 |  -3.4581964 | 0.000999001 |
-|    plan    | InStrength |  0.12225988 |   2.8370445 | 0.002997003 |
-| synthesis  | InStrength | -0.04909607 |  -3.1668552 | 0.001998002 |
+|   adapt    | InStrength | -0.23693341 |   -6.534460 | 0.000999001 |
+|  cohesion  | InStrength |  0.01634987 |    0.343033 | 0.718281718 |
+| consensus  | InStrength |  0.53680793 |    7.513230 | 0.000999001 |
+| coregulate | InStrength | -0.25275371 |   -7.250372 | 0.000999001 |
+|  discuss   | InStrength | -0.09009651 |   -1.907370 | 0.049950050 |
+|  emotion   | InStrength |  0.19288376 |    3.932699 | 0.000999001 |
+|  monitor   | InStrength | -0.09192991 |   -3.414719 | 0.001998002 |
+|    plan    | InStrength |  0.12225988 |    2.830524 | 0.003996004 |
+| synthesis  | InStrength | -0.04909607 |   -3.092963 | 0.001998002 |
 
 # Papers using TNA
 
