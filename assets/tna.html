@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tna - R Package Documentation</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a2e;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --border: #e5e7eb;
+    --code-bg: #f8fafc;
+    --code-border: #e2e8f0;
+    --table-stripe: #f9fafb;
+    --header-bg: #0f172a;
+    --success: #059669;
+    --warn: #d97706;
+    --sidebar-w: 280px;
+    --output-bg: #f0fdf4;
+    --output-border: #86efac;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    color: var(--fg);
+    line-height: 1.7;
+    background: var(--bg);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--sidebar-w);
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--header-bg);
+    color: #cbd5e1;
+    padding: 1.5rem 0;
+    font-size: 0.85rem;
+    z-index: 100;
+    scrollbar-width: thin;
+    scrollbar-color: #334155 transparent;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+  .sidebar .logo {
+    padding: 0 1.5rem 1.2rem;
+    border-bottom: 1px solid #1e293b;
+    margin-bottom: 1rem;
+  }
+  .sidebar .logo h1 {
+    font-size: 1.3rem;
+    color: #f1f5f9;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .sidebar .logo p {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+  }
+
+  .sidebar nav ul { list-style: none; }
+  .sidebar nav > ul > li > a {
+    display: block;
+    padding: 0.5rem 1.5rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: color 0.15s;
+  }
+  .sidebar nav > ul > li > a:hover { color: #e2e8f0; }
+
+  .sidebar nav > ul > li > ul { margin-bottom: 0.5rem; }
+  .sidebar nav > ul > li > ul > li > a {
+    display: block;
+    padding: 0.3rem 1.5rem 0.3rem 2.2rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .sidebar nav > ul > li > ul > li > a:hover {
+    color: #e2e8f0;
+    background: rgba(255,255,255,0.04);
+    border-left-color: var(--accent);
+  }
+
+  /* ── Main content ── */
+  .main {
+    margin-left: var(--sidebar-w);
+    max-width: 900px;
+    padding: 2.5rem 3rem 5rem;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 3rem 0 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+    color: var(--fg);
+    letter-spacing: -0.02em;
+  }
+  h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 2rem 0 0.5rem;
+    color: var(--fg);
+  }
+  h3 code {
+    font-size: 1.1rem;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+
+  h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.4rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  p { margin: 0.5rem 0; color: #374151; }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2.5rem;
+  }
+  .hero h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; }
+  .hero p { color: #94a3b8; font-size: 1.05rem; margin-top: 0.5rem; }
+  .hero .badges { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .hero .badge {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .badge-blue { background: #1d4ed8; color: #dbeafe; }
+  .badge-green { background: #065f46; color: #d1fae5; }
+  .badge-purple { background: #5b21b6; color: #ede9fe; }
+  .badge-amber { background: #92400e; color: #fef3c7; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    margin: 0.8rem 0;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em;
+  }
+  p code, li code, td code {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    color: #be185d;
+    font-size: 0.85em;
+  }
+
+  /* ── Signature blocks ── */
+  .signature {
+    background: #f8fafc;
+    border-left: 3px solid var(--accent);
+    padding: 0.8rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 0.8rem 0;
+    overflow-x: auto;
+  }
+  .signature code { color: var(--fg); font-size: 0.82rem; }
+
+  /* ── Output blocks ── */
+  .output {
+    background: var(--output-bg);
+    border: 1px solid var(--output-border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.82rem;
+    overflow-x: auto;
+    margin: 0.5rem 0 1rem;
+    position: relative;
+  }
+  .output::before {
+    content: 'Output';
+    position: absolute;
+    top: -0.6rem;
+    left: 0.8rem;
+    background: var(--output-bg);
+    padding: 0 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--success);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .output code { color: #166534; background: none; border: none; padding: 0; }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.8rem 0 1.2rem;
+    font-size: 0.88rem;
+  }
+  th {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 2px solid var(--fg);
+    font-weight: 600;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.45rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) { background: var(--table-stripe); }
+
+  /* ── Collapsible ── */
+  details {
+    margin: 0.8rem 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  summary {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    background: #f9fafb;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  summary:hover { background: #f3f4f6; }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .detail-content { padding: 1rem; }
+
+  /* ── Lists ── */
+  ul, ol { padding-left: 1.5rem; margin: 0.4rem 0; }
+  li { margin: 0.25rem 0; color: #374151; }
+
+  /* ── Install box ── */
+  .install-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0 2rem;
+  }
+
+  /* ── Quick ref ── */
+  .quick-ref {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1rem 0 2rem;
+  }
+  .quick-ref-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    transition: box-shadow 0.15s;
+  }
+  .quick-ref-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .quick-ref-card h4 {
+    margin: 0 0 0.4rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--fg);
+    font-size: 0.92rem;
+  }
+  .quick-ref-card .funcs {
+    font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+
+  /* ── Notes ── */
+  .note {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 0.6rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.8rem 0;
+    font-size: 0.88rem;
+  }
+
+  .returns {
+    background: #f0f9ff;
+    border-left: 3px solid #0ea5e9;
+    padding: 0.6rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.8rem 0;
+    font-size: 0.88rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 1.5rem; }
+    .quick-ref { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<aside class="sidebar">
+  <div class="logo">
+    <h1>tna</h1>
+    <p>v1.1.0 &middot; R Package</p>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#getting-started">Getting Started</a></li>
+      <li><a href="#data-preparation">Data Preparation</a>
+        <ul>
+          <li><a href="#prepare_data">prepare_data()</a></li>
+        </ul>
+      </li>
+      <li><a href="#building-models">Building Models</a>
+        <ul>
+          <li><a href="#tna-fn">tna() / ftna() / ctna() / atna()</a></li>
+          <li><a href="#build_model">build_model()</a></li>
+          <li><a href="#group_model">group_model()</a></li>
+        </ul>
+      </li>
+      <li><a href="#plotting">Plotting</a>
+        <ul>
+          <li><a href="#plot">plot()</a></li>
+          <li><a href="#plot_frequencies">plot_frequencies()</a></li>
+          <li><a href="#plot_mosaic">plot_mosaic()</a></li>
+          <li><a href="#plot_sequences">plot_sequences()</a></li>
+          <li><a href="#plot_compare">plot_compare()</a></li>
+          <li><a href="#plot_associations">plot_associations()</a></li>
+          <li><a href="#hist">hist()</a></li>
+        </ul>
+      </li>
+      <li><a href="#centrality">Centrality Measures</a>
+        <ul>
+          <li><a href="#centralities">centralities()</a></li>
+          <li><a href="#betweenness_network">betweenness_network()</a></li>
+          <li><a href="#estimate_cs">estimate_cs()</a></li>
+        </ul>
+      </li>
+      <li><a href="#structure">Network Structure</a>
+        <ul>
+          <li><a href="#communities">communities()</a></li>
+          <li><a href="#cliques">cliques()</a></li>
+        </ul>
+      </li>
+      <li><a href="#comparison">Comparison</a>
+        <ul>
+          <li><a href="#compare">compare()</a></li>
+          <li><a href="#compare_sequences">compare_sequences()</a></li>
+          <li><a href="#permutation_test">permutation_test()</a></li>
+        </ul>
+      </li>
+      <li><a href="#validation">Validation</a>
+        <ul>
+          <li><a href="#bootstrap">bootstrap()</a></li>
+          <li><a href="#bootstrap_cliques">bootstrap_cliques()</a></li>
+          <li><a href="#prune">prune()</a></li>
+        </ul>
+      </li>
+      <li><a href="#clustering">Clustering</a>
+        <ul>
+          <li><a href="#cluster_sequences">cluster_sequences()</a></li>
+          <li><a href="#rename_groups">rename_groups()</a></li>
+          <li><a href="#mmm_stats">mmm_stats()</a></li>
+        </ul>
+      </li>
+      <li><a href="#summary-conversion">Summary &amp; Conversion</a>
+        <ul>
+          <li><a href="#summary">summary()</a></li>
+          <li><a href="#as_igraph">as.igraph()</a></li>
+          <li><a href="#sna">sna()</a></li>
+          <li><a href="#simulate">simulate()</a></li>
+          <li><a href="#import_data">import_data()</a></li>
+          <li><a href="#import_onehot">import_onehot()</a></li>
+        </ul>
+      </li>
+      <li><a href="#references">References &amp; Tutorials</a>
+        <ul>
+          <li><a href="#ref-tutorials">Updated Tutorials</a></li>
+          <li><a href="#ref-book2">Book 2 Chapters</a></li>
+          <li><a href="#ref-book1">Book 1 Chapters</a></li>
+          <li><a href="#ref-papers">Papers</a></li>
+          <li><a href="#ref-vignettes">Vignettes</a></li>
+          <li><a href="#ref-tools">Tools &amp; Apps</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main">
+
+<!-- ── Hero ── -->
+<section id="getting-started">
+<div class="hero">
+  <h1>tna</h1>
+  <p>A methodologically rigorous framework for modeling behavioral processes as networks with the full power of graph theory and modern network science techniques. Supports multiple model types &mdash; first-order Markov, frequency-based, co-occurrence, and attention-based &mdash; with confirmatory testing at every level: bootstrapped edge significance, centrality stability coefficients, and permutation-based group comparisons with effect sizes and multiple-comparison corrections.</p>
+  <div class="badges">
+    <span class="badge badge-blue">v1.1.0</span>
+    <span class="badge badge-green">CRAN</span>
+    <span class="badge badge-purple">Markov Models</span>
+    <span class="badge badge-amber">R &ge; 4.1.0</span>
+  </div>
+</div>
+
+<div class="install-box">
+  <h4>Install</h4>
+<pre><code>install.packages("tna")
+# or dev version:
+devtools::install_github("sonsoleslp/tna")</code></pre>
+  <p>All analysis objects have <code>print()</code>, <code>summary()</code>, and <code>plot()</code> methods.</p>
+</div>
+
+<div style="background: linear-gradient(135deg, #f0f9ff 0%, #eff6ff 100%); border: 1px solid #93c5fd; border-radius: 10px; padding: 1.2rem 1.5rem; margin: 0 0 1.5rem;">
+  <h4 style="margin: 0 0 0.6rem; text-transform: none; letter-spacing: 0; color: var(--fg); font-size: 0.95rem;">Tutorials</h4>
+  <div style="display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; font-size: 0.85rem;">
+    <a href="https://sonsoles.me/posts/tna-tutorial/" style="color: var(--accent); text-decoration: none; font-weight: 500;">Comprehensive TNA Tutorial</a>
+    <a href="https://sonsoles.me/posts/tna-group/index.html" style="color: var(--accent); text-decoration: none; font-weight: 500;">Group Analysis</a>
+    <a href="https://sonsoles.me/posts/tna-clustering/" style="color: var(--accent); text-decoration: none; font-weight: 500;">Clustering</a>
+    <a href="https://sonsoles.me/posts/tna-compare/" style="color: var(--accent); text-decoration: none; font-weight: 500;">Model Comparison</a>
+    <a href="https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html" style="color: var(--accent); text-decoration: none; font-weight: 500;">Book Ch. 15: TNA Primer</a>
+    <a href="https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html" style="color: var(--accent); text-decoration: none; font-weight: 500;">Book Ch. 16: FTNA</a>
+    <a href="https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html" style="color: var(--accent); text-decoration: none; font-weight: 500;">Book Ch. 17: Clusters</a>
+  </div>
+</div>
+
+<div class="quick-ref">
+  <div class="quick-ref-card">
+    <h4>Build Models</h4>
+    <div class="funcs">tna() &middot; ftna() &middot; ctna() &middot; atna() &middot; group_model() &middot; sna()</div>
+  </div>
+  <div class="quick-ref-card">
+    <h4>Plotting</h4>
+    <div class="funcs">plot() &middot; plot_frequencies() &middot; plot_mosaic() &middot; plot_sequences() &middot; plot_compare() &middot; hist()</div>
+  </div>
+  <div class="quick-ref-card">
+    <h4>Analysis</h4>
+    <div class="funcs">centralities() &middot; communities() &middot; cliques() &middot; compare() &middot; permutation_test()</div>
+  </div>
+  <div class="quick-ref-card">
+    <h4>Validation</h4>
+    <div class="funcs">bootstrap() &middot; prune() &middot; estimate_cs() &middot; cluster_sequences()</div>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════ DATA PREPARATION ═══════════════ -->
+<h2 id="data-preparation">Data Preparation</h2>
+
+<!-- prepare_data -->
+<h3 id="prepare_data"><code>prepare_data()</code></h3>
+<p>Convert long-format event logs into wide-format sequences. This is typically your first step before building a TNA model.</p>
+
+<div class="signature"><code>prepare_data(data, actor, time, action, order, time_threshold = 900,
+             custom_format = NULL, is_unix_time = FALSE,
+             unix_time_unit = "seconds", unused_fn = dplyr::first)</code></div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>data</code></td><td>Long-format data frame with actor, time, action columns</td><td>&mdash;</td></tr>
+    <tr><td><code>actor</code></td><td>Column name for actor/sequence ID</td><td>&mdash;</td></tr>
+    <tr><td><code>time</code></td><td>Column name for timestamps</td><td>&mdash;</td></tr>
+    <tr><td><code>action</code></td><td>Column name for states/actions</td><td>&mdash;</td></tr>
+    <tr><td><code>time_threshold</code></td><td>Max seconds between events in same session</td><td><code>900</code></td></tr>
+  </tbody>
+</table>
+
+<div class="returns"><strong>Returns:</strong> List with <code>$sequence_data</code>, <code>$statistics</code>, <code>$data</code>.</div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>results &lt;- prepare_data(
+  group_regulation_long,
+  actor = "Actor", time = "Time", action = "Action"
+)
+print(results$statistics)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ BUILDING MODELS ═══════════════ -->
+<h2 id="building-models">Building Models</h2>
+
+<!-- tna -->
+<h3 id="tna-fn"><code>tna()</code> / <code>ftna()</code> / <code>ctna()</code> / <code>atna()</code></h3>
+<p>The recommended way to build a TNA model. Each shortcut creates a model of a specific type from sequence data &mdash; no need to specify <code>type</code> manually. <code>tna()</code> builds a first-order Markov transition probability matrix where each row sums to 1, representing the likelihood of transitioning from one state to the next. The other shortcuts build frequency, co-occurrence, and attention-weighted models respectively.</p>
+
+<div class="signature"><code>tna(x, ...)
+ftna(x, ...)
+ctna(x, ...)
+atna(x, ...)</code></div>
+
+<table>
+  <thead><tr><th>Function</th><th>Model Type</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>tna()</code></td><td><code>"relative"</code></td><td>Transition probabilities (rows sum to 1). The standard TNA model</td></tr>
+    <tr><td><code>ftna()</code></td><td><code>"frequency"</code></td><td>Raw transition counts. Required for <code>plot_mosaic()</code> and <code>plot_associations()</code></td></tr>
+    <tr><td><code>ctna()</code></td><td><code>"co-occurrence"</code></td><td>Co-occurrence within sequences, regardless of order</td></tr>
+    <tr><td><code>atna()</code></td><td><code>"attention"</code></td><td>Exponential decay-weighted downstream pairs</td></tr>
+  </tbody>
+</table>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>x</code></td><td><code>data.frame</code> (wide format), <code>stslist</code>, <code>matrix</code>, or <code>tna_data</code> object</td></tr>
+    <tr><td><code>...</code></td><td>Additional arguments passed to <code>build_model()</code>: <code>scaling</code>, <code>cols</code>, <code>params</code>, <code>inits</code>, <code>begin_state</code>, <code>end_state</code></td></tr>
+  </tbody>
+</table>
+
+<div class="returns"><strong>Returns:</strong> A <code>tna</code> object with <code>$weights</code> (transition matrix), <code>$inits</code> (initial state probabilities), <code>$labels</code> (state names), <code>$data</code> (original data).</div>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code># Build a standard TNA model (transition probabilities)
+model &lt;- tna(group_regulation)
+print(model)
+summary(model)
+
+# Build other model types
+model_f &lt;- ftna(group_regulation)   # frequency counts
+model_c &lt;- ctna(group_regulation)   # co-occurrence
+model_a &lt;- atna(group_regulation)   # attention-weighted</code></pre>
+  </div>
+</details>
+
+<!-- build_model -->
+<h3 id="build_model"><code>build_model()</code></h3>
+<p>The general-purpose model constructor. Use this when you need model types beyond the four shortcuts (e.g., n-gram, gap, window, reverse), or when you need fine-grained control over <code>params</code>. For the common cases, prefer <code>tna()</code>, <code>ftna()</code>, <code>ctna()</code>, <code>atna()</code> above.</p>
+
+<div class="signature"><code>build_model(x, type = "relative", scaling = character(0L), cols = everything(),
+            params = list(), inits, begin_state, end_state)</code></div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>x</code></td><td><code>data.frame</code> (wide), <code>stslist</code>, <code>matrix</code>, or <code>tna_data</code></td><td>&mdash;</td></tr>
+    <tr><td><code>type</code></td><td><code>"relative"</code>, <code>"frequency"</code>, <code>"co-occurrence"</code>, <code>"n-gram"</code>, <code>"gap"</code>, <code>"window"</code>, <code>"reverse"</code>, <code>"attention"</code></td><td><code>"relative"</code></td></tr>
+    <tr><td><code>scaling</code></td><td><code>"minmax"</code>, <code>"max"</code>, <code>"rank"</code>, or empty vector</td><td><code>character(0)</code></td></tr>
+    <tr><td><code>params</code></td><td>List: <code>n_gram</code>, <code>max_gap</code>, <code>window_size</code>, <code>weighted</code>, <code>direction</code>, <code>decay</code>, <code>lambda</code>, <code>time</code>, <code>duration</code></td><td><code>list()</code></td></tr>
+  </tbody>
+</table>
+
+<div class="returns"><strong>Returns:</strong> A <code>tna</code> object with <code>$weights</code>, <code>$inits</code>, <code>$labels</code>, <code>$data</code>.</div>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code># Using build_model with explicit type
+model &lt;- build_model(group_regulation, type = "relative")
+
+# Shortcut functions (preferred)
+model   &lt;- tna(group_regulation)       # type = "relative"
+model_f &lt;- ftna(group_regulation)      # type = "frequency"
+model_c &lt;- ctna(group_regulation)      # type = "co-occurrence"
+model_a &lt;- atna(group_regulation)      # type = "attention"
+
+print(model)
+summary(model)</code></pre>
+  </div>
+</details>
+
+<h4>Model Types</h4>
+<table>
+  <thead><tr><th>Type</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>"relative"</code></td><td>Transition probabilities (rows sum to 1). Default</td></tr>
+    <tr><td><code>"frequency"</code></td><td>Raw transition counts</td></tr>
+    <tr><td><code>"co-occurrence"</code></td><td>Co-occurrence within sequences</td></tr>
+    <tr><td><code>"n-gram"</code></td><td>Higher-order transitions</td></tr>
+    <tr><td><code>"gap"</code></td><td>Non-adjacent transitions, weighted by gap</td></tr>
+    <tr><td><code>"window"</code></td><td>Transitions within sliding window</td></tr>
+    <tr><td><code>"reverse"</code></td><td>Reverse order (reply networks)</td></tr>
+    <tr><td><code>"attention"</code></td><td>Exponential decay-weighted downstream pairs</td></tr>
+  </tbody>
+</table>
+
+<!-- group_model -->
+<h3 id="group_model"><code>group_model()</code> / <code>group_tna()</code></h3>
+<p>Build a TNA model for each group. Accepts manual group assignments, <code>mhmm</code> objects, or <code>tna_clustering</code> results. Most tna functions accept <code>group_tna</code> directly &mdash; no need to specify groups again.</p>
+
+<div class="signature"><code>group_model(x, group, type = "relative", scaling = character(0L),
+            groupwise = FALSE, cols = everything(), params = list(), na.rm = TRUE, ...)</code></div>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code># From mixture Markov model
+gmodel &lt;- group_model(engagement_mmm)
+print(gmodel)
+summary(gmodel)
+
+# Manual groups
+group &lt;- c(rep("High", 1000), rep("Low", 1000))
+gmodel &lt;- group_model(group_regulation, group = group)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ PLOTTING ═══════════════ -->
+<h2 id="plotting">Plotting</h2>
+<p>All TNA analysis objects have <code>plot()</code> methods returning qgraph or ggplot2 objects.</p>
+
+<!-- plot -->
+<h3 id="plot"><code>plot()</code></h3>
+<p>Plot a TNA model as a transition network.</p>
+
+<div class="signature"><code>plot(x, labels, colors, pie, cut, show_pruned = TRUE, pruned_edge_color = "pink",
+     edge.color = NA, edge.labels = TRUE, edge.label.position = 0.65,
+     layout = "circle", layout_args = list(), scale_nodes, scaling_factor = 0.5,
+     mar = rep(5, 4), theme = "colorblind", ...)</code></div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>layout</code></td><td><code>"circle"</code>, <code>"spring"</code>, or custom matrix</td><td><code>"circle"</code></td></tr>
+    <tr><td><code>scale_nodes</code></td><td>Centrality measure name to scale node size (e.g., <code>"OutStrength"</code>)</td><td>&mdash;</td></tr>
+    <tr><td><code>show_pruned</code></td><td>Show pruned edges in a different color</td><td><code>TRUE</code></td></tr>
+    <tr><td><code>edge.labels</code></td><td>Display edge weight labels</td><td><code>TRUE</code></td></tr>
+    <tr><td><code>theme</code></td><td>qgraph color theme</td><td><code>"colorblind"</code></td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+plot(model)
+plot(model, layout = "spring", scale_nodes = "OutStrength")
+
+# Group model &mdash; side-by-side panels
+gmodel &lt;- group_model(engagement_mmm)
+plot(gmodel)</code></pre>
+  </div>
+</details>
+
+<!-- plot_frequencies -->
+<h3 id="plot_frequencies"><code>plot_frequencies()</code></h3>
+<p>Bar plot of state frequency distribution. Works on <code>tna</code> and <code>group_tna</code>.</p>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+plot_frequencies(model)
+
+# Group comparison
+gmodel &lt;- group_model(engagement_mmm)
+plot_frequencies(gmodel)</code></pre>
+  </div>
+</details>
+
+<!-- plot_mosaic -->
+<h3 id="plot_mosaic"><code>plot_mosaic()</code></h3>
+<p>Mosaic plot with chi-square test results. Requires frequency model (<code>ftna()</code>).</p>
+
+<div class="note">Requires integer-valued weight matrix. Use <code>ftna()</code>, not <code>tna()</code>.</div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model_f &lt;- ftna(group_regulation)
+plot_mosaic(model_f)</code></pre>
+  </div>
+</details>
+
+<!-- plot_sequences -->
+<h3 id="plot_sequences"><code>plot_sequences()</code></h3>
+<p>Sequence index plots or state distribution plots. Pass <code>group_tna</code> directly for group comparison.</p>
+
+<div class="signature"><code>plot_sequences(x, group, type = "index", scale = "proportion",
+               geom = "bar", include_na = FALSE, colors, na_color = "white",
+               sort_by, show_n = TRUE, border, title, legend_title, xlab, ylab,
+               tick = 5, ncol = 2L, ...)</code></div>
+<div class="note">The <code>data.frame</code> method also accepts a <code>cols</code> parameter to select columns.</div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>type</code></td><td><code>"index"</code> or <code>"distribution"</code></td><td><code>"index"</code></td></tr>
+    <tr><td><code>scale</code></td><td><code>"proportion"</code> or <code>"count"</code></td><td><code>"proportion"</code></td></tr>
+    <tr><td><code>geom</code></td><td><code>"bar"</code> or <code>"tile"</code></td><td><code>"bar"</code></td></tr>
+    <tr><td><code>sort_by</code></td><td>Column name or <code>"multidimensional"</code> to sort sequences</td><td>&mdash;</td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>plot_sequences(group_regulation)
+plot_sequences(group_regulation, type = "distribution")
+
+# Group comparison &mdash; pass group_tna directly
+gmodel &lt;- group_model(engagement_mmm)
+plot_sequences(gmodel)</code></pre>
+  </div>
+</details>
+
+<!-- plot_compare -->
+<h3 id="plot_compare"><code>plot_compare()</code></h3>
+<p>Difference network between two models. Green = x greater, red = y greater.</p>
+
+<div class="signature"><code>plot_compare(x, y, ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model_a &lt;- tna(group_regulation[1:1000, ])
+model_b &lt;- tna(group_regulation[1001:2000, ])
+plot_compare(model_a, model_b)</code></pre>
+  </div>
+</details>
+
+<!-- plot_associations -->
+<h3 id="plot_associations"><code>plot_associations()</code></h3>
+<p>Association network. Requires frequency model (<code>ftna()</code>).</p>
+
+<div class="note">Requires integer-valued weight matrix. Use <code>ftna()</code>, not <code>tna()</code>.</div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model_f &lt;- ftna(group_regulation)
+plot_associations(model_f)</code></pre>
+  </div>
+</details>
+
+<!-- hist -->
+<h3 id="hist"><code>hist()</code></h3>
+<p>Histogram of edge weight distribution.</p>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+hist(model)</code></pre>
+  </div>
+</details>
+
+<h4>Additional Plot Methods</h4>
+<table>
+  <thead><tr><th>Object</th><th>plot() produces</th></tr></thead>
+  <tbody>
+    <tr><td><code>tna_centralities</code></td><td>Lollipop charts by measure</td></tr>
+    <tr><td><code>tna_communities</code></td><td>Network colored by community</td></tr>
+    <tr><td><code>tna_cliques</code></td><td>Individual clique subnetworks</td></tr>
+    <tr><td><code>tna_bootstrap</code></td><td>Significant edges only</td></tr>
+    <tr><td><code>tna_permutation</code></td><td>Significant edge differences</td></tr>
+    <tr><td><code>tna_stability</code></td><td>Stability curves with CS-coefficients</td></tr>
+    <tr><td><code>tna_comparison</code></td><td>Heatmap or difference viz</td></tr>
+    <tr><td><code>tna_sequence_comparison</code></td><td>Pattern comparison chart</td></tr>
+    <tr><td><code>group_tna</code></td><td>Side-by-side network plots</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════ CENTRALITY ═══════════════ -->
+<h2 id="centrality">Centrality Measures</h2>
+
+<!-- centralities -->
+<h3 id="centralities"><code>centralities()</code></h3>
+<p>Calculate centrality measures. Works on <code>tna</code>, <code>group_tna</code>, and <code>matrix</code>.</p>
+
+<div class="signature"><code>centralities(x, loops = FALSE, normalize = FALSE, measures)</code></div>
+
+<table>
+  <thead><tr><th>Measure</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>OutStrength</code></td><td>Total weight of outgoing edges</td></tr>
+    <tr><td><code>InStrength</code></td><td>Total weight of incoming edges</td></tr>
+    <tr><td><code>ClosenessIn</code> / <code>ClosenessOut</code> / <code>Closeness</code></td><td>Closeness centrality variants</td></tr>
+    <tr><td><code>Betweenness</code></td><td>Geodesic betweenness</td></tr>
+    <tr><td><code>BetweennessRSP</code></td><td>Randomized shortest paths betweenness</td></tr>
+    <tr><td><code>Diffusion</code></td><td>Diffusion centrality</td></tr>
+    <tr><td><code>Clustering</code></td><td>Signed clustering coefficient</td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+cm &lt;- centralities(model)
+print(cm)
+plot(cm, ncol = 3, reorder = TRUE)
+
+# On group_tna directly
+gmodel &lt;- group_model(engagement_mmm)
+centralities(gmodel)</code></pre>
+  </div>
+</details>
+
+<!-- betweenness_network -->
+<h3 id="betweenness_network"><code>betweenness_network()</code></h3>
+<p>Build network with edge betweenness as weights.</p>
+
+<div class="signature"><code>betweenness_network(x, directed, ...)</code></div>
+
+<div class="returns"><strong>Returns:</strong> A <code>tna</code> object with betweenness-weighted edges.</div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+bn &lt;- betweenness_network(model)
+print(bn)</code></pre>
+  </div>
+</details>
+
+<!-- estimate_cs -->
+<h3 id="estimate_cs"><code>estimate_cs()</code></h3>
+<p>Centrality stability via subset sampling.</p>
+
+<div class="signature"><code>estimate_cs(x, loops = FALSE, normalize = FALSE,
+            measures = c("InStrength", "OutStrength", "Betweenness"),
+            iter = 1000, method = "pearson",
+            drop_prop = seq(0.1, 0.9, by = 0.1),
+            threshold = 0.7, certainty = 0.95, progressbar = FALSE)</code></div>
+
+<div class="returns"><strong>Returns:</strong> A <code>tna_stability</code> object with CS-coefficients per measure.</div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+cs &lt;- estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 100)
+print(cs)
+plot(cs)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ NETWORK STRUCTURE ═══════════════ -->
+<h2 id="structure">Network Structure</h2>
+
+<!-- communities -->
+<h3 id="communities"><code>communities()</code></h3>
+<p>Detect communities using 7 igraph algorithms. Works on <code>tna</code> and <code>group_tna</code>.</p>
+
+<div class="signature"><code>communities(x, methods, gamma = 1)</code></div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>methods</code></td><td>Character vector of igraph community detection methods</td><td>All 7 methods</td></tr>
+    <tr><td><code>gamma</code></td><td>Resolution parameter for modularity-based methods</td><td><code>1</code></td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+comm &lt;- communities(model)
+print(comm)
+plot(comm, method = "spinglass")
+
+# On group_tna directly
+gmodel &lt;- group_model(engagement_mmm)
+communities(gmodel)</code></pre>
+  </div>
+</details>
+
+<!-- cliques -->
+<h3 id="cliques"><code>cliques()</code></h3>
+<p>Identify cliques (complete subgraphs) of a given size.</p>
+
+<div class="signature"><code>cliques(x, size = 2, threshold = 0, sum_weights = FALSE, ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+cliq &lt;- cliques(model, size = 2)
+print(cliq)
+plot(cliq, n = 3, ask = FALSE)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ COMPARISON ═══════════════ -->
+<h2 id="comparison">Comparison</h2>
+
+<!-- compare -->
+<h3 id="compare"><code>compare()</code></h3>
+<p>Compare two TNA models with comprehensive metrics.</p>
+
+<div class="signature"><code># tna method
+compare(x, y, scaling = "none", ...)
+
+# group_tna method
+compare(x, i, j, ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>gmodel &lt;- group_model(engagement_mmm)
+comp &lt;- compare(gmodel, i = 1, j = 2)
+print(comp)
+plot(comp)</code></pre>
+  </div>
+</details>
+
+<!-- compare_sequences -->
+<h3 id="compare_sequences"><code>compare_sequences()</code></h3>
+<p>Compare subsequence patterns between groups. Pass <code>group_tna</code> directly &mdash; groups are already defined.</p>
+
+<div class="signature"><code># For group_tna (groups already defined)
+compare_sequences(x, sub, min_freq = 5L, correction = "bonferroni", ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>gmodel &lt;- group_model(engagement_mmm)
+comp_seq &lt;- compare_sequences(gmodel)
+print(head(comp_seq, 10))
+plot(comp_seq)</code></pre>
+  </div>
+</details>
+
+<!-- permutation_test -->
+<h3 id="permutation_test"><code>permutation_test()</code></h3>
+<p>Permutation tests for edge weight and centrality differences.</p>
+
+<div class="signature"><code>permutation_test(x, y, adjust = "none", iter = 1000, paired = FALSE,
+                 level = 0.05, measures = character(0), ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model_x &lt;- tna(group_regulation[1:200, ])
+model_y &lt;- tna(group_regulation[1001:1200, ])
+perm &lt;- permutation_test(model_x, model_y, iter = 100)
+print(perm)
+plot(perm)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ VALIDATION ═══════════════ -->
+<h2 id="validation">Validation</h2>
+
+<!-- bootstrap -->
+<h3 id="bootstrap"><code>bootstrap()</code></h3>
+<p>Bootstrap transition networks for confidence intervals and significance.</p>
+
+<div class="signature"><code>bootstrap(x, iter = 1000, level = 0.05, method = "stability",
+          threshold, consistency_range = c(0.75, 1.25))</code></div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>iter</code></td><td>Number of bootstrap iterations</td><td><code>1000</code></td></tr>
+    <tr><td><code>level</code></td><td>Significance level</td><td><code>0.05</code></td></tr>
+    <tr><td><code>method</code></td><td><code>"stability"</code> or <code>"significance"</code></td><td><code>"stability"</code></td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+boot &lt;- bootstrap(model, iter = 100)
+print(boot)
+plot(boot)</code></pre>
+  </div>
+</details>
+
+<!-- bootstrap_cliques -->
+<h3 id="bootstrap_cliques"><code>bootstrap_cliques()</code></h3>
+<p>Bootstrap cliques to assess stability.</p>
+
+<div class="signature"><code>bootstrap_cliques(x, size = 2L, threshold = 0, iter = 1000, level = 0.05,
+                  consistency_range = c(0.75, 1.25), ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+bc &lt;- bootstrap_cliques(model, size = 2, iter = 100)
+print(bc)</code></pre>
+  </div>
+</details>
+
+<!-- prune -->
+<h3 id="prune"><code>prune()</code></h3>
+<p>Remove weak edges. Four methods available.</p>
+
+<div class="signature"><code>prune(x, method = "threshold", threshold = 0.1, lowest = 0.05,
+      level = 0.5, boot = NULL, ...)</code></div>
+
+<table>
+  <thead><tr><th>Method</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td><code>"threshold"</code></td><td>Remove edges below absolute threshold</td></tr>
+    <tr><td><code>"lowest"</code></td><td>Remove lowest proportion of edges</td></tr>
+    <tr><td><code>"disparity"</code></td><td>Statistical disparity filter</td></tr>
+    <tr><td><code>"bootstrap"</code></td><td>Remove non-significant edges (requires <code>boot</code>)</td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+
+pruned_t &lt;- prune(model, method = "threshold", threshold = 0.1)
+pruned_p &lt;- prune(model, method = "lowest", lowest = 0.05)
+pruned_d &lt;- prune(model, method = "disparity", level = 0.5)
+
+pruning_details(pruned_t)
+plot(pruned_t)
+
+# Restore and reapply
+restored &lt;- deprune(pruned_t)
+repruned &lt;- reprune(restored)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ CLUSTERING ═══════════════ -->
+<h2 id="clustering">Clustering</h2>
+
+<!-- cluster_sequences -->
+<h3 id="cluster_sequences"><code>cluster_sequences()</code></h3>
+<p>Cluster sequences using string distance-based dissimilarity.</p>
+
+<div class="signature"><code>cluster_sequences(data, k, dissimilarity = "hamming", method = "pam",
+                  na_syms = c("*", "%"), weighted = FALSE, lambda = 1, ...)</code></div>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Description</th><th>Default</th></tr></thead>
+  <tbody>
+    <tr><td><code>k</code></td><td>Number of clusters</td><td>&mdash;</td></tr>
+    <tr><td><code>dissimilarity</code></td><td><code>"hamming"</code>, <code>"osa"</code>, <code>"lv"</code>, <code>"dl"</code>, <code>"lcs"</code>, etc.</td><td><code>"hamming"</code></td></tr>
+    <tr><td><code>method</code></td><td><code>"pam"</code> or <code>"ward"</code></td><td><code>"pam"</code></td></tr>
+  </tbody>
+</table>
+
+<div class="note">For variable-length sequences, use <code>"osa"</code> instead of <code>"hamming"</code>.</div>
+
+<div class="returns"><strong>Returns:</strong> A <code>tna_clustering</code> object. Pass directly to <code>group_model()</code>.</div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>result &lt;- cluster_sequences(group_regulation[1:200, ], k = 3, dissimilarity = "osa")
+print(result)
+
+# Pass directly to group_model
+gmodel_clust &lt;- group_model(result)
+plot(gmodel_clust)</code></pre>
+  </div>
+</details>
+
+<!-- rename_groups -->
+<h3 id="rename_groups"><code>rename_groups()</code></h3>
+<p>Rename groups in a <code>group_tna</code> object.</p>
+
+<div class="signature"><code>rename_groups(x, new_names)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>gmodel &lt;- group_model(engagement_mmm)
+gmodel_renamed &lt;- rename_groups(gmodel, c("A", "B", "C"))
+names(gmodel_renamed)  # "A" "B" "C"</code></pre>
+  </div>
+</details>
+
+<!-- mmm_stats -->
+<h3 id="mmm_stats"><code>mmm_stats()</code></h3>
+<p>Extract statistics from a mixture Markov model.</p>
+
+<div class="signature"><code>mmm_stats(x, level = 0.05)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>mmm_stats(engagement_mmm)</code></pre>
+  </div>
+</details>
+
+<!-- ═══════════════ SUMMARY & CONVERSION ═══════════════ -->
+<h2 id="summary-conversion">Summary &amp; Conversion</h2>
+
+<!-- summary -->
+<h3 id="summary"><code>summary()</code></h3>
+<p>Comprehensive summary of a TNA model. Works on <code>tna</code> and <code>group_tna</code>.</p>
+
+<details>
+  <summary>Examples</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+summary(model)
+
+gmodel &lt;- group_model(engagement_mmm)
+summary(gmodel)</code></pre>
+  </div>
+</details>
+
+<!-- as.igraph -->
+<h3 id="as_igraph"><code>as.igraph()</code></h3>
+<p>Convert a TNA model to an igraph object for use with igraph functions.</p>
+
+<div class="signature"><code>as.igraph(x, mode = "directed", ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+g &lt;- as.igraph(model)
+print(g)</code></pre>
+  </div>
+</details>
+
+<!-- simulate -->
+<h3 id="simulate"><code>simulate()</code></h3>
+<p>Simulate sequence data from a TNA model (requires <code>type = "relative"</code>).</p>
+
+<div class="signature"><code>simulate(object, nsim = 1, seed = NULL, max_len = 100L, na_range = c(0L, 0L), ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>model &lt;- tna(group_regulation)
+sim &lt;- simulate(model, nsim = 5, seed = 123, max_len = 10)
+print(sim)</code></pre>
+  </div>
+</details>
+
+<!-- sna -->
+<h3 id="sna"><code>sna()</code></h3>
+<p>Build a social network analysis model from edge-list data (from, to, weight).</p>
+
+<div class="signature"><code>sna(x, aggregate = sum, ...)</code></div>
+
+<details>
+  <summary>Example</summary>
+  <div class="detail-content">
+<pre><code>set.seed(42)
+d &lt;- data.frame(
+  from   = sample(LETTERS[1:4], 100, replace = TRUE),
+  to     = sample(LETTERS[1:4], 100, replace = TRUE),
+  weight = rexp(100)
+)
+model_sna &lt;- sna(d)</code></pre>
+  </div>
+</details>
+
+<!-- import_data -->
+<h3 id="import_data"><code>import_data()</code></h3>
+<p>Transform wide-format feature data into long-format sequence data.</p>
+
+<div class="signature"><code>import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)</code></div>
+
+<!-- import_onehot -->
+<h3 id="import_onehot"><code>import_onehot()</code></h3>
+<p>Import one-hot encoded data as co-occurrence network.</p>
+
+<div class="signature"><code>import_onehot(data, cols, window = 1L)</code></div>
+
+<!-- ═══════════════ REFERENCES & TUTORIALS ═══════════════ -->
+<h2 id="references">References &amp; Tutorials</h2>
+
+<h3 id="ref-tutorials">Updated Tutorials</h3>
+<table>
+  <thead><tr><th>Tutorial</th><th>Link</th></tr></thead>
+  <tbody>
+    <tr><td>An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)</td><td><a href="https://sonsoles.me/posts/tna-tutorial/" style="color: var(--accent);">sonsoles.me/posts/tna-tutorial</a></td></tr>
+    <tr><td>TNA Group Analysis: Comparing Groups and Discovering Clusters</td><td><a href="https://sonsoles.me/posts/tna-group/index.html" style="color: var(--accent);">sonsoles.me/posts/tna-group</a></td></tr>
+    <tr><td>TNA Clustering: Discovering Latent Subgroups from Sequence Data</td><td><a href="https://sonsoles.me/posts/tna-clustering/" style="color: var(--accent);">sonsoles.me/posts/tna-clustering</a></td></tr>
+    <tr><td>TNA Model Comparison: A Complete Guide to compare() Metrics</td><td><a href="https://sonsoles.me/posts/tna-compare/" style="color: var(--accent);">sonsoles.me/posts/tna-compare</a></td></tr>
+  </tbody>
+</table>
+
+<h3 id="ref-book2">Advanced Learning Analytics Methods (Book 2, Springer 2026)</h3>
+<p style="color: var(--muted); font-size: 0.88rem;">Saqr, M. &amp; Lopez-Pernas, S. (Eds.) (2026). <em>Advanced Learning Analytics Methods: AI, Precision and Complexity</em>. Springer. Open Access. <a href="https://doi.org/10.1007/978-3-031-95365-1" style="color: var(--accent);">doi:10.1007/978-3-031-95365-1</a></p>
+
+<table>
+  <thead><tr><th>Ch.</th><th>Title</th><th>Tutorial</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>15</td>
+      <td><strong>Saqr, M., Lopez-Pernas, S., &amp; Tikka, S.</strong> Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial. pp. 371&ndash;411.<br><a href="https://doi.org/10.1007/978-3-031-95365-1_15" style="color: var(--accent); font-size: 0.82rem;">doi:10.1007/978-3-031-95365-1_15</a></td>
+      <td><a href="https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html" style="color: var(--accent);">Online tutorial</a></td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td><strong>Saqr, M., Lopez-Pernas, S., &amp; Tikka, S.</strong> Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial.<br><a href="https://doi.org/10.1007/978-3-031-95365-1_16" style="color: var(--accent); font-size: 0.82rem;">doi:10.1007/978-3-031-95365-1_16</a></td>
+      <td><a href="https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html" style="color: var(--accent);">Online tutorial</a></td>
+    </tr>
+    <tr>
+      <td>17</td>
+      <td><strong>Lopez-Pernas, S., Tikka, S., &amp; Saqr, M.</strong> Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach.<br><a href="https://doi.org/10.1007/978-3-031-95365-1_17" style="color: var(--accent); font-size: 0.82rem;">doi:10.1007/978-3-031-95365-1_17</a></td>
+      <td><a href="https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html" style="color: var(--accent);">Online tutorial</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="ref-book1">Learning Analytics Methods and Tutorials (Book 1, Springer 2024)</h3>
+<p style="color: var(--muted); font-size: 0.88rem;">Saqr, M. &amp; Lopez-Pernas, S. (Eds.). <em>Learning Analytics Methods and Tutorials: A Practical Guide Using R</em>. Springer. Open Access. <a href="https://doi.org/10.1007/978-3-031-54464-4" style="color: var(--accent);">doi:10.1007/978-3-031-54464-4</a></p>
+
+<table>
+  <thead><tr><th>Ch.</th><th>Title</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>10</td>
+      <td><strong>Saqr, M., Lopez-Pernas, S., Helske, S., Durand, M., Murphy, K., Studer, M., &amp; Ritschard, G.</strong> Sequence Analysis in Education: Principles, Technique, and Tutorial with R. pp. 321&ndash;354.<br><a href="https://doi.org/10.1007/978-3-031-54464-4_10" style="color: var(--accent); font-size: 0.82rem;">doi:10.1007/978-3-031-54464-4_10</a></td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td><strong>Helske, J., Helske, S., Saqr, M., Lopez-Pernas, S., &amp; Murphy, K.</strong> A Modern Approach to Transition Analysis and Process Mining with Markov Models in Education.<br><a href="https://doi.org/10.1007/978-3-031-54464-4_12" style="color: var(--accent); font-size: 0.82rem;">doi:10.1007/978-3-031-54464-4_12</a></td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td><strong>Lopez-Pernas, S., Saqr, M., Helske, S., &amp; Murphy, K.</strong> Multichannel Sequence Analysis in Educational Research: An Introduction and Tutorial with R.<br><a href="https://doi.org/10.1007/978-3-031-54464-4_13" style="color: var(--accent); font-size: 0.82rem;">doi:10.1007/978-3-031-54464-4_13</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="ref-papers">Papers</h3>
+
+<p><strong>Saqr, M., Lopez-Pernas, S., Tormanen, T., Kaliisa, R., Misiejuk, K., &amp; Tikka, S.</strong> (2025). Transition Network Analysis: A Novel Framework for Modeling, Visualizing, and Identifying the Temporal Patterns of Learners and Learning Processes. <em>Proceedings of the 15th International Learning Analytics and Knowledge Conference (LAK &rsquo;25)</em>, 351&ndash;361. ACM.<br>
+<a href="https://doi.org/10.1145/3706468.3706513" style="color: var(--accent);">doi:10.1145/3706468.3706513</a> &middot; <a href="https://arxiv.org/abs/2411.15486" style="color: var(--accent);">arXiv:2411.15486</a></p>
+
+<p><strong>Tikka, S., Lopez-Pernas, S., &amp; Saqr, M.</strong> (2025). tna: An R Package for Transition Network Analysis. <em>Applied Psychological Measurement</em> (online ahead of print).<br>
+<a href="https://doi.org/10.1177/01466216251348840" style="color: var(--accent);">doi:10.1177/01466216251348840</a></p>
+
+<p><strong>Misiejuk, K., Kaliisa, R., Lopez-Pernas, S., &amp; Saqr, M.</strong> (2026). Expanding the Quantitative Ethnography Toolkit with Transition Network Analysis: Exploring Methodological Synergies and Boundaries. In <em>Advances in Quantitative Ethnography. ICQE 2025</em>, CCIS vol. 2677. Springer.<br>
+<a href="https://doi.org/10.1007/978-3-032-12229-2_10" style="color: var(--accent);">doi:10.1007/978-3-032-12229-2_10</a></p>
+
+<p><strong>Lopez-Pernas, S., Misiejuk, K., Tikka, S., &amp; Saqr, M.</strong> (2026). Role Dynamics in Student-AI Collaboration: A Heterogeneous Transition Network Analysis Approach. SSRN preprint.<br>
+<a href="https://doi.org/10.2139/ssrn.6082190" style="color: var(--accent);">doi:10.2139/ssrn.6082190</a></p>
+
+<h3 id="ref-vignettes">Package Vignettes</h3>
+<table>
+  <thead><tr><th>Vignette</th><th>Link</th></tr></thead>
+  <tbody>
+    <tr><td>Getting started with tna</td><td><a href="https://sonsoles.me/tna/articles/tna.html" style="color: var(--accent);">sonsoles.me/tna/articles/tna.html</a></td></tr>
+    <tr><td>A showcase of the main tna functions</td><td><a href="https://sonsoles.me/tna/articles/complete_tutorial.html" style="color: var(--accent);">sonsoles.me/tna/articles/complete_tutorial.html</a></td></tr>
+    <tr><td>How to prepare data for tna</td><td><a href="https://sonsoles.me/tna/articles/prepare_data.html" style="color: var(--accent);">sonsoles.me/tna/articles/prepare_data.html</a></td></tr>
+    <tr><td>Frequency-based TNA</td><td><a href="https://sonsoles.me/tna/articles/ftna.html" style="color: var(--accent);">sonsoles.me/tna/articles/ftna.html</a></td></tr>
+    <tr><td>Attention TNA</td><td><a href="https://sonsoles.me/tna/articles/atna.html" style="color: var(--accent);">sonsoles.me/tna/articles/atna.html</a></td></tr>
+    <tr><td>Finding cliques and communities</td><td><a href="https://sonsoles.me/tna/articles/communities_and_cliques.html" style="color: var(--accent);">sonsoles.me/tna/articles/communities_and_cliques.html</a></td></tr>
+    <tr><td>Using grouped sequence data</td><td><a href="https://sonsoles.me/tna/articles/grouped_sequences.html" style="color: var(--accent);">sonsoles.me/tna/articles/grouped_sequences.html</a></td></tr>
+  </tbody>
+</table>
+
+<h3 id="ref-tools">Tools &amp; Apps</h3>
+<table>
+  <thead><tr><th>Resource</th><th>Link</th></tr></thead>
+  <tbody>
+    <tr><td>CRAN package</td><td><a href="https://cran.r-project.org/package=tna" style="color: var(--accent);">cran.r-project.org/package=tna</a></td></tr>
+    <tr><td>GitHub repository</td><td><a href="https://github.com/sonsoleslp/tna" style="color: var(--accent);">github.com/sonsoleslp/tna</a></td></tr>
+    <tr><td>Documentation site</td><td><a href="https://sonsoles.me/tna/" style="color: var(--accent);">sonsoles.me/tna</a></td></tr>
+    <tr><td>TNA Web (Shiny app)</td><td><a href="https://sonsoleslp.shinyapps.io/tna-app/" style="color: var(--accent);">sonsoleslp.shinyapps.io/tna-app</a></td></tr>
+    <tr><td>JTNA (Jamovi plugin)</td><td><a href="https://github.com/sonsoleslp/jTNA" style="color: var(--accent);">github.com/sonsoleslp/jTNA</a></td></tr>
+    <tr><td>LA Methods companion site</td><td><a href="https://lamethods.org" style="color: var(--accent);">lamethods.org</a></td></tr>
+    <tr><td>UEF TNA resource hub</td><td><a href="https://sites.uef.fi/learning-analytics/tna/" style="color: var(--accent);">sites.uef.fi/learning-analytics/tna</a></td></tr>
+  </tbody>
+</table>
+
+<!-- ── Footer ── -->
+<hr style="margin-top: 3rem;">
+<p style="font-size: 0.85rem; color: var(--muted); margin-top: 1rem;">
+  <strong>tna</strong> v1.1.0 | MIT License | Mohammed Saqr, Santtu Tikka, Sonsoles Lopez-Pernas
+</p>
+
+</div>
+</body>
+</html>
