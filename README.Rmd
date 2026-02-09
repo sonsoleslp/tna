@@ -44,6 +44,18 @@ that identified dynamics are meaningful. See [(Saqr et al., 2025)](https://doi.o
 
 ## Resources
 
+### Companion tutorials
+We have also released comprehensive new tutorials for the main TNA features:
+
+| Tutorial | Link |
+|--------|------|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | https://sonsoles.me/posts/tna-tutorial |
+| TNA Group Analysis: Comparing Groups and Discovering Clusters | https://sonsoles.me/posts/tna-group |
+| TNA Clustering: Discovering Latent Subgroups from Sequence Data | https://sonsoles.me/posts/tna-clustering |
+| TNA Model Comparison: A Complete Guide to compare() Metrics | https://sonsoles.me/posts/tna-compare |
+| Full reference guide on `tna` functions | https://sonsoles.me/tna/tna.html |
+
+
 ### Vignettes
 Check out the `tna` R package vignettes:
 
@@ -57,24 +69,15 @@ Check out the `tna` R package vignettes:
 | Finding cliques and communities | https://sonsoles.me/tna/articles/communities_and_cliques.html |
 | Using grouped sequence data | https://sonsoles.me/tna/articles/grouped_sequences.html |
 
-### Companion tutorials
-We have also released comprehensive new tutorials for the main TNA features:
-
-| Tutorial | Link |
-|--------|------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | https://sonsoles.me/posts/tna-tutorial |
-| TNA Group Analysis: Comparing Groups and Discovering Clusters | https://sonsoles.me/posts/tna-group |
-| TNA Clustering: Discovering Latent Subgroups from Sequence Data | https://sonsoles.me/posts/tna-clustering |
-| TNA Model Comparison: A Complete Guide to compare() Metrics | https://sonsoles.me/posts/tna-compare |
 
 ### Book chapters
 Do not forget to check out our tutorials in the "Advanced learning analytics methods" book:
 
 | Title | Pages | Tutorial |
 |-------|-------|----------|
-| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial*  | https://doi.org/10.1007/978-3-031-95365-1_15 | [Online tutorial]((https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)) |
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial*  | https://doi.org/10.1007/978-3-031-95365-1_15 | [Online tutorial](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) |
 | Saqr, M., Lopez-Pernas, S., & Tikka, S. *Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial*   | https://doi.org/10.1007/978-3-031-95365-1_16 | [Online tutorial](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html) |
-| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach*  | https://doi.org/10.1007/978-3-031-95365-1_17 | [Online tutorial]((https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)) |
+| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach*  | https://doi.org/10.1007/978-3-031-95365-1_17 | [Online tutorial](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) |
 
 ### Other tools
 
