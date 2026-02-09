@@ -7,9 +7,10 @@ articles:
   complete_tutorial: complete_tutorial.html
   articles/ftna: ftna.html
   grouped_sequences: grouped_sequences.html
+  articles/new-docs: new-docs.html
   prepare_data: prepare_data.html
   tna: tna.html
-last_built: 2026-02-06T20:36Z
+last_built: 2026-02-09T20:58Z
 urls:
   reference: http://sonsoles.me/tna/reference
   article: http://sonsoles.me/tna/articles
