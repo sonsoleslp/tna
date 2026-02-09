@@ -13,6 +13,19 @@ more details on TNA.
 
 ## Resources
 
+### Companion tutorials
+
+We have also released comprehensive new tutorials for the main TNA
+features:
+
+| Tutorial                                                               | Link                                       |
+|------------------------------------------------------------------------|--------------------------------------------|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | <https://sonsoles.me/posts/tna-tutorial>   |
+| TNA Group Analysis: Comparing Groups and Discovering Clusters          | <https://sonsoles.me/posts/tna-group>      |
+| TNA Clustering: Discovering Latent Subgroups from Sequence Data        | <https://sonsoles.me/posts/tna-clustering> |
+| TNA Model Comparison: A Complete Guide to compare() Metrics            | <https://sonsoles.me/posts/tna-compare>    |
+| Full reference guide on `tna` functions                                | <https://sonsoles.me/tna/tna.html>         |
+
 ### Vignettes
 
 Check out the `tna` R package vignettes:
@@ -27,28 +40,16 @@ Check out the `tna` R package vignettes:
 | Finding cliques and communities      | <https://sonsoles.me/tna/articles/communities_and_cliques.html> |
 | Using grouped sequence data          | <https://sonsoles.me/tna/articles/grouped_sequences.html>       |
 
-### Companion tutorials
-
-We have also released comprehensive new tutorials for the main TNA
-features:
-
-| Tutorial                                                               | Link                                       |
-|------------------------------------------------------------------------|--------------------------------------------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | <https://sonsoles.me/posts/tna-tutorial>   |
-| TNA Group Analysis: Comparing Groups and Discovering Clusters          | <https://sonsoles.me/posts/tna-group>      |
-| TNA Clustering: Discovering Latent Subgroups from Sequence Data        | <https://sonsoles.me/posts/tna-clustering> |
-| TNA Model Comparison: A Complete Guide to compare() Metrics            | <https://sonsoles.me/posts/tna-compare>    |
-
 ### Book chapters
 
 Do not forget to check out our tutorials in the “Advanced learning
 analytics methods” book:
 
-| Title                                                                                                                                                                    | Pages                                          | Tutorial                                                                         |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|----------------------------------------------------------------------------------|
-| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial*                                            | <https://doi.org/10.1007/978-3-031-95365-1_15> | [Online tutorial](NA)                                                            |
-| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial* | <https://doi.org/10.1007/978-3-031-95365-1_16> | [Online tutorial](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html) |
-| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach*                                        | <https://doi.org/10.1007/978-3-031-95365-1_17> | [Online tutorial](NA)                                                            |
+| Title                                                                                                                                                                    | Pages                                          | Tutorial                                                                                         |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial*                                            | <https://doi.org/10.1007/978-3-031-95365-1_15> | [Online tutorial](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)                   |
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial* | <https://doi.org/10.1007/978-3-031-95365-1_16> | [Online tutorial](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)                 |
+| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach*                                        | <https://doi.org/10.1007/978-3-031-95365-1_17> | [Online tutorial](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) |
 
 ### Other tools
 
@@ -211,15 +212,15 @@ print(comparison$centralities$stats)
 
 |   state    | centrality |   diff_true | effect_size |     p_value |
 |:----------:|:----------:|------------:|------------:|------------:|
-|   adapt    | InStrength | -0.23693341 |  -6.3752775 | 0.000999001 |
-|  cohesion  | InStrength |  0.01634987 |   0.3348145 | 0.744255744 |
-| consensus  | InStrength |  0.53680793 |   7.4908254 | 0.000999001 |
-| coregulate | InStrength | -0.25275371 |  -7.3491897 | 0.000999001 |
-|  discuss   | InStrength | -0.09009651 |  -1.9693084 | 0.051948052 |
-|  emotion   | InStrength |  0.19288376 |   4.0120340 | 0.000999001 |
-|  monitor   | InStrength | -0.09192991 |  -3.4413962 | 0.000999001 |
-|    plan    | InStrength |  0.12225988 |   2.7388355 | 0.006993007 |
-| synthesis  | InStrength | -0.04909607 |  -3.1453992 | 0.001998002 |
+|   adapt    | InStrength | -0.23693341 |  -6.5193982 | 0.000999001 |
+|  cohesion  | InStrength |  0.01634987 |   0.3301392 | 0.748251748 |
+| consensus  | InStrength |  0.53680793 |   7.4993638 | 0.000999001 |
+| coregulate | InStrength | -0.25275371 |  -7.3043979 | 0.000999001 |
+|  discuss   | InStrength | -0.09009651 |  -1.8499898 | 0.062937063 |
+|  emotion   | InStrength |  0.19288376 |   4.0044398 | 0.000999001 |
+|  monitor   | InStrength | -0.09192991 |  -3.4581964 | 0.000999001 |
+|    plan    | InStrength |  0.12225988 |   2.8370445 | 0.002997003 |
+| synthesis  | InStrength | -0.04909607 |  -3.1668552 | 0.001998002 |
 
 # Papers using TNA
 
