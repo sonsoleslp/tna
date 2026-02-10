@@ -624,9 +624,13 @@ import_data <- function(data, cols, id_cols,
 #'   `data` containing the actor identifiers.
 #' @param session An optional `character` string giving the column name of
 #'   `data` containing the session identifiers.
-#' @param keep An optional `expression` giving a tidy selection of columns
-#'   that should be retained in the aggregated data besides `cols`.
-#' @param window An `integer` specifying the window size for grouping.
+#' @param window_size An `integer` specifying the window size for grouping.
+#' @param window_type A `character` string. Either `"tumbling"` (the default)
+#'   for non-overlapping windows or `"sliding"` for one-step sliding window.
+#' @param aggregate A `logical` value that determines how multiple occurrences
+#'   of the same event within a window are processed. Option `TRUE` aggregates
+#'   multiple occurrences into a single occurrence. Option `FALSE` keeps
+#'   all occurrences (the default).
 #' @return The processed data as a `data.frame`.
 #' @examples
 #' d <- data.frame(
@@ -639,52 +643,98 @@ import_data <- function(data, cols, id_cols,
 #' onehot1 <- import_onehot(d, feature1:feature3)
 #' onehot2 <- import_onehot(d, feature1:feature3, "actor", "session")
 #'
-import_onehot <- function(data, cols, actor, session, keep, window = 1L) {
+import_onehot <- function(data, cols, actor, session, window_size = 1L,
+                          window_type = "tumbling", aggregate = FALSE) {
   check_missing(data)
   check_class(data, "data.frame")
-  check_values(window, strict = TRUE)
+  check_values(window_size, strict = TRUE)
+  check_flag(aggregate)
+  window_type <- check_match(window_type, c("sliding", "tumbling"))
   cols <- get_cols(rlang::enquo(cols), data)
-  keep <- get_cols(rlang::enquo(keep), data)
-  keep <- keep %m% character(0L)
   actor <- get_cols(rlang::enquo(actor), data)
   session <- get_cols(rlang::enquo(session), data)
   check_cols(actor, missing_ok = TRUE)
   check_cols(session, missing_ok = TRUE)
+  if (missing(actor)) {
+    actor <- ".actor"
+    data$.actor <- 1L
+  }
+  if (missing(session)) {
+    session <- ".session"
+    data$.session <- 1L
+  }
   out <- data |>
-    dplyr::select(tidyselect::all_of(c(cols, keep))) |>
+    dplyr::select(tidyselect::all_of(c(actor, session, cols))) |>
     dplyr::mutate(
       dplyr::across(
         tidyselect::all_of(cols),
         ~ ifelse(.x == 1, dplyr::cur_column(), NA_character_)
       )
-    )
-  if (!missing(actor) && !missing(session)) {
-    .session_nr <- as.integer(factor(data[[session]]))
-    .group <- paste(
-      data[[actor]],
-      floor((.session_nr - 1) / window),
-      sep = "_"
-    )
-  } else if (!missing(actor)) {
-    .group <- paste(
-      data[[actor]],
-      floor((seq_len(nrow(data)) - 1) / window),
-      sep = "_"
-    )
-  } else if (!missing(session)) {
-    .session_nr <- as.integer(factor(data[[session]]))
-    .group <- floor((.session_nr - 1) / window)
-  } else {
-    .group <- floor((seq_len(nrow(data)) - 1) / window)
-  }
-  out$.group <- .group
-  # Take the first non-NA occurrence for each code within the window
-  out |>
-    dplyr::group_by(!!rlang::sym(".group")) |>
-    dplyr::summarise(
-      dplyr::across(tidyselect::all_of(cols), ~ stats::na.omit(.x)[1L]),
-      dplyr::across(tidyselect::all_of(keep), ~ .x[1L]),
-      .groups = "drop"
     ) |>
-    dplyr::select(!(!!rlang::sym(".group")))
+    dplyr::group_by(!!rlang::sym(actor), !!rlang::sym(session))
+  if (window_type == "sliding") {
+    for (w in seq(1, window_size - 1)) {
+      out <- out |>
+        dplyr::mutate(
+          dplyr::across(
+            tidyselect::all_of(cols),
+            ~ ifelse(
+              !is.na(.x) | !is.na(dplyr::lag(.x, n = w)),
+              dplyr::cur_column(),
+              NA_character_
+            )
+          )
+        )
+    }
+    out <- out |>
+      dplyr::slice(-1) |>
+      dplyr::mutate(
+        .window = floor(seq_len(dplyr::n()) - 1)
+      )
+  } else {
+    out <- out |>
+      dplyr::mutate(
+        .window = floor((seq_len(dplyr::n()) - 1) / window_size)
+      )
+  }
+  if (aggregate) {
+    out <- out |>
+      dplyr::group_by(
+        !!rlang::sym(actor),
+        !!rlang::sym(session),
+        !!rlang::sym(".window")
+      ) |>
+      dplyr::summarise(
+        dplyr::across(tidyselect::all_of(cols), ~ stats::na.omit(.x)[1L]),
+        .groups = "drop"
+      )
+  }
+  out <- out |>
+    dplyr::ungroup() |>
+    tidyr::pivot_longer(
+      cols = tidyselect::all_of(cols)
+    ) |> dplyr::group_by(
+      !!rlang::sym(actor),
+      !!rlang::sym(session),
+      !!rlang::sym(".window")
+    ) |>
+    dplyr::mutate(
+      .obs = seq_len(dplyr::n())
+    ) |>
+    dplyr::select(-!!rlang::sym("name")) |>
+    dplyr::ungroup() |>
+    tidyr::pivot_wider(
+      id_cols = tidyselect::all_of(c(actor, session)),
+      names_from = tidyselect::all_of(c(".window", ".obs")),
+      names_glue = "W{.window}_T{.obs}",
+      values_from = "value"
+    )
+  out[[actor]] <- NULL
+  out[[session]] <- NULL
+  out[[".window"]] <- NULL
+  # Window properties for modeling
+  attr(out, "windowed") <- TRUE
+  attr(out, "window_size") <- window_size^(!aggregate)
+  attr(out, "window_span") <- length(cols)
+  out
 }

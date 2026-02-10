@@ -229,11 +229,7 @@ test_that("one-hot data can be imported", {
     NA
   )
   expect_error(
-    import_onehot(d, feature1:feature3, window = 5),
-    NA
-  )
-  expect_error(
-    import_onehot(d, feature1:feature3, keep = "actor"),
+    import_onehot(d, feature1:feature3, window_size = 5),
     NA
   )
   expect_error(

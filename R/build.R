@@ -29,9 +29,6 @@
 #'       patterns.
 #'   * `"gap"` allows transitions between non-adjacent states, with
 #'       transitions weighted by the gap size.
-#'   * `"window"` creates transitions between all states within a
-#'       sliding window, capturing local relationships
-#'       (several sequences together).
 #'   * `"reverse"` considers the sequences in reverse order
 #'       (resulting in what is called a reply network in some contexts).
 #'       The resulting weight matrix is the transpose of the `"frequency"`
@@ -62,34 +59,38 @@
 #'   `type`. The potential elements of this list are:
 #'
 #'   * `n_gram`: An `integer` for n-gram transitions specifying the number of
-#'       adjacent events. The default value is 2.
+#'     adjacent events. The default value is 2.
 #'   * `max_gap`: An `integer` for the gap-allowed transitions specifying the
-#'       largest allowed gap size. The default is 1.
+#'     largest allowed gap size. The default is 1.
+#'   * `windowed`: Perform the model estimation by window. Supported for
+#'     `relative`, `frequency` and `co-occurrence` `type`s.
 #'   * `window_size`: An `integer` for the sliding window transitions
-#'       specifying the window size. The default is 2.
+#'     specifying the window size. The default is 2.
+#'   * `window_type`: A `character` string that defines the window type.
+#'     Either `"rolling"` or `"tumbling"`.
 #'   * `weighted`: A `logical` value. If `TRUE`, the transitions
-#'      are weighted by the inverse of the sequence length. Can be used for
-#'      frequency, co-occurrence and reverse model types. The default is
+#'     are weighted by the inverse of the sequence length. Can be used for
+#'     frequency, co-occurrence and reverse model types. The default is
 #'      `FALSE`.
 #'   * `direction`: A `character` string specifying the direction of attention
-#'      for models of `type = "attention"`. The available options are
-#'      `"backward"`, `"forward"`, and `"both"`, for backward attention,
-#'      forward attention, and bidirectional attention, respectively.
-#'      The default is `"forward"`.
+#'     for models of `type = "attention"`. The available options are
+#'     `"backward"`, `"forward"`, and `"both"`, for backward attention,
+#'     forward attention, and bidirectional attention, respectively.
+#'     The default is `"forward"`.
 #'   * `decay`: A `function` that specifies the decay of the weights between
-#'      two time points at a specific distance. The function should take three
-#'      arguments: `i`, `j` and `lambda`, where `i` and `j` are `numeric`
-#'      vectors of time values, and `lambda` is  a `numeric` value for the
-#'      decay rate. The function should return a `numeric` vector of weights.
-#'      The default is `function(i, j, lambda) exp(-abs(i - j) / lambda)`.
+#'     two time points at a specific distance. The function should take three
+#'     arguments: `i`, `j` and `lambda`, where `i` and `j` are `numeric`
+#'     vectors of time values, and `lambda` is  a `numeric` value for the
+#'     decay rate. The function should return a `numeric` vector of weights.
+#'     The default is `function(i, j, lambda) exp(-abs(i - j) / lambda)`.
 #'   * `lambda`: A `numeric` value for the decay rate. The default is 1.
 #'   * `time`: A `matrix` or a `data.frame` providing the time values
-#'      for each sequence and at time index. For `tna_data` objects, this can
-#'      also be a logical value, where `TRUE` will use the `time_data` element
-#'      of `x` for the time values. `Date` values are converted to `numeric`.
+#'     for each sequence and at time index. For `tna_data` objects, this can
+#'     also be a logical value, where `TRUE` will use the `time_data` element
+#'     of `x` for the time values. `Date` values are converted to `numeric`.
 #'   * `duration`: A `matrix` or a `data.frame` providing the
-#'      time spent in each state for each sequence and time index.
-#'      This is an alternative to `time`.
+#'     time spent in each state for each sequence and time index.
+#'     This is an alternative to `time`.
 #'
 #' @param concat An `integer` for the number of consecutive sequences
 #'   to concatenate. The default is 1 (no concatenation).
@@ -100,7 +101,7 @@
 #'   signify the beginning of the sequence
 #' @param end_state A `character` string for an additional end state.
 #'   This state is added as the last observation for every sequence to
-#'   siginify the end of the sequence.
+#'   signify the end of the sequence.
 #' @param ... Ignored. For the `build_model` aliases (e.g., `tna`), this
 #'   argument matches the actual arguments to `build_model` beside `x`.
 #' @return An object of class `tna` which is a `list` containing the
@@ -253,6 +254,10 @@ build_model.data.frame <- function(x, type = "relative",
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
+  params$window_span <- attr(x, "window_span")
+  params$window_size <- attr(x, "window_size")
+  params$windowed <- !is.null(params$window_size) ||
+    !is.null(params$window_span)
   x <- create_seqdata(
     x = x,
     cols = cols,
@@ -659,6 +664,9 @@ initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
 #' @param params Parameters for the transition model.
 #' @noRd
 compute_transitions <- function(m, a, type, params) {
+  if (isTRUE(params$windowed)) {
+    return(compute_transitions_windowed(m, a, type, params))
+  }
   n <- nrow(m)
   p <- ncol(m)
   idx <- seq_len(n)
@@ -718,19 +726,6 @@ compute_transitions <- function(m, a, type, params) {
         trans[new_trans] <- trans[new_trans] + 1.0 / (j - i)
       }
     }
-  } else if (type == "window") {
-    window_size <- params$window_size %||% 2L
-    for (i in seq_len(p - window_size + 1L)) {
-      for (j in seq(i, i + window_size - 2L)) {
-        from <- m[, j]
-        for (k in seq(j + 1L, i + window_size - 1L)) {
-          to <- m[, k]
-          any_na <- is.na(from) | is.na(to)
-          new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
-          trans[new_trans] <- trans[new_trans] + 1L
-        }
-      }
-    }
   } else if (type == "attention") {
     lambda <- params$lambda %||% 1.0
     decay <- params$decay %||% function(i, j, lambda) exp(-abs(i - j) / lambda)
@@ -786,6 +781,86 @@ compute_transitions <- function(m, a, type, params) {
   trans
 }
 
+compute_transitions_windowed <- function(m, a, type, params) {
+  n <- nrow(m)
+  p <- ncol(m)
+  idx <- seq_len(n)
+  trans <- array(0L, dim = c(n, a, a))
+  seq_lengths <- .rowSums(!is.na(m), m = n, n = p)
+  weight <- ifelse_(isTRUE(params$weighted), 1.0 / seq_lengths, rep(1L, n))
+  window_size <- params$window_size %||% 2L
+  window_span <- params$window_span %||% 1L
+  window_size <- window_size * window_span
+  divides <- p %% window_size == 0L
+  q <- p %/% window_size - 1L * divides
+  if (type %in% c("relative", "frequency")) {
+    for (i in seq_len(q)) {
+      j_idx <- seq(
+        (i - 1) * window_size + 1L,
+        i * window_size
+      )
+      for (j in j_idx) {
+        from <- m[, j]
+        k_idx <- seq(
+          i * window_size + 1L,
+          min(p, (i + 1) * window_size)
+        )
+        for (k in k_idx) {
+          to <- m[, k]
+          any_na <- is.na(from) | is.na(to)
+          new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+          trans[new_trans] <- trans[new_trans] + 1L
+        }
+      }
+    }
+  } else if (type == "co-occurrence") {
+    for (i in seq_len(q + 1)) {
+      j_idx <- seq(
+        (i - 1) * window_size + 1L,
+        min(p, i * window_size)
+      )
+      for (j in j_idx) {
+        from <- m[, j]
+        k_idx <- seq(
+          (i - 1) * window_size + 1L,
+          min(p, i * window_size)
+        )
+        for (k in k_idx) {
+          to <- m[, k]
+          any_na <- is.na(from) | is.na(to)
+          new_trans <- cbind(idx, from, to)[!any_na, , drop = FALSE]
+          trans[new_trans] <- trans[new_trans] + 1L
+        }
+      }
+    }
+    # for (i in seq_len(q)) {
+    #   for (j in seq(i + 1, q + 1)) {
+    #     k_idx <- seq(
+    #       (i - 1) * window_size + 1L,
+    #       i * window_size
+    #     )
+    #     for (k in k_idx) {
+    #       from <- m[, k]
+    #       l_idx <- seq(
+    #         (j - 1) * window_size + 1L,
+    #         min(p, j * window_size)
+    #       )
+    #       for (l in l_idx) {
+    #         to <- m[, l]
+    #         any_na <- is.na(from) | is.na(to)
+    #         new_trans <- rbind(
+    #           cbind(idx, from, to)[!any_na, , drop = FALSE],
+    #           cbind(idx, to, from)[!any_na, , drop = FALSE]
+    #         )
+    #         trans[new_trans] <- trans[new_trans] + weight[!any_na]
+    #       }
+    #     }
+    #   }
+    # }
+  }
+  trans
+}
+
 # Internal function to get all transitions
 get_transitions <- function(x) { # nocov start
   m <- x$data
@@ -833,7 +908,7 @@ compute_weights <- function(transitions, type, scaling, a) {
 #' @param a An `integer`, the number of states.
 #' @noRd
 scale_weights <- function(weights, type, scaling, a) {
-  if (type == "relative") {
+  if (type == "relative" || "probability" %in% scaling) {
     rs <- .rowSums(weights, m = a, n = a)
     pos <- which(rs > 0)
     weights[pos, ] <- weights[pos, ] / rs[pos]
