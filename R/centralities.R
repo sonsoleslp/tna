@@ -432,8 +432,8 @@ wcc <- function(mat) {
 
 #' @export
 #' @rdname centralities
-centralities.group_tna <- function(x, loops = FALSE,
-                                   normalize = FALSE, measures) {
+centralities.group_tna <- function(x, loops = FALSE, normalize = FALSE,
+                                   invert = TRUE, measures) {
   check_missing(x)
   check_class(x, "group_tna")
   # missing() does not work with lapply, need to evaluate measures here.
@@ -447,6 +447,7 @@ centralities.group_tna <- function(x, loops = FALSE,
             x = i,
             loops = loops,
             normalize = normalize,
+            invert = invert,
             measures = measures
           )
         )
@@ -463,6 +464,7 @@ centralities.group_tna <- function(x, loops = FALSE,
 #' @export
 #' @rdname estimate_centrality_stability
 estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
+                                  invert = TRUE,
                                   measures = c(
                                     "InStrength", "OutStrength", "Betweenness"
                                   ), iter = 1000, method = "pearson",
@@ -479,6 +481,7 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
           i,
           loops = loops,
           normalize = normalize,
+          invert = invert,
           measures = measures,
           iter = iter,
           method = method,
