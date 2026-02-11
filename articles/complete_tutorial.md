@@ -278,12 +278,12 @@ print(Permutation$edges$stats)
 #>  [ reached 'max' / getOption("max.print") -- omitted 74 rows ]
 print(Permutation$centralities$stats)
 #>        state  centrality diff_true effect_size p_value
-#> 1      adapt Betweenness        -9       -1.31   0.221
-#> 2   cohesion Betweenness         1        0.79   0.315
-#> 3  consensus Betweenness         0         NaN   1.000
-#> 4 coregulate Betweenness         3        1.02   0.323
-#> 5    discuss Betweenness         2        4.55   0.006
-#> 6    emotion Betweenness         0         NaN   1.000
+#> 1      adapt Betweenness        -3       -6.69   0.001
+#> 2   cohesion Betweenness         0        0.00   1.000
+#> 3  consensus Betweenness         5        7.01   0.001
+#> 4 coregulate Betweenness        -3       -0.97   0.265
+#> 5    discuss Betweenness         2        1.83   0.233
+#> 6    emotion Betweenness         2       16.33   0.001
 #>  [ reached 'max' / getOption("max.print") -- omitted 3 rows ]
 ```
 

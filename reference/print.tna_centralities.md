@@ -41,14 +41,14 @@ print(cm)
 #> # A tibble: 9 × 10
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 adapt          1          0.345      13.4           2.33     18.5           17
-#> 2 cohesion       0.973      0.812       3.65          2.79     13.8            0
-#> 3 consens…       0.918      2.67        0.798         4.34     11.5            0
-#> 4 coregul…       0.977      0.567       4.55          2.31      5.97           5
-#> 5 discuss        0.805      1.19        1.95          2.68      7.31           0
-#> 6 emotion        0.923      0.894       1.57          3.13     14.5            0
-#> 7 monitor        0.982      0.346       6.24          2.21      7.76           3
-#> 8 plan           0.626      1.19        5.47          2.91     17.6           10
-#> 9 synthes…       1          0.192      12.3           2.18     15.9           14
+#> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
+#> 2 cohesion       0.973      0.812     0.0138        0.0124    0.0265           0
+#> 3 consens…       0.918      2.67      0.0351        0.0125    0.0383          30
+#> 4 coregul…       0.977      0.567     0.0155        0.0150    0.0210           0
+#> 5 discuss        0.805      1.19      0.0196        0.0131    0.0271          16
+#> 6 emotion        0.923      0.894     0.0141        0.0121    0.0231           5
+#> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
+#> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
+#> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
 #> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
 ```

@@ -6,13 +6,13 @@ about the measures.
 ## Usage
 
 ``` r
-centralities(x, loops = FALSE, normalize = FALSE, measures)
+centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
 # S3 method for class 'tna'
-centralities(x, loops = FALSE, normalize = FALSE, measures)
+centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
 # S3 method for class 'matrix'
-centralities(x, loops = FALSE, normalize = FALSE, measures)
+centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
 # S3 method for class 'group_tna'
 centralities(x, loops = FALSE, normalize = FALSE, measures)
@@ -28,12 +28,17 @@ centralities(x, loops = FALSE, normalize = FALSE, measures)
 - loops:
 
   A `logical` value indicating whether to include loops in the network
-  when computing the centrality measures (default is `FALSE`).
+  when computing the centrality measures. The default is `FALSE`.
 
 - normalize:
 
   A `logical` value indicating whether the centralities should be
-  normalized (default is `FALSE`).
+  normalized. The default is `FALSE`.
+
+- invert:
+
+  A `logical` value indicating whether the weights should be inverted
+  for distance-based measures. The default is `TRUE`.
 
 - measures:
 
@@ -111,15 +116,15 @@ centralities(model)
 #> # A tibble: 9 × 10
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 adapt          1          0.345      13.4           2.33     18.5           17
-#> 2 cohesion       0.973      0.812       3.65          2.79     13.8            0
-#> 3 consens…       0.918      2.67        0.798         4.34     11.5            0
-#> 4 coregul…       0.977      0.567       4.55          2.31      5.97           5
-#> 5 discuss        0.805      1.19        1.95          2.68      7.31           0
-#> 6 emotion        0.923      0.894       1.57          3.13     14.5            0
-#> 7 monitor        0.982      0.346       6.24          2.21      7.76           3
-#> 8 plan           0.626      1.19        5.47          2.91     17.6           10
-#> 9 synthes…       1          0.192      12.3           2.18     15.9           14
+#> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
+#> 2 cohesion       0.973      0.812     0.0138        0.0124    0.0265           0
+#> 3 consens…       0.918      2.67      0.0351        0.0125    0.0383          30
+#> 4 coregul…       0.977      0.567     0.0155        0.0150    0.0210           0
+#> 5 discuss        0.805      1.19      0.0196        0.0131    0.0271          16
+#> 6 emotion        0.923      0.894     0.0141        0.0121    0.0231           5
+#> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
+#> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
+#> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
 #> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
 
 # Centrality measures excluding loops in the network
@@ -127,15 +132,15 @@ centralities(model, loops = FALSE)
 #> # A tibble: 9 × 10
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 adapt          1          0.345      13.4           2.33     18.5           17
-#> 2 cohesion       0.973      0.812       3.65          2.79     13.8            0
-#> 3 consens…       0.918      2.67        0.798         4.34     11.5            0
-#> 4 coregul…       0.977      0.567       4.55          2.31      5.97           5
-#> 5 discuss        0.805      1.19        1.95          2.68      7.31           0
-#> 6 emotion        0.923      0.894       1.57          3.13     14.5            0
-#> 7 monitor        0.982      0.346       6.24          2.21      7.76           3
-#> 8 plan           0.626      1.19        5.47          2.91     17.6           10
-#> 9 synthes…       1          0.192      12.3           2.18     15.9           14
+#> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
+#> 2 cohesion       0.973      0.812     0.0138        0.0124    0.0265           0
+#> 3 consens…       0.918      2.67      0.0351        0.0125    0.0383          30
+#> 4 coregul…       0.977      0.567     0.0155        0.0150    0.0210           0
+#> 5 discuss        0.805      1.19      0.0196        0.0131    0.0271          16
+#> 6 emotion        0.923      0.894     0.0141        0.0121    0.0231           5
+#> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
+#> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
+#> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
 #> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
 
 # Centrality measures normalized
@@ -143,14 +148,14 @@ centralities(model, normalize = TRUE)
 #> # A tibble: 9 × 10
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 adapt          1         0.0618      1            0.0690     1           1    
-#> 2 cohesion       0.927     0.250       0.226        0.281      0.623       0    
-#> 3 consens…       0.781     1           0            1          0.438       0    
-#> 4 coregul…       0.938     0.151       0.297        0.0578     0           0.294
-#> 5 discuss        0.479     0.403       0.0917       0.230      0.106       0    
-#> 6 emotion        0.795     0.284       0.0611       0.439      0.681       0    
-#> 7 monitor        0.952     0.0623      0.432        0.0121     0.142       0.176
-#> 8 plan           0         0.405       0.371        0.338      0.924       0.588
-#> 9 synthes…       1         0           0.910        0          0.790       0.824
+#> 1 adapt          1         0.0618      0.0276        0.855    0.290       0.0333
+#> 2 cohesion       0.927     0.250       0.226         0.205    0.382       0     
+#> 3 consens…       0.781     1           1             0.240    1           1     
+#> 4 coregul…       0.938     0.151       0.289         0.816    0.0928      0     
+#> 5 discuss        0.479     0.403       0.436         0.365    0.412       0.533 
+#> 6 emotion        0.795     0.284       0.237         0.128    0.202       0.167 
+#> 7 monitor        0.952     0.0623      0             0.508    0           0     
+#> 8 plan           0         0.405       0.721         0        0.428       0.3   
+#> 9 synthes…       1         0           0.0867        1        0.265       0.233 
 #> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
 ```

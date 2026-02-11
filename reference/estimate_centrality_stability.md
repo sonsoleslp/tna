@@ -12,6 +12,7 @@ estimate_cs(
   x,
   loops,
   normalize,
+  invert,
   measures,
   iter,
   method,
@@ -25,6 +26,7 @@ estimate_centrality_stability(
   x,
   loops,
   normalize,
+  invert,
   measures,
   iter,
   method,
@@ -39,6 +41,7 @@ estimate_cs(
   x,
   loops = FALSE,
   normalize = FALSE,
+  invert = TRUE,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
@@ -53,6 +56,7 @@ estimate_centrality_stability(
   x,
   loops = FALSE,
   normalize = FALSE,
+  invert = TRUE,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
@@ -102,12 +106,17 @@ estimate_centrality_stability(
 - loops:
 
   A `logical` value indicating whether to include loops in the network
-  when computing the centrality measures (default is `FALSE`).
+  when computing the centrality measures. The default is `FALSE`.
 
 - normalize:
 
   A `logical` value indicating whether to normalize the centrality
   measures. The default is `FALSE`.
+
+- invert:
+
+  A `logical` value indicating whether the weights should be inverted
+  for distance-based measures. The default is `TRUE`.
 
 - measures:
 

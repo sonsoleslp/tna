@@ -402,15 +402,15 @@ print(centrality_measures)
 #> # A tibble: 9 × 10
 #>   state      OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>            <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 adapt            0.203      0.212       14.6          5.83     21.6           20
-#> 2 cohesion         0.658      0.667        6.61         6.54     18.7            0
-#> 3 consensus        2.32       2.34         1.25         5.89      7.68           0
-#> 4 coregulate       0.768      0.818       11.3          4.02     13.0            0
-#> 5 discuss          1.27       1.26         7.22         3.30      7.68           0
-#> 6 emotion          1.05       1.02         4.46         6.68     16.9            0
-#> 7 monitor          0.562      0.480       10.8          5.24     13.0            7
-#> 8 plan             1.54       1.56        11.6          5.88     16.8            9
-#> 9 synthesis        0.260      0.275       12.0          5.72     16.9           21
+#> 1 adapt            0.203      0.212     0.00967      0.00901    0.0104           0
+#> 2 cohesion         0.658      0.667     0.0128       0.0176     0.0193           0
+#> 3 consensus        2.32       2.34      0.0245       0.0254     0.0294          39
+#> 4 coregulate       0.768      0.818     0.0196       0.0148     0.0205           0
+#> 5 discuss          1.27       1.26      0.0210       0.0222     0.0272          19
+#> 6 emotion          1.05       1.02      0.0159       0.0195     0.0207           7
+#> 7 monitor          0.562      0.480     0.0124       0.0135     0.0154           0
+#> 8 plan             1.54       1.56      0.0221       0.0236     0.0263          18
+#> 9 synthesis        0.260      0.275     0.0137       0.0104     0.0147           0
 #> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
 plot(centrality_measures)
 ```

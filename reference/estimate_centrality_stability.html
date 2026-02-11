@@ -62,6 +62,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">loops</span>,</span>
 <span>  <span class="va">normalize</span>,</span>
+<span>  <span class="va">invert</span>,</span>
 <span>  <span class="va">measures</span>,</span>
 <span>  <span class="va">iter</span>,</span>
 <span>  <span class="va">method</span>,</span>
@@ -75,6 +76,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">loops</span>,</span>
 <span>  <span class="va">normalize</span>,</span>
+<span>  <span class="va">invert</span>,</span>
 <span>  <span class="va">measures</span>,</span>
 <span>  <span class="va">iter</span>,</span>
 <span>  <span class="va">method</span>,</span>
@@ -89,6 +91,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  loops <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  invert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InStrength"</span>, <span class="st">"OutStrength"</span>, <span class="st">"Betweenness"</span><span class="op">)</span>,</span>
 <span>  iter <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
@@ -103,6 +106,7 @@ centralities and those computed using sampled subsets.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  loops <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  invert <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InStrength"</span>, <span class="st">"OutStrength"</span>, <span class="st">"Betweenness"</span><span class="op">)</span>,</span>
 <span>  iter <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
@@ -152,7 +156,7 @@ analysis data. The object should be created from a sequence data object.</p></dd
 
 <dt id="arg-loops">loops<a class="anchor" aria-label="anchor" href="#arg-loops"></a></dt>
 <dd><p>A <code>logical</code> value indicating whether to include loops in the
-network when computing the centrality measures (default is <code>FALSE</code>).</p></dd>
+network when computing the centrality measures. The default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
@@ -160,11 +164,16 @@ network when computing the centrality measures (default is <code>FALSE</code>).<
 the centrality measures. The default is <code>FALSE</code>.</p></dd>
 
 
+<dt id="arg-invert">invert<a class="anchor" aria-label="anchor" href="#arg-invert"></a></dt>
+<dd><p>A <code>logical</code> value indicating whether the weights should be
+inverted for distance-based measures. The default is <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg-measures">measures<a class="anchor" aria-label="anchor" href="#arg-measures"></a></dt>
 <dd><p>A <code>character</code> vector of centrality measures to estimate.
 The default measures are <code>"InStrength"</code>, <code>"OutStrength"</code>,
-and <code>"Betweenness"</code>. See <code><a href="centralities.html">centralities()</a></code> for a list of available centrality
-measures.</p></dd>
+and <code>"Betweenness"</code>. See <code><a href="centralities.html">centralities()</a></code> for a list of available
+centrality measures.</p></dd>
 
 
 <dt id="arg-iter">iter<a class="anchor" aria-label="anchor" href="#arg-iter"></a></dt>
@@ -179,8 +188,8 @@ type. The default is <code>"pearson"</code>. See <code><a href="https://rdrr.io/
 
 <dt id="arg-drop-prop">drop_prop<a class="anchor" aria-label="anchor" href="#arg-drop-prop"></a></dt>
 <dd><p>A <code>numeric</code> vector specifying the proportions of
-cases to drop in each sampling iteration. Default is a sequence from 0.1 to
-0.9 in increments of 0.1.</p></dd>
+cases to drop in each sampling iteration. Default is a sequence from 0.1
+to 0.9 in increments of 0.1.</p></dd>
 
 
 <dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
