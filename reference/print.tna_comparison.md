@@ -96,34 +96,4 @@ print(comp)
 #> 11 Centralization (Out-Degree) 1.09e- 1 1.25e- 1
 #> 12 Centralization (In-Degree)  1.09e- 1 1.25e- 1
 #> 13 Reciprocity                 8.92e- 1 8.75e- 1
-#> 
-#> Centrality differences
-#> # A tibble: 81 × 5
-#>    state    centrality          x     y difference
-#>    <fct>    <chr>           <dbl> <dbl>      <dbl>
-#>  1 adapt    OutStrength     1     1         0     
-#>  2 adapt    InStrength      0.241 0.509    -0.267 
-#>  3 adapt    ClosenessIn    11.4   3.85      7.52  
-#>  4 adapt    ClosenessOut    1.11  1.55     -0.445 
-#>  5 adapt    Closeness      15.4   6.32      9.13  
-#>  6 adapt    Betweenness     0     4        -4     
-#>  7 adapt    BetweennessRSP  1     3        -2     
-#>  8 adapt    Diffusion       5.82  5.28      0.544 
-#>  9 adapt    Clustering      0.406 0.285     0.121 
-#> 10 cohesion OutStrength     0.962 0.988    -0.0260
-#> # ℹ 71 more rows
-#> 
-#> Centrality correlations
-#> # A tibble: 9 × 3
-#>   centrality     Centrality     correlation
-#>   <chr>          <chr>                <dbl>
-#> 1 Betweenness    Betweenness          0.324
-#> 2 BetweennessRSP BetweennessRSP       0.986
-#> 3 Closeness      Closeness            0.501
-#> 4 ClosenessIn    ClosenessIn          0.606
-#> 5 ClosenessOut   ClosenessOut         0.330
-#> 6 Clustering     Clustering           0.831
-#> 7 Diffusion      Diffusion            0.980
-#> 8 InStrength     InStrength           0.971
-#> 9 OutStrength    OutStrength          0.983
 ```

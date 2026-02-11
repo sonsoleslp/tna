@@ -15,7 +15,7 @@ the differences."><meta property="og:image" content="http://sonsoles.me/tna/logo
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,10 +64,10 @@ the differences.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
-<span><span class="fu">compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, scaling <span class="op">=</span> <span class="st">"none"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, scaling <span class="op">=</span> <span class="st">"none"</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, network <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'matrix'</span></span>
-<span><span class="fu">compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, scaling <span class="op">=</span> <span class="st">"none"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">compare</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, scaling <span class="op">=</span> <span class="st">"none"</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, network <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -91,6 +91,7 @@ the differences.</p>
 apply to the weights before comparing them. The supported options are:</p><ul><li><p><code>"none"</code>: No scaling is performed. The weights are used as is.</p></li>
 <li><p><code>"minmax"</code>: Performs min-max normalization, i.e., the minimum value is
 subtracted and the differences are scaled by the range.</p></li>
+<li><p><code>"max"</code>: Max-normalization: the values are divided by the maximum value.</p></li>
 <li><p><code>"rank"</code>: Applies min-max normalization to the ranks of the weights
 (computed with <code>ties.method = "average"</code>).</p></li>
 <li><p><code>"zscore"</code>: Computes the standard score, i.e. the mean weight is
@@ -105,6 +106,17 @@ Useful for scenarios with zero weights.</p></li>
 <li><p><code>"quantile"</code>: Uses the empirical quantiles of the weights
 via <a href="https://rdrr.io/r/stats/ecdf.html" class="external-link">stats::ecdf</a>.</p></li>
 </ul></dd>
+
+
+<dt id="arg-measures">measures<a class="anchor" aria-label="anchor" href="#arg-measures"></a></dt>
+<dd><p>A <code>character</code> vector indicating which centrality
+measures should be computed. See <code><a href="centralities.html">centralities()</a></code> for the
+available measures. No measures are included by default.</p></dd>
+
+
+<dt id="arg-network">network<a class="anchor" aria-label="anchor" href="#arg-network"></a></dt>
+<dd><p>A <code>logical</code> value indicating whether network metrics should
+be included in the comparison. The default is <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -66,7 +66,7 @@ A `ggplot` object.
 
 Szekely, G.J., Rizzo, M.L., and Bakirov, N.K. (2007), Measuring and
 Testing Dependence by Correlation of Distances, *Annals of Statistics*,
-Vol. 35 No. 6, pp. 2769-2794. doi:10.1214/009053607000000505
+35(6), 2769-2794. doi:10.1214/009053607000000505
 
 ## See also
 

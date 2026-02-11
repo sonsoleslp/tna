@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,7 @@ prints only the non-significant edges.</p></dd>
 <code><a href="plot.group_tna_stability.html">plot.group_tna_stability()</a></code>,
 <code><a href="plot.tna_bootstrap.html">plot.tna_bootstrap()</a></code>,
 <code><a href="plot.tna_permutation.html">plot.tna_permutation()</a></code>,
+<code><a href="plot.tna_reliability.html">plot.tna_reliability()</a></code>,
 <code><a href="plot.tna_stability.html">plot.tna_stability()</a></code>,
 <code><a href="print.group_tna_bootstrap.html">print.group_tna_bootstrap()</a></code>,
 <code><a href="print.group_tna_permutation.html">print.group_tna_permutation()</a></code>,
@@ -101,9 +102,11 @@ prints only the non-significant edges.</p></dd>
 <code><a href="print.summary.group_tna_bootstrap.html">print.summary.group_tna_bootstrap()</a></code>,
 <code><a href="print.summary.tna_bootstrap.html">print.summary.tna_bootstrap()</a></code>,
 <code><a href="print.tna_permutation.html">print.tna_permutation()</a></code>,
+<code><a href="print.tna_reliability.html">print.tna_reliability()</a></code>,
 <code><a href="print.tna_stability.html">print.tna_stability()</a></code>,
 <code><a href="prune.html">prune()</a></code>,
 <code><a href="pruning_details.html">pruning_details()</a></code>,
+<code><a href="reliability.html">reliability()</a></code>,
 <code><a href="reprune.html">reprune()</a></code>,
 <code><a href="summary.group_tna_bootstrap.html">summary.group_tna_bootstrap()</a></code>,
 <code><a href="summary.tna_bootstrap.html">summary.tna_bootstrap()</a></code></p></div>
@@ -119,22 +122,22 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          from         to       weight    p_value     cr_lower    cr_upper</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2    cohesion      adapt 0.0029498525 0.63636364 0.0022123894 0.003687316</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   consensus      adapt 0.0047400853 0.09090909 0.0035550640 0.005925107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  coregulate      adapt 0.0162436548 0.45454545 0.0121827411 0.020304569</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   consensus      adapt 0.0047400853 0.18181818 0.0035550640 0.005925107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  coregulate      adapt 0.0162436548 0.18181818 0.0121827411 0.020304569</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5     discuss      adapt 0.0713743356 0.09090909 0.0535307517 0.089217920</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6     emotion      adapt 0.0024673951 0.54545455 0.0018505464 0.003084244</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     monitor      adapt 0.0111653873 0.27272727 0.0083740405 0.013956734</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        plan      adapt 0.0009745006 0.63636364 0.0007308754 0.001218126</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     monitor      adapt 0.0111653873 0.09090909 0.0083740405 0.013956734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        plan      adapt 0.0009745006 0.81818182 0.0007308754 0.001218126</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9   synthesis      adapt 0.2346625767 0.09090909 0.1759969325 0.293328221</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10      adapt   cohesion 0.2730844794 0.09090909 0.2048133595 0.341355599</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   cohesion   cohesion 0.0271386431 0.09090909 0.0203539823 0.033923304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   cohesion   cohesion 0.0271386431 0.18181818 0.0203539823 0.033923304</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12  consensus   cohesion 0.0148522673 0.09090909 0.0111392005 0.018565334</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13 coregulate   cohesion 0.0360406091 0.09090909 0.0270304569 0.045050761</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14    discuss   cohesion 0.0475828904 0.09090909 0.0356871678 0.059478613</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15    emotion   cohesion 0.3253436729 0.09090909 0.2440077547 0.406679591</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16    monitor   cohesion 0.0558269365 0.18181818 0.0418702024 0.069783671</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17       plan   cohesion 0.0251745980 0.09090909 0.0188809485 0.031468248</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  synthesis   cohesion 0.0337423313 0.27272727 0.0253067485 0.042177914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  synthesis   cohesion 0.0337423313 0.18181818 0.0253067485 0.042177914</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19      adapt  consensus 0.4774066798 0.09090909 0.3580550098 0.596758350</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 20   cohesion  consensus 0.4979351032 0.09090909 0.3734513274 0.622418879</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21  consensus  consensus 0.0820034761 0.09090909 0.0615026070 0.102504345</span>
@@ -147,13 +150,13 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28      adapt coregulate 0.0216110020 0.45454545 0.0162082515 0.027013752</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29   cohesion coregulate 0.1191740413 0.09090909 0.0893805310 0.148967552</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30  consensus coregulate 0.1877073787 0.09090909 0.1407805340 0.234634223</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 coregulate coregulate 0.0233502538 0.27272727 0.0175126904 0.029187817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 coregulate coregulate 0.0233502538 0.09090909 0.0175126904 0.029187817</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 32    discuss coregulate 0.0842824601 0.09090909 0.0632118451 0.105353075</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33    emotion coregulate 0.0341910469 0.09090909 0.0256432852 0.042738809</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34    monitor coregulate 0.0579204466 0.09090909 0.0434403350 0.072400558</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 35       plan coregulate 0.0172161767 0.09090909 0.0129121325 0.021520221</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36  synthesis coregulate 0.0444785276 0.18181818 0.0333588957 0.055598160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37      adapt    discuss 0.0589390963 0.18181818 0.0442043222 0.073673870</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  synthesis coregulate 0.0444785276 0.36363636 0.0333588957 0.055598160</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37      adapt    discuss 0.0589390963 0.27272727 0.0442043222 0.073673870</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 38   cohesion    discuss 0.0595870206 0.09090909 0.0446902655 0.074483776</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 39  consensus    discuss 0.1880233844 0.09090909 0.1410175383 0.235029231</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 40 coregulate    discuss 0.2736040609 0.09090909 0.2052030457 0.342005076</span>
@@ -161,8 +164,8 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 42    emotion    discuss 0.1018681706 0.09090909 0.0764011280 0.127335213</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 43    monitor    discuss 0.3754361479 0.09090909 0.2815771110 0.469295185</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 44       plan    discuss 0.0678902063 0.09090909 0.0509176547 0.084862758</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45  synthesis    discuss 0.0628834356 0.18181818 0.0471625767 0.078604294</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46      adapt    emotion 0.1198428291 0.18181818 0.0898821218 0.149803536</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  synthesis    discuss 0.0628834356 0.36363636 0.0471625767 0.078604294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46      adapt    emotion 0.1198428291 0.09090909 0.0898821218 0.149803536</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 47   cohesion    emotion 0.1156342183 0.09090909 0.0867256637 0.144542773</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 48  consensus    emotion 0.0726813083 0.09090909 0.0545109812 0.090851635</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 49 coregulate    emotion 0.1720812183 0.09090909 0.1290609137 0.215101523</span>
@@ -170,8 +173,8 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 51    emotion    emotion 0.0768417342 0.09090909 0.0576313007 0.096052168</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 52    monitor    emotion 0.0907187718 0.09090909 0.0680390789 0.113398465</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 53       plan    emotion 0.1468247523 0.09090909 0.1101185642 0.183530940</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54  synthesis    emotion 0.0705521472 0.09090909 0.0529141104 0.088190184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55      adapt    monitor 0.0333988212 0.18181818 0.0250491159 0.041748527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54  synthesis    emotion 0.0705521472 0.18181818 0.0529141104 0.088190184</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55      adapt    monitor 0.0333988212 0.36363636 0.0250491159 0.041748527</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 56   cohesion    monitor 0.0330383481 0.09090909 0.0247787611 0.041297935</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 57  consensus    monitor 0.0466108390 0.09090909 0.0349581292 0.058263549</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 58 coregulate    monitor 0.0862944162 0.09090909 0.0647208122 0.107868020</span>
@@ -179,8 +182,8 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 60    emotion    monitor 0.0363059570 0.09090909 0.0272294677 0.045382446</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 61    monitor    monitor 0.0181437544 0.18181818 0.0136078158 0.022679693</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 62       plan    monitor 0.0755237941 0.09090909 0.0566428455 0.094404743</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63  synthesis    monitor 0.0122699387 0.54545455 0.0092024540 0.015337423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64      adapt       plan 0.0157170923 0.63636364 0.0117878193 0.019646365</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63  synthesis    monitor 0.0122699387 0.72727273 0.0092024540 0.015337423</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64      adapt       plan 0.0157170923 0.45454545 0.0117878193 0.019646365</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 65   cohesion       plan 0.1410029499 0.09090909 0.1057522124 0.176253687</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 66  consensus       plan 0.3957971243 0.09090909 0.2968478433 0.494746405</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 67 coregulate       plan 0.2390862944 0.09090909 0.1793147208 0.298857868</span>
@@ -188,93 +191,93 @@ prints only the non-significant edges.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 69    emotion       plan 0.0997532605 0.09090909 0.0748149454 0.124691576</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 70    monitor       plan 0.2156315422 0.09090909 0.1617236567 0.269539428</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 71       plan       plan 0.3742082183 0.09090909 0.2806561637 0.467760273</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72  synthesis       plan 0.0751533742 0.27272727 0.0563650307 0.093941718</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74   cohesion  synthesis 0.0035398230 0.54545455 0.0026548673 0.004424779</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75  consensus  synthesis 0.0075841365 0.18181818 0.0056881024 0.009480171</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 coregulate  synthesis 0.0187817259 0.27272727 0.0140862944 0.023477157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72  synthesis       plan 0.0751533742 0.09090909 0.0563650307 0.093941718</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74   cohesion  synthesis 0.0035398230 0.63636364 0.0026548673 0.004424779</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75  consensus  synthesis 0.0075841365 0.09090909 0.0056881024 0.009480171</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76 coregulate  synthesis 0.0187817259 0.09090909 0.0140862944 0.023477157</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 77    discuss  synthesis 0.1409769679 0.09090909 0.1057327259 0.176221210</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78    emotion  synthesis 0.0028198802 0.45454545 0.0021149101 0.003524850</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79    monitor  synthesis 0.0160502442 0.18181818 0.0120376832 0.020062805</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78    emotion  synthesis 0.0028198802 0.72727273 0.0021149101 0.003524850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79    monitor  synthesis 0.0160502442 0.36363636 0.0120376832 0.020062805</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 80       plan  synthesis 0.0017865844 0.45454545 0.0013399383 0.002233230</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        ci_lower    ci_upper</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.0007173440 0.003744877</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.0040418563 0.005812372</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.0145160099 0.022757978</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.0642346945 0.076911102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.0007861425 0.004593798</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.0086152916 0.014040406</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.0006342186 0.001323212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.2064675926 0.250730850</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.2493286763 0.324421037</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 0.0235175676 0.030211620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 0.0121659921 0.016999851</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 0.0301305112 0.043034840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 0.0413145981 0.049563699</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 0.3115478514 0.339532899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 0.0483073199 0.068991700</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 0.0218071150 0.028885567</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 0.0230565891 0.042650246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 0.4438220157 0.511736305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 0.4734443071 0.518444902</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 0.0771067935 0.088581578</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 0.1244374436 0.148153986</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 0.3209382176 0.334032310</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 0.3121089114 0.346050498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 0.1489900780 0.175262003</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 0.2820291200 0.298141674</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 0.4468231198 0.499905254</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 0.0128923184 0.031863860</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 0.1076666089 0.134056849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 0.1798789517 0.195573164</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31 0.0201435262 0.031891104</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 0.0791911715 0.091595275</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 0.0312554486 0.037408321</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 0.0495393338 0.065780993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35 0.0157092930 0.020563441</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36 0.0331665404 0.052800558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37 0.0503477548 0.073035738</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38 0.0522171334 0.065690903</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39 0.1802132895 0.195130318</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40 0.2598969645 0.290322905</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41 0.1809853316 0.204465090</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42 0.0879067893 0.102767103</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43 0.3558517047 0.404199150</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44 0.0632145290 0.074161716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45 0.0451732283 0.073430900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46 0.0964748704 0.148722768</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47 0.1061352218 0.124786094</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48 0.0698462891 0.077487860</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49 0.1462541201 0.181661004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50 0.0989290150 0.111324316</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51 0.0671442599 0.082881547</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52 0.0788471458 0.098495043</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53 0.1354723980 0.151000413</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54 0.0605770887 0.084075772</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55 0.0247150526 0.038415824</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56 0.0296353624 0.037403157</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57 0.0445399632 0.052063568</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58 0.0760731260 0.095429498</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59 0.0182629268 0.023564588</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60 0.0287256678 0.038693719</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61 0.0129310228 0.020507795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62 0.0722653419 0.080082961</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63 0.0055858516 0.020333713</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64 0.0098697556 0.029801740</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65 0.1268967461 0.156639071</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66 0.3779664156 0.403485549</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67 0.2327211863 0.252593717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68 0.0105815041 0.014923971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69 0.0940832207 0.104523840</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70 0.2041517504 0.236642139</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71 0.3630419209 0.383266885</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72 0.0573718949 0.095727838</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74 0.0021163987 0.005712873</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75 0.0060221805 0.009410459</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76 0.0133873835 0.020047230</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77 0.1336952149 0.146967522</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78 0.0010590783 0.003794408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79 0.0113936716 0.018574032</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80 0.0013356626 0.002731615</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  0.0012688684 0.005678294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  0.0037682464 0.006016564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  0.0101674029 0.019524799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  0.0655589277 0.079539026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  0.0010512621 0.003872933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  0.0089766833 0.013543132</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  0.0004770554 0.001802971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  0.2136789045 0.264373145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 0.2484742194 0.303473100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 0.0213115756 0.034573891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 0.0128418262 0.016027752</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 0.0315330524 0.038972187</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 0.0448334767 0.052528434</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 0.3232073322 0.332986899</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 0.0474852457 0.069757568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 0.0222800742 0.027218151</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 0.0274974534 0.043896639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 0.4443995226 0.497329472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 0.4811939217 0.516706874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 0.0762097177 0.089410480</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 0.1290376004 0.156127900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 0.3088757345 0.328473304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 0.3128062667 0.323594440</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 0.1386551027 0.170446534</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 0.2821916593 0.301490279</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 0.4372730856 0.488941519</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 0.0112573099 0.034817311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 0.1126674055 0.134204595</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 0.1833796024 0.194773652</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 0.0181997275 0.027353560</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 0.0796359696 0.088329557</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 0.0312887222 0.040076616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 0.0520172163 0.060209460</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 0.0153803576 0.019201290</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 0.0280194219 0.056289369</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37 0.0427179625 0.064133011</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 0.0502691099 0.067949826</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 0.1784462648 0.198681767</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 0.2575513635 0.291046091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 0.1847502004 0.205556425</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 0.0930794955 0.107973956</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 0.3578539298 0.401156580</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 0.0632717660 0.073805028</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 0.0507171575 0.086292801</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46 0.1037970397 0.136666857</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 0.1013969581 0.120129758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 0.0676769123 0.075537828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49 0.1440947159 0.187429889</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 0.1001629800 0.111790903</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 51 0.0691925849 0.082780449</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 52 0.0793493933 0.097045567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 53 0.1371348182 0.150036096</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54 0.0609292328 0.089773150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 55 0.0229588394 0.051891420</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 56 0.0305070752 0.039920822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 57 0.0424427849 0.049391671</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 58 0.0727171900 0.091748432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 59 0.0179562051 0.024972319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 60 0.0316211864 0.039524325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 61 0.0119245913 0.022196672</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 62 0.0702815266 0.079551071</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 63 0.0067422637 0.020634819</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 64 0.0113153735 0.027071150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 65 0.1334246310 0.152838846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 66 0.3857560726 0.402329665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 67 0.2236764702 0.256919629</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 68 0.0087942754 0.013819976</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 69 0.0931021094 0.104227022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 70 0.1927090553 0.236961938</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 71 0.3606645763 0.384752048</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 72 0.0598021303 0.090125861</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 74 0.0018284576 0.005776951</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 75 0.0068121298 0.009102800</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76 0.0162951807 0.023007321</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 77 0.1319176460 0.152134465</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 78 0.0012385350 0.004812148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 79 0.0131903114 0.023059323</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 80 0.0010357341 0.002219541</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

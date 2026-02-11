@@ -1,11 +1,19 @@
-# Import One-Hot Data and Create a Co-Occurrence Network Model
+# Import One-Hot Data
 
-Import One-Hot Data and Create a Co-Occurrence Network Model
+Import One-Hot Data
 
 ## Usage
 
 ``` r
-import_onehot(data, cols, window = 1L)
+import_onehot(
+  data,
+  cols,
+  actor,
+  session,
+  window_size = 1L,
+  window_type = "tumbling",
+  aggregate = FALSE
+)
 ```
 
 ## Arguments
@@ -16,24 +24,38 @@ import_onehot(data, cols, window = 1L)
 
 - cols:
 
-  An `expression` giving a tidy selection of column names to be
-  transformed into long format (actions). This can be a vector of column
-  names (e.g., `c(feature1, feature2)`) or a range specified as
-  `feature1:feature6` (without quotes) to include all columns from
-  'feature1' to 'feature6' in the order they appear in the data frame.
-  For more information on tidy selections, see
-  [`dplyr::select()`](https://dplyr.tidyverse.org/reference/select.html).
+  An `expression` giving a tidy selection of columns to be considered as
+  one-hot data.
 
-- window:
+- actor:
 
-  An `integer` specifying the size of the window for sequence grouping.
-  Default is 1 (each row is a separate window). Can also be a
-  `character` string giving a name of the column in `data` whose levels
-  define the windows.
+  An optional `character` string giving the column name of `data`
+  containing the actor identifiers.
+
+- session:
+
+  An optional `character` string giving the column name of `data`
+  containing the session identifiers.
+
+- window_size:
+
+  An `integer` specifying the window size for grouping.
+
+- window_type:
+
+  A `character` string. Either `"tumbling"` (the default) for
+  non-overlapping windows or `"sliding"` for one-step sliding window.
+
+- aggregate:
+
+  A `logical` value that determines how multiple occurrences of the same
+  event within a window are processed. Option `TRUE` aggregates multiple
+  occurrences into a single occurrence. Option `FALSE` keeps all
+  occurrences (the default).
 
 ## Value
 
-A `tna` object for the co-occurrence model.
+The processed data as a `data.frame`.
 
 ## See also
 
@@ -41,16 +63,19 @@ Other data:
 [`import_data()`](http://sonsoles.me/tna/reference/import_data.md),
 [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md),
 [`print.tna_data()`](http://sonsoles.me/tna/reference/print.tna_data.md),
+[`simulate.group_tna()`](http://sonsoles.me/tna/reference/simulate.group_tna.md),
 [`simulate.tna()`](http://sonsoles.me/tna/reference/simulate.tna.md)
 
 ## Examples
 
 ``` r
 d <- data.frame(
-  window = gl(100, 5),
+  actor = gl(100, 5),
+  session = gl(10, 50),
   feature1 = rbinom(500, 1, prob = 0.33),
   feature2 = rbinom(500, 1, prob = 0.25),
   feature3 = rbinom(500, 1, prob = 0.50)
 )
-model <- import_onehot(d, feature1:feature3, window = "window")
+onehot1 <- import_onehot(d, feature1:feature3)
+onehot2 <- import_onehot(d, feature1:feature3, "actor", "session")
 ```

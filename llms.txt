@@ -335,13 +335,15 @@ print(comparison$centralities$stats)
 - [`import_data()`](http://sonsoles.me/tna/reference/import_data.md) :
   Import Wide Format Sequence Data as Long Format Sequence Data
 - [`import_onehot()`](http://sonsoles.me/tna/reference/import_onehot.md)
-  : Import One-Hot Data and Create a Co-Occurrence Network Model
+  : Import One-Hot Data
 - [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md) :
   Compute User Sessions from Event Data
 - [`print(`*`<tna_data>`*`)`](http://sonsoles.me/tna/reference/print.tna_data.md)
   : Print a TNA Data Object
 - [`simulate(`*`<tna>`*`)`](http://sonsoles.me/tna/reference/simulate.tna.md)
   : Simulate Data from a Transition Network Analysis Model
+- [`simulate(`*`<group_tna>`*`)`](http://sonsoles.me/tna/reference/simulate.group_tna.md)
+  : Simulate Data from a Group Transition Network Analysis Model
 - [`summary(`*`<tna>`*`)`](http://sonsoles.me/tna/reference/summary.tna.md)
   : Calculate Summary of Network Metrics for a Transition Network
 
@@ -388,9 +390,10 @@ print(comparison$centralities$stats)
 
 ## Clusters
 
-- [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_sequences.md)
-  [`print(`*`<tna_clustering>`*`)`](http://sonsoles.me/tna/reference/cluster_sequences.md)
-  : Cluster Sequences via Dissimilarity Matrix based on String Distances
+- [`cluster_data()`](http://sonsoles.me/tna/reference/cluster_data.md)
+  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md)
+  [`print(`*`<tna_clustering>`*`)`](http://sonsoles.me/tna/reference/cluster_data.md)
+  : Clustering via Dissimilarity Matrix based on String Distances
 - [`mmm_stats()`](http://sonsoles.me/tna/reference/mmm_stats.md) :
   Retrieve Statistics from a Mixture Markov Model (MMM)
 
@@ -495,6 +498,15 @@ print(comparison$centralities$stats)
 
 - [`summary(`*`<group_tna_bootstrap>`*`)`](http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md)
   : Summarize Bootstrap Results for a Grouped Transition Network
+
+- [`reliability()`](http://sonsoles.me/tna/reference/reliability.md) :
+  Assess Model Reliability
+
+- [`print(`*`<tna_reliability>`*`)`](http://sonsoles.me/tna/reference/print.tna_reliability.md)
+  : Print Reliability Analysis Results
+
+- [`plot(`*`<tna_reliability>`*`)`](http://sonsoles.me/tna/reference/plot.tna_reliability.md)
+  : Plot Reliability Analysis Results
 
 ## Groups
 

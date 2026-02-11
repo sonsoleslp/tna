@@ -39,8 +39,7 @@ centralities(x, loops = FALSE, normalize = FALSE, measures)
 
   A `character` vector indicating which centrality measures should be
   computed. If missing, all available measures are returned. See
-  'Details' for available measures. The elements are partially matched
-  ignoring case.
+  'Details' for the available measures.
 
 ## Value
 

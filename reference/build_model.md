@@ -9,27 +9,16 @@ also accepts weight matrices and initial state probabilities directly.
 ## Usage
 
 ``` r
-build_model(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  cols = tidyselect::everything(),
-  params = list(),
-  inits,
-  begin_state,
-  end_state
-)
+build_model(x, ...)
 
 # Default S3 method
 build_model(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
   inits,
-  begin_state,
-  end_state
+  ...
 )
 
 # S3 method for class 'matrix'
@@ -37,11 +26,9 @@ build_model(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
   inits,
-  begin_state,
-  end_state
+  ...
 )
 
 # S3 method for class 'stslist'
@@ -51,9 +38,10 @@ build_model(
   scaling = character(0L),
   cols = tidyselect::everything(),
   params = list(),
-  inits,
+  concat = 1L,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 # S3 method for class 'data.frame'
@@ -62,10 +50,11 @@ build_model(
   type = "relative",
   scaling = character(0L),
   cols = tidyselect::everything(),
+  concat = 1L,
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 # S3 method for class 'tna_data'
@@ -73,11 +62,11 @@ build_model(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
+  concat = 1L,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 # S3 method for class 'tsn'
@@ -85,23 +74,11 @@ build_model(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
+  concat = 1L,
   begin_state,
-  end_state
-)
-
-# S3 method for class 'tsn_ews'
-build_model(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  cols = tidyselect::everything(),
-  params = list(),
-  inits,
-  begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 tna(x, ...)
@@ -129,6 +106,11 @@ tsn(x, ...)
   to state `j`. If `x` is a `data.frame`, then it must be in wide format
   (see `cols` on how to define columns for the time points).
 
+- ...:
+
+  Ignored. For the `build_model` aliases (e.g., `tna`), this argument
+  matches the actual arguments to `build_model` beside `x`.
+
 - type:
 
   A `character` string describing the weight matrix type. Currently
@@ -146,9 +128,6 @@ tsn(x, ...)
 
   - `"gap"` allows transitions between non-adjacent states, with
     transitions weighted by the gap size.
-
-  - `"window"` creates transitions between all states within a sliding
-    window, capturing local relationships (several sequences together).
 
   - `"reverse"` considers the sequences in reverse order (resulting in
     what is called a reply network in some contexts). The resulting
@@ -180,12 +159,6 @@ tsn(x, ...)
     [`base::rank()`](https://rdrr.io/r/base/rank.html) with
     `ties.method = "average"`.
 
-- cols:
-
-  An `expression` giving a tidy selection of columns that should be
-  considered as sequence data. By default, all columns are used. Ignored
-  for `matrix`, `tna_data` and `tsn` type `x`.
-
 - params:
 
   A `list` of additional arguments for models of specific `type`. The
@@ -197,8 +170,14 @@ tsn(x, ...)
   - `max_gap`: An `integer` for the gap-allowed transitions specifying
     the largest allowed gap size. The default is 1.
 
+  - `windowed`: Perform the model estimation by window. Supported for
+    `relative`, `frequency` and `co-occurrence` `type`s.
+
   - `window_size`: An `integer` for the sliding window transitions
     specifying the window size. The default is 2.
+
+  - `window_type`: A `character` string that defines the window type.
+    Either `"rolling"` or `"tumbling"`.
 
   - `weighted`: A `logical` value. If `TRUE`, the transitions are
     weighted by the inverse of the sequence length. Can be used for
@@ -234,8 +213,17 @@ tsn(x, ...)
 - inits:
 
   An optional `numeric` vector of initial state probabilities for each
-  state. The vector will be scaled to unity. Ignored if `x` is not a
-  `matrix`.
+  state. The vector will be scaled to unity.
+
+- cols:
+
+  An `expression` giving a tidy selection of columns that should be
+  considered as sequence data. By default, all columns are used.
+
+- concat:
+
+  An `integer` for the number of consecutive sequences to concatenate.
+  The default is 1 (no concatenation).
 
 - begin_state:
 
@@ -246,13 +234,8 @@ tsn(x, ...)
 - end_state:
 
   A `character` string for an additional end state. This state is added
-  as the last observation for every sequence to siginify the end of the
+  as the last observation for every sequence to signify the end of the
   sequence.
-
-- ...:
-
-  Ignored. For the `build_model` aliases (e.g., `tna`), this argument
-  matches the actual arguments to `build_model` beside `x`.
 
 ## Value
 

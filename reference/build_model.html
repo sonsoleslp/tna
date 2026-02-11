@@ -15,7 +15,7 @@ matrices and initial state probabilities directly."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,27 +61,16 @@ matrices and initial state probabilities directly.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_model</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
-<span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">inits</span>,</span>
-<span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
-<span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_model</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Default S3 method</span></span>
 <span><span class="fu">build_model</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">inits</span>,</span>
-<span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'matrix'</span></span>
@@ -89,11 +78,9 @@ matrices and initial state probabilities directly.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">inits</span>,</span>
-<span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'stslist'</span></span>
@@ -103,9 +90,10 @@ matrices and initial state probabilities directly.</p>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">inits</span>,</span>
+<span>  concat <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
+<span>  <span class="va">end_state</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'data.frame'</span></span>
@@ -114,10 +102,11 @@ matrices and initial state probabilities directly.</p>
 <span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  concat <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">inits</span>,</span>
 <span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
+<span>  <span class="va">end_state</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna_data'</span></span>
@@ -125,11 +114,11 @@ matrices and initial state probabilities directly.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">inits</span>,</span>
+<span>  concat <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
+<span>  <span class="va">end_state</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tsn'</span></span>
@@ -137,23 +126,11 @@ matrices and initial state probabilities directly.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
 <span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">inits</span>,</span>
+<span>  concat <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'tsn_ews'</span></span>
-<span><span class="fu">build_model</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  type <span class="op">=</span> <span class="st">"relative"</span>,</span>
-<span>  scaling <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0L</span><span class="op">)</span>,</span>
-<span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  <span class="va">inits</span>,</span>
-<span>  <span class="va">begin_state</span>,</span>
-<span>  <span class="va">end_state</span></span>
+<span>  <span class="va">end_state</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">tna</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -183,6 +160,11 @@ it must be in wide format (see <code>cols</code> on how to define columns for th
 time points).</p></dd>
 
 
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Ignored. For the <code>build_model</code> aliases (e.g., <code>tna</code>), this
+argument matches the actual arguments to <code>build_model</code> beside <code>x</code>.</p></dd>
+
+
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>A <code>character</code> string describing the weight matrix type.
 Currently supports the following types:</p><ul><li><p><code>"relative"</code> for relative frequencies (probabilities, the default)</p></li>
@@ -193,9 +175,6 @@ considering sequences of n states, useful for identifying longer
 patterns.</p></li>
 <li><p><code>"gap"</code> allows transitions between non-adjacent states, with
 transitions weighted by the gap size.</p></li>
-<li><p><code>"window"</code> creates transitions between all states within a
-sliding window, capturing local relationships
-(several sequences together).</p></li>
 <li><p><code>"reverse"</code> considers the sequences in reverse order
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the <code>"frequency"</code>
@@ -223,20 +202,18 @@ positive ranks, unlike <code>"minmax"</code> when all weights are positive.</p><
 </ul></dd>
 
 
-<dt id="arg-cols">cols<a class="anchor" aria-label="anchor" href="#arg-cols"></a></dt>
-<dd><p>An <code>expression</code> giving a tidy selection of columns that should
-be considered as sequence data. By default, all columns are used. Ignored
-for <code>matrix</code>, <code>tna_data</code> and <code>tsn</code> type <code>x</code>.</p></dd>
-
-
 <dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
 <dd><p>A <code>list</code> of additional arguments for models of specific
 <code>type</code>. The potential elements of this list are:</p><ul><li><p><code>n_gram</code>: An <code>integer</code> for n-gram transitions specifying the number of
 adjacent events. The default value is 2.</p></li>
 <li><p><code>max_gap</code>: An <code>integer</code> for the gap-allowed transitions specifying the
 largest allowed gap size. The default is 1.</p></li>
+<li><p><code>windowed</code>: Perform the model estimation by window. Supported for
+<code>relative</code>, <code>frequency</code> and <code>co-occurrence</code> <code>type</code>s.</p></li>
 <li><p><code>window_size</code>: An <code>integer</code> for the sliding window transitions
 specifying the window size. The default is 2.</p></li>
+<li><p><code>window_type</code>: A <code>character</code> string that defines the window type.
+Either <code>"rolling"</code> or <code>"tumbling"</code>.</p></li>
 <li><p><code>weighted</code>: A <code>logical</code> value. If <code>TRUE</code>, the transitions
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
@@ -265,8 +242,17 @@ This is an alternative to <code>time</code>.</p></li>
 
 <dt id="arg-inits">inits<a class="anchor" aria-label="anchor" href="#arg-inits"></a></dt>
 <dd><p>An optional <code>numeric</code> vector of initial state probabilities
-for each state. The vector will be scaled to unity.
-Ignored if <code>x</code> is not a <code>matrix</code>.</p></dd>
+for each state. The vector will be scaled to unity.</p></dd>
+
+
+<dt id="arg-cols">cols<a class="anchor" aria-label="anchor" href="#arg-cols"></a></dt>
+<dd><p>An <code>expression</code> giving a tidy selection of columns that should
+be considered as sequence data. By default, all columns are used.</p></dd>
+
+
+<dt id="arg-concat">concat<a class="anchor" aria-label="anchor" href="#arg-concat"></a></dt>
+<dd><p>An <code>integer</code> for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).</p></dd>
 
 
 <dt id="arg-begin-state">begin_state<a class="anchor" aria-label="anchor" href="#arg-begin-state"></a></dt>
@@ -278,12 +264,7 @@ signify the beginning of the sequence</p></dd>
 <dt id="arg-end-state">end_state<a class="anchor" aria-label="anchor" href="#arg-end-state"></a></dt>
 <dd><p>A <code>character</code> string for an additional end state.
 This state is added as the last observation for every sequence to
-siginify the end of the sequence.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Ignored. For the <code>build_model</code> aliases (e.g., <code>tna</code>), this
-argument matches the actual arguments to <code>build_model</code> beside <code>x</code>.</p></dd>
+signify the end of the sequence.</p></dd>
 
 </dl></div>
     <div class="section level2">

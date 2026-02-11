@@ -6,7 +6,15 @@ Compare Grouped TNA Models with Comprehensive Metrics
 
 ``` r
 # S3 method for class 'group_tna'
-compare(x, i = 1L, j = 2L, scaling = "none", ...)
+compare(
+  x,
+  i = 1L,
+  j = 2L,
+  scaling = "none",
+  measures = character(0),
+  network = TRUE,
+  ...
+)
 ```
 
 ## Arguments
@@ -27,7 +35,48 @@ compare(x, i = 1L, j = 2L, scaling = "none", ...)
 
 - scaling:
 
-  See [`compare.tna()`](http://sonsoles.me/tna/reference/compare.md).
+  A `character` string naming a scaling method to apply to the weights
+  before comparing them. The supported options are:
+
+  - `"none"`: No scaling is performed. The weights are used as is.
+
+  - `"minmax"`: Performs min-max normalization, i.e., the minimum value
+    is subtracted and the differences are scaled by the range.
+
+  - `"max"`: Max-normalization: the values are divided by the maximum
+    value.
+
+  - `"rank"`: Applies min-max normalization to the ranks of the weights
+    (computed with `ties.method = "average"`).
+
+  - `"zscore"`: Computes the standard score, i.e. the mean weight is
+    subtracted and the differences are scaled by the standard deviation.
+
+  - `"robust"`: Computes the robust z-score, i.e. the median weight is
+    subtracted and the differences are scaled by the median absolute
+    deviation (using [stats::mad](https://rdrr.io/r/stats/mad.html)).
+
+  - `"log"`: Simply the natural logarithm of the weights.
+
+  - `"log1p"`: As above, but adds 1 to the values before taking the
+    logarithm. Useful for scenarios with zero weights.
+
+  - `"softmax"`: Performs softmax normalization.
+
+  - `"quantile"`: Uses the empirical quantiles of the weights via
+    [stats::ecdf](https://rdrr.io/r/stats/ecdf.html).
+
+- measures:
+
+  A `character` vector indicating which centrality measures should be
+  computed. See
+  [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
+  for the available measures. No measures are included by default.
+
+- network:
+
+  A `logical` value indicating whether network metrics should be
+  included in the comparison. The default is `TRUE`.
 
 - ...:
 
@@ -109,34 +158,4 @@ compare(model, i = 1, j = 2)
 #> 11 Centralization (Out-Degree) 0     0.25 
 #> 12 Centralization (In-Degree)  0     0.25 
 #> 13 Reciprocity                 1     0.8  
-#> 
-#> Centrality differences
-#> # A tibble: 27 × 5
-#>    state   centrality         x     y difference
-#>    <fct>   <chr>          <dbl> <dbl>      <dbl>
-#>  1 Active  OutStrength    0.140 0.159    -0.0189
-#>  2 Active  InStrength     0.360 0.248     0.112 
-#>  3 Active  ClosenessIn    4.14  4.03      0.109 
-#>  4 Active  ClosenessOut   7.14  1.68      5.46  
-#>  5 Active  Closeness      7.29  4.03      3.26  
-#>  6 Active  Betweenness    1     1         0     
-#>  7 Active  BetweennessRSP 2     1         1     
-#>  8 Active  Diffusion      0.202 0.250    -0.0474
-#>  9 Active  Clustering     0.308 0.789    -0.481 
-#> 10 Average OutStrength    0.458 0.370     0.0875
-#> # ℹ 17 more rows
-#> 
-#> Centrality correlations
-#> # A tibble: 9 × 3
-#>   centrality     Centrality     correlation
-#>   <chr>          <chr>                <dbl>
-#> 1 Betweenness    Betweenness         -0.5  
-#> 2 BetweennessRSP BetweennessRSP       0.327
-#> 3 Closeness      Closeness            0.805
-#> 4 ClosenessIn    ClosenessIn         -0.883
-#> 5 ClosenessOut   ClosenessOut        -1.000
-#> 6 Clustering     Clustering           0.350
-#> 7 Diffusion      Diffusion            0.300
-#> 8 InStrength     InStrength          -0.252
-#> 9 OutStrength    OutStrength          0.113
 ```

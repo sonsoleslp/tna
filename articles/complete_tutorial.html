@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,14 +79,18 @@
 <div class="section level2">
 <h2 id="tutorial-of-tna-with-r">Tutorial of TNA with R<a class="anchor" aria-label="anchor" href="#tutorial-of-tna-with-r"></a>
 </h2>
+<p>This is a short tutorial of the <code>tna</code> package. We begin by
+loading the package and the example data set
+<code>group_regulation</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install `tna` if you haven't already</span></span>
-<span><span class="co"># install.packages("tna")</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sonsoleslp/tna/" class="external-link">"tna"</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"group_regulation"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sonsoleslp/tna/" class="external-link">"tna"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"group_regulation"</span>, package <span class="op">=</span> <span class="st">"tna"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="building-tna-model">Building <code>tna</code> Model<a class="anchor" aria-label="anchor" href="#building-tna-model"></a>
 </h3>
+<p>TNA models can be built with the <code>tna</code> function, which
+accepts several types of data such a sequence data, data frames or
+matrices.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>

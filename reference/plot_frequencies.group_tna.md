@@ -33,28 +33,30 @@ plot_frequencies(
 
 - colors:
 
-  A vector of colors to be used in the plot (one per group)
+  A `character` vector of colors to be used in the plot (one per group).
 
 - width:
 
-  Width of the bars. Default is 0.7.
+  A `numeric` value for the width of the bars. The default is `0.7`.
 
 - palette:
 
-  A palette to be used if colors are not passed.
+  A `character` string that specifies the palette to be used if `colors`
+  are not passed.
 
 - show_label:
 
-  Boolean indicating whether to show a label with the frequency counts.
-  Default is `TRUE`.
+  A `logical` value indicating whether to show a label with the
+  frequency counts. Default is `TRUE`.
 
 - position:
 
-  Position of the bars: "dodge", "dodge2", "fill" or "stack"
+  Position of the bars:`"dodge"`, `"dodge2"`, `"fill"` or `"stack"`.
 
 - hjust:
 
-  Horizontal adjustment of the labels. Default is 1.2.
+  A `numeric` value for the horizontal adjustment of the labels. The
+  default is `1.2`.
 
 - ...:
 

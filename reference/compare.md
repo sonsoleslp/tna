@@ -12,10 +12,10 @@ and scatterplots to further illustrate the differences.
 compare(x, ...)
 
 # S3 method for class 'tna'
-compare(x, y, scaling = "none", ...)
+compare(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 
 # S3 method for class 'matrix'
-compare(x, y, scaling = "none", ...)
+compare(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 ```
 
 ## Arguments
@@ -42,6 +42,9 @@ compare(x, y, scaling = "none", ...)
   - `"minmax"`: Performs min-max normalization, i.e., the minimum value
     is subtracted and the differences are scaled by the range.
 
+  - `"max"`: Max-normalization: the values are divided by the maximum
+    value.
+
   - `"rank"`: Applies min-max normalization to the ranks of the weights
     (computed with `ties.method = "average"`).
 
@@ -61,6 +64,18 @@ compare(x, y, scaling = "none", ...)
 
   - `"quantile"`: Uses the empirical quantiles of the weights via
     [stats::ecdf](https://rdrr.io/r/stats/ecdf.html).
+
+- measures:
+
+  A `character` vector indicating which centrality measures should be
+  computed. See
+  [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
+  for the available measures. No measures are included by default.
+
+- network:
+
+  A `logical` value indicating whether network metrics should be
+  included in the comparison. The default is `TRUE`.
 
 ## Value
 

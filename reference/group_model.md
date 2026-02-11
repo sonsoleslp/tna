@@ -18,6 +18,7 @@ group_model(
   groupwise = FALSE,
   cols = tidyselect::everything(),
   params = list(),
+  concat = 1L,
   na.rm = TRUE,
   ...
 )
@@ -61,7 +62,7 @@ group_atna(x, ...)
   used for building the Markov model. The argument `x` also accepts
   `data.frame` objects in wide format, and `tna_data` objects. This can
   also be the output of clustering from
-  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_sequences.md).
+  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md).
 
 - ...:
 
@@ -94,9 +95,6 @@ group_atna(x, ...)
 
   - `"gap"` allows transitions between non-adjacent states, with
     transitions weighted by the gap size.
-
-  - `"window"` creates transitions between all states within a sliding
-    window, capturing local relationships (several sequences together).
 
   - `"reverse"` considers the sequences in reverse order (resulting in
     what is called a reply network in some contexts). The resulting
@@ -151,8 +149,14 @@ group_atna(x, ...)
   - `max_gap`: An `integer` for the gap-allowed transitions specifying
     the largest allowed gap size. The default is 1.
 
+  - `windowed`: Perform the model estimation by window. Supported for
+    `relative`, `frequency` and `co-occurrence` `type`s.
+
   - `window_size`: An `integer` for the sliding window transitions
     specifying the window size. The default is 2.
+
+  - `window_type`: A `character` string that defines the window type.
+    Either `"rolling"` or `"tumbling"`.
 
   - `weighted`: A `logical` value. If `TRUE`, the transitions are
     weighted by the inverse of the sequence length. Can be used for
@@ -184,6 +188,11 @@ group_atna(x, ...)
   - `duration`: A `matrix` or a `data.frame` providing the time spent in
     each state for each sequence and time index. This is an alternative
     to `time`.
+
+- concat:
+
+  An `integer` for the number of consecutive sequences to concatenate.
+  The default is 1 (no concatenation).
 
 - na.rm:
 

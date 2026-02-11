@@ -6,7 +6,7 @@ Plot State Frequencies as a Mosaic Between Two Groups
 
 ``` r
 # S3 method for class 'group_tna'
-plot_mosaic(x, label, digits = 1L, ...)
+plot_mosaic(x, label, ...)
 ```
 
 ## Arguments
@@ -20,11 +20,6 @@ plot_mosaic(x, label, digits = 1L, ...)
   An optional `character` string that can be provided to specify the
   grouping factor name if `x` was not constructed using a column name of
   the original data.
-
-- digits:
-
-  An `integer` that determines the number of digits to use for the
-  chi-square test statistic and the p-value in the plot.
 
 - ...:
 
@@ -57,7 +52,7 @@ Basic functions
 ## Examples
 
 ``` r
-model <- group_model(engagement_mmm)
+model <- group_model(engagement, group = rep(1:3, length.out = 1000))
 plot_mosaic(model)
 
 ```

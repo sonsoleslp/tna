@@ -13,7 +13,7 @@ the edge weights of the network."><meta property="og:image" content="http://sons
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +61,9 @@ the edge weights of the network.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'tna'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
+<span>  <span class="va">node_list</span>,</span>
+<span>  use_list_order <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">x_offset</span>,</span>
 <span>  <span class="va">labels</span>,</span>
 <span>  <span class="va">colors</span>,</span>
 <span>  <span class="va">pie</span>,</span>
@@ -86,6 +89,24 @@ the edge weights of the network.</p>
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A <code>tna</code> object from <code><a href="build_model.html">tna()</a></code>.</p></dd>
+
+
+<dt id="arg-node-list">node_list<a class="anchor" aria-label="anchor" href="#arg-node-list"></a></dt>
+<dd><p>An optional <code>list</code> of two <code>character</code> vectors that define
+two mutually exclusive groups of node labels.</p></dd>
+
+
+<dt id="arg-use-list-order">use_list_order<a class="anchor" aria-label="anchor" href="#arg-use-list-order"></a></dt>
+<dd><p>A <code>logical</code> value. If <code>node_list</code> is provided,
+defines how the order of the nodes in the plot is defined. A <code>TRUE</code> value
+uses the order in <code>node_list</code>. Otherwise, the nodes are ranked based on
+edge weights and ordered according to the rank.</p></dd>
+
+
+<dt id="arg-x-offset">x_offset<a class="anchor" aria-label="anchor" href="#arg-x-offset"></a></dt>
+<dd><p>An optional <code>numeric</code> vector with the same number of
+elements as there are states. Defines a horizontal offset for each node
+in the plot when <code>node_list</code> is provided.</p></dd>
 
 
 <dt id="arg-labels">labels<a class="anchor" aria-label="anchor" href="#arg-labels"></a></dt>
@@ -147,7 +168,7 @@ a function name.</p></dd>
 <dd><p>A <code>character</code> string giving the name of a centrality
 measure to scale the node size by. See <code><a href="centralities.html">centralities()</a></code> for valid names.
 If missing (the default), uses default <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code> scaling.
-Overrides <code>vsize</code> provided via <code>...</code>.</p></dd>
+The value of <code>vsize</code> provided via <code>...</code> is used as baseline size.</p></dd>
 
 
 <dt id="arg-scaling-factor">scaling_factor<a class="anchor" aria-label="anchor" href="#arg-scaling-factor"></a></dt>

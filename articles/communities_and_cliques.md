@@ -6,19 +6,10 @@ loading the package and the example data set `group_regulation`.
 
 ``` r
 library("tna")
-#> 'tna' package version 1.1.0
-#> ------------------------------------------------------
-#>   Tikka, S., López-Pernas, S., and Saqr, M. (2025). 
-#>   tna: An R Package for Transition Network Analysis.
-#>   Applied Psychological Measurement.
-#>   https://doi.org/10.1177/01466216251348840
-#> ------------------------------------------------------
-#> Please type 'citation("tna")' for more citation information.
-#> See the package website at https://sonsoles.me/tna/
 data("group_regulation", package = "tna")
 ```
 
-We fit the TNA model to the data.
+We fit a TNA model to the data.
 
 ``` r
 tna_model <- tna(group_regulation)

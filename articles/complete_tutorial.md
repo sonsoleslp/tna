@@ -2,14 +2,18 @@
 
 ## Tutorial of TNA with R
 
+This is a short tutorial of the `tna` package. We begin by loading the
+package and the example data set `group_regulation`.
+
 ``` r
-# Install `tna` if you haven't already
-# install.packages("tna")
 library("tna")
-data("group_regulation")
+data("group_regulation", package = "tna")
 ```
 
 ### Building `tna` Model
+
+TNA models can be built with the `tna` function, which accepts several
+types of data such a sequence data, data frames or matrices.
 
 ``` r
 model <- tna(group_regulation)

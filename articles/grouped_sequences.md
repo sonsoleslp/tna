@@ -30,9 +30,9 @@ init_probs <- list(
 )
 ```
 
-Next, we building and fit the model (this step takes some time to
-compute, the final model object is also available in the `tna` package
-as `engagement_mmm`).
+Next, we build and fit the model (this step takes some time to compute,
+the final model object is also available in the `tna` package as
+`engagement_mmm`).
 
 ``` r
 mmm <- build_mmm(

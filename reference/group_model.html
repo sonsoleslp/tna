@@ -11,7 +11,7 @@ or a mixture Markov model."><meta property="og:image" content="http://sonsoles.m
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,6 +66,7 @@ or a mixture Markov model.</p>
 <span>  groupwise <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cols <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  concat <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  na.rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -110,7 +111,7 @@ or a mixture Markov model.</p>
 be used for building the Markov model. The argument <code>x</code> also accepts
 <code>data.frame</code> objects in wide format, and <code>tna_data</code> objects.
 This can also be the output of clustering from
-<code><a href="cluster_sequences.html">cluster_sequences()</a></code>.</p></dd>
+<code><a href="cluster_data.html">cluster_sequences()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -137,9 +138,6 @@ considering sequences of n states, useful for identifying longer
 patterns.</p></li>
 <li><p><code>"gap"</code> allows transitions between non-adjacent states, with
 transitions weighted by the gap size.</p></li>
-<li><p><code>"window"</code> creates transitions between all states within a
-sliding window, capturing local relationships
-(several sequences together).</p></li>
 <li><p><code>"reverse"</code> considers the sequences in reverse order
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the <code>"frequency"</code>
@@ -186,8 +184,12 @@ is automatically removed from these columns if provided.</p></dd>
 adjacent events. The default value is 2.</p></li>
 <li><p><code>max_gap</code>: An <code>integer</code> for the gap-allowed transitions specifying the
 largest allowed gap size. The default is 1.</p></li>
+<li><p><code>windowed</code>: Perform the model estimation by window. Supported for
+<code>relative</code>, <code>frequency</code> and <code>co-occurrence</code> <code>type</code>s.</p></li>
 <li><p><code>window_size</code>: An <code>integer</code> for the sliding window transitions
 specifying the window size. The default is 2.</p></li>
+<li><p><code>window_type</code>: A <code>character</code> string that defines the window type.
+Either <code>"rolling"</code> or <code>"tumbling"</code>.</p></li>
 <li><p><code>weighted</code>: A <code>logical</code> value. If <code>TRUE</code>, the transitions
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
@@ -212,6 +214,11 @@ of <code>x</code> for the time values. <code>Date</code> values are converted to
 time spent in each state for each sequence and time index.
 This is an alternative to <code>time</code>.</p></li>
 </ul></dd>
+
+
+<dt id="arg-concat">concat<a class="anchor" aria-label="anchor" href="#arg-concat"></a></dt>
+<dd><p>An <code>integer</code> for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>

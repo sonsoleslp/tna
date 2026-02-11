@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,7 +72,22 @@ groups are plotted.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="plot.tna.html">plot.tna</a></code></p><dl><dt><code>labels</code></dt>
+<dd><p>Arguments passed on to <code><a href="plot.tna.html">plot.tna</a></code></p><dl><dt><code>node_list</code></dt>
+<dd><p>An optional <code>list</code> of two <code>character</code> vectors that define
+two mutually exclusive groups of node labels.</p></dd>
+
+    <dt><code>use_list_order</code></dt>
+<dd><p>A <code>logical</code> value. If <code>node_list</code> is provided,
+defines how the order of the nodes in the plot is defined. A <code>TRUE</code> value
+uses the order in <code>node_list</code>. Otherwise, the nodes are ranked based on
+edge weights and ordered according to the rank.</p></dd>
+
+    <dt><code>x_offset</code></dt>
+<dd><p>An optional <code>numeric</code> vector with the same number of
+elements as there are states. Defines a horizontal offset for each node
+in the plot when <code>node_list</code> is provided.</p></dd>
+
+    <dt><code>labels</code></dt>
 <dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
 
     <dt><code>colors</code></dt>
@@ -120,7 +135,7 @@ a function name.</p></dd>
 <dd><p>A <code>character</code> string giving the name of a centrality
 measure to scale the node size by. See <code><a href="centralities.html">centralities()</a></code> for valid names.
 If missing (the default), uses default <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code> scaling.
-Overrides <code>vsize</code> provided via <code>...</code>.</p></dd>
+The value of <code>vsize</code> provided via <code>...</code> is used as baseline size.</p></dd>
 
     <dt><code>scaling_factor</code></dt>
 <dd><p>A <code>numeric</code> value specifying how strongly to scale

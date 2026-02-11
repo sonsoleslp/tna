@@ -8,7 +8,7 @@ Create a Mosaic Plot of Transitions or Events
 plot_mosaic(x, ...)
 
 # S3 method for class 'tna'
-plot_mosaic(x, digits = 1, ...)
+plot_mosaic(x, ...)
 ```
 
 ## Arguments
@@ -20,11 +20,6 @@ plot_mosaic(x, digits = 1, ...)
 - ...:
 
   Ignored.
-
-- digits:
-
-  An `integer` that determines the number of digits to use for the
-  chi-square test statistic and the p-value in the plot.
 
 ## Value
 

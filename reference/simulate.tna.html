@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,6 +56,8 @@
 <span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_len <span class="op">=</span> <span class="fl">100L</span>,</span>
 <span>  na_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fl">0L</span><span class="op">)</span>,</span>
+<span>  zero_row <span class="op">=</span> <span class="st">"self"</span>,</span>
+<span>  format <span class="op">=</span> <span class="st">"wide"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -66,7 +68,8 @@
 
 <dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>A <code>tna</code> object. The edge weights must be transition
-probabilities, i.e., the model must have <code>type = "relative"</code>.</p></dd>
+probabilities or frequencies, i.e., the model must have
+<code>type = "relative"</code> or <code>type = "frequency"</code>.</p></dd>
 
 
 <dt id="arg-nsim">nsim<a class="anchor" aria-label="anchor" href="#arg-nsim"></a></dt>
@@ -75,7 +78,14 @@ The default is 1.</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
-<dd><p>Ignored. Please use <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed()</a></code> manually.</p></dd>
+<dd><p>an object specifying if and how the random number
+    generator should be initialized (‘seeded’).<br>
+    For the <code>"lm"</code> method, either <code>NULL</code> or an integer that will be
+    used in a call to <code>set.seed</code> before simulating the response
+    vectors.  If set, the value is saved as the <code>"seed"</code> attribute
+    of the returned value.  The default, <code>NULL</code> will not change the
+    random generator state, and return <code><a href="https://rdrr.io/r/base/Random.html" class="external-link">.Random.seed</a></code> as the
+    <code>"seed"</code> attribute, see ‘Value’.</p></dd>
 
 
 <dt id="arg-max-len">max_len<a class="anchor" aria-label="anchor" href="#arg-max-len"></a></dt>
@@ -91,14 +101,25 @@ of missing values is drawn uniformly from this range. If both values are
 zero (the default), no missing values are generated.</p></dd>
 
 
+<dt id="arg-zero-row">zero_row<a class="anchor" aria-label="anchor" href="#arg-zero-row"></a></dt>
+<dd><p>A <code>character</code> string describing how to process zero rows
+in the weight matrix. The option <code>"self"</code> (the default) assigns
+probability 1 to the corresponding state (self loop) and option
+<code>"uniform"</code> assigns a uniform distribution.</p></dd>
+
+
+<dt id="arg-format">format<a class="anchor" aria-label="anchor" href="#arg-format"></a></dt>
+<dd><p>A <code>character</code> string indicating whether the data should be
+returned in <code>wide</code> or <code>long</code> format.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Ignored.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>data.frame</code> of the simulated sequence data with <code>nsim</code> rows and
-<code>max_len</code> columns.</p>
+    <p>A <code>data.frame</code> of the simulated sequence data.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -106,7 +127,8 @@ zero (the default), no missing values are generated.</p></dd>
 <code><a href="import_data.html">import_data()</a></code>,
 <code><a href="import_onehot.html">import_onehot()</a></code>,
 <code><a href="prepare_data.html">prepare_data()</a></code>,
-<code><a href="print.tna_data.html">print.tna_data()</a></code></p></div>
+<code><a href="print.tna_data.html">print.tna_data()</a></code>,
+<code><a href="simulate.group_tna.html">simulate.group_tna()</a></code></p></div>
     </div>
 
     <div class="section level2">

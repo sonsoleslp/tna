@@ -104,6 +104,7 @@ Other data:
 [`import_data()`](http://sonsoles.me/tna/reference/import_data.md),
 [`import_onehot()`](http://sonsoles.me/tna/reference/import_onehot.md),
 [`print.tna_data()`](http://sonsoles.me/tna/reference/print.tna_data.md),
+[`simulate.group_tna()`](http://sonsoles.me/tna/reference/simulate.group_tna.md),
 [`simulate.tna()`](http://sonsoles.me/tna/reference/simulate.tna.md)
 
 ## Examples

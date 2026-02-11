@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'group_tna'</span></span>
-<span><span class="fu"><a href="plot_mosaic.html">plot_mosaic</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">label</span>, digits <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="plot_mosaic.html">plot_mosaic</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">label</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -65,11 +65,6 @@
 <dd><p>An optional <code>character</code> string that can be provided to specify
 the grouping factor name if <code>x</code> was not constructed using a column name of
 the original data.</p></dd>
-
-
-<dt id="arg-digits">digits<a class="anchor" aria-label="anchor" href="#arg-digits"></a></dt>
-<dd><p>An <code>integer</code> that determines the number of digits to use
-for the chi-square test statistic and the p-value in the plot.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -103,7 +98,7 @@ for the chi-square test statistic and the p-value in the plot.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement</span>, group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot_mosaic.html">plot_mosaic</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_mosaic.group_tna-1.png" alt="" width="1080" height="1080"></span>
 <span class="r-in"><span></span></span>

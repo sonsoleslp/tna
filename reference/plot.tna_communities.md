@@ -8,7 +8,7 @@ corresponding color mappings.
 
 ``` r
 # S3 method for class 'tna_communities'
-plot(x, colors, method = "spinglass", ...)
+plot(x, colors, method, ...)
 ```
 
 ## Arguments
@@ -27,7 +27,8 @@ plot(x, colors, method = "spinglass", ...)
 - method:
 
   A `character` string naming a community detection method to use for
-  coloring the plot. See
+  coloring the plot. The default is to use the first available method in
+  `x`. See
   [`communities()`](http://sonsoles.me/tna/reference/communities.md) for
   details.
 

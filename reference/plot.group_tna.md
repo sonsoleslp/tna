@@ -30,6 +30,24 @@ plot(x, title, which, ...)
   Arguments passed on to
   [`plot.tna`](http://sonsoles.me/tna/reference/plot.tna.md)
 
+  `node_list`
+
+  :   An optional `list` of two `character` vectors that define two
+      mutually exclusive groups of node labels.
+
+  `use_list_order`
+
+  :   A `logical` value. If `node_list` is provided, defines how the
+      order of the nodes in the plot is defined. A `TRUE` value uses the
+      order in `node_list`. Otherwise, the nodes are ranked based on
+      edge weights and ordered according to the rank.
+
+  `x_offset`
+
+  :   An optional `numeric` vector with the same number of elements as
+      there are states. Defines a horizontal offset for each node in the
+      plot when `node_list` is provided.
+
   `labels`
 
   :   See
@@ -105,7 +123,8 @@ plot(x, title, which, ...)
       [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
       for valid names. If missing (the default), uses default
       [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html)
-      scaling. Overrides `vsize` provided via `...`.
+      scaling. The value of `vsize` provided via `...` is used as
+      baseline size.
 
   `scaling_factor`
 

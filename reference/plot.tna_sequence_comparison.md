@@ -1,6 +1,7 @@
 # Plot a Sequence Comparison
 
-Plot a Sequence Comparison
+Visualize the differences in pattern counts by plotting the standardized
+residuals by pattern and group.
 
 ## Usage
 
