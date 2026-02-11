@@ -417,7 +417,21 @@ print.tna_permutation <- function(x, ...) {
 #' Print the Results of Clustering
 #'
 #' @export
-#' @rdname cluster_data
+#' @family validation
+#' @param x A `tna_clustering` object.
+#' @param ... Additional arguments passed to the generic print method.
+#' @return `x` (invisibly).
+#' @examples
+#' data <- data.frame(
+#'   T1 = c("A", "B", "A", "C", "A", "B"),
+#'   T2 = c("B", "A", "B", "A", "C", "A"),
+#'   T3 = c("C", "C", "A", "B", "B", "C")
+#' )
+#'
+#' # PAM clustering with optimal string alignment (default)
+#' result <- cluster_sequences(data, k = 2)
+#' print(result)
+#' 
 print.tna_clustering <- function(x, ...) {
   cat("Clustering method:", x$method, "\n")
   cat("Number of clusters:", x$k, "\n")
