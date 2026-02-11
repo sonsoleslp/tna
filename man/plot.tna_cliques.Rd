@@ -11,7 +11,7 @@
   show_loops = FALSE,
   edge.labels = TRUE,
   edge.label.position = 0.65,
-  minimum = 0.00001,
+  minimum = 1e-05,
   mar = rep(5, 4),
   layout = "circle",
   layout_args = list(),
