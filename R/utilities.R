@@ -156,19 +156,6 @@ n_unique <- function(x) {
   length(unique(x))
 }
 
-#' Create all pairs of two vectors
-#'
-#' @param x A `vector`.
-#' @param y A `vector`.
-#' @noRd
-create_pairs <- function(x, y) {
-  n_x <- length(x)
-  out <- matrix(0, nrow = n_x * length(y), ncol = 2L)
-  out[, 1L] <- x
-  out[, 2L] <- rep(y, each = n_x)
-  out
-}
-
 #' Force values into bounds
 #'
 #' @param x A `numeric` vector of values
