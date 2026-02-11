@@ -25,6 +25,7 @@ Imports:
     cluster,
     colorspace,
     dplyr,
+    foreach,
     ggplot2,
     graphics,
     igraph,

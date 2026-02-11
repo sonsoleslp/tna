@@ -24,6 +24,7 @@ model_renamed <- rename_groups(model, c("A", "B", "C"))
 }
 \seealso{
 Cluster-related functions
+\code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{group_model}()},
 \code{\link{mmm_stats}()}
