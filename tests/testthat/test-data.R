@@ -289,3 +289,93 @@ test_that("invalid column selection fails", {
     "Can't select columns that don't exist"
   )
 })
+
+# Tests for import_onehot with sliding window
+test_that("import_onehot works with sliding window type", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    session = gl(5, 20),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  expect_error(
+    result <- import_onehot(
+      d,
+      feature1:feature3,
+      actor = "actor",
+      session = "session",
+      window_size = 3,
+      window_type = "sliding"
+    ),
+    NA
+  )
+  expect_s3_class(result, "data.frame")
+})
+
+test_that("import_onehot works with aggregate = TRUE", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    session = gl(5, 20),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  expect_error(
+    result <- import_onehot(
+      d,
+      feature1:feature3,
+      actor = "actor",
+      session = "session",
+      window_size = 2,
+      aggregate = TRUE
+    ),
+    NA
+  )
+  expect_s3_class(result, "data.frame")
+})
+
+test_that("import_onehot works with sliding window and aggregate", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    session = gl(5, 20),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  expect_error(
+    result <- import_onehot(
+      d,
+      feature1:feature3,
+      window_size = 2,
+      window_type = "sliding",
+      aggregate = TRUE
+    ),
+    NA
+  )
+  expect_s3_class(result, "data.frame")
+})
+
+test_that("parse_time handles milliseconds unix time", {
+  time <- c(1609459200000, 1609459260000, 1609459320000)
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- tna:::parse_time(
+    time,
+    custom_format = NULL,
+    is_unix_time = TRUE,
+    unix_time_unit = "milliseconds"
+  )
+  expect_s3_class(result, "POSIXct")
+})
+
+test_that("parse_time handles microseconds unix time", {
+  time <- c(1609459200000000, 1609459260000000, 1609459320000000)
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- tna:::parse_time(
+    time,
+    custom_format = NULL,
+    is_unix_time = TRUE,
+    unix_time_unit = "microseconds"
+  )
+  expect_s3_class(result, "POSIXct")
+})

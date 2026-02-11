@@ -328,3 +328,70 @@ test_that("sequence data can be concatenated", {
     all.equal(data_concat, data_orig)
   )
 })
+
+# Tests for windowed transitions
+test_that("windowed transitions work for relative type", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  onehot <- import_onehot(d, feature1:feature3, window_size = 2)
+  expect_error(
+    model <- tna(onehot),
+    NA
+  )
+  expect_s3_class(model, "tna")
+})
+
+test_that("windowed transitions work for frequency type", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  onehot <- import_onehot(d, feature1:feature3, window_size = 2)
+  expect_error(
+    model <- ftna(onehot),
+    NA
+  )
+  expect_s3_class(model, "tna")
+})
+
+test_that("windowed transitions work for co-occurrence type", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  onehot <- import_onehot(d, feature1:feature3, window_size = 2)
+  expect_error(
+    model <- ctna(onehot),
+    NA
+  )
+  expect_s3_class(model, "tna")
+})
+
+test_that("sna validates input correctly", {
+  # Wrong number of columns
+  expect_error(
+    sna(data.frame(a = 1, b = 2)),
+    "Argument `x` must have three columns"
+  )
+
+  # NA values
+  expect_error(
+    sna(data.frame(from = "A", to = NA, weight = 1)),
+    "must not contain missing values"
+  )
+})
+
+test_that("build_model.matrix handles negative inits", {
+  expect_error(
+    tna(mock_matrix, inits = c(-1, 0.5, 0.5, 0)),
+    "non-negative"
+  )
+})
