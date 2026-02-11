@@ -134,10 +134,11 @@
 
 - [`cluster_data()`](http://sonsoles.me/tna/reference/cluster_data.md)
   [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md)
-  [`print(`*`<tna_clustering>`*`)`](http://sonsoles.me/tna/reference/cluster_data.md)
   : Clustering via Dissimilarity Matrix based on String Distances
 - [`mmm_stats()`](http://sonsoles.me/tna/reference/mmm_stats.md) :
   Retrieve Statistics from a Mixture Markov Model (MMM)
+- [`print(`*`<tna_clustering>`*`)`](http://sonsoles.me/tna/reference/print.tna_clustering.md)
+  : Print the Results of Clustering
 
 ## Comparison
 

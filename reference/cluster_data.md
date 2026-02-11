@@ -29,9 +29,6 @@ cluster_sequences(
   lambda = 1,
   ...
 )
-
-# S3 method for class 'tna_clustering'
-print(x, ...)
 ```
 
 ## Arguments
@@ -114,11 +111,4 @@ data <- data.frame(
 
 # PAM clustering with optimal string alignment (default)
 result <- cluster_sequences(data, k = 2)
-print(result)
-#> Clustering method: pam 
-#> Number of clusters: 2 
-#> Silhouette score: 0.4345238 
-#> Cluster sizes:
-#> 1 2 
-#> 3 3 
 ```

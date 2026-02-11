@@ -55,6 +55,7 @@ Validation functions
 [`print.group_tna_stability()`](http://sonsoles.me/tna/reference/print.group_tna_stability.md),
 [`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
 [`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.tna_clustering()`](http://sonsoles.me/tna/reference/print.tna_clustering.md),
 [`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
 [`print.tna_reliability()`](http://sonsoles.me/tna/reference/print.tna_reliability.md),
 [`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),

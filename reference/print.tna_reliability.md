@@ -48,6 +48,7 @@ Validation functions
 [`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
 [`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
 [`print.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.tna_bootstrap.md),
+[`print.tna_clustering()`](http://sonsoles.me/tna/reference/print.tna_clustering.md),
 [`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
 [`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),
 [`prune()`](http://sonsoles.me/tna/reference/prune.md),
@@ -68,8 +69,8 @@ print(rel)
 #> # A tibble: 4 × 8
 #>   metric               mean       sd  median     min    max     q25     q75
 #>   <chr>               <dbl>    <dbl>   <dbl>   <dbl>  <dbl>   <dbl>   <dbl>
-#> 1 Mean Abs. Diff.   0.00674 0.00263  0.00608 0.00291 0.0112 0.00487 0.00868
-#> 2 Median Abs. Diff. 0.00517 0.00241  0.00457 0.00255 0.0116 0.00352 0.00611
-#> 3 Pearson           1.000   0.000378 1.000   0.999   1.000  0.999   1.000  
-#> 4 Bray-Curtis       0.0101  0.00394  0.00912 0.00437 0.0169 0.00730 0.0130 
+#> 1 Mean Abs. Diff.   0.00752 0.00236  0.00658 0.00420 0.0123 0.00602 0.00826
+#> 2 Median Abs. Diff. 0.00601 0.00219  0.00583 0.00247 0.0104 0.00441 0.00743
+#> 3 Pearson           1.000   0.000439 1.000   0.998   1.000  1.000   1.000  
+#> 4 Bray-Curtis       0.0113  0.00354  0.00987 0.00631 0.0185 0.00904 0.0124 
 ```

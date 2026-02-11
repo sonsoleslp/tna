@@ -45,7 +45,7 @@ stringdist package."><meta property="og:image" content="http://sonsoles.me/tna/l
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Clustering via Dissimilarity Matrix based on String Distances</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/R/clusters.R" class="external-link"><code>R/clusters.R</code></a>, <a href="https://github.com/sonsoleslp/tna/blob/main/R/print.R" class="external-link"><code>R/print.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sonsoleslp/tna/blob/main/R/clusters.R" class="external-link"><code>R/clusters.R</code></a></small>
       <div class="d-none name"><code>cluster_data.Rd</code></div>
     </div>
 
@@ -78,10 +78,7 @@ and compared using the dissimilarity measures available in the
 <span>  weighted <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  lambda <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'tna_clustering'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -155,13 +152,6 @@ supported for the Hamming distance.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># PAM clustering with optimal string alignment (default)</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">cluster_sequences</span><span class="op">(</span><span class="va">data</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Clustering method: pam </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of clusters: 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Silhouette score: 0.4345238 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Cluster sizes:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3 </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -1,57 +1,27 @@
-# Assess Model Reliability
+# Print the Results of Clustering
 
-Performs reliability analysis and outputs a concise summary of key
-metrics. The results can also be visualized.
+Print the Results of Clustering
 
 ## Usage
 
 ``` r
-reliability(x, ...)
-
-# S3 method for class 'tna'
-reliability(
-  x,
-  types = "relative",
-  split = 0.5,
-  iter = 1000,
-  scaling = "none",
-  ...
-)
+# S3 method for class 'tna_clustering'
+print(x, ...)
 ```
 
 ## Arguments
 
 - x:
 
-  A `tna` object.
+  A `tna_clustering` object.
 
 - ...:
 
-  Ignored.
-
-- types:
-
-  A `character` vector giving the model types to fit. See
-  [`build_model()`](http://sonsoles.me/tna/reference/build_model.md) for
-  available options.
-
-- split:
-
-  A `numeric` value between `0` and `1` specifying the proportion of
-  data for the split. The default is `0.5` for an even split.
-
-- iter:
-
-  An `integer` specifying number of iterations (splits). The default is
-  `1000`.
-
-- scaling:
-
-  See [`compare()`](http://sonsoles.me/tna/reference/compare.md).
+  Additional arguments passed to the generic print method.
 
 ## Value
 
-A `tna_reliability` object.
+`x` (invisibly).
 
 ## See also
 
@@ -74,12 +44,12 @@ Validation functions
 [`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
 [`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
 [`print.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](http://sonsoles.me/tna/reference/print.tna_clustering.md),
 [`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
 [`print.tna_reliability()`](http://sonsoles.me/tna/reference/print.tna_reliability.md),
 [`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),
 [`prune()`](http://sonsoles.me/tna/reference/prune.md),
 [`pruning_details()`](http://sonsoles.me/tna/reference/pruning_details.md),
+[`reliability()`](http://sonsoles.me/tna/reference/reliability.md),
 [`reprune()`](http://sonsoles.me/tna/reference/reprune.md),
 [`summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
 [`summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
@@ -87,7 +57,19 @@ Validation functions
 ## Examples
 
 ``` r
-# Small number of iterations for CRAN
-model <- tna(engagement)
-rel <- reliability(model, iter = 20)
+data <- data.frame(
+  T1 = c("A", "B", "A", "C", "A", "B"),
+  T2 = c("B", "A", "B", "A", "C", "A"),
+  T3 = c("C", "C", "A", "B", "B", "C")
+)
+
+# PAM clustering with optimal string alignment (default)
+result <- cluster_sequences(data, k = 2)
+print(result)
+#> Clustering method: pam 
+#> Number of clusters: 2 
+#> Silhouette score: 0.4345238 
+#> Cluster sizes:
+#> 1 2 
+#> 3 3 
 ```
