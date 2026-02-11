@@ -122,9 +122,9 @@ test_that("simulate.group_tna long format binds cleanly and has required columns
   set.seed(0)
 
   sim <- simulate(mock_group_tna, nsim = c(3, 5), max_len = c(4, 6), format = "long")
-  expect_true(all(c("group", "actor", "t", "t_label", "state") %in% names(sim)))
+  expect_true(all(c("group", "id", "time", "state") %in% names(sim)))
 
   # t should be within [1, max_len] per group, actor should restart per group (simulate.tna default)
-  expect_true(all(sim$t >= 1))
-  expect_true(all(grepl("^T\\d+$", sim$t_label)))
+  expect_true(all(sim$time >= 1 & sim$time <= 6))
+  #expect_true(all(grepl("^T\\d+$", sim$t_label)))
 })

@@ -10,47 +10,61 @@
   seed = NULL,
   max_len = 100L,
   na_range = c(0L, 0L),
-  zero_row = c("self", "uniform"),
-  format = c("wide", "long"),
+  zero_row = "self",
+  format = "wide",
   ...
 )
 }
 \arguments{
 \item{object}{A \code{group_tna} object. The edge weights must be transition
-probabilities, i.e., the model must have \code{type = "relative"} or
-\code{type = "absolute"}.}
+probabilities or frequencies, i.e., the model must have
+\code{type = "relative"} or \code{type = "frequency"}.}
 
-\item{nsim}{An \code{integer} giving the number of sequences to simulate.
-The default is 1. It can also be a vector whose length matches
-the number of groups in the model.}
+\item{nsim}{An \code{integer} vector giving the number of sequences to simulate
+per group. If a single integer is provided, the same number of sequences
+is generated per each group. The default is 1.}
 
-\item{seed}{Ignored. Please use \code{\link[=set.seed]{set.seed()}} manually.}
+\item{seed}{an object specifying if and how the random number
+    generator should be initialized (\sQuote{seeded}).\cr
+    For the \code{"lm"} method, either \code{NULL} or an integer that will be
+    used in a call to \code{set.seed} before simulating the response
+    vectors.  If set, the value is saved as the \code{"seed"} attribute
+    of the returned value.  The default, \code{NULL} will not change the
+    random generator state, and return \code{\link{.Random.seed}} as the
+    \code{"seed"} attribute, see \sQuote{Value}.
+  }
 
-\item{max_len}{An \code{integer} giving the maximum length of the simulated
-sequences. When no missing values are generated, this is the length of
-all simulated sequences. It can also be a vector whose length matches
-the number of groups in the model.}
+\item{max_len}{An \code{integer} vector giving the maximum length of the simulated
+sequences per group. When no missing values are generated, this is the
+length of all simulated sequences. If a single integer is provided, the
+maximum length is the same for each group.}
 
 \item{na_range}{An \code{integer} vector of length 2 giving the minimum and
 maximum number of missing values to generate for each sequence. The number
 of missing values is drawn uniformly from this range. If both values are
 zero (the default), no missing values are generated.}
 
-\item{format}{A \code{character} indicating whether the data should be in \code{wide} or
-\code{long} format.}
+\item{zero_row}{A \code{character} string describing how to process zero rows
+in the weight matrix. The option \code{"self"} (the default) assigns
+probability 1 to the corresponding state (self loop) and option
+\code{"uniform"} assigns a uniform distribution.}
+
+\item{format}{A \code{character} string indicating whether the data should be
+returned in \code{wide} or \code{long} format.}
 
 \item{...}{Ignored.}
 }
 \value{
-A \code{data.frame} of the simulated sequence data with \code{nsim} rows and
-\code{max_len} columns.
+A \code{data.frame} of the simulated sequence data.
 }
 \description{
 Simulate Data from a Group Transition Network Analysis Model
 }
 \examples{
-model <- group_tna(group_regulation,
-                   group = c(rep("High",1000), rep("Low",1000)))
+model <- group_tna(
+  group_regulation,
+  group = rep(c("High", "Low"), each = 1000)
+)
 sim <- simulate(model, nsim = 10, max_len = 10)
 
 }

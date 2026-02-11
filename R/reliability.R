@@ -4,6 +4,7 @@
 #' metrics. The results can also be visualized.
 #'
 #' @export
+#' @family validation
 #' @param x A `tna` object.
 #' @param types A `character` vector giving the model types to fit.
 #'   See [build_model()] for available options.
@@ -16,7 +17,8 @@
 #' @return A `tna_reliability` object.
 #' @examples
 #' # Small number of iterations for CRAN
-#' rel <- reliability(engagement, iter = 20)
+#' model <- tna(engagement)
+#' rel <- reliability(model, iter = 20)
 #'
 reliability <- function(x, ...) {
   UseMethod("reliability")

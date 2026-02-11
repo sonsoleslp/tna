@@ -928,7 +928,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
 #' Plot Reliability Analysis Results
 #'
 #' @export
-#' @family comparison
+#' @family validation
 #' @param x A `tna_reliability` object.
 #' @param type A `character` string specifying the plot type. The options are:
 #'   `"histogram"` (default), `"density"`, or `"boxplot"`.
@@ -937,7 +937,8 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
 #' @param ... Ignored
 #' @examples
 #' # Small number of iterations for CRAN
-#' rel <- reliability(engagement, iter = 20)
+#' model <- tna(engagement)
+#' rel <- reliability(model, iter = 20)
 #' plot(rel)
 #'
 plot.tna_reliability <- function(x, type = "histogram",

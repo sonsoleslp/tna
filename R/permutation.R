@@ -342,7 +342,7 @@ permutation_test_patterns <- function(x, len, iter, adjust) {
   out <- vector(mode = "list", length = k)
   for (j in seq_len(k)) {
     stat_perm_mean <- apply(stat_perm[[j]], 1, mean)
-    stat_perm_sd <- apply(stat_perm[[j]], 1, sd)
+    stat_perm_sd <- apply(stat_perm[[j]], 1, stats::sd)
     out[[j]] <- data.frame(
       effect_size = (stat_true[[j]] - stat_perm_mean) / stat_perm_sd,
       p_value = stats::p.adjust(

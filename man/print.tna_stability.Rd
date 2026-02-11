@@ -41,6 +41,7 @@ Validation functions
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
 \code{\link{plot.tna_permutation}()},
+\code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
 \code{\link{print.group_tna_bootstrap}()},
 \code{\link{print.group_tna_permutation}()},
@@ -49,8 +50,10 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.tna_bootstrap}()},
 \code{\link{print.tna_permutation}()},
+\code{\link{print.tna_reliability}()},
 \code{\link{prune}()},
 \code{\link{pruning_details}()},
+\code{\link{reliability}()},
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
 \code{\link{summary.tna_bootstrap}()}

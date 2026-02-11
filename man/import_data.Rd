@@ -19,11 +19,11 @@ For more information on tidy selections, see \code{\link[dplyr:select]{dplyr::se
 \item{id_cols}{An \code{expression} giving a tidy selection of column names that
 uniquely identify each observation (IDs).}
 
+\item{window_size}{An \code{integer} specifying the size of the window for
+sequence grouping. Default is 1 (each row is a separate window).}
+
 \item{replace_zeros}{A \code{logical} value indicating whether to replace 0s
 in \code{cols} with \code{NA}. The default is \code{TRUE}.}
-
-\item{window}{An \code{integer} specifying the size of the window for
-sequence grouping. Default is 1 (each row is a separate window).}
 }
 \value{
 A \code{data.frame} in long format with added columns for window and

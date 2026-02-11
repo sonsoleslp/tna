@@ -147,6 +147,7 @@ available_clustering_metrics <- c(
 #'
 #' @param strings Output of `seq2str`.
 #' @param lambda A `numeric` value for the decay rate.
+#' @noRd
 dissimilarity_matrix <- function(strings, dissimilarity, lambda, ...) {
   mat <- strings$mat
   len <- strings$len

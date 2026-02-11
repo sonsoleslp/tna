@@ -4,7 +4,15 @@
 \alias{import_onehot}
 \title{Import One-Hot Data}
 \usage{
-import_onehot(data, cols, actor, session, keep, window = 1L)
+import_onehot(
+  data,
+  cols,
+  actor,
+  session,
+  window_size = 1L,
+  window_type = "tumbling",
+  aggregate = FALSE
+)
 }
 \arguments{
 \item{data}{A \code{data.frame} in wide format.}
@@ -18,10 +26,15 @@ considered as one-hot data.}
 \item{session}{An optional \code{character} string giving the column name of
 \code{data} containing the session identifiers.}
 
-\item{keep}{An optional \code{expression} giving a tidy selection of columns
-that should be retained in the aggregated data besides \code{cols}.}
+\item{window_size}{An \code{integer} specifying the window size for grouping.}
 
-\item{window}{An \code{integer} specifying the window size for grouping.}
+\item{window_type}{A \code{character} string. Either \code{"tumbling"} (the default)
+for non-overlapping windows or \code{"sliding"} for one-step sliding window.}
+
+\item{aggregate}{A \code{logical} value that determines how multiple occurrences
+of the same event within a window are processed. Option \code{TRUE} aggregates
+multiple occurrences into a single occurrence. Option \code{FALSE} keeps
+all occurrences (the default).}
 }
 \value{
 The processed data as a \code{data.frame}.

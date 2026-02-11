@@ -1,7 +1,6 @@
 # tna 1.2.0
 
 * Added the function `reliability()` for reliability analysis of `tna` models.
-* Added the function `sequence_indices()` for computing various sequence indices.
 * The `import_onehot()` function has been redesigned with new features.
 * Replaced the Z tests and chi-squared tests in `compare_sequences()` with a permutation test.
 * Removed the chi-squared test from `plot_mosaic()`.

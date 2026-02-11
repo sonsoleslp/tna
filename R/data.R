@@ -519,7 +519,7 @@ parse_time <- function(time, custom_format, is_unix_time, unix_time_unit) {
 #'   For more information on tidy selections, see [dplyr::select()].
 #' @param id_cols An `expression` giving a tidy selection of column names that
 #'   uniquely identify each observation (IDs).
-#' @param window An `integer` specifying the size of the window for
+#' @param window_size An `integer` specifying the size of the window for
 #'   sequence grouping. Default is 1 (each row is a separate window).
 #' @param replace_zeros A `logical` value indicating whether to replace 0s
 #'   in `cols` with `NA`. The default is `TRUE`.

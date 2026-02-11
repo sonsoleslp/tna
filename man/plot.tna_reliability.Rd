@@ -22,21 +22,38 @@ Plot Reliability Analysis Results
 }
 \examples{
 # Small number of iterations for CRAN
-rel <- reliability(engagement, iter = 20)
+model <- tna(engagement)
+rel <- reliability(model, iter = 20)
 plot(rel)
 
 }
 \seealso{
-Model comparison functions
-\code{\link{compare}()},
-\code{\link{compare.group_tna}()},
-\code{\link{compare_sequences}()},
-\code{\link{plot.tna_comparison}()},
-\code{\link{plot.tna_sequence_comparison}()},
-\code{\link{plot_compare}()},
-\code{\link{plot_compare.group_tna}()},
-\code{\link{print.tna_comparison}()},
+Validation functions
+\code{\link{bootstrap}()},
+\code{\link{deprune}()},
+\code{\link{estimate_cs}()},
+\code{\link{permutation_test}()},
+\code{\link{permutation_test.group_tna}()},
+\code{\link{plot.group_tna_bootstrap}()},
+\code{\link{plot.group_tna_permutation}()},
+\code{\link{plot.group_tna_stability}()},
+\code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_permutation}()},
+\code{\link{plot.tna_stability}()},
+\code{\link{print.group_tna_bootstrap}()},
+\code{\link{print.group_tna_permutation}()},
+\code{\link{print.group_tna_stability}()},
+\code{\link{print.summary.group_tna_bootstrap}()},
+\code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.tna_bootstrap}()},
+\code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
-\code{\link{print.tna_sequence_comparison}()}
+\code{\link{print.tna_stability}()},
+\code{\link{prune}()},
+\code{\link{pruning_details}()},
+\code{\link{reliability}()},
+\code{\link{reprune}()},
+\code{\link{summary.group_tna_bootstrap}()},
+\code{\link{summary.tna_bootstrap}()}
 }
-\concept{comparison}
+\concept{validation}

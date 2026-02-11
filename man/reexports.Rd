@@ -14,6 +14,6 @@ below to see their documentation.
 \describe{
   \item{igraph}{\code{\link[igraph]{as.igraph}}}
 
-  \item{stats}{\code{\link[stats]{simulate}}, \code{\link[stats]{simulate}}}
+  \item{stats}{\code{\link[stats]{simulate}}}
 }}
 

@@ -116,9 +116,6 @@ considering sequences of n states, useful for identifying longer
 patterns.
 \item \code{"gap"} allows transitions between non-adjacent states, with
 transitions weighted by the gap size.
-\item \code{"window"} creates transitions between all states within a
-sliding window, capturing local relationships
-(several sequences together).
 \item \code{"reverse"} considers the sequences in reverse order
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the \code{"frequency"}
@@ -152,8 +149,12 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 adjacent events. The default value is 2.
 \item \code{max_gap}: An \code{integer} for the gap-allowed transitions specifying the
 largest allowed gap size. The default is 1.
+\item \code{windowed}: Perform the model estimation by window. Supported for
+\code{relative}, \code{frequency} and \code{co-occurrence} \code{type}s.
 \item \code{window_size}: An \code{integer} for the sliding window transitions
 specifying the window size. The default is 2.
+\item \code{window_type}: A \code{character} string that defines the window type.
+Either \code{"rolling"} or \code{"tumbling"}.
 \item \code{weighted}: A \code{logical} value. If \code{TRUE}, the transitions
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
@@ -194,7 +195,7 @@ signify the beginning of the sequence}
 
 \item{end_state}{A \code{character} string for an additional end state.
 This state is added as the last observation for every sequence to
-siginify the end of the sequence.}
+signify the end of the sequence.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the
