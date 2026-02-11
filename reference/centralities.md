@@ -15,7 +15,7 @@ centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
 # S3 method for class 'group_tna'
-centralities(x, loops = FALSE, normalize = FALSE, measures)
+centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 ```
 
 ## Arguments
