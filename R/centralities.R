@@ -39,9 +39,11 @@
 #' @param x A `tna` object, a `group_tna` object, or
 #' a square `matrix` representing edge weights.
 #' @param loops A `logical` value indicating whether to include loops in the
-#'   network when computing the centrality measures (default is `FALSE`).
-#' @param normalize  A `logical` value indicating whether the centralities
-#'   should be normalized (default is `FALSE`).
+#'   network when computing the centrality measures. The default is `FALSE`.
+#' @param normalize A `logical` value indicating whether the centralities
+#'   should be normalized. The default is `FALSE`.
+#' @param invert A `logical` value indicating whether the weights should be
+#'   inverted for distance-based measures. The default is `TRUE`.
 #' @param measures A `character` vector indicating which centrality
 #'   measures should be computed. If missing, all available measures are
 #'   returned. See 'Details' for the available measures.
@@ -59,19 +61,22 @@
 #' # Centrality measures normalized
 #' centralities(model, normalize = TRUE)
 #'
-centralities <- function(x, loops = FALSE, normalize = FALSE, measures) {
+centralities <- function(x, loops = FALSE, normalize = FALSE,
+                         invert = TRUE, measures) {
   UseMethod("centralities")
 }
 
 #' @export
 #' @rdname centralities
-centralities.tna <- function(x, loops = FALSE, normalize = FALSE, measures) {
+centralities.tna <- function(x, loops = FALSE, normalize = FALSE,
+                             invert = TRUE, measures) {
   check_missing(x)
   check_class(x, "tna")
   out <- centralities_(
     x$weights,
     loops = loops,
     normalize = normalize,
+    invert = invert,
     measures = measures
   )
   if (!is.null(x$data)) {
@@ -82,13 +87,14 @@ centralities.tna <- function(x, loops = FALSE, normalize = FALSE, measures) {
 
 #' @export
 #' @rdname centralities
-centralities.matrix <- function(x, loops = FALSE, normalize = FALSE, measures) {
+centralities.matrix <- function(x, loops = FALSE, normalize = FALSE,
+                                invert = TRUE, measures) {
   check_missing(x)
   stopifnot_(
     is.matrix(x),
     "Argument {.arg x} must be a {.cls matrix}."
   )
-  centralities_(x, loops, normalize, measures)
+  centralities_(x, loops, normalize, invert, measures)
 }
 
 #' Internal function to calculate various centrality measures
@@ -96,17 +102,23 @@ centralities.matrix <- function(x, loops = FALSE, normalize = FALSE, measures) {
 #' @param x An adjacency `matrix` of a directed weighted graph.
 #' @inheritParams centralities
 #' @noRd
-centralities_ <- function(x, loops, normalize, measures) {
+centralities_ <- function(x, loops, normalize, invert, measures) {
   check_flag(loops)
   check_flag(normalize)
+  check_flag(invert)
   measures <- measures %m% names(centrality_funs)
   measures <- check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
   g <- as.igraph(x)
+  w <- ifelse_(
+    invert,
+    1.0 / igraph::E(g)$weight,
+    igraph::E(g)$weight
+  )
   measures_out <- lapply(
     measures,
     function(y) {
-      centrality_funs[[y]](g = g, x = x)
+      centrality_funs[[y]](g = g, x = x, w = w)
     }
   )
   names(measures_out) <- measures
@@ -142,7 +154,7 @@ diffusion <- function(mat) {
 
 #' @export
 #' @rdname estimate_centrality_stability
-estimate_cs <- function(x, loops, normalize, measures, iter, method,
+estimate_cs <- function(x, loops, normalize, invert, measures, iter, method,
                         drop_prop, threshold, certainty, progressbar) {
   UseMethod("estimate_cs")
 }
@@ -175,28 +187,30 @@ estimate_centrality_stability <- estimate_cs
 #' @family validation
 #' @rdname estimate_centrality_stability
 #' @param x A `tna` or a `group_tna` object representing the temporal network
-#' analysis data. The object should be created from a sequence data object.
+#'   analysis data. The object should be created from a sequence data object.
 #' @param loops A `logical` value indicating whether to include loops in the
-#'   network when computing the centrality measures (default is `FALSE`).
+#'   network when computing the centrality measures. The default is `FALSE`.
 #' @param normalize A `logical` value indicating whether to normalize
-#' the centrality measures. The default is `FALSE`.
+#'   the centrality measures. The default is `FALSE`.
+#' @param invert A `logical` value indicating whether the weights should be
+#'   inverted for distance-based measures. The default is `TRUE`.
 #' @param measures A `character` vector of centrality measures to estimate.
-#' The default measures are `"InStrength"`, `"OutStrength"`,
-#' and `"Betweenness"`. See [centralities()] for a list of available centrality
-#' measures.
+#'   The default measures are `"InStrength"`, `"OutStrength"`,
+#'   and `"Betweenness"`. See [centralities()] for a list of available
+#'   centrality measures.
 #' @param iter An `integer` specifying the number of resamples to draw.
-#' The default is 1000.
+#'   The default is 1000.
 #' @param method A `character` string indicating the correlation coefficient
-#' type. The default is `"pearson"`. See [stats::cor()] for details.
+#'   type. The default is `"pearson"`. See [stats::cor()] for details.
 #' @param drop_prop A `numeric` vector specifying the proportions of
-#' cases to drop in each sampling iteration. Default is a sequence from 0.1 to
-#' 0.9 in increments of 0.1.
+#'   cases to drop in each sampling iteration. Default is a sequence from 0.1
+#'   to 0.9 in increments of 0.1.
 #' @param threshold A `numeric` value specifying the correlation threshold for
-#' calculating the CS-coefficient. The default is 0.7.
+#'   calculating the CS-coefficient. The default is 0.7.
 #' @param certainty A `numeric` value specifying the desired level of certainty
-#' for the CS-coefficient. Default is 0.95.
+#'   for the CS-coefficient. Default is 0.95.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
-#' Defaults to `FALSE`
+#'   Defaults to `FALSE`
 #'
 #' @return A `tna_stability` object which is a `list` with an element for each
 #' `measure` with the following elements:
@@ -219,7 +233,7 @@ estimate_centrality_stability <- estimate_cs
 #'   iter = 10
 #' )
 #'
-estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
+estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE, invert = TRUE,
                             measures = c(
                               "InStrength", "OutStrength", "Betweenness"
                             ), iter = 1000, method = "pearson",
@@ -229,6 +243,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
   check_tna_seq(x)
   check_flag(loops)
   check_flag(normalize)
+  check_flag(invert)
   check_flag(progressbar)
   check_values(iter, strict = TRUE)
   check_range(threshold, lower = 0, upper = 1)
@@ -248,6 +263,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
     x = x$weights,
     loops = loops,
     normalize = normalize,
+    invert = invert,
     measures = measures
   )
   sds_orig <- centralities_orig |>
@@ -290,6 +306,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE,
       centralities_sub <- centralities_(
         x = weight_sub,
         loops = loops,
+        invert = invert,
         normalize = normalize,
         measures = measures
       )
@@ -492,20 +509,20 @@ centrality_funs$InStrength <- function(g, ...) {
   igraph::strength(g, mode = "in")
 }
 
-centrality_funs$ClosenessIn <- function(g, ...) {
-  igraph::closeness(g, mode = "in")
+centrality_funs$ClosenessIn <- function(g, w, ...) {
+  igraph::closeness(g, mode = "in", weights = w)
 }
 
-centrality_funs$ClosenessOut <- function(g, ...) {
-  igraph::closeness(g, mode = "out")
+centrality_funs$ClosenessOut <- function(g, w, ...) {
+  igraph::closeness(g, mode = "out", weights = w)
 }
 
-centrality_funs$Closeness <- function(g, ...) {
-  igraph::closeness(g, mode = "all")
+centrality_funs$Closeness <- function(g, w, ...) {
+  igraph::closeness(g, mode = "all", weights = w)
 }
 
-centrality_funs$Betweenness <- function(g, ...) {
-  igraph::betweenness(g)
+centrality_funs$Betweenness <- function(g, w, ...) {
+  igraph::betweenness(g, weights = w)
 }
 
 centrality_funs$BetweennessRSP <- function(x, ...) {
