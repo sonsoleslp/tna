@@ -56,6 +56,7 @@ reference:
     - prepare_data
     - print.tna_data
     - simulate.tna
+    - simulate.group_tna
     - summary.tna
 
   - title: Centralities
@@ -128,6 +129,9 @@ reference:
     - plot.group_tna_bootstrap
     - summary.tna_bootstrap
     - summary.group_tna_bootstrap
+    - reliability
+    - print.tna_reliability
+    - plot.tna_reliability
 
   - title: Groups
     contents:

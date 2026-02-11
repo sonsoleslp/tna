@@ -133,11 +133,16 @@ summary.tna_bootstrap <- function(object, ...) {
 #   check_missing(object)
 #   check_class(object, "tna_mmm")
 #   mean_prob <- do.call(
-#     "rbind",
+#     base::rbind,
 #     lapply(
 #       object$cluster_names,
 #       function(i) {
-#         colMeans(object$posterior[object$assignments == i, ])
+#         assign_i <- object$assignments == i
+#         if (any(assign_i)) {
+#           colMeans(object$posterior[assign_i, , drop = FALSE])
+#         } else {
+#           rep(NA_real_, ncol(object$posterior))
+#         }
 #       }
 #     )
 #   )

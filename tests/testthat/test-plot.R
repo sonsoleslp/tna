@@ -362,7 +362,7 @@ test_that("sequences can be sorted in index plot", {
     NA
   )
   expect_error(
-    plot_sequences(mock_tna_data, sort_by = "T1"),
+    plot_sequences(mock_tna_data, sort_by = "event_T1"),
     NA
   )
   expect_error(
@@ -410,4 +410,79 @@ test_that("observations can be bounded", {
   y <- bound(x, c(-2, 2))
   expect_equal(max(y), 2)
   expect_equal(min(y), -2)
+})
+
+test_that("heterogenous tna can be plotted", {
+  groups <- list(
+    `A` = "A",
+    `B` = c("C", "B")
+  )
+  expect_error(
+    plot(mock_tna_seq, node_list = groups),
+    NA
+  )
+  expect_error(
+    plot(mock_tna_seq, node_list = groups, use_list_order = FALSE),
+    NA
+  )
+  expect_error(
+    plot(mock_tna_seq, node_list = groups, x_offset = c(-1, 1, 2)),
+    NA
+  )
+})
+
+test_that("invalid node lists fail", {
+  node_list1 <- list(c("A", "B"), c("A", "B"), c("C"))
+  node_list2 <- list(c(1, 2), c(3))
+  node_list3 <- list(c("A", "B"), c("A", "B"))
+  node_list4 <- list(c("A"), c("B"))
+  expect_error(
+    plot(mock_tna_seq, node_list = node_list1),
+    "Argument `node_list` must be a <list> of length 2"
+  )
+  expect_error(
+    plot(mock_tna_seq, node_list = node_list2),
+    "Elements of `node_list` must be <character> vectors"
+  )
+  expect_error(
+    plot(mock_tna_seq, node_list = node_list3),
+    "The groups defined by `node_list` must not contain common states"
+  )
+  expect_error(
+    plot(mock_tna_seq, node_list = node_list4),
+    "Every state must belong to one of the groups defined by `node_list`"
+  )
+})
+
+test_that("reliability analysis can be plotted", {
+  rel <- reliability(mock_tna_seq, iter = 50)
+  expect_error(
+    plot(rel, type = "histogram"),
+    NA
+  )
+  expect_error(
+    plot(rel, type = "density"),
+    NA
+  )
+  expect_error(
+    plot(rel, type = "boxplot"),
+    NA
+  )
+  rel2 <- reliability(
+    mock_tna_seq, 
+    types = c("relative", "frequency"), 
+    iter = 50
+  )
+  expect_error(
+    plot(rel2, type = "histogram"),
+    NA
+  )
+  expect_error(
+    plot(rel2, type = "density"),
+    NA
+  )
+  expect_error(
+    plot(rel2, type = "boxplot"),
+    NA
+  )
 })

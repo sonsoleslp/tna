@@ -312,3 +312,19 @@ test_that("time data from tna_data objects can be used for attention models", {
     NA
   )
 })
+
+test_that("sequence data can be concatenated", {
+  expect_error(
+    model_concat <- tna(mock_sequence, concat = 2L),
+    NA
+  )
+  expect_true(
+    ncol(model_concat$data) == 2L * ncol(mock_sequence)
+  )
+  data_concat <- c(t(model_concat$data))
+  data_concat <- data_concat[!is.na(data_concat)]
+  data_orig <- c(t(mock_tna_seq$data))
+  expect_true(
+    all.equal(data_concat, data_orig)
+  )
+})

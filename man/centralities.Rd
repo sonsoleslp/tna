@@ -27,8 +27,7 @@ should be normalized (default is \code{FALSE}).}
 
 \item{measures}{A \code{character} vector indicating which centrality
 measures should be computed. If missing, all available measures are
-returned. See 'Details' for available measures. The elements are partially
-matched ignoring case.}
+returned. See 'Details' for the available measures.}
 }
 \value{
 A \code{tna_centralities} object which is a tibble (\code{tbl_df}).

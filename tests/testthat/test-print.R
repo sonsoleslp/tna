@@ -203,7 +203,7 @@ test_that("permutation test results can be printed for clusters", {
 #     NA
 #   )
 # })
-
+# 
 # test_that("mixture Markov model summary can be printed", {
 #   expect_error(
 #     capture.output(print(summary(engagement_tna_mmm))),
@@ -224,6 +224,14 @@ test_that("sequence comparison output can be printed", {
   comp <- compare_sequences(group_regulation, group)
   expect_error(
     capture.output(print(comp)),
+    NA
+  )
+})
+
+test_that("reliability analysis can be printed", {
+  rel <- reliability(mock_tna_seq, iter = 50)
+  expect_error(
+    capture.output(print(rel)),
     NA
   )
 })

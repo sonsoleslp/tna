@@ -55,22 +55,18 @@ mock_long <- data.frame(
 mock_tsn <- structure(
   data.frame(
     id = gl(10, 100),
-    series = c(
+    value = c(
       replicate(
         10,
         stats::arima.sim(list(order = c(2, 1, 0), ar = c(0.5, 0.2)), n = 99)
       )
     ),
-    series_state = factor(
+    state = factor(
       sample(3, 1000, replace = TRUE),
       labels = c("State 1", "State 2", "State 3")
     ),
-    .time = rep(seq_len(100), 10)
+    time = rep(seq_len(100), 10)
   ),
-  id_col = "id",
-  value_col = "series",
-  state_col = "series_state",
-  time_col = ".time",
   class = c("tsn", "data.frame")
 )
 

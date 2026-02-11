@@ -17,16 +17,18 @@ knitr::opts_chunk$set(
   dpi = 100,
   comment = "#>"
 )
+suppressPackageStartupMessages({
+  library("tna")
+})
 ```
 
-The `tna` package includes functionalities for finding cliques of the transition network as well as discovering communities.
-We begin by loading the package and the example data set `group_regulation`.
+The `tna` package includes functionalities for finding cliques of the transition network as well as discovering communities. We begin by loading the package and the example data set `group_regulation`.
 ```{r}
 library("tna")
 data("group_regulation", package = "tna")
 ```
 
-We fit the TNA model to the data.
+We fit a TNA model to the data.
 ```{r}
 tna_model <- tna(group_regulation)
 print(tna_model)
@@ -39,8 +41,7 @@ cd <- communities(tna_model)
 plot(cd, method = "leading_eigen")
 ```
 
-Cliques can be obtained with the `cliques` function. Here we look for dyads and triads by setting `size = 2` and `size = 3`, respectively.
-Finally, we plot the results.
+Cliques can be obtained with the `cliques` function. Here we look for dyads and triads by setting `size = 2` and `size = 3`, respectively. Finally, we plot the results.
 ```{r, figures-side, fig.show="hold", fig.height=6, fig.width=8}
 layout(matrix(1:4, ncol = 2, byrow = TRUE))
 dyads <- cliques(tna_model, size = 2, threshold = 0.2)
@@ -48,4 +49,3 @@ triads <- cliques(tna_model, size = 3, threshold = 0.05)
 plot(dyads, ask = FALSE)
 plot(triads, ask = FALSE)
 ```
-

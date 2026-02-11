@@ -1,6 +1,6 @@
 Package: tna
 Title: Transition Network Analysis (TNA)
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: c(
     person("Mohammed", "Saqr", role = "aut"),
     person("Santtu", "Tikka", role = "aut"),
@@ -32,16 +32,18 @@ Imports:
     RColorBrewer,
     rlang,
     stats,
-    stringdist,
     tibble,
     tidyr,
     tidyselect
 Suggests:
+    doParallel,
     gt,
     knitr,
+    parallel,
     pracma,
     rmarkdown,
     seqHMM,
+    stringdist,
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr

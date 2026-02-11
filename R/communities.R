@@ -91,13 +91,13 @@ communities.tna <- function(x, methods, gamma = 1) {
       communities[[method]] <- suppressWarnings(
         communities[[method]] <- do.call(
           supported_communities[[method]]$fun,
-          args = args
+          args
         )
       )
     } else {
       communities[[method]] <- do.call(
         supported_communities[[method]]$fun,
-        args = args
+        args
       )
     }
     mapping[[method]] <- igraph::membership(communities[[method]]) |>

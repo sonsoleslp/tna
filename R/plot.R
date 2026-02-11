@@ -64,6 +64,15 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @export
 #' @family basic
 #' @param x A `tna` object from [tna()].
+#' @param node_list An optional `list` of two `character` vectors that define
+#'   two mutually exclusive groups of node labels.
+#' @param use_list_order A `logical` value. If `node_list` is provided,
+#'   defines how the order of the nodes in the plot is defined. A `TRUE` value
+#'   uses the order in `node_list`. Otherwise, the nodes are ranked based on
+#'   edge weights and ordered according to the rank.
+#' @param x_offset An optional `numeric` vector with the same number of
+#'   elements as there are states. Defines a horizontal offset for each node
+#'   in the plot when `node_list` is provided.
 #' @param labels See [qgraph::qgraph()].
 #' @param colors See [qgraph::qgraph()].
 #' @param pie See [qgraph::qgraph()].
@@ -89,7 +98,7 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' @param scale_nodes A `character` string giving the name of a centrality
 #'   measure to scale the node size by. See [centralities()] for valid names.
 #'   If missing (the default), uses default [qgraph::qgraph()] scaling.
-#'   Overrides `vsize` provided via `...`.
+#'   The value of `vsize` provided via `...` is used as baseline size.
 #' @param scaling_factor A `numeric` value specifying how strongly to scale
 #'   the nodes when `scale_nodes` is provided. Values
 #'   between 0 and 1 will result in smaller differences and values larger
@@ -102,7 +111,8 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' model <- tna(group_regulation)
 #' plot(model)
 #'
-plot.tna <- function(x, labels, colors, pie, cut,
+plot.tna <- function(x, node_list, use_list_order = TRUE, x_offset,
+                     labels, colors, pie, cut,
                      show_pruned = TRUE, pruned_edge_color = "pink",
                      edge.color = NA, edge.labels = TRUE,
                      edge.label.position = 0.65, layout = "circle",
@@ -110,6 +120,131 @@ plot.tna <- function(x, labels, colors, pie, cut,
                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_missing(x)
   check_class(x, "tna")
+  if (missing(node_list)) {
+    out <- plot_tna_(
+      x, labels, colors, pie, cut, show_pruned, pruned_edge_color,
+      edge.color, edge.labels, edge.label.position, layout,
+      layout_args, scale_nodes, scaling_factor, mar, theme, ...
+    )
+  } else {
+    out <- plot_htna_(
+      x = x,
+      node_list = node_list,
+      use_list_order = use_list_order,
+      x_offset = x_offset,
+      layout = NULL,
+      colors = NULL,
+      shape = NULL,
+      labels = labels,
+      pie = pie,
+      cut = cut,
+      show_pruned = show_pruned,
+      pruned_edge_color = pruned_edge_color,
+      edge.color = edge.color,
+      edge.labels = edge.labels,
+      edge.label.position = edge.label.position,
+      layout_args = list(),
+      scale_nodes = scale_nodes,
+      scaling_factor = scaling_factor,
+      mar = mar,
+      theme = theme,
+      ...
+    )
+  }
+  invisible(out)
+}
+
+plot_htna_ <- function(x, node_list, use_list_order = TRUE, x_offset,
+                       layout, colors, shape, ...) {
+  stopifnot_(
+    length(node_list) == 2L,
+    "Argument {.arg node_list} must be a {.cls list} of length 2."
+  )
+  stopifnot_(
+    is.character(node_list[[1L]]) && is.character(node_list[[2L]]),
+    "Elements of {.arg node_list} must be {.cls character} vectors."
+  )
+  check_flag(use_list_order)
+  lab <- x$labels
+  lhs <- node_list[[1L]]
+  rhs <- node_list[[2L]]
+  common <- intersect(rhs, lhs)
+  stopifnot_(
+    length(common) == 0,
+    "The groups defined by {.arg node_list} must not contain common states."
+  )
+  lhs_idx <- match(lhs, lab)
+  rhs_idx <- match(rhs, lab)
+  missing <- lhs[is.na(lhs_idx)]
+  stopifnot_(
+    length(missing) == 0,
+    "Nodes {.val {missing}} are not present in the model."
+  )
+  missing <- rhs[is.na(rhs_idx)]
+  stopifnot_(
+    length(missing) == 0,
+    "Nodes {.val {missing}} are not present in the model."
+  )
+  n_lhs <- length(lhs_idx)
+  n_rhs <- length(rhs_idx)
+  n <- length(lab)
+  missing <- lab[!lab %in% union(lhs, rhs)]
+  stopifnot_(
+    n_lhs + n_rhs == n,
+    c(
+      "Every state must belong to one of the
+      groups defined by {.arg node_list}.",
+      `x` = "No group has been specified for node{?s} {.val {missing}}."
+    )
+  )
+  colors <- rep("lightgray", n)
+  shape <- rep("circle", n)
+  colors[lhs_idx] <- "#ffd89d"
+  colors[rhs_idx] <- "#a68ba5"
+  shape[lhs_idx] <- "circle"
+  shape[rhs_idx] <- "square"
+  x_pos <- rep(0, n)
+  x_pos[lhs_idx] <- -0.5
+  x_pos[rhs_idx] <- 0.5
+  if (!missing(x_offset)) {
+    stopifnot_(
+      length(x_offset) == n,
+      "Argument {.arg x_offset} must be of length {n} (the number of nodes)."
+    )
+    x_pos[lhs_idx] <- x_offset[1:n_lhs]
+    x_pos[rhs_idx] <- x_offset[(n_lhs + 1):n]
+  }
+  y_pos <- rep(0, n)
+  y_pos[lhs_idx] <- seq(1, -1, length.out = n_lhs)
+  y_pos[rhs_idx] <- seq(1, -1, length.out = n_rhs)
+  if (!use_list_order) {
+    w <- x$weights
+    edges <- w[lhs_idx, rhs_idx, drop = FALSE]
+    out_str <- rowSums(edges)
+    in_str <- colSums(edges)
+    rank_in <- rank(-in_str)
+    rank_out <- rank(-out_str)
+    pos_lhs <- rowSums(edges * rank_in[col(edges)]) / out_str
+    pos_rhs <- colSums(edges * rank_out) / in_str
+    y_pos[lhs_idx] <- y_pos[lhs_idx][rank(pos_lhs, ties.method = "first")]
+    y_pos[rhs_idx] <- y_pos[rhs_idx][rank(pos_rhs, ties.method = "first")]
+  }
+  layout_mat <- cbind(x = x_pos, y = y_pos)
+  plot_tna_(
+    x = x,
+    layout = layout_mat,
+    colors = colors,
+    shape = shape,
+    ...
+  )
+}
+
+plot_tna_ <- function(x, labels, colors, pie, cut,
+                      show_pruned = TRUE, pruned_edge_color = "pink",
+                      edge.color = NA, edge.labels = TRUE,
+                      edge.label.position = 0.65, layout = "circle",
+                      layout_args = list(), scale_nodes, scaling_factor = 0.5,
+                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_flag(show_pruned)
   check_flag(edge.labels)
   check_range(edge.label.position, scalar = FALSE)
@@ -151,13 +286,12 @@ plot.tna <- function(x, labels, colors, pie, cut,
     "InStrength",
     scale_nodes
   )
+  vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
   if (length(scale_nodes) > 0) {
     check_string(scale_nodes)
     check_range(scaling_factor, lower = 0)
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
-    vsize <- rep(8 * exp(-n / 80)) * (1 + cent)^scaling_factor
-  } else {
-    vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
+    vsize <- vsize * (1 + cent)^scaling_factor
   }
   qgraph::qgraph(
     input = weights,
@@ -176,7 +310,6 @@ plot.tna <- function(x, labels, colors, pie, cut,
     ...
   )
 }
-
 
 #' Plot a Bootstrapped Transition Network Analysis Model
 #'
@@ -241,10 +374,10 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param cut See [qgraph::qgraph()].
 #' @param normalize See [qgraph::qgraph()].
 #' @param show_loops A `logical` value indicating whether to include loops
-#' in the plots or not.
+#'   in the plots or not.
 #' @param minimum See [qgraph::qgraph()].
 #' @param ask A `logical` value. When `TRUE`, show plots one by one and asks
-#' to plot the next plot in interactive mode.
+#'   to plot the next plot in interactive mode.
 #' @return `NULL` (invisibly).
 #' @examples
 #' model <- tna(group_regulation)
@@ -315,12 +448,13 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' @export
 #' @family communities
 #' @param x A `communities` object generated by the `find_communities` method.
-#' Each community detection method maps nodes or points in to a specific
-#' communities.
+#'   Each community detection method maps nodes or points in to a specific
+#'   communities.
 #' @param colors A `character` vector of color values used for visualizing
-#' community assignments.
+#'   community assignments.
 #' @param method A `character` string naming a community detection method to
-#' use for coloring the plot. See [communities()] for details.
+#'   use for coloring the plot. The default is to use the first available 
+#'   method in `x`. See [communities()] for details.
 #' @param ... Additional arguments passed to [qgraph::qgraph()].
 #' @return A `qgraph` object in which the nodes are colored by community.
 #' @examples
@@ -328,12 +462,14 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' comm <- communities(model)
 #' plot(comm, method = "leading_eigen")
 #'
-plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
+plot.tna_communities <- function(x, colors, method, ...) {
   check_class(x, "tna_communities")
   available_methods <- intersect(
     names(x$assignment),
     names(supported_communities)
   )
+  method <- method %m% available_methods[1L]
+  check_string(method)
   stopifnot_(
     method %in% available_methods,
     "The {.val {method}} method is not available in {.arg x}."
@@ -349,27 +485,27 @@ plot.tna_communities <- function(x, colors, method = "spinglass", ...) {
 #' @family comparison
 #' @param x A `tna_comparison` object.
 #' @param type A `character` string naming the type of plot to produce. The
-#' available options are `"heatmap"` (the default), `"scatterplot"`,
-#' `"centrality_heatmap"`, and `"weight_density"`.
+#'   available options are `"heatmap"` (the default), `"scatterplot"`,
+#'   `"centrality_heatmap"`, and `"weight_density"`.
 #' @param population A `"character"` string naming the population for which
-#' to produce the heatmaps, i.e, one of `"x"`, `"y"`, or `"difference"` for the
-#' differences. Ignored for `type = "scatterplot"`. Defaults to `"diff"`.
+#'   to produce the heatmaps, i.e, one of `"x"`, `"y"`, or `"difference"` for
+#'   the differences. Ignored for `type = "scatterplot"`. Defaults to `"diff"`.
 #' @param method A `character` string naming the correlation coefficient to
-#' use when plotting a scatterplot. The available options are `"pearson"`
-#' (the default), `"kendall"`, `"spearman"`, and `"distance"`. The final option
-#' is the distance correlation coefficient of
-#' Szekely, Rizzo, and Bakirov (2007). See also the `energy` package for
-#' further information on this measure.
+#'   use when plotting a scatterplot. The available options are `"pearson"`
+#'   (the default), `"kendall"`, `"spearman"`, and `"distance"`. The final
+#'   option is the distance correlation coefficient of
+#'   Szekely, Rizzo, and Bakirov (2007). See also the `energy` package for
+#'   further information on this measure.
 #' @param name_x An optional `character` string to use as the name of the
-#' first population in the plots. The default is `"x"`.
+#'   first population in the plots. The default is `"x"`.
 #' @param name_y An optional `character` string to use as the name of the
-#' second population in the plots. The default is `"y"`.
+#'   second population in the plots. The default is `"y"`.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @references
 #' Szekely, G.J., Rizzo, M.L., and Bakirov, N.K. (2007),
 #' Measuring and Testing Dependence by Correlation of Distances,
-#' *Annals of Statistics*, Vol. 35 No. 6, pp. 2769-2794.
+#' *Annals of Statistics*, 35(6), 2769-2794.
 #' doi:10.1214/009053607000000505
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
@@ -514,7 +650,7 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' @param negCol Color for plotting edges when
 #'   the the difference in edge weights is negative. See [qgraph::qgraph()].
 #' @return A `qgraph` object containing only the significant edges according
-#' to the permutation test.
+#'   to the permutation test.
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
@@ -548,7 +684,7 @@ plot.tna_permutation <- function(x, colors,
 #' @family validation
 #' @param x A `tna_stability` object produced by `estimate_cs`.
 #' @param level A `numeric` value representing the significance level for
-#' the confidence intervals. Defaults to `0.05`.
+#'   the confidence intervals. Defaults to `0.05`.
 #' @param ... Ignored.
 #'
 #' @details
@@ -665,6 +801,9 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 
 #' Plot a Sequence Comparison
 #'
+#' Visualize the differences in pattern counts by plotting the standardized
+#' residuals by pattern and group.
+#'
 #' @export
 #' @family comparison
 #' @param x A `tna_sequence_comparison` object.
@@ -689,6 +828,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
                                          cells = TRUE, text_color = "white",
                                          digits = 2L, ...) {
   check_missing(x)
+  check_class(x, "tna_sequence_comparison")
   check_values(n, strict = TRUE)
   check_flag(legend)
   check_flag(cells)
@@ -696,7 +836,19 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
   check_values(digits)
   n <- min(n, length(x$pattern))
   pat <- x$pattern[seq_len(n)]
-  resid <- attr(x, "residuals")[pat, ]
+  freq_cols <- attr(x, "freq_cols")
+  groups <- attr(x, "groups")
+  x <- x |>
+    dplyr::filter(!!rlang::sym("pattern") %in% pat) |>
+    dplyr::select(dplyr::all_of(freq_cols))
+  n <- sum(x)
+  rs <- rowSums(x)
+  cs <- colSums(x)
+  expected <- outer(rs, cs) / n
+  v <- function(r, c, n) c * r * (n - r) * (n - c) / n^3
+  cell_var <- outer(rs, cs, v, n)
+  resid <- (x - expected) / cell_var
+  n <- nrow(resid)
   m <- ncol(resid)
   d <- data.frame(xmin = rep(0.0, n * m), xmax = 0.0, ymin = 0.0, ymax = 0.0)
   for (i in seq_len(n)) {
@@ -712,7 +864,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
   }
   d$xcent <- (d$xmin + d$xmax) / 2.0
   d$ycent <- (d$ymin + d$ymax) / 2.0
-  out <-
+  p <-
     ggplot2::ggplot(
       d,
       ggplot2::aes(
@@ -725,7 +877,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
     ) +
     ggplot2::geom_rect(color = "white", show.legend = legend) +
     ggplot2::scale_fill_gradient2(
-      name = "",
+      name = "Standardized\nresidual",
       oob = bound,
       low = "#D33F6A",
       high = "#4A6FE3",
@@ -734,13 +886,13 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
     ) +
     ggplot2::scale_x_continuous(
       breaks = unique(d$xcent),
-      labels = colnames(resid),
+      labels = groups,
       position = "bottom",
       expand = c(0.01, 0)
     ) +
     ggplot2::scale_y_continuous(
       breaks = unique(d$ycent),
-      labels = rownames(resid),
+      labels = pat,
       expand = c(0.01, 0)
     ) +
     ggplot2::theme_classic() +
@@ -750,16 +902,16 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
       axis.ticks = ggplot2::element_blank(),
       axis.line = ggplot2::element_blank(),
       axis.text.x =  ggplot2::element_text(
-        angle =  ifelse(n > 3, 90, 0),
-        hjust =  ifelse(n > 3, 0, 0.5),
-        vjust =  ifelse(n > 3, 0.5, 0)
+        angle = ifelse(n > 3, 90, 0),
+        hjust = ifelse(n > 3, 0, 0.5),
+        vjust = ifelse(n > 3, 0.5, 0)
       ),
       legend.key.size = ggplot2::unit(1, "cm"),
       axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
     ) +
     ggplot2::labs(x = "Groups", y = "")
   if (cells) {
-    out <- out +
+    p <- p +
       ggplot2::geom_text(
         mapping = ggplot2::aes(
           x = !!rlang::sym("xcent"),
@@ -770,8 +922,177 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
         color = text_color
       )
   }
-  out
+  p
 }
+
+#' Plot Reliability Analysis Results
+#'
+#' @export
+#' @family validation
+#' @param x A `tna_reliability` object.
+#' @param type A `character` string specifying the plot type. The options are:
+#'   `"histogram"` (default), `"density"`, or `"boxplot"`.
+#' @param metric A `character` string specifying the metric to plot.
+#'   The default is the median absolute difference (`"Median Abs. Diff."`).
+#' @param ... Ignored
+#' @examples
+#' # Small number of iterations for CRAN
+#' model <- tna(engagement)
+#' rel <- reliability(model, iter = 20)
+#' plot(rel)
+#'
+plot.tna_reliability <- function(x, type = "histogram",
+                                 metric = "Median Abs. Diff.", ...) {
+  check_missing(x)
+  check_class(x, "tna_reliability")
+  check_string(metric)
+  type <- check_match(type, c("histogram", "density", "boxplot"))
+  stopifnot_(
+    !metric %in% unique(x$metrics),
+    "Metric {.val {metric}} was not found in {.arg x}"
+  )
+  met <- metric
+  d <- x$metrics |>
+    dplyr::filter(metric == met)
+  has_model <- "model_type" %in% names(x$metrics)
+  if (has_model) {
+    stats <- d |>
+      dplyr::group_by(!!rlang::sym("model_type")) |>
+      dplyr::summarize(
+        mean = mean(!!rlang::sym("value"), na.rm = TRUE),
+        sd = stats::sd(!!rlang::sym("value"), na.rm = TRUE),
+        .groups = "drop"
+      ) |>
+      dplyr::mutate(
+        label = paste0(
+          !!rlang::sym("model_type"),
+          " (Mean: ",
+          round(!!rlang::sym("mean"), 3),
+          ", SD: ",
+          round(!!rlang::sym("sd"), 3),
+          ")"
+        )
+      )
+    d <- d |> dplyr::left_join(stats, by = "model_type")
+    group_var <- "label"
+  } else {
+    stats <- d |>
+      dplyr::summarize(
+        mean = mean(!!rlang::sym("value"), na.rm = TRUE),
+        sd = stats::sd(!!rlang::sym("value"), na.rm = TRUE)
+      )
+    group_var <- NULL
+  }
+  sub <- paste0(
+    "Mean: ", round(stats$mean, 3),
+    " | SD: ", round(stats$sd, 3)
+  )
+  p <- ggplot2::ggplot(d, ggplot2::aes(x = !!rlang::sym("value"))) +
+    ggplot2::labs(
+      title = paste("Reliability Distribution:", metric),
+      x = metric,
+      y = "Frequency"
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(face = "bold"),
+      legend.position = "top",
+      legend.title = ggplot2::element_blank()
+    )
+  if (type == "histogram") {
+    if (has_model) {
+      p <- p +
+        ggplot2::geom_histogram(
+          ggplot2::aes(
+            fill = !!rlang::sym(group_var)
+          ),
+          position = "identity",
+          alpha = 0.5,
+          bins = 30,
+          color = "white"
+        ) +
+        ggplot2::geom_vline(
+          data = stats,
+          ggplot2::aes(
+            xintercept = !!rlang::sym("mean"),
+            color = !!rlang::sym("label"),
+          ),
+          linetype = "dashed",
+          linewidth = 1,
+          show.legend = FALSE
+        )
+    } else {
+      p <- p +
+        ggplot2::geom_histogram(
+          fill = "cadetblue",
+          color = "white",
+          alpha = 0.7,
+          bins = 30
+        ) +
+        ggplot2::geom_vline(
+          ggplot2::aes(xintercept = stats$mean),
+          linetype = "dashed",
+          color = "firebrick",
+          linewidth = 1
+        ) +
+        ggplot2::labs(y = "Frequency", subtitle = sub)
+    }
+  } else if (type == "density") {
+    if (has_model) {
+      p <- p +
+        ggplot2::geom_density(
+          ggplot2::aes(fill = !!rlang::sym(group_var)),
+          alpha = 0.4
+        ) +
+        ggplot2::geom_vline(
+          data = stats,
+          ggplot2::aes(
+            xintercept = !!rlang::sym("mean"),
+            color = !!rlang::sym("label")
+          ),
+          linetype = "dashed",
+          linewidth = 1,
+          show.legend = FALSE
+        ) +
+        ggplot2::labs(y = "Density")
+    } else {
+      p <- p +
+        ggplot2::geom_density(fill = "cadetblue", alpha = 0.5) +
+        ggplot2::geom_vline(
+          ggplot2::aes(xintercept = stats$mean),
+          linetype = "dashed",
+          color = "firebrick",
+          linewidth = 1
+        ) +
+        ggplot2::labs(y = "Density", subtitle = sub)
+    }
+
+  } else if (type == "boxplot") {
+    if (has_model) {
+      p <- ggplot2::ggplot(
+        d,
+        ggplot2::aes(
+          x = !!rlang::sym(group_var),
+          y = !!rlang::sym("value"),
+          fill = !!rlang::sym(group_var))
+      ) +
+        ggplot2::geom_boxplot(alpha = 0.7) +
+        ggplot2::labs(x = "", title = metric) +
+        ggplot2::theme_minimal() +
+        ggplot2::theme(legend.position = "none")
+    } else {
+      p <- ggplot2::ggplot(
+        d,
+        ggplot2::aes(y = !!rlang::sym("value"))
+      ) +
+        ggplot2::geom_boxplot(fill = "cadetblue", alpha = 0.7) +
+        ggplot2::labs(title = metric, subtitle = sub) +
+        ggplot2::theme_minimal()
+    }
+  }
+  p
+}
+
 
 #' Plot Centrality Measures
 #'
@@ -885,14 +1206,15 @@ plot_centralities_multiple <- function(x, reorder, ncol, scales,
       direction = "long"
     )
   x$name <- factor(x$name, levels = measures)
-  ggplot2::ggplot(x,
-                  ggplot2::aes(
-                    x = !!rlang::sym("value"),
-                    y = !!rlang::sym("state"),
-                    color = !!rlang::sym("group"),
-                    fill = !!rlang::sym("group"),
-                    group = !!rlang::sym("group")
-                  )
+  ggplot2::ggplot(
+    x,
+    ggplot2::aes(
+      x = !!rlang::sym("value"),
+      y = !!rlang::sym("state"),
+      color = !!rlang::sym("group"),
+      fill = !!rlang::sym("group"),
+      group = !!rlang::sym("group")
+    )
   ) +
     ggplot2::facet_wrap("name", ncol = ncol, scales = scales) +
     ggplot2::geom_path() +
@@ -1043,7 +1365,6 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
       stat = "identity",
       width = width
     )
-
   if (show_label) {
     p <- p +
       ggplot2::geom_text(
@@ -1108,8 +1429,6 @@ plot_model <- function(x, labels, colors, cut,
 #' @export
 #' @family basic
 #' @param x A `tna` or a `group_tna` object.
-#' @param digits An `integer` that determines the number of digits to use
-#' for the chi-square test statistic and the p-value in the plot.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
@@ -1122,7 +1441,7 @@ plot_mosaic <- function(x, ...) {
 
 #' @export
 #' @rdname plot_mosaic
-plot_mosaic.tna <- function(x, digits = 1, ...) {
+plot_mosaic.tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna")
   stopifnot_(
@@ -1131,16 +1450,14 @@ plot_mosaic.tna <- function(x, digits = 1, ...) {
   )
   plot_mosaic_(
     as.table(t(x$weights)),
-    digits,
-    title = "Mosaic plot of outgoing against incoming transitions:",
-    xlab = "Incoming",
-    ylab = "Outgoing"
+    xlab = "Incoming edges",
+    ylab = "Outgoing edges"
   )
 }
 
 # from https://stackoverflow.com/questions/19233365/how-to-create-a-marimekko-mosaic-plot-in-ggplot2,
 # Based on the code by Jake Fisher and cpsyctc.
-plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
+plot_mosaic_ <- function(tab, xlab, ylab) {
   n <- nrow(tab)
   m <- ncol(tab)
   rs <- .rowSums(tab, n, m)
@@ -1161,80 +1478,56 @@ plot_mosaic_ <- function(tab, digits, title, xlab, ylab) {
   }
   d$row <- rep(dimnames(tab)[[1]], m)
   d$col <- rep(dimnames(tab)[[2]], each = n)
-  # TODO suppress for now
   chisq <- suppressWarnings(stats::chisq.test(tab))
   df <- chisq$parameter
-  pval <- chisq$p.value
   chisqval <- chisq$statistic
-  # stdResids <- chisq$stdres
   d$xcent <- (d$xmin + d$xmax) / 2
   d$ycent <- (d$ymin + d$ymax) / 2
   d$stdres <- as.vector(t(chisq$stdres))
-  d$sig <- cut(
-    d$stdres,
-    breaks = c(-Inf, -4, -2, 0, 2, 4, Inf),
-    labels = c("<-4", "-4:-2", "-2:0", "0:2", "2:4", ">4"),
-    ordered_result = TRUE
-  )
-  title_chi <- bquote(
-    .(title) ~~
-      {chi^2}[.(df)] ~ " = " ~
-      .(round(chisqval, digits)) * ", p =" ~ .(format.pval(pval, digits))
-  )
-  out <-
-    ggplot2::ggplot(
-      d,
-      ggplot2::aes(
-        xmin = !!rlang::sym("xmin"),
-        xmax = !!rlang::sym("xmax"),
-        ymin = !!rlang::sym("ymin"),
-        ymax = !!rlang::sym("ymax"),
-        fill = !!rlang::sym("sig"),
-        linetype = !!rlang::sym("sig")
-      )
-    ) +
-    ggplot2::geom_rect(color = "black", show.legend = TRUE) +
-    ggplot2::scale_fill_manual(
-      name = "Standardized\nresidual",
-      values = c(
-        "#D33F6A", "#E495A5", "#E2E2E2", "#E2E2E2", "#9DA8E2", "#4A6FE3"
-      ),
-      guide = ggplot2::guide_legend(reverse = TRUE),
-      drop = FALSE
-    ) +
-    ggplot2::scale_linetype_manual(
-      name = "Standardized\nresidual",
-      values = c(2, 2, 2, 1, 1, 1),
-      guide = ggplot2::guide_legend(reverse = TRUE),
-      drop = FALSE
-    ) +
-    ggplot2::scale_x_continuous(
-      breaks = unique(d$xcent),
-      labels = dimnames(tab)[[1]],
-      position = "top",
-      expand = c(0.01, 0)
-    ) +
-    ggplot2::scale_y_continuous(
-      breaks = d$ycent[d$xmin == 0],
-      labels = dimnames(tab)[[2]],
-      expand = c(0.01, 0)
-    ) +
-    ggplot2::ggtitle(title_chi) +
-    ggplot2::theme_classic() +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(hjust = 0.5),
-      plot.subtitle = ggplot2::element_text(hjust = 0.5),
-      axis.ticks = ggplot2::element_blank(),
-      axis.line = ggplot2::element_blank(),
-      axis.text.x =  ggplot2::element_text(
-        angle =  ifelse(n > 3, 90, 0),
-        hjust =  ifelse(n > 3, 0, 0.5),
-        vjust =  ifelse(n > 3, 0.5, 0)
-      ),
-      axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
-    ) +
-    ggplot2::labs(x = xlab, y = ylab)
-  out
+  ggplot2::ggplot(
+    d,
+    ggplot2::aes(
+      xmin = !!rlang::sym("xmin"),
+      xmax = !!rlang::sym("xmax"),
+      ymin = !!rlang::sym("ymin"),
+      ymax = !!rlang::sym("ymax"),
+      fill = !!rlang::sym("stdres"),
+    )
+  ) +
+  ggplot2::geom_rect(color = "black", show.legend = TRUE) +
+  ggplot2::scale_fill_gradient2(
+    name = "Standardized\nresidual",
+    oob = bound,
+    low = "#D33F6A",
+    high = "#4A6FE3",
+    limits = c(-4, 4),
+    breaks = c(-4, -2, 0, 2, 4)
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = unique(d$xcent),
+    labels = dimnames(tab)[[1]],
+    position = "top",
+    expand = c(0.01, 0)
+  ) +
+  ggplot2::scale_y_continuous(
+    breaks = d$ycent[d$xmin == 0],
+    labels = dimnames(tab)[[2]],
+    expand = c(0.01, 0)
+  ) +
+  ggplot2::theme_classic() +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(hjust = 0.5),
+    plot.subtitle = ggplot2::element_text(hjust = 0.5),
+    axis.ticks = ggplot2::element_blank(),
+    axis.line = ggplot2::element_blank(),
+    axis.text.x =  ggplot2::element_text(
+      angle =  ifelse(n > 3, 90, 0),
+      hjust =  ifelse(n > 3, 0, 0.5),
+      vjust =  ifelse(n > 3, 0.5, 0)
+    ),
+    axis.text.y = ggplot2::element_text(hjust = 1, vjust = 0.40)
+  ) +
+  ggplot2::labs(x = xlab, y = ylab)
 }
 
 #' Create a Sequence Index Plot or a Distribution Plot
@@ -1412,7 +1705,7 @@ plot_sequences.default <- function(x, cols = tidyselect::everything(),
     sort(unique(unlist(x[, cols])))
   )
   lev <- seq_along(lab)
-  x[cols] <- lapply(x[cols], factor)
+  x[cols] <- lapply(x[cols], factor, labels = lab, levels = lab)
   x[cols] <- lapply(x[cols], as.integer)
   sort_by <- sort_by %m% rlang::enquo(sort_by)
   sort_by <- rlang::as_quosure(sort_by, rlang::caller_env())
@@ -1447,7 +1740,7 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
     x <- x |>
       dplyr::arrange(dplyr::across(dplyr::all_of(sort_by)), .by_group = TRUE)
   }
-  x$.seq_id <- seq_len(nrow(x))
+  x$.seq_id <- rev(seq_len(nrow(x)))
   # Remove temporary grouping used in sorting
   group <- ifelse_(has_group, group, rlang::missing_arg())
   x <- x |> dplyr::ungroup()
@@ -1726,7 +2019,7 @@ plot.group_tna_bootstrap <- function(x, title, ...) {
 #' @param palette A color palette to be applied if `colors` is not specified.
 #' @inheritParams plot.tna_centralities
 #' @return A `ggplot` object displaying a line chart for each centrality
-#' with one line per cluster.
+#'   with one line per cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cm <- centralities(model)
@@ -1749,8 +2042,8 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param title A `character` vector of titles to use for each plot.
 #' @param ... Arguments passed to [plot.tna_cliques()].
 #' @return A `list` (invisibly) with one element per cluster. Each element
-#' contains a `qgraph` plot when only one clique is present per cluster,
-#' otherwise the element is `NULL`.
+#'   contains a `qgraph` plot when only one clique is present per cluster,
+#'   otherwise the element is `NULL`.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
@@ -1775,7 +2068,7 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' @param colors A `character` vector of colors to use.
 #' @param ... Arguments passed to [plot.tna_communities()].
 #' @return A `list` (invisibly) of `qgraph` objects in which the nodes are
-#' colored by community for each cluster.
+#'   colored by community for each cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' comm <- communities(model)
@@ -1808,7 +2101,7 @@ plot.group_tna_communities <- function(x, title, colors, ...) {
 #' @param x A `group_tna_stability` object.
 #' @param ... Arguments passed to [plot.tna_stability()].
 #' @return A `list` (invisibly) of `ggplot` objects displaying the stability
-#' analysis plot.
+#'   analysis plot.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Low number of iterations for CRAN
@@ -1831,11 +2124,11 @@ plot.group_tna_stability <- function(x, ...) {
 #' @family validation
 #' @param x A `group_tna_permutation` object.
 #' @param title An optional `character` vector of titles for each plot.
-#' When not provided, the title shows the names of the clusters being
-#' contrasted.
+#'   When not provided, the title shows the names of the clusters being
+#'   contrasted.
 #' @param ... Arguments passed to [plot.tna_permutation()].
 #' @return A `list` (invisibly) of `qgraph` objects depicting the significant
-#' difference between each pair.
+#'   difference between each pair.
 #' @examples
 #' model <- group_tna(engagement_mmm)
 #' # Small number of iterations for CRAN
@@ -1883,15 +2176,20 @@ plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
 #' @family basic
 #' @param x A `group_tna` object.
 #' @param label An optional `character` string that can be provided to specify
-#' the grouping factor name if `x` was not constructed using a column name of
-#' the original data.
-#' @param colors A vector of colors to be used in the plot (one per group)
-#' @param palette A palette to be used if colors are not passed.
-#' @param width Width of the bars. Default is 0.7.
-#' @param hjust Horizontal adjustment of the labels. Default is 1.2.
-#' @param position Position of the bars: "dodge", "dodge2", "fill" or "stack"
-#' @param show_label Boolean indicating whether to show a label with the
-#'  frequency counts. Default is `TRUE`.
+#'   the grouping factor name if `x` was not constructed using a column name of
+#'   the original data.
+#' @param colors A `character` vector of colors to be used in the plot
+#'   (one per group).
+#' @param palette A `character` string that specifies the palette to be used if
+#'   `colors` are not passed.
+#' @param width A `numeric` value for the width of the bars.
+#'   The default is `0.7`.
+#' @param hjust A `numeric` value for the horizontal adjustment of the labels.
+#'   The default is `1.2`.
+#' @param position Position of the bars:`"dodge"`, `"dodge2"`, `"fill"` or
+#'   `"stack"`.
+#' @param show_label A `logical` value indicating whether to show a label with
+#'   the frequency counts. Default is `TRUE`.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
@@ -1982,13 +2280,11 @@ plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
 #' @export
 #' @family basic
 #' @param x A `tna_data` object.
-#' @param digits An `integer` that determines the number of digits to use
-#' for the chi-square test statistic and the p-value in the plot.
 #' @param group A `character` string giving the column name of the (meta) data
-#' to contrast the frequencies with or a vector of group indicators with the
-#' the same length as the number of rows in the sequence data.
+#'   to contrast the frequencies with or a vector of group indicators with the
+#'   the same length as the number of rows in the sequence data.
 #' @param label An optional `character` string that specifies a label for the
-#' grouping variable when `group` is not a column name of the data.
+#'   grouping variable when `group` is not a column name of the data.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
@@ -2005,7 +2301,7 @@ plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
 #' )
 #' plot_mosaic(sequence_data, group = "group")
 #'
-plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
+plot_mosaic.tna_data <- function(x, group, label = "Group", ...) {
   check_missing(x)
   check_class(x, "tna_data")
   check_missing(group)
@@ -2033,8 +2329,6 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
   tab <- table(long$.group, long$value)
   plot_mosaic_(
     tab,
-    digits,
-    title = paste0("State frequency by ", label),
     xlab = label,
     ylab = "State"
   )
@@ -2046,19 +2340,17 @@ plot_mosaic.tna_data <- function(x, group, label = "Group", digits = 1, ...) {
 #' @family basic
 #' @param x A `group_tna` object.
 #' @param label An optional `character` string that can be provided to specify
-#' the grouping factor name if `x` was not constructed using a column name of
-#' the original data.
-#' @inheritParams plot_mosaic.tna_data
+#'   the grouping factor name if `x` was not constructed using a column name of
+#'   the original data.
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
-#' model <- group_model(engagement_mmm)
+#' model <- group_model(engagement, group = rep(1:3, length.out = 1000))
 #' plot_mosaic(model)
 #'
-plot_mosaic.group_tna <- function(x, label, digits = 1L, ...) {
+plot_mosaic.group_tna <- function(x, label, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  check_values(digits, strict = TRUE)
   label <- label %m% attr(x, "label")
   combined <- combine_data(x)
   long <- tidyr::pivot_longer(combined, cols = !(!!rlang::sym(".group")))
@@ -2068,8 +2360,6 @@ plot_mosaic.group_tna <- function(x, label, digits = 1L, ...) {
   dimnames(tab) <- list(attr(x, "levels"), labels)
   plot_mosaic_(
     tab,
-    digits,
-    title = paste0("State frequency by ", label),
     xlab = label,
     ylab = "State"
   )
@@ -2124,11 +2414,10 @@ plot_associations.tna <- function(x, edge.color, ...) {
   check_class(x, "tna")
   stopifnot_(
     attr(x, "type") %in% c("frequency", "co-occurrence"),
-    "Association network plot are supported only for
+    "Association network plots are supported only for
      integer-valued weight matrices."
   )
   tab <- as.table(t(x$weights))
-  # TODO suppress for now
   chisq <- suppressWarnings(stats::chisq.test(tab))
   res <- as.numeric(chisq$stdres)
   dim(res) <- dim(tab)

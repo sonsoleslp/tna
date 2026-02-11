@@ -8,7 +8,6 @@
 \alias{build_model.data.frame}
 \alias{build_model.tna_data}
 \alias{build_model.tsn}
-\alias{build_model.tsn_ews}
 \alias{tna}
 \alias{ftna}
 \alias{ctna}
@@ -16,37 +15,24 @@
 \alias{tsn}
 \title{Build a Transition Network Analysis Model}
 \usage{
-build_model(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  cols = tidyselect::everything(),
-  params = list(),
-  inits,
-  begin_state,
-  end_state
-)
+build_model(x, ...)
 
 \method{build_model}{default}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
   inits,
-  begin_state,
-  end_state
+  ...
 )
 
 \method{build_model}{matrix}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
   inits,
-  begin_state,
-  end_state
+  ...
 )
 
 \method{build_model}{stslist}(
@@ -55,9 +41,10 @@ build_model(
   scaling = character(0L),
   cols = tidyselect::everything(),
   params = list(),
-  inits,
+  concat = 1L,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{data.frame}(
@@ -65,43 +52,33 @@ build_model(
   type = "relative",
   scaling = character(0L),
   cols = tidyselect::everything(),
+  concat = 1L,
   params = list(),
-  inits,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{tna_data}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
+  concat = 1L,
   begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 \method{build_model}{tsn}(
   x,
   type = "relative",
   scaling = character(0L),
-  cols = tidyselect::everything(),
   params = list(),
-  inits,
+  concat = 1L,
   begin_state,
-  end_state
-)
-
-\method{build_model}{tsn_ews}(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  cols = tidyselect::everything(),
-  params = list(),
-  inits,
-  begin_state,
-  end_state
+  end_state,
+  ...
 )
 
 tna(x, ...)
@@ -125,6 +102,9 @@ from state \code{i} to state \code{j}. If \code{x} is a \code{data.frame}, then
 it must be in wide format (see \code{cols} on how to define columns for the
 time points).}
 
+\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
+argument matches the actual arguments to \code{build_model} beside \code{x}.}
+
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:
 \itemize{
@@ -136,9 +116,6 @@ considering sequences of n states, useful for identifying longer
 patterns.
 \item \code{"gap"} allows transitions between non-adjacent states, with
 transitions weighted by the gap size.
-\item \code{"window"} creates transitions between all states within a
-sliding window, capturing local relationships
-(several sequences together).
 \item \code{"reverse"} considers the sequences in reverse order
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the \code{"frequency"}
@@ -165,10 +142,6 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 \code{ties.method = "average"}.
 }}
 
-\item{cols}{An \code{expression} giving a tidy selection of columns that should
-be considered as sequence data. By default, all columns are used. Ignored
-for \code{matrix}, \code{tna_data} and \code{tsn} type \code{x}.}
-
 \item{params}{A \code{list} of additional arguments for models of specific
 \code{type}. The potential elements of this list are:
 \itemize{
@@ -176,8 +149,12 @@ for \code{matrix}, \code{tna_data} and \code{tsn} type \code{x}.}
 adjacent events. The default value is 2.
 \item \code{max_gap}: An \code{integer} for the gap-allowed transitions specifying the
 largest allowed gap size. The default is 1.
+\item \code{windowed}: Perform the model estimation by window. Supported for
+\code{relative}, \code{frequency} and \code{co-occurrence} \code{type}s.
 \item \code{window_size}: An \code{integer} for the sliding window transitions
 specifying the window size. The default is 2.
+\item \code{window_type}: A \code{character} string that defines the window type.
+Either \code{"rolling"} or \code{"tumbling"}.
 \item \code{weighted}: A \code{logical} value. If \code{TRUE}, the transitions
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
@@ -204,8 +181,13 @@ This is an alternative to \code{time}.
 }}
 
 \item{inits}{An optional \code{numeric} vector of initial state probabilities
-for each state. The vector will be scaled to unity.
-Ignored if \code{x} is not a \code{matrix}.}
+for each state. The vector will be scaled to unity.}
+
+\item{cols}{An \code{expression} giving a tidy selection of columns that should
+be considered as sequence data. By default, all columns are used.}
+
+\item{concat}{An \code{integer} for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).}
 
 \item{begin_state}{A \code{character} string for an additional begin state.
 This state is added as the first observation for every sequence to
@@ -213,10 +195,7 @@ signify the beginning of the sequence}
 
 \item{end_state}{A \code{character} string for an additional end state.
 This state is added as the last observation for every sequence to
-siginify the end of the sequence.}
-
-\item{...}{Ignored. For the \code{build_model} aliases (e.g., \code{tna}), this
-argument matches the actual arguments to \code{build_model} beside \code{x}.}
+signify the end of the sequence.}
 }
 \value{
 An object of class \code{tna} which is a \code{list} containing the

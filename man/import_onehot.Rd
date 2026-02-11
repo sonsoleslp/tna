@@ -2,39 +2,56 @@
 % Please edit documentation in R/data.R
 \name{import_onehot}
 \alias{import_onehot}
-\title{Import One-Hot Data and Create a Co-Occurrence Network Model}
+\title{Import One-Hot Data}
 \usage{
-import_onehot(data, cols, window = 1L)
+import_onehot(
+  data,
+  cols,
+  actor,
+  session,
+  window_size = 1L,
+  window_type = "tumbling",
+  aggregate = FALSE
+)
 }
 \arguments{
 \item{data}{A \code{data.frame} in wide format.}
 
-\item{cols}{An \code{expression} giving a tidy selection of column names to be
-transformed into long format (actions). This can be a vector of column names
-(e.g., \code{c(feature1, feature2)}) or a range  specified as \code{feature1:feature6}
-(without quotes) to include all columns from 'feature1' to 'feature6'
-in the order they appear in the data frame. For more information on
-tidy selections, see \code{\link[dplyr:select]{dplyr::select()}}.}
+\item{cols}{An \code{expression} giving a tidy selection of columns to be
+considered as one-hot data.}
 
-\item{window}{An \code{integer} specifying the size of the window for
-sequence grouping. Default is 1 (each row is a separate window). Can
-also be a \code{character} string giving a name of the column in \code{data} whose
-levels define the windows.}
+\item{actor}{An optional \code{character} string giving the column name of
+\code{data} containing the actor identifiers.}
+
+\item{session}{An optional \code{character} string giving the column name of
+\code{data} containing the session identifiers.}
+
+\item{window_size}{An \code{integer} specifying the window size for grouping.}
+
+\item{window_type}{A \code{character} string. Either \code{"tumbling"} (the default)
+for non-overlapping windows or \code{"sliding"} for one-step sliding window.}
+
+\item{aggregate}{A \code{logical} value that determines how multiple occurrences
+of the same event within a window are processed. Option \code{TRUE} aggregates
+multiple occurrences into a single occurrence. Option \code{FALSE} keeps
+all occurrences (the default).}
 }
 \value{
-A \code{tna} object for the co-occurrence model.
+The processed data as a \code{data.frame}.
 }
 \description{
-Import One-Hot Data and Create a Co-Occurrence Network Model
+Import One-Hot Data
 }
 \examples{
 d <- data.frame(
-  window = gl(100, 5),
+  actor = gl(100, 5),
+  session = gl(10, 50),
   feature1 = rbinom(500, 1, prob = 0.33),
   feature2 = rbinom(500, 1, prob = 0.25),
   feature3 = rbinom(500, 1, prob = 0.50)
 )
-model <- import_onehot(d, feature1:feature3, window = "window")
+onehot1 <- import_onehot(d, feature1:feature3)
+onehot2 <- import_onehot(d, feature1:feature3, "actor", "session")
 
 }
 \seealso{
@@ -42,6 +59,7 @@ Other data:
 \code{\link{import_data}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
+\code{\link{simulate.group_tna}()},
 \code{\link{simulate.tna}()}
 }
 \concept{data}

@@ -23,18 +23,23 @@
 the grouping factor name if \code{x} was not constructed using a column name of
 the original data.}
 
-\item{colors}{A vector of colors to be used in the plot (one per group)}
+\item{colors}{A \code{character} vector of colors to be used in the plot
+(one per group).}
 
-\item{width}{Width of the bars. Default is 0.7.}
+\item{width}{A \code{numeric} value for the width of the bars.
+The default is \code{0.7}.}
 
-\item{palette}{A palette to be used if colors are not passed.}
+\item{palette}{A \code{character} string that specifies the palette to be used if
+\code{colors} are not passed.}
 
-\item{show_label}{Boolean indicating whether to show a label with the
-frequency counts. Default is \code{TRUE}.}
+\item{show_label}{A \code{logical} value indicating whether to show a label with
+the frequency counts. Default is \code{TRUE}.}
 
-\item{position}{Position of the bars: "dodge", "dodge2", "fill" or "stack"}
+\item{position}{Position of the bars:\code{"dodge"}, \code{"dodge2"}, \code{"fill"} or
+\code{"stack"}.}
 
-\item{hjust}{Horizontal adjustment of the labels. Default is 1.2.}
+\item{hjust}{A \code{numeric} value for the horizontal adjustment of the labels.
+The default is \code{1.2}.}
 
 \item{...}{Ignored.}
 }

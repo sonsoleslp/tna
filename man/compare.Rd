@@ -8,9 +8,9 @@
 \usage{
 compare(x, ...)
 
-\method{compare}{tna}(x, y, scaling = "none", ...)
+\method{compare}{tna}(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 
-\method{compare}{matrix}(x, y, scaling = "none", ...)
+\method{compare}{matrix}(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object or a \code{matrix} of weights.}
@@ -25,6 +25,7 @@ apply to the weights before comparing them. The supported options are:
 \item \code{"none"}: No scaling is performed. The weights are used as is.
 \item \code{"minmax"}: Performs min-max normalization, i.e., the minimum value is
 subtracted and the differences are scaled by the range.
+\item \code{"max"}: Max-normalization: the values are divided by the maximum value.
 \item \code{"rank"}: Applies min-max normalization to the ranks of the weights
 (computed with \code{ties.method = "average"}).
 \item \code{"zscore"}: Computes the standard score, i.e. the mean weight is
@@ -39,6 +40,13 @@ Useful for scenarios with zero weights.
 \item \code{"quantile"}: Uses the empirical quantiles of the weights
 via \link[stats:ecdf]{stats::ecdf}.
 }}
+
+\item{measures}{A \code{character} vector indicating which centrality
+measures should be computed. See \code{\link[=centralities]{centralities()}} for the
+available measures. No measures are included by default.}
+
+\item{network}{A \code{logical} value indicating whether network metrics should
+be included in the comparison. The default is \code{TRUE}.}
 }
 \value{
 A \code{tna_comparison} object, which is a \code{list} containing the

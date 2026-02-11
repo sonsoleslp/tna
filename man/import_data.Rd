@@ -10,11 +10,11 @@ import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)
 \item{data}{A \code{data.frame} in wide format.}
 
 \item{cols}{An \code{expression} giving a tidy selection of column names to be
-transformed into long format (actions). This can be a vector of column names
-(e.g., \code{c(feature1, feature2)}) or a range  specified as \code{feature1:feature6}
-(without quotes) to include all columns from 'feature1' to 'feature6'
-in the order they appear in the data frame. For more information on
-tidy selections, see \code{\link[dplyr:select]{dplyr::select()}}.}
+transformed into long format (actions). This can be a vector of column
+names (e.g., \code{c(feature1, feature2)}) or a range  specified as
+\code{feature1:feature6} (without quotes) to include all columns from
+'feature1' to 'feature6' in the order they appear in the data frame.
+For more information on tidy selections, see \code{\link[dplyr:select]{dplyr::select()}}.}
 
 \item{id_cols}{An \code{expression} giving a tidy selection of column names that
 uniquely identify each observation (IDs).}
@@ -69,6 +69,7 @@ Other data:
 \code{\link{import_onehot}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
+\code{\link{simulate.group_tna}()},
 \code{\link{simulate.tna}()}
 }
 \concept{data}

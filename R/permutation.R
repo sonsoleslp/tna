@@ -304,3 +304,62 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     class = "tna_permutation"
   )
 }
+
+permutation_test_patterns <- function(x, len, iter, adjust) {
+  stopifnot_(
+    length(attr(x, "scaling")) == 0L || attr(x, "groupwise"),
+    "Permutation test is not supported for
+     grouped models with globally scaled edge weights."
+  )
+  check_values(iter, strict = TRUE)
+  data <- combine_data(x)
+  group <- data$.group
+  data$.group <- NULL
+  m <- as.matrix(data)
+  n <- nrow(m)
+  k <- length(len)
+  labels <- x[[1L]]$labels
+  pattern_matrices <- extract_patterns(m, len, labels)
+  patterns <- factorize_patterns(pattern_matrices, group)
+  stat_true <- lapply(patterns, pattern_statistic)
+  stat_perm <- vector(mode = "list", length = k)
+  stat_p_value <- vector(mode = "list", length = k)
+  for (j in seq_len(k)) {
+    u <- length(pattern_matrices[[j]]$unique)
+    stat_perm[[j]] <- matrix(0, u, iter)
+    stat_p_value[[j]] <- numeric(u)
+  }
+  for (i in seq_len(iter)) {
+    perm_idx <- sample(n)
+    perm_group <- group[perm_idx]
+    perm_patterns <- factorize_patterns(pattern_matrices, perm_group)
+    for (j in seq_len(k)) {
+      stat_perm[[j]][, i] <- pattern_statistic(perm_patterns[[j]])
+      stat_p_value[[j]] <- stat_p_value[[j]] + 1L *
+        (stat_perm[[j]][, i] >= stat_true[[j]])
+    }
+  }
+  out <- vector(mode = "list", length = k)
+  for (j in seq_len(k)) {
+    stat_perm_mean <- apply(stat_perm[[j]], 1, mean)
+    stat_perm_sd <- apply(stat_perm[[j]], 1, stats::sd)
+    out[[j]] <- data.frame(
+      effect_size = (stat_true[[j]] - stat_perm_mean) / stat_perm_sd,
+      p_value = stats::p.adjust(
+        (stat_p_value[[j]] + 1) / (iter + 1),
+        method = adjust
+      )
+    )
+  }
+  do.call("rbind", out)
+}
+
+pattern_statistic <- function(x) {
+  n <- sum(x)
+  nr <- nrow(x)
+  nc <- ncol(x)
+  rs <- .rowSums(x, m = nr, n = nc)
+  cs <- .colSums(x, m = nr, n = nc)
+  expected <- outer(rs, cs) / n
+  sqrt(.rowSums((x - expected)^2, m = nr, n = nc))
+}

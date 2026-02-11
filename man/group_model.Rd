@@ -4,6 +4,7 @@
 \alias{group_model}
 \alias{group_model.default}
 \alias{group_model.mhmm}
+\alias{group_model.tna_mmm}
 \alias{group_model.tna_clustering}
 \alias{group_tna}
 \alias{group_ftna}
@@ -21,11 +22,22 @@ group_model(x, ...)
   groupwise = FALSE,
   cols = tidyselect::everything(),
   params = list(),
+  concat = 1L,
   na.rm = TRUE,
   ...
 )
 
 \method{group_model}{mhmm}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  groupwise = FALSE,
+  params = list(),
+  na.rm = TRUE,
+  ...
+)
+
+\method{group_model}{tna_mmm}(
   x,
   type = "relative",
   scaling = character(0L),
@@ -81,9 +93,6 @@ considering sequences of n states, useful for identifying longer
 patterns.
 \item \code{"gap"} allows transitions between non-adjacent states, with
 transitions weighted by the gap size.
-\item \code{"window"} creates transitions between all states within a
-sliding window, capturing local relationships
-(several sequences together).
 \item \code{"reverse"} considers the sequences in reverse order
 (resulting in what is called a reply network in some contexts).
 The resulting weight matrix is the transpose of the \code{"frequency"}
@@ -126,8 +135,12 @@ is automatically removed from these columns if provided.}
 adjacent events. The default value is 2.
 \item \code{max_gap}: An \code{integer} for the gap-allowed transitions specifying the
 largest allowed gap size. The default is 1.
+\item \code{windowed}: Perform the model estimation by window. Supported for
+\code{relative}, \code{frequency} and \code{co-occurrence} \code{type}s.
 \item \code{window_size}: An \code{integer} for the sliding window transitions
 specifying the window size. The default is 2.
+\item \code{window_type}: A \code{character} string that defines the window type.
+Either \code{"rolling"} or \code{"tumbling"}.
 \item \code{weighted}: A \code{logical} value. If \code{TRUE}, the transitions
 are weighted by the inverse of the sequence length. Can be used for
 frequency, co-occurrence and reverse model types. The default is
@@ -152,6 +165,9 @@ of \code{x} for the time values. \code{Date} values are converted to \code{numer
 time spent in each state for each sequence and time index.
 This is an alternative to \code{time}.
 }}
+
+\item{concat}{An \code{integer} for the number of consecutive sequences
+to concatenate. The default is 1 (no concatenation).}
 
 \item{na.rm}{A \code{logical} value that determines if observations with \code{NA}
 value in \code{group} be removed. If \code{FALSE}, an additional category for \code{NA}

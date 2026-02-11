@@ -4,7 +4,15 @@
 \alias{compare.group_tna}
 \title{Compare Grouped TNA Models with Comprehensive Metrics}
 \usage{
-\method{compare}{group_tna}(x, i = 1L, j = 2L, scaling = "none", ...)
+\method{compare}{group_tna}(
+  x,
+  i = 1L,
+  j = 2L,
+  scaling = "none",
+  measures = character(0),
+  network = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}
@@ -15,7 +23,34 @@
 \item{j}{An \code{integer} index or the name of the secondary cluster as a
 \code{character} string.}
 
-\item{scaling}{See \code{\link[=compare.tna]{compare.tna()}}.}
+\item{scaling}{A  \code{character} string naming a scaling method to
+apply to the weights before comparing them. The supported options are:
+\itemize{
+\item \code{"none"}: No scaling is performed. The weights are used as is.
+\item \code{"minmax"}: Performs min-max normalization, i.e., the minimum value is
+subtracted and the differences are scaled by the range.
+\item \code{"max"}: Max-normalization: the values are divided by the maximum value.
+\item \code{"rank"}: Applies min-max normalization to the ranks of the weights
+(computed with \code{ties.method = "average"}).
+\item \code{"zscore"}: Computes the standard score, i.e. the mean weight is
+subtracted and the differences are scaled by the standard deviation.
+\item \code{"robust"}: Computes the robust z-score, i.e. the median weight is
+subtracted and the differences are scaled by the median absolute deviation
+(using \link[stats:mad]{stats::mad}).
+\item \code{"log"}: Simply the natural logarithm of the weights.
+\item \code{"log1p"}: As above, but adds 1 to the values before taking the logarithm.
+Useful for scenarios with zero weights.
+\item \code{"softmax"}: Performs softmax normalization.
+\item \code{"quantile"}: Uses the empirical quantiles of the weights
+via \link[stats:ecdf]{stats::ecdf}.
+}}
+
+\item{measures}{A \code{character} vector indicating which centrality
+measures should be computed. See \code{\link[=centralities]{centralities()}} for the
+available measures. No measures are included by default.}
+
+\item{network}{A \code{logical} value indicating whether network metrics should
+be included in the comparison. The default is \code{TRUE}.}
 
 \item{...}{Additional arguments passed to \code{\link[=compare.tna]{compare.tna()}}.}
 }

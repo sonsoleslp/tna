@@ -232,15 +232,19 @@ print.tna_comparison <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_comparison")
   cat("Edge difference metrics\n")
-  print(x$edge_metrics, ...)
+  print(tibble::as_tibble(x$edge_metrics), ...)
   cat("\nSummary metrics of differences\n")
   print(x$summary_metrics, ...)
   cat("\nNetwork metrics\n")
-  print(x$network_metrics, ...)
-  cat("\nCentrality differences\n")
-  print(x$centrality_differences, ...)
-  cat("\nCentrality correlations\n")
-  print(x$centrality_correlations, ...)
+  print(tibble::as_tibble(x$network_metrics), ...)
+  if (!is.null(x$centrality_differences)) {
+    cat("\nCentrality differences\n")
+    print(x$centrality_differences, ...)
+  }
+  if (!is.null(x$centrality_correlations)) {
+    cat("\nCentrality correlations\n")
+    print(x$centrality_correlations, ...)
+  }
   invisible(x)
 }
 
@@ -413,7 +417,7 @@ print.tna_permutation <- function(x, ...) {
 #' Print the Results of Clustering
 #'
 #' @export
-#' @rdname cluster_sequences
+#' @rdname cluster_data
 print.tna_clustering <- function(x, ...) {
   cat("Clustering method:", x$method, "\n")
   cat("Number of clusters:", x$k, "\n")
@@ -437,6 +441,36 @@ print.tna_clustering <- function(x, ...) {
 #'
 print.tna_sequence_comparison <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
+}
+
+#' Print Reliability Analysis Results
+#'
+#' @export
+#' @family validation
+#' @param x A `tna_reliability` object.
+#' @param summary_metrics A `character` vector of metrics to display.
+#' @param ... Arguments passed to the generic `print` method.
+#' @return `x` (invisibly).
+#' @examples
+#' # Small number of iterations for CRAN
+#' model <- tna(engagement)
+#' rel <- reliability(model, iter = 20)
+#' print(rel)
+#'
+print.tna_reliability <- function(x, summary_metrics, ...) {
+  summary_metrics <- summary_metrics %m% c(
+    "Mean Abs. Diff.",
+    "Median Abs. Diff.",
+    "Pearson",
+    "Bray-Curtis"
+  )
+  cat("Reliability summary\n")
+  sumr <- x$summary |>
+    dplyr::filter(!!rlang::sym("metric") %in% summary_metrics) |>
+    dplyr::arrange(
+      factor(!!rlang::sym("metric"), levels = summary_metrics)
+    )
+  print(sumr, ...)
 }
 
 # Groups ----------------------------------------------------------------

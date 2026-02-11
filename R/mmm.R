@@ -85,7 +85,8 @@
 #     stats::model.matrix(formula, data = data)
 #   )
 #   cols <- get_cols(rlang::enquo(cols), data)
-#   data <- create_seqdata(x = data, cols = cols)
+#   d <- create_seqdata(x = data, cols = cols)
+#   s <- length(attr(d, "labels"))
 #   criterion <- check_match(criterion, c("bic", "aic"))
 #   control <- check_em_control(control)
 #   check_flag(progressbar)
@@ -99,13 +100,10 @@
 #     "Argument {.arg cluster_names} must be a {.cls character}
 #      vector with {.code max(k)} elements."
 #   )
-#   s <- length(attr(data, "labels"))
 #   if (parallel && missing(cl)) {
 #     stopifnot_(
-#       requireNamespace("parallel", quietly = TRUE) &&
-#         requireNamespace("doParallel", quietly = TRUE),
-#       "Please install the {.pkg parallel}, {.pkg doParallel}
-#        packages for parallel computation."
+#       requireNamespace("doParallel", quietly = TRUE),
+#       "Please install the {.pkg doParallel} package for parallel computation."
 #     )
 #     n_cores <- n_cores %m% parallel::detectCores()
 #     n_cores <- min(n_cores, parallel::detectCores())
@@ -137,7 +135,7 @@
 #   }
 #   for (i in seq_along(k)) {
 #     results[[i]] <- fit_mmm(
-#       data = data,
+#       data = d,
 #       mm = mm,
 #       k = k[i],
 #       progressbar = progressbar && k_len == 1L,
@@ -153,26 +151,9 @@
 #     cli::cli_progress_done()
 #   }
 #   if (k_len > 1L) {
-#     #nulls <- vapply(results, is.null, logical(1L))
-#     # stopifnot_(
-#     #   !all(nulls),
-#     #   "Fitting the model failed with all values of {.arg k}."
-#     # )
-#     # if (any(nulls)) {
-#     #   failed <- k[which(nulls)]
-#     #   k_failed <- cs(failed)
-#     #   warning_(
-#     #     "Fitting the model with k = {k_failed} failed."
-#     #   )
-#     # }
-#     #results <- results[!nulls]
 #     criteria <- vapply(results, "[[", numeric(1L), criterion)
 #     out <- results[[which.min(criteria)]]
 #   } else {
-#     # stopifnot_(
-#     #   !is.null(results[[1L]]),
-#     #   "Fitting the model with k = {k} failed."
-#     # )
 #     out <- results[[1L]]
 #   }
 #   cluster_names <- cluster_names[seq_len(out$k)]
@@ -190,6 +171,9 @@
 #   names(out$beta) <- cluster_names
 #   if (!missing(formula)) {
 #     out$formula <- formula
+#   }
+#   if (!out$converged) {
+#     warning_("The algorithm did not converge.")
 #   }
 #   structure(
 #     out,
@@ -333,9 +317,9 @@
 #     # E-step
 #     for (j in 1:k) {
 #       log_prob <- log(inits[[j]][init_state]) + log(prior[j])
-#       log_trans_j <- log(trans[[j]] + 1e-10)
+#       log_trans_j <- c(log(trans[[j]] + 1e-10))
 #       loglik_mat[, j] <- log_prob +
-#         as.vector(trans_count_mat %*% c(log_trans_j))
+#         as.vector(trans_count_mat %*% log_trans_j)
 #     }
 #     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
 #     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
@@ -355,7 +339,7 @@
 #       trans_new <- colSums(trans_count * post_clust_arr, dims = 1L)
 #       rs <- .rowSums(trans_new, s, s)
 #       pos <- which(rs > 0)
-#       trans[[j]][pos] <- trans_new[pos] / rs[pos]
+#       trans[[j]][pos, ] <- trans_new[pos, ] / rs[pos]
 #     }
 #     loglik <- sum(log_sum_exp_vec)
 #     if (iter > 1L) {
@@ -387,8 +371,8 @@
 #     iterations = iter
 #   )
 # }
-
-# The EM Algorithm for a mixture Markov Model with Covariates
+# 
+# # The EM Algorithm for a mixture Markov Model with Covariates
 # em_covariates <- function(start, data, mm, k, labels, control) {
 #   set.seed(control$seed + start)
 #   maxiter <- control$maxiter
@@ -457,7 +441,7 @@
 #       log_prob <- log(inits[[j]][init_state]) + log(prior[, j])
 #       log_trans_j <- c(log(trans[[j]] + 1e-10))
 #       loglik_mat[, j] <- log_prob +
-#         as.vector(trans_count_mat %*% c(log_trans_j))
+#         as.vector(trans_count_mat %*% log_trans_j)
 #     }
 #     log_sum_exp_vec <- log_sum_exp_rows(loglik_mat, m = n, n = k)
 #     posterior[] <- exp(loglik_mat - log_sum_exp_vec)
@@ -513,7 +497,7 @@
 #       trans_new <- colSums(trans_count * post_clust_arr, dims = 1L)
 #       rs <- .rowSums(trans_new, s, s)
 #       pos <- which(rs > 0)
-#       trans[[j]][pos] <- trans_new[pos] / rs[pos]
+#       trans[[j]][pos, ] <- trans_new[pos, ] / rs[pos]
 #     }
 #     loglik <- sum(log_sum_exp_vec)
 #     if (iter > 1L) {

@@ -53,13 +53,13 @@
 #' @format A `mhmm` object.
 "engagement_mmm"
 
-# #' Example Mixed Markov Model Fitted to the `engagement` Data via TNA
-# #'
-# #' @family datasets
-# #' @source The data was generated via `mixed_markov_model.R` in
-# #' <https://github.com/sonsoleslp/tna/tree/main/data-raw/>
-# #' @format A `tna_mmm` object.
-# "engagement_tna_mmm"
+#' Example Mixed Markov Model Fitted to the `engagement` Data via TNA
+#'
+#' @family datasets
+#' @source The data was generated via `mixed_markov_model.R` in
+#' <https://github.com/sonsoleslp/tna/tree/main/data-raw/>
+#' @format A `tna_mmm` object.
+"engagement_tna_mmm"
 
 #' Example Wide Data on Group Regulation
 #'

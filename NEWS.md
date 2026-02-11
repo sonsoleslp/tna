@@ -1,3 +1,15 @@
+# tna 1.2.0
+
+* Added the function `reliability()` for reliability analysis of `tna` models.
+* The `import_onehot()` function has been redesigned with new features.
+* Replaced the Z tests and chi-squared tests in `compare_sequences()` with a permutation test.
+* Removed the chi-squared test from `plot_mosaic()`.
+* The `correct` argument of `compare_sequences()` has been renamed to `adjust` to align with other similar arguments.
+* Added several new arguments to the `plot` method of `tna` objects for plotting heterogeneous networks.
+* The `plot` method for `communities` now uses the first available method by default.
+* The `stringdist` package has been moved to Suggests.
+* Added additional checks for missing columns when using tidy selections in various functions that were previously silently ignored.
+
 # tna 1.1.0
 
 * Added the function `cluster_sequences()` to cluster sequence data using string distance measures of the `stringdist` package.

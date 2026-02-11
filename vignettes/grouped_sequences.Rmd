@@ -22,12 +22,11 @@ suppressPackageStartupMessages({
   library("tibble")
   library("dplyr")
   library("gt")
+  library("seqHMM")
 })
 ```
 
-TNA also enables the analysis of transition networks constructed from grouped sequence data.
-In this example, we first fit a mixed Markov model to the `engagement` data using the `seqHMM` package and build a grouped TNA model based on this model.
-First, we load the packages we will use for this example.
+TNA also enables the analysis of transition networks constructed from grouped sequence data. In this example, we first fit a mixed Markov model to the `engagement` data using the `seqHMM` package and build a grouped TNA model based on this model. First, we load the packages we will use for this example.
 
 ```{r, eval = FALSE}
 library("tna")
@@ -52,7 +51,7 @@ init_probs <- list(
 )
 ```
 
-Next, we building and fit the model (this step takes some time to compute, the final model object is also available in the `tna` package as `engagement_mmm`).
+Next, we build and fit the model (this step takes some time to compute, the final model object is also available in the `tna` package as `engagement_mmm`).
 ```{r, eval = FALSE}
 mmm <- build_mmm(
   engagement,
@@ -69,8 +68,7 @@ fit_mmm <- fit_model(
 )
 ```
 
-Now, we create a new model using the cluster information from the model. 
-Alternatively, if sequence data is provided to `group_model()`, the group assignments can be provided with the `group` argument.
+Now, we create a new model using the cluster information from the model. Alternatively, if sequence data is provided to `group_model()`, the group assignments can be provided with the `group` argument.
 ```{r, eval = TRUE, echo = FALSE}
 tna_model_clus <- group_model(engagement_mmm)
 ```
