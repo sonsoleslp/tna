@@ -44,13 +44,44 @@ that identified dynamics are meaningful. See [(Saqr et al., 2025)](https://doi.o
 
 ## Resources
 
-Check out our tutorials:
+### Companion tutorials
+We have also released comprehensive new tutorials for the main TNA features:
 
- - [Basics of TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)
- - [Frequency-based TNA](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
- - [Clustering](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
- 
-You can also try our [Shiny app](https://sonsoleslp.shinyapps.io/tna-app/).
+| Tutorial | Link |
+|--------|------|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | https://sonsoles.me/posts/tna-tutorial |
+| TNA Group Analysis: Analysis and Comparison of Groups | https://sonsoles.me/posts/tna-group |
+| TNA Clustering: Discovering and Analysis of Clusters | https://sonsoles.me/posts/tna-clustering |
+| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | https://sonsoles.me/posts/tna-compare |
+| Full reference guide on `tna` functions | https://sonsoles.me/tna/tna.html |
+
+
+### Vignettes
+Check out the `tna` R package vignettes:
+
+| Vignette | Link |
+|--------|------|
+| Getting started with tna | https://sonsoles.me/tna/articles/tna.html |
+| A showcase of the main tna functions | https://sonsoles.me/tna/articles/complete_tutorial.html |
+| How to prepare data for tna | https://sonsoles.me/tna/articles/prepare_data.html |
+| Frequency-based TNA | https://sonsoles.me/tna/articles/ftna.html |
+| Attention TNA | https://sonsoles.me/tna/articles/atna.html |
+| Finding cliques and communities | https://sonsoles.me/tna/articles/communities_and_cliques.html |
+| Using grouped sequence data | https://sonsoles.me/tna/articles/grouped_sequences.html |
+
+
+### Book chapters
+Do not forget to check out our tutorials in the "Advanced learning analytics methods" book:
+
+| Title | Pages | Tutorial |
+|-------|-------|----------|
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial*  | https://doi.org/10.1007/978-3-031-95365-1_15 | [Online tutorial](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) |
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial*   | https://doi.org/10.1007/978-3-031-95365-1_16 | [Online tutorial](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html) |
+| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach*  | https://doi.org/10.1007/978-3-031-95365-1_17 | [Online tutorial](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) |
+
+### Other tools
+
+In addition to the `tna` R package, you can also try our [Shiny app](https://sonsoleslp.shinyapps.io/tna-app/) and [Jamovi plugin](https://github.com/sonsoleslp/jTNA).
 
 ## Installation
 
@@ -173,3 +204,15 @@ comparison$centralities$stats |>
   gt::gt() |>
   gt::as_raw_html()
 ```
+
+
+
+# Papers using TNA
+
+* Saqr, M., Lopez-Pernas, S., Tormanen, T., Kaliisa, R., Misiejuk, K., & Tikka, S. (2025). Transition Network Analysis: A Novel Framework for Modeling, Visualizing, and Identifying the Temporal Patterns of Learners and Learning Processes. Proceedings of the 15th International Learning Analytics and Knowledge Conference (LAK ’25), 351–361. ACM. https://doi.org/10.1145/3706468.3706513
+* Tikka, S., Lopez-Pernas, S., & Saqr, M. (2025). tna: An R Package for Transition Network Analysis. Applied Psychological Measurement (online ahead of print). doi:10.1177/01466216251348840
+* López-Pernas, S., Misiejuk, K., Kaliisa, R., & Saqr, M. (2025). Capturing the process of students’ AI interactions when creating and learning complex network structures. IEEE Transactions on Learning Technologies, 1–13. https://doi.org/10.1109/tlt.2025.3568599
+* Törmänen, T., Saqr, M., López-Pernas, S., Mänty, K., Suoraniemi, J., Heikkala, N., & Järvenoja, H. (2025). Emotional dynamics and regulation in collaborative learning. Learning and Instruction, 100, 102188. https://doi.org/10.1016/j.learninstruc.2025.102188
+* López-Pernas, S., Misiejuk, K., Oliveira, E., & Saqr, M. (2025). The dynamics of the self-regulation process in student-AI interactions: The case of problem-solving in programming education. Proceedings of the 25th Koli Calling International Conference on Computing Education Research, 1–12. https://doi.org/10.1145/3769994.3770043
+* Misiejuk, K., Kaliisa, R., Lopez-Pernas, S., & Saqr, M. (2026). Expanding the Quantitative Ethnography Toolkit with Transition Network Analysis: Exploring Methodological Synergies and Boundaries. In Advances in Quantitative Ethnography. ICQE 2025, CCIS vol. 2677. Springer. https://doi.org/10.1007/978-3-032-12229-2_10
+* Lopez-Pernas, S., Misiejuk, K., Tikka, S., & Saqr, M. (2026). Role Dynamics in Student-AI Collaboration: A Heterogeneous Transition Network Analysis Approach. SSRN preprint. https://doi.org/10.2139/ssrn.6082190

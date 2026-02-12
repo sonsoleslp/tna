@@ -128,3 +128,94 @@ test_that("simulate.group_tna long format binds cleanly and has required columns
   expect_true(all(sim$time >= 1 & sim$time <= 6))
   #expect_true(all(grepl("^T\\d+$", sim$t_label)))
 })
+
+# Tests for freq_to_prob edge cases
+test_that("freq_to_prob handles zero rows with uniform option", {
+  # Create a 3x3 matrix with a zero row (row 2)
+  prob <- matrix(c(1, 2, 3, 0, 0, 0, 4, 5, 6), nrow = 3, byrow = TRUE)
+  result <- freq_to_prob(prob, zero_row = "uniform")
+
+  # Zero row should have uniform distribution (1/3 each)
+  expect_equal(result[2, ], rep(1/3, 3))
+  # Non-zero rows should be normalized
+  expect_equal(sum(result[1, ]), 1)
+  expect_equal(sum(result[3, ]), 1)
+})
+
+test_that("freq_to_prob handles zero rows with self option", {
+  # Create a 3x3 matrix with a zero row (row 2)
+  prob <- matrix(c(1, 2, 3, 0, 0, 0, 4, 5, 6), nrow = 3, byrow = TRUE)
+  result <- freq_to_prob(prob, zero_row = "self")
+
+  # Zero row should have self-loop (1 on diagonal, 0 elsewhere)
+  expect_equal(result[2, 1], 0)
+  expect_equal(result[2, 2], 1)
+  expect_equal(result[2, 3], 0)
+})
+
+test_that("freq_to_prob normalizes rows correctly", {
+  # Row sums > 1 should be normalized
+  prob <- matrix(c(10, 20, 30, 40), nrow = 2, byrow = TRUE)
+  result <- freq_to_prob(prob, zero_row = "self")
+
+  # Each row should sum to 1
+  expect_equal(rowSums(result), c(1, 1))
+  expect_equal(result[1, ], c(1/3, 2/3))
+  expect_equal(result[2, ], c(3/7, 4/7))
+})
+
+test_that("simulate.group_tna handles unnamed groups", {
+  set.seed(0)
+  # Create group_tna without names
+  unnamed_model <- mock_group_tna
+  names(unnamed_model) <- NULL
+
+  sim <- simulate(unnamed_model, nsim = 5, max_len = 5)
+  expect_true("group" %in% names(sim))
+  # Should use numeric group names
+  expect_true(all(sim$group %in% c("1", "2")))
+})
+
+test_that("simulate.tna validates na_range correctly", {
+  expect_error(
+    simulate(mock_tna, nsim = 10, max_len = 10, na_range = c(5, 3)),
+    "Invalid"
+  )
+  expect_error(
+    simulate(mock_tna, nsim = 10, max_len = 10, na_range = c(-1, 5)),
+    "Invalid"
+  )
+  expect_error(
+    simulate(mock_tna, nsim = 10, max_len = 10, na_range = c(0, 15)),
+    "Invalid"
+  )
+})
+
+test_that("simulate.group_tna validates nsim length", {
+  expect_error(
+    simulate(mock_group_tna, nsim = c(1, 2, 3), max_len = 10),
+    "must be length 1 or the same length"
+  )
+})
+
+test_that("simulate.group_tna validates max_len length", {
+  expect_error(
+    simulate(mock_group_tna, nsim = 10, max_len = c(5, 10, 15)),
+    "must be length 1 or the same length"
+  )
+})
+
+test_that("simulate.tna rejects unsupported model types", {
+  mock_co <- mock_tna
+  attr(mock_co, "type") <- "co-occurrence"
+  expect_error(
+    simulate(mock_co, nsim = 10, max_len = 10),
+    "Simulation is only supported"
+  )
+})
+
+test_that("simulate.tna seed parameter produces reproducible results", {
+  sim1 <- simulate(mock_tna, nsim = 5, max_len = 10, seed = 123)
+  sim2 <- simulate(mock_tna, nsim = 5, max_len = 10, seed = 123)
+  expect_equal(sim1, sim2)
+})

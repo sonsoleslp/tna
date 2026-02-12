@@ -1,0 +1,568 @@
+---
+title: "tna — R Package Documentation"
+subtitle: "v1.1.0 — Transition Network Analysis"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+    theme: flatly
+    highlight: tango
+    code_folding: hide
+    number_sections: false
+#knit: (function(input, ...) rmarkdown::render(input, output_file = "tna_knit.html", ...))
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, warning = FALSE,
+  fig.width = 8, fig.height = 6,
+  comment = "#>"
+)
+library(tna)
+```
+
+---
+
+**tna** provides tools for performing Transition Network Analysis (TNA) to study relational dynamics. Build Markov models from sequence data, compute centrality measures, detect communities and cliques, and validate findings with bootstrapping and permutation tests.
+
+**Install:**
+
+```{r eval=FALSE}
+install.packages("tna")
+# or dev version:
+devtools::install_github("sonsoleslp/tna")
+```
+
+Requires R >= 4.1.0. All analysis objects have `print()`, `summary()`, and `plot()` methods.
+
+---
+
+# Building Models
+
+## `build_model()`
+
+Construct a transition network analysis model from sequence data. Requires specifying `type`. For convenience, use the shortcut functions: `tna()` = relative, `ftna()` = frequency, `ctna()` = co-occurrence, `atna()` = attention.
+
+```
+build_model(x, type = "relative", scaling = character(0L), cols = everything(),
+            params = list(), inits, begin_state, end_state)
+```
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `x` | `data.frame` (wide), `stslist`, `matrix`, or `tna_data` | — |
+| `type` | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"window"`, `"reverse"`, `"attention"` | `"relative"` |
+| `scaling` | `"minmax"`, `"max"`, `"rank"`, or empty vector | `character(0)` |
+| `params` | List: `n_gram`, `max_gap`, `window_size`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration` | `list()` |
+
+**Returns:** A `tna` object with `$weights`, `$inits`, `$labels`, `$data`.
+
+```{r}
+# Using build_model with explicit type
+model <- build_model(group_regulation, type = "relative")
+
+# Shortcut functions (preferred)
+model <- tna(group_regulation)       # type = "relative"
+model_f <- ftna(group_regulation)    # type = "frequency"
+model_c <- ctna(group_regulation)    # type = "co-occurrence"
+model_a <- atna(group_regulation)    # type = "attention"
+
+print(model)
+summary(model)
+```
+
+### Model types
+
+| Type | Description |
+|------|-------------|
+| `"relative"` | Transition probabilities (rows sum to 1). Default |
+| `"frequency"` | Raw transition counts |
+| `"co-occurrence"` | Co-occurrence within sequences |
+| `"n-gram"` | Higher-order transitions |
+| `"gap"` | Non-adjacent transitions, weighted by gap |
+| `"window"` | Transitions within sliding window |
+| `"reverse"` | Reverse order (reply networks) |
+| `"attention"` | Exponential decay-weighted downstream pairs |
+
+## `group_model()` / `group_tna()`
+
+Build a TNA model for each group. Accepts manual group assignments, `mhmm` objects, or `tna_clustering` results. Most tna functions accept `group_tna` directly — no need to specify groups again.
+
+```
+group_model(x, group, type = "relative", scaling = character(0L),
+            groupwise = FALSE, cols = everything(), params = list(), na.rm = TRUE, ...)
+```
+
+```{r}
+# From mixture Markov model
+model <- group_model(engagement_mmm)
+print(model)
+summary(model)
+```
+
+```{r}
+# Manual groups
+group <- c(rep("High", 1000), rep("Low", 1000))
+model <- group_model(group_regulation, group = group)
+```
+
+## `sna()`
+
+Build a social network analysis model from edge-list data (from, to, weight).
+
+```{r}
+set.seed(42)
+d <- data.frame(
+  from = sample(LETTERS[1:4], 100, replace = TRUE),
+  to = sample(LETTERS[1:4], 100, replace = TRUE),
+  weight = rexp(100)
+)
+model_sna <- sna(d)
+```
+
+---
+
+# Plotting
+
+All TNA analysis objects have `plot()` methods returning qgraph or ggplot2 objects.
+
+## `plot()`
+
+Plot a TNA model as a transition network.
+
+```
+plot(x, labels, colors, pie, cut, show_pruned = TRUE, pruned_edge_color = "pink",
+     edge.color = NA, edge.labels = TRUE, edge.label.position = 0.65,
+     layout = "circle", layout_args = list(), scale_nodes, scaling_factor = 0.5,
+     mar = rep(5, 4), theme = "colorblind", ...)
+```
+
+```{r}
+model <- tna(group_regulation)
+plot(model)
+```
+
+```{r}
+plot(model, layout = "spring", scale_nodes = "OutStrength")
+```
+
+```{r}
+# Group model — side-by-side panels
+gmodel <- group_model(engagement_mmm)
+plot(gmodel)
+```
+
+## `plot_frequencies()`
+
+Bar plot of state frequency distribution.
+
+```{r}
+model <- tna(group_regulation)
+plot_frequencies(model)
+```
+
+```{r}
+# Group comparison
+gmodel <- group_model(engagement_mmm)
+plot_frequencies(gmodel)
+```
+
+## `plot_mosaic()`
+
+Mosaic plot with chi-square test results. Requires frequency model (`ftna()`).
+
+```{r}
+model_f <- ftna(group_regulation)
+plot_mosaic(model_f)
+```
+
+## `plot_sequences()`
+
+Sequence index plots or state distribution plots.
+
+```
+plot_sequences(x, cols = everything(), group, type = "index", scale = "proportion",
+               geom = "bar", include_na = FALSE, colors, na_color = "white",
+               sort_by, show_n = TRUE, border, title, legend_title, xlab, ylab,
+               tick = 5, ncol = 2L, ...)
+```
+
+```{r}
+plot_sequences(group_regulation)
+```
+
+```{r}
+plot_sequences(group_regulation, type = "distribution")
+```
+
+```{r}
+# Group comparison — pass group_tna directly
+gmodel <- group_model(engagement_mmm)
+plot_sequences(gmodel)
+```
+
+## `plot_compare()`
+
+Difference network between two models. Green = x greater, red = y greater.
+
+```{r}
+model_a <- tna(group_regulation[1:1000, ])
+model_b <- tna(group_regulation[1001:2000, ])
+plot_compare(model_a, model_b)
+```
+
+## `plot_associations()`
+
+Association network. Requires frequency model (`ftna()`).
+
+```{r}
+model_f <- ftna(group_regulation)
+plot_associations(model_f)
+```
+
+## `hist()`
+
+```{r}
+model <- tna(group_regulation)
+hist(model)
+```
+
+### Additional plot methods
+
+| Object | plot() produces |
+|--------|----------------|
+| `tna_centralities` | Lollipop charts by measure |
+| `tna_communities` | Network colored by community |
+| `tna_cliques` | Individual clique subnetworks |
+| `tna_bootstrap` | Significant edges only |
+| `tna_permutation` | Significant edge differences |
+| `tna_stability` | Stability curves with CS-coefficients |
+| `tna_comparison` | Heatmap or difference viz |
+| `tna_sequence_comparison` | Pattern comparison chart |
+| `group_tna` | Side-by-side network plots |
+
+---
+
+# Data Preparation
+
+## `prepare_data()`
+
+Convert long-format event logs into wide-format sequences.
+
+```
+prepare_data(data, actor, time, action, order, time_threshold = 900,
+             custom_format = NULL, is_unix_time = FALSE,
+             unix_time_unit = "seconds", unused_fn = dplyr::first)
+```
+
+```{r}
+results <- prepare_data(
+  group_regulation_long,
+  actor = "Actor", time = "Time", action = "Action"
+)
+print(results$statistics)
+```
+
+## `import_data()`
+
+Transform wide-format feature data into long-format sequence data.
+
+```
+import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)
+```
+
+## `import_onehot()`
+
+Import one-hot encoded data as co-occurrence network.
+
+```
+import_onehot(data, cols, window = 1L)
+```
+
+## `simulate()`
+
+Simulate sequence data from a TNA model (requires `type = "relative"`).
+
+```{r}
+model <- tna(group_regulation)
+sim <- simulate(model, nsim = 5, seed = 123, max_len = 10)
+print(sim)
+```
+
+---
+
+# Centrality Measures
+
+## `centralities()`
+
+Calculate centrality measures. Works on `tna`, `group_tna`, and `matrix`.
+
+```
+centralities(x, loops = FALSE, normalize = FALSE, measures)
+```
+
+| Measure | Description |
+|---------|-------------|
+| `OutStrength` | Total weight of outgoing edges |
+| `InStrength` | Total weight of incoming edges |
+| `ClosenessIn` / `ClosenessOut` / `Closeness` | Closeness centrality variants |
+| `Betweenness` | Geodesic betweenness |
+| `BetweennessRSP` | Randomized shortest paths betweenness |
+| `Diffusion` | Diffusion centrality |
+| `Clustering` | Signed clustering coefficient |
+
+```{r}
+model <- tna(group_regulation)
+cm <- centralities(model)
+print(cm)
+plot(cm, ncol = 3, reorder = TRUE)
+```
+
+```{r}
+# On group_tna directly
+gmodel <- group_model(engagement_mmm)
+centralities(gmodel)
+```
+
+## `betweenness_network()`
+
+Build network with edge betweenness as weights.
+
+```{r}
+model <- tna(group_regulation)
+bn <- betweenness_network(model)
+print(bn)
+```
+
+## `estimate_cs()`
+
+Centrality stability via subset sampling.
+
+```
+estimate_cs(x, loops = FALSE, normalize = FALSE,
+            measures = c("InStrength", "OutStrength", "Betweenness"),
+            iter = 1000, method = "pearson",
+            drop_prop = seq(0.1, 0.9, by = 0.1),
+            threshold = 0.7, certainty = 0.95, progressbar = FALSE)
+```
+
+```{r}
+model <- tna(group_regulation)
+cs <- estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 100)
+print(cs)
+plot(cs)
+```
+
+---
+
+# Network Structure
+
+## `communities()`
+
+Detect communities using 7 igraph algorithms. Works on `tna` and `group_tna`.
+
+```
+communities(x, methods, gamma = 1)
+```
+
+```{r}
+model <- tna(group_regulation)
+comm <- communities(model)
+print(comm)
+plot(comm, method = "spinglass")
+```
+
+```{r}
+# On group_tna directly
+gmodel <- group_model(engagement_mmm)
+communities(gmodel)
+```
+
+## `cliques()`
+
+Identify cliques (complete subgraphs) of a given size.
+
+```
+cliques(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
+```
+
+```{r}
+model <- tna(group_regulation)
+cliq <- cliques(model, size = 2)
+print(cliq)
+plot(cliq, n = 3, ask = FALSE)
+```
+
+---
+
+# Comparison
+
+## `compare()`
+
+Compare two TNA models with comprehensive metrics.
+
+```{r}
+gmodel <- group_model(engagement_mmm)
+comp <- compare(gmodel, i = 1, j = 2)
+print(comp)
+plot(comp)
+```
+
+## `compare_sequences()`
+
+Compare subsequence patterns between groups. Pass `group_tna` directly.
+
+```
+# For group_tna (groups already defined)
+compare_sequences(x, sub, min_freq = 5L, correction = "bonferroni", ...)
+```
+
+```{r}
+gmodel <- group_model(engagement_mmm)
+comp_seq <- compare_sequences(gmodel)
+print(head(comp_seq, 10))
+plot(comp_seq)
+```
+
+## `permutation_test()`
+
+Permutation tests for edge weight and centrality differences.
+
+```
+permutation_test(x, y, adjust = "none", iter = 1000, paired = FALSE,
+                 level = 0.05, measures = character(0), ...)
+```
+
+```{r}
+model_x <- tna(group_regulation[1:200, ])
+model_y <- tna(group_regulation[1001:1200, ])
+perm <- permutation_test(model_x, model_y, iter = 100)
+print(perm)
+plot(perm)
+```
+
+---
+
+# Validation
+
+## `bootstrap()`
+
+Bootstrap transition networks for confidence intervals and significance.
+
+```
+bootstrap(x, iter = 1000, level = 0.05, method = "stability",
+          threshold, consistency_range = c(0.75, 1.25))
+```
+
+```{r}
+model <- tna(group_regulation)
+boot <- bootstrap(model, iter = 100)
+print(boot)
+plot(boot)
+```
+
+## `bootstrap_cliques()`
+
+Bootstrap cliques to assess stability.
+
+```{r}
+bc <- bootstrap_cliques(model, size = 2, iter = 100)
+print(bc)
+```
+
+## `prune()`
+
+Remove weak edges. Four methods available.
+
+```
+prune(x, method = "threshold", threshold = 0.1, lowest = 0.05,
+      level = 0.5, boot = NULL, ...)
+```
+
+```{r}
+model <- tna(group_regulation)
+
+pruned_t <- prune(model, method = "threshold", threshold = 0.1)
+pruned_p <- prune(model, method = "lowest", lowest = 0.05)
+pruned_d <- prune(model, method = "disparity", level = 0.5)
+
+pruning_details(pruned_t)
+```
+
+```{r}
+plot(pruned_t)
+```
+
+```{r}
+# Restore and reapply
+restored <- deprune(pruned_t)
+repruned <- reprune(restored)
+```
+
+---
+
+# Clustering
+
+## `cluster_sequences()`
+
+Cluster sequences using string distance-based dissimilarity.
+
+```
+cluster_sequences(data, k, dissimilarity = "hamming", method = "pam",
+                  na_syms = c("*", "%"), weighted = FALSE, lambda = 1, ...)
+```
+
+```{r}
+result <- cluster_sequences(group_regulation[1:200, ], k = 3, dissimilarity = "osa")
+print(result)
+
+# Pass directly to group_model
+gmodel_clust <- group_model(result)
+plot(gmodel_clust)
+```
+
+## `rename_groups()`
+
+```{r}
+gmodel <- group_model(engagement_mmm)
+gmodel_renamed <- rename_groups(gmodel, c("A", "B", "C"))
+cat("Original:", names(group_model(engagement_mmm)), "\n")
+cat("Renamed:", names(gmodel_renamed), "\n")
+```
+
+## `mmm_stats()`
+
+```{r}
+mmm_stats(engagement_mmm)
+```
+
+---
+
+# Summary & Conversion
+
+## `summary()`
+
+```{r}
+model <- tna(group_regulation)
+summary(model)
+```
+
+```{r}
+gmodel <- group_model(engagement_mmm)
+summary(gmodel)
+```
+
+## `as.igraph()`
+
+```{r}
+model <- tna(group_regulation)
+g <- as.igraph(model)
+print(g)
+```
+
+---
+
+**tna** v1.1.0 | MIT License | Mohammed Saqr, Santtu Tikka, Sonsoles Lopez-Pernas
+
+Reference: Saqr M., Lopez-Pernas S., et al. (2025). Transition Network Analysis. *Proc. LAK '25*, 351-361. [doi:10.1145/3706468.3706513](https://doi.org/10.1145/3706468.3706513)

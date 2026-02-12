@@ -189,6 +189,19 @@ test_that("comparison results can be printed", {
   )
 })
 
+test_that("comparison results with centralities can be printed", {
+  model_x <- tna(group_regulation[1:200, ])
+  model_y <- tna(group_regulation[1001:1200, ])
+  # Comparing models with centrality measures included
+  comp <- compare(model_x, model_y, measures = c("InStrength", "OutStrength"))
+  expect_true(!is.null(comp$centrality_differences))
+  expect_true(!is.null(comp$centrality_correlations))
+  expect_error(
+    capture.output(print(comp)),
+    NA
+  )
+})
+
 test_that("permutation test results can be printed for clusters", {
   perm <- permutation_test(mmm_model, iter = 50)
   expect_error(

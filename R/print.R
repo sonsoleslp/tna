@@ -32,64 +32,64 @@ print.summary.tna_bootstrap <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)
 }
 
-# #' Print a Summary of a Mixture Markov Model Fit
-# #'
-# #' @export
-# #' @family groups
-# #' @param x A `summary.tna_mmm` object.
-# #' @param digits An `integer` giving the number of *significant* digits
-# #'   to print.
-# #' @param ... Arguments passed to the generic `print` method.
-# #' @return A `summary.tna_mmm` object (invisibly) with details of the model fit.
-# #' @examples
-# #' sumr <- summary(engagement_tna_mmm)
-# #' print(sumr)
-# #'
-# print.summary.tna_mmm <- function(x, digits = 3L, ...) {
-#   cat("Covariate effects :\n")
-#   cat("Reference cluster:", x$cluster_names[1L], "\n\n")
-#   cf <- x$coefficients
-#   v <- diag(x$vcov)
-#   k <- ncol(x$prior)
-#   q <- nrow(cf)
-#   mean_prior <- colMeans(x$prior)
-#   names(mean_prior) <- x$cluster_names
-#   clust_tab <- table(x$assignments)
-#   tab <- matrix(
-#     c(
-#       as.character(clust_tab),
-#       as.character(round(prop.table(clust_tab), digits = digits))
-#     ),
-#     nrow = 2L,
-#     byrow = TRUE
-#   )
-#   colnames(tab) <- x$cluster_names
-#   rownames(tab) <- c("count", "proportion")
-#   for (i in seq(2L, k)) {
-#     idx <- seq((i - 2L) * q + 1L, (i - 1L) * q)
-#     cat(x$cluster_names[i], ":\n")
-#     d <- data.frame(
-#       `Estimate` = round(cf[, i], digits = digits),
-#       `Std. error` = round(sqrt(v[idx]), digits = digits),
-#       check.names = FALSE
-#     )
-#     rownames(d) <- rownames(cf)
-#     print(d, digits = digits, ...)
-#     cat("\n")
-#   }
-#   cat("Log-likelihood:", round(x$loglik, digits = digits), "\n")
-#   cat("AIC:", round(x$aic, digits = digits), "\n")
-#   cat("BIC:", round(x$bic, digits = digits), "\n\n")
-#   cat("Mean of prior cluster probabilities :\n")
-#   print(mean_prior, digits = digits, ...)
-#   cat("\nMost probable clusters :\n")
-#   print.default(tab, quote = FALSE, print.gap = 2L, right = TRUE)
-#   cat("\n")
-#   cat("Classification table :\n")
-#   cat("Mean cluster probabilities (columns) by the most probable cluster (rows)\n\n")
-#   print(x$classification, digits = digits, ...)
-#   invisible(x)
-# }
+#' Print a Summary of a Mixture Markov Model Fit
+#'
+#' @export
+#' @family groups
+#' @param x A `summary.tna_mmm` object.
+#' @param digits An `integer` giving the number of *significant* digits
+#'   to print.
+#' @param ... Arguments passed to the generic `print` method.
+#' @return A `summary.tna_mmm` object (invisibly) with details of the model fit.
+#' @examples
+#' sumr <- summary(engagement_tna_mmm)
+#' print(sumr)
+#'
+print.summary.tna_mmm <- function(x, digits = 3L, ...) {
+  cat("Covariate effects :\n")
+  cat("Reference cluster:", x$cluster_names[1L], "\n\n")
+  cf <- x$coefficients
+  v <- diag(x$vcov)
+  k <- ncol(x$prior)
+  q <- nrow(cf)
+  mean_prior <- colMeans(x$prior)
+  names(mean_prior) <- x$cluster_names
+  clust_tab <- table(x$assignments)
+  tab <- matrix(
+    c(
+      as.character(clust_tab),
+      as.character(round(prop.table(clust_tab), digits = digits))
+    ),
+    nrow = 2L,
+    byrow = TRUE
+  )
+  colnames(tab) <- x$cluster_names
+  rownames(tab) <- c("count", "proportion")
+  for (i in seq(2L, k)) {
+    idx <- seq((i - 2L) * q + 1L, (i - 1L) * q)
+    cat(x$cluster_names[i], ":\n")
+    d <- data.frame(
+      `Estimate` = round(cf[, i], digits = digits),
+      `Std. error` = round(sqrt(v[idx]), digits = digits),
+      check.names = FALSE
+    )
+    rownames(d) <- rownames(cf)
+    print(d, digits = digits, ...)
+    cat("\n")
+  }
+  cat("Log-likelihood:", round(x$loglik, digits = digits), "\n")
+  cat("AIC:", round(x$aic, digits = digits), "\n")
+  cat("BIC:", round(x$bic, digits = digits), "\n\n")
+  cat("Mean of prior cluster probabilities :\n")
+  print(mean_prior, digits = digits, ...)
+  cat("\nMost probable clusters :\n")
+  print.default(tab, quote = FALSE, print.gap = 2L, right = TRUE)
+  cat("\n")
+  cat("Classification table :\n")
+  cat("Mean cluster probabilities (columns) by the most probable cluster (rows)\n\n")
+  print(x$classification, digits = digits, ...)
+  invisible(x)
+}
 
 #' Print a `tna` Object
 #'
@@ -382,37 +382,37 @@ print.tna_permutation <- function(x, ...) {
   invisible(x)
 }
 
-# #' Print a Mixture Markov Model Fit
-# #'
-# #' @export
-# #' @family clusters
-# #' @param x A `tna_mmm` object.
-# #' @param digits An `integer` giving the number of *significant* digits
-# #'   to print.
-# #' @param ... Arguments passed to the generic `print` method
-# #' @return `x` (invisibly)
-# #' @examples
-# #' print(engagement_tna_mmm)
-# #'
-# print.tna_mmm <- function(x, digits = 3L, ...) {
-#   cat("Mixture Markov Model\n\n")
-#   cat("Data:", x$data_name, "\n")
-#   cat("Number of sequences:", nrow(x$data), "\n")
-#   cat("Number of time points:", ncol(x$data), "\n")
-#   cat("Number of clusters:", x$k, "\n")
-#   cat("States:", cs(x$states), "\n")
-#   cat("Coefficients :\n")
-#   print(coef.tna_mmm(x), digits = digits)
-#   cat("\n")
-#   cat("Cluster sizes:")
-#   print(x$sizes)
-#   cat("\n")
-#   cat("Intial probabilities :\n")
-#   print.listof(x$inits, digits = digits)
-#   cat("Transition probabilities :\n")
-#   print.listof(x$trans, digits = digits)
-#   invisible(x)
-# }
+#' Print a Mixture Markov Model Fit
+#'
+#' @export
+#' @family clusters
+#' @param x A `tna_mmm` object.
+#' @param digits An `integer` giving the number of *significant* digits
+#'   to print.
+#' @param ... Arguments passed to the generic `print` method
+#' @return `x` (invisibly)
+#' @examples
+#' print(engagement_tna_mmm)
+#'
+print.tna_mmm <- function(x, digits = 3L, ...) {
+  cat("Mixture Markov Model\n\n")
+  cat("Data:", x$data_name, "\n")
+  cat("Number of sequences:", nrow(x$data), "\n")
+  cat("Number of time points:", ncol(x$data), "\n")
+  cat("Number of clusters:", x$k, "\n")
+  cat("States:", cs(x$states), "\n")
+  cat("Coefficients :\n")
+  print(coef.tna_mmm(x), digits = digits)
+  cat("\n")
+  cat("Cluster sizes:")
+  print(x$sizes)
+  cat("\n")
+  cat("Intial probabilities :\n")
+  print.listof(x$inits, digits = digits)
+  cat("Transition probabilities :\n")
+  print.listof(x$trans, digits = digits)
+  invisible(x)
+}
 
 #' Print the Results of Clustering
 #'
@@ -642,7 +642,6 @@ print.group_tna_stability <- function(x, ...) {
   print.listof(x, ...)
   invisible(x)
 }
-
 
 #' Print Permutation Test Results
 #'

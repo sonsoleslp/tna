@@ -7,23 +7,26 @@
 \alias{centralities.group_tna}
 \title{Calculate Centrality Measures for a Transition Matrix}
 \usage{
-centralities(x, loops = FALSE, normalize = FALSE, measures)
+centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
-\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, measures)
+\method{centralities}{tna}(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
-\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, measures)
+\method{centralities}{matrix}(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
-\method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, measures)
+\method{centralities}{group_tna}(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 }
 \arguments{
 \item{x}{A \code{tna} object, a \code{group_tna} object, or
 a square \code{matrix} representing edge weights.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
-network when computing the centrality measures (default is \code{FALSE}).}
+network when computing the centrality measures. The default is \code{FALSE}.}
 
 \item{normalize}{A \code{logical} value indicating whether the centralities
-should be normalized (default is \code{FALSE}).}
+should be normalized. The default is \code{FALSE}.}
+
+\item{invert}{A \code{logical} value indicating whether the weights should be
+inverted for distance-based measures. The default is \code{TRUE}.}
 
 \item{measures}{A \code{character} vector indicating which centrality
 measures should be computed. If missing, all available measures are

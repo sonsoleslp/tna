@@ -138,11 +138,11 @@ summary.tna_mmm <- function(object, ...) {
       object$cluster_names,
       function(i) {
         assign_i <- object$assignments == i
-        if (any(assign_i)) {
-          colMeans(object$posterior[assign_i, , drop = FALSE])
-        } else {
+        ifelse_(
+          any(assign_i),
+          colMeans(object$posterior[assign_i, , drop = FALSE]),
           rep(NA_real_, ncol(object$posterior))
-        }
+        )
       }
     )
   )

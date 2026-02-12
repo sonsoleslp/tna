@@ -33,6 +33,7 @@ Cluster-related functions
 \code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{group_model}()},
+\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

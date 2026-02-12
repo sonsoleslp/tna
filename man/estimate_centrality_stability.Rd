@@ -13,6 +13,7 @@ estimate_cs(
   x,
   loops,
   normalize,
+  invert,
   measures,
   iter,
   method,
@@ -26,6 +27,7 @@ estimate_centrality_stability(
   x,
   loops,
   normalize,
+  invert,
   measures,
   iter,
   method,
@@ -39,6 +41,7 @@ estimate_centrality_stability(
   x,
   loops = FALSE,
   normalize = FALSE,
+  invert = TRUE,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
@@ -52,6 +55,7 @@ estimate_centrality_stability(
   x,
   loops = FALSE,
   normalize = FALSE,
+  invert = TRUE,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
@@ -65,6 +69,7 @@ estimate_centrality_stability(
   x,
   loops = FALSE,
   normalize = FALSE,
+  invert = TRUE,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
@@ -78,6 +83,7 @@ estimate_centrality_stability(
   x,
   loops = FALSE,
   normalize = FALSE,
+  invert = TRUE,
   measures = c("InStrength", "OutStrength", "Betweenness"),
   iter = 1000,
   method = "pearson",
@@ -92,15 +98,18 @@ estimate_centrality_stability(
 analysis data. The object should be created from a sequence data object.}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
-network when computing the centrality measures (default is \code{FALSE}).}
+network when computing the centrality measures. The default is \code{FALSE}.}
 
 \item{normalize}{A \code{logical} value indicating whether to normalize
 the centrality measures. The default is \code{FALSE}.}
 
+\item{invert}{A \code{logical} value indicating whether the weights should be
+inverted for distance-based measures. The default is \code{TRUE}.}
+
 \item{measures}{A \code{character} vector of centrality measures to estimate.
 The default measures are \code{"InStrength"}, \code{"OutStrength"},
-and \code{"Betweenness"}. See \code{\link[=centralities]{centralities()}} for a list of available centrality
-measures.}
+and \code{"Betweenness"}. See \code{\link[=centralities]{centralities()}} for a list of available
+centrality measures.}
 
 \item{iter}{An \code{integer} specifying the number of resamples to draw.
 The default is 1000.}
@@ -109,8 +118,8 @@ The default is 1000.}
 type. The default is \code{"pearson"}. See \code{\link[stats:cor]{stats::cor()}} for details.}
 
 \item{drop_prop}{A \code{numeric} vector specifying the proportions of
-cases to drop in each sampling iteration. Default is a sequence from 0.1 to
-0.9 in increments of 0.1.}
+cases to drop in each sampling iteration. Default is a sequence from 0.1
+to 0.9 in increments of 0.1.}
 
 \item{threshold}{A \code{numeric} value specifying the correlation threshold for
 calculating the CS-coefficient. The default is 0.7.}

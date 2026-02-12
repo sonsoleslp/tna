@@ -205,6 +205,7 @@ Cluster-related functions
 \code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{mmm_stats}()},
+\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

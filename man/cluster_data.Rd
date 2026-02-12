@@ -85,6 +85,5 @@ data <- data.frame(
 
 # PAM clustering with optimal string alignment (default)
 result <- cluster_sequences(data, k = 2)
-print(result)
 
 }
