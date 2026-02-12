@@ -199,51 +199,6 @@ test_that("range check variants are correct", {
   )
 })
 
-# Tests for check_em_control
-test_that("check_em_control returns defaults when missing", {
-  result <- check_em_control()
-  expect_type(result, "list")
-  expect_equal(result$maxiter, 500L)
-  expect_equal(result$maxiter_m, 500L)
-  expect_equal(result$reltol, 1e-10)
-  expect_equal(result$reltol_m, 1e-6)
-  expect_equal(result$restarts, 10L)
-  expect_equal(result$seed, 1L)
-  expect_equal(result$step, 1.0)
-})
-
-test_that("check_em_control merges with defaults", {
-  result <- check_em_control(list(maxiter = 100L))
-  expect_equal(result$maxiter, 100L)
-  expect_equal(result$maxiter_m, 500L)  # default
-  expect_equal(result$restarts, 10L)  # default
-})
-
-test_that("check_em_control validates maxiter", {
-  expect_error(
-    check_em_control(list(maxiter = -1)),
-    "positive"
-  )
-})
-
-test_that("check_em_control validates step range", {
-  expect_error(
-    check_em_control(list(step = 1.5)),
-    "between 0 and 1"
-  )
-  expect_error(
-    check_em_control(list(step = -0.1)),
-    "between 0 and 1"
-  )
-})
-
-test_that("check_em_control validates reltol", {
-  expect_error(
-    check_em_control(list(reltol = -1)),
-    "positive"
-  )
-})
-
 test_that("check_numeric validates correctly", {
   f <- function(z) {
     check_numeric(z)

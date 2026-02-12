@@ -4,7 +4,6 @@
 \alias{group_model}
 \alias{group_model.default}
 \alias{group_model.mhmm}
-\alias{group_model.tna_mmm}
 \alias{group_model.tna_clustering}
 \alias{group_tna}
 \alias{group_ftna}
@@ -28,16 +27,6 @@ group_model(x, ...)
 )
 
 \method{group_model}{mhmm}(
-  x,
-  type = "relative",
-  scaling = character(0L),
-  groupwise = FALSE,
-  params = list(),
-  na.rm = TRUE,
-  ...
-)
-
-\method{group_model}{tna_mmm}(
   x,
   type = "relative",
   scaling = character(0L),
@@ -202,10 +191,8 @@ model <- group_atna(group_regulation, group = gl(2, 1000))
 }
 \seealso{
 Cluster-related functions
-\code{\link{cluster_mmm}()},
 \code{\link{communities}()},
 \code{\link{mmm_stats}()},
-\code{\link{print.tna_mmm}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

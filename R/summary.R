@@ -118,52 +118,6 @@ summary.tna_bootstrap <- function(object, ...) {
   )
 }
 
-#' Summarize a Mixture Markov Model Fit
-#'
-#' @export
-#' @param object A `tna_mmm` object.
-#' @param ... Not used.
-#' @return A `summary.tna_mmm` object containing the log-likelihood value,
-#' the regression coefficients, the variance-covariance matrix and other
-#' details.
-#' @examples
-#' summary(engagement_tna_mmm)
-#'
-summary.tna_mmm <- function(object, ...) {
-  check_missing(object)
-  check_class(object, "tna_mmm")
-  mean_prob <- do.call(
-    base::rbind,
-    lapply(
-      object$cluster_names,
-      function(i) {
-        assign_i <- object$assignments == i
-        ifelse_(
-          any(assign_i),
-          colMeans(object$posterior[assign_i, , drop = FALSE]),
-          rep(NA_real_, ncol(object$posterior))
-        )
-      }
-    )
-  )
-  dimnames(mean_prob) <- list(object$cluster_names, object$cluster_names)
-  structure(
-    list(
-      loglik = object$loglik,
-      aic = object$aic,
-      bic = object$bic,
-      coefficients = coef.tna_mmm(object, ...),
-      vcov = vcov.tna_mmm(object, ...),
-      prior = object$prior,
-      posterior = object$posterior,
-      assignments = object$assignments,
-      classification = mean_prob,
-      cluster_names = object$cluster_names
-    ),
-    class = "summary.tna_mmm"
-  )
-}
-
 #' Calculate Summary of Network Metrics for a grouped Transition Network
 #'
 #' This function calculates a variety of network metrics for a `tna` object.
