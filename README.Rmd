@@ -49,10 +49,10 @@ We have also released comprehensive new tutorials for the main TNA features:
 
 | Tutorial | Link |
 |--------|------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | https://sonsoles.me/posts/tna-tutorial |
-| TNA Group Analysis: Analysis and Comparison of Groups | https://sonsoles.me/posts/tna-group |
-| TNA Clustering: Discovering and Analysis of Clusters | https://sonsoles.me/posts/tna-clustering |
-| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | https://sonsoles.me/posts/tna-compare |
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | https://sonsoles.me/posts/tna-tutorial/ |
+| TNA Group Analysis: Analysis and Comparison of Groups | https://sonsoles.me/posts/tna-group/ |
+| TNA Clustering: Discovering and Analysis of Clusters | https://sonsoles.me/posts/tna-clustering/ |
+| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | https://sonsoles.me/posts/tna-compare/ |
 | Full reference guide on `tna` functions | https://sonsoles.me/tna/tna.html |
 
 
