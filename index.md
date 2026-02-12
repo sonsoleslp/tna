@@ -18,13 +18,13 @@ more details on TNA.
 We have also released comprehensive new tutorials for the main TNA
 features:
 
-| Tutorial                                                                               | Link                                       |
-|----------------------------------------------------------------------------------------|--------------------------------------------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)                 | <https://sonsoles.me/posts/tna-tutorial>   |
-| TNA Group Analysis: Analysis and Comparison of Groups                                  | <https://sonsoles.me/posts/tna-group>      |
-| TNA Clustering: Discovering and Analysis of Clusters                                   | <https://sonsoles.me/posts/tna-clustering> |
-| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | <https://sonsoles.me/posts/tna-compare>    |
-| Full reference guide on `tna` functions                                                | <https://sonsoles.me/tna/tna.html>         |
+| Tutorial                                                                               | Link                                        |
+|----------------------------------------------------------------------------------------|---------------------------------------------|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)                 | <https://sonsoles.me/posts/tna-tutorial/>   |
+| TNA Group Analysis: Analysis and Comparison of Groups                                  | <https://sonsoles.me/posts/tna-group/>      |
+| TNA Clustering: Discovering and Analysis of Clusters                                   | <https://sonsoles.me/posts/tna-clustering/> |
+| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | <https://sonsoles.me/posts/tna-compare/>    |
+| Full reference guide on `tna` functions                                                | <https://sonsoles.me/tna/tna.html>          |
 
 ### Vignettes
 
@@ -137,15 +137,15 @@ cent <- centralities(tna_model)
 
 |   state    | OutStrength | InStrength | ClosenessIn | ClosenessOut | Closeness | Betweenness | BetweennessRSP | Diffusion | Clustering |
 |:----------:|------------:|-----------:|------------:|-------------:|----------:|------------:|---------------:|----------:|-----------:|
-|   adapt    |       1.000 |      0.345 |      13.406 |        2.333 |    18.546 |      17.000 |          1.000 |     5.586 |      0.337 |
-|  cohesion  |       0.973 |      0.812 |       3.651 |        2.791 |    13.813 |       0.000 |         19.000 |     5.209 |      0.300 |
-| consensus  |       0.918 |      2.667 |       0.798 |        4.344 |    11.481 |       0.000 |        103.000 |     4.660 |      0.161 |
-| coregulate |       0.977 |      0.567 |       4.547 |        2.309 |     5.974 |       5.000 |         27.000 |     5.148 |      0.306 |
-|  discuss   |       0.805 |      1.188 |       1.954 |        2.681 |     7.308 |       0.000 |         53.000 |     4.628 |      0.240 |
-|  emotion   |       0.923 |      0.894 |       1.568 |        3.133 |    14.539 |       0.000 |         36.000 |     5.070 |      0.290 |
-|  monitor   |       0.982 |      0.346 |       6.243 |        2.210 |     7.757 |       3.000 |         11.000 |     5.157 |      0.289 |
-|    plan    |       0.626 |      1.194 |       5.475 |        2.914 |    17.593 |      10.000 |         61.000 |     3.488 |      0.287 |
-| synthesis  |       1.000 |      0.192 |      12.271 |        2.184 |    15.901 |      14.000 |          3.000 |     5.583 |      0.359 |
+|   adapt    |       1.000 |      0.345 |       0.008 |        0.015 |     0.025 |       1.000 |          1.000 |     5.586 |      0.337 |
+|  cohesion  |       0.973 |      0.812 |       0.014 |        0.012 |     0.027 |       0.000 |         19.000 |     5.209 |      0.300 |
+| consensus  |       0.918 |      2.667 |       0.035 |        0.013 |     0.038 |      30.000 |        103.000 |     4.660 |      0.161 |
+| coregulate |       0.977 |      0.567 |       0.016 |        0.015 |     0.021 |       0.000 |         27.000 |     5.148 |      0.306 |
+|  discuss   |       0.805 |      1.188 |       0.020 |        0.013 |     0.027 |      16.000 |         53.000 |     4.628 |      0.240 |
+|  emotion   |       0.923 |      0.894 |       0.014 |        0.012 |     0.023 |       5.000 |         36.000 |     5.070 |      0.290 |
+|  monitor   |       0.982 |      0.346 |       0.008 |        0.014 |     0.019 |       0.000 |         11.000 |     5.157 |      0.289 |
+|    plan    |       0.626 |      1.194 |       0.027 |        0.012 |     0.027 |       9.000 |         61.000 |     3.488 |      0.287 |
+| synthesis  |       1.000 |      0.192 |       0.010 |        0.016 |     0.024 |       7.000 |          3.000 |     5.583 |      0.359 |
 
 Plot the centrality measures
 
@@ -162,7 +162,7 @@ estimate_centrality_stability(tna_model)
 #> Centrality Stability Coefficients
 #> 
 #>  InStrength OutStrength Betweenness 
-#>         0.9         0.9         0.7
+#>         0.9         0.9         0.9
 ```
 
 Identify and plot communities
@@ -212,15 +212,15 @@ print(comparison$centralities$stats)
 
 |   state    | centrality |   diff_true | effect_size |     p_value |
 |:----------:|:----------:|------------:|------------:|------------:|
-|   adapt    | InStrength | -0.23693341 |   -6.534460 | 0.000999001 |
-|  cohesion  | InStrength |  0.01634987 |    0.343033 | 0.718281718 |
-| consensus  | InStrength |  0.53680793 |    7.513230 | 0.000999001 |
-| coregulate | InStrength | -0.25275371 |   -7.250372 | 0.000999001 |
-|  discuss   | InStrength | -0.09009651 |   -1.907370 | 0.049950050 |
-|  emotion   | InStrength |  0.19288376 |    3.932699 | 0.000999001 |
-|  monitor   | InStrength | -0.09192991 |   -3.414719 | 0.001998002 |
-|    plan    | InStrength |  0.12225988 |    2.830524 | 0.003996004 |
-| synthesis  | InStrength | -0.04909607 |   -3.092963 | 0.001998002 |
+|   adapt    | InStrength | -0.23693341 |   -6.746110 | 0.000999001 |
+|  cohesion  | InStrength |  0.01634987 |    0.345312 | 0.720279720 |
+| consensus  | InStrength |  0.53680793 |    7.777826 | 0.000999001 |
+| coregulate | InStrength | -0.25275371 |   -7.385802 | 0.000999001 |
+|  discuss   | InStrength | -0.09009651 |   -1.930958 | 0.046953047 |
+|  emotion   | InStrength |  0.19288376 |    4.215793 | 0.000999001 |
+|  monitor   | InStrength | -0.09192991 |   -3.454281 | 0.000999001 |
+|    plan    | InStrength |  0.12225988 |    2.745588 | 0.007992008 |
+| synthesis  | InStrength | -0.04909607 |   -3.220131 | 0.002997003 |
 
 # Papers using TNA
 
