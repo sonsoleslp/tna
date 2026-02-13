@@ -125,14 +125,14 @@ permutation_test(model_x, model_y, iter = 20)
 #>    edge_name           diff_true effect_size p_value
 #>    <chr>                   <dbl>       <dbl>   <dbl>
 #>  1 adapt -> adapt       0            NaN      1     
-#>  2 cohesion -> adapt    0.00541        0.946  0.619 
-#>  3 consensus -> adapt  -0.000679      -0.200  0.810 
-#>  4 coregulate -> adapt  0.00769        0.718  0.619 
-#>  5 discuss -> adapt    -0.130         -6.38   0.0476
-#>  6 emotion -> adapt     0.0101         2.00   0.143 
-#>  7 monitor -> adapt    -0.00480       -0.529  1     
+#>  2 cohesion -> adapt    0.00541        0.949  0.810 
+#>  3 consensus -> adapt  -0.000679      -0.218  0.714 
+#>  4 coregulate -> adapt  0.00769        0.488  0.714 
+#>  5 discuss -> adapt    -0.130         -5.84   0.0476
+#>  6 emotion -> adapt     0.0101         2.11   0.190 
+#>  7 monitor -> adapt    -0.00480       -0.422  1     
 #>  8 plan -> adapt        0.00339        1.42   0.0476
-#>  9 synthesis -> adapt  -0.159         -1.48   0.190 
-#> 10 adapt -> cohesion   -0.0907        -1.33   0.190 
+#>  9 synthesis -> adapt  -0.159         -2.47   0.0952
+#> 10 adapt -> cohesion   -0.0907        -1.04   0.333 
 #> # ℹ 71 more rows
 ```

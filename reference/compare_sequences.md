@@ -20,7 +20,7 @@ compare_sequences(
   group,
   sub,
   min_freq = 5L,
-  test = FALSE,
+  test = TRUE,
   iter = 1000L,
   adjust = "bonferroni",
   ...
@@ -31,7 +31,7 @@ compare_sequences(
   x,
   sub,
   min_freq = 5L,
-  test = FALSE,
+  test = TRUE,
   iter = 1000L,
   adjust = "bonferroni",
   ...
@@ -72,7 +72,7 @@ compare_sequences(
 
   A `logical` value indicating whether to test the differences of
   pattern counts between the groups using a permutation test. The
-  default is `FALSE`.
+  default is `TRUE`.
 
 - iter:
 

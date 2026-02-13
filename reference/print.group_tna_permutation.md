@@ -66,42 +66,42 @@ print(perm)
 #> # A tibble: 9 × 4
 #>   edge_name                diff_true effect_size p_value
 #>   <chr>                        <dbl>       <dbl>   <dbl>
-#> 1 Active -> Active            0.0189       0.565  0.571 
-#> 2 Average -> Active           0.220        3.99   0.0476
-#> 3 Disengaged -> Active       -0.108       -3.45   0.0476
-#> 4 Active -> Average          -0.0699      -3.05   0.0952
-#> 5 Average -> Average         -0.0875      -1.72   0.143 
-#> 6 Disengaged -> Average      -0.349       -5.79   0.0476
-#> 7 Active -> Disengaged        0.0509       2.59   0.0476
-#> 8 Average -> Disengaged      -0.132       -3.22   0.0476
-#> 9 Disengaged -> Disengaged    0.457        6.85   0.0476
+#> 1 Active -> Active            0.0189       0.666  0.619 
+#> 2 Average -> Active           0.220        3.09   0.0476
+#> 3 Disengaged -> Active       -0.108       -4.80   0.0476
+#> 4 Active -> Average          -0.0699      -2.86   0.0476
+#> 5 Average -> Average         -0.0875      -1.24   0.190 
+#> 6 Disengaged -> Average      -0.349       -7.20   0.0476
+#> 7 Active -> Disengaged        0.0509       2.60   0.0476
+#> 8 Average -> Disengaged      -0.132       -2.58   0.0476
+#> 9 Disengaged -> Disengaged    0.457        9.37   0.0476
 #> 
 #> Cluster 1 vs. Cluster 3 :
 #> # A tibble: 9 × 4
 #>   edge_name                diff_true effect_size p_value
 #>   <chr>                        <dbl>       <dbl>   <dbl>
-#> 1 Active -> Active            0.277        6.31   0.0476
-#> 2 Average -> Active           0.159        1.57   0.0952
-#> 3 Disengaged -> Active        0.0479       1.17   0.286 
-#> 4 Active -> Average          -0.0358      -0.961  0.333 
-#> 5 Average -> Average         -0.277       -2.49   0.0476
-#> 6 Disengaged -> Average      -0.438       -3.32   0.0476
-#> 7 Active -> Disengaged       -0.241       -8.67   0.0476
-#> 8 Average -> Disengaged       0.118        1.94   0.0952
-#> 9 Disengaged -> Disengaged    0.390        3.01   0.0476
+#> 1 Active -> Active            0.277        5.79   0.0476
+#> 2 Average -> Active           0.159        1.79   0.0952
+#> 3 Disengaged -> Active        0.0479       1.34   0.286 
+#> 4 Active -> Average          -0.0358      -0.699  0.524 
+#> 5 Average -> Average         -0.277       -3.34   0.0476
+#> 6 Disengaged -> Average      -0.438       -6.04   0.0476
+#> 7 Active -> Disengaged       -0.241       -8.81   0.0476
+#> 8 Average -> Disengaged       0.118        1.86   0.0952
+#> 9 Disengaged -> Disengaged    0.390        4.77   0.0476
 #> 
 #> Cluster 2 vs. Cluster 3 :
 #> # A tibble: 9 × 4
 #>   edge_name                diff_true effect_size p_value
 #>   <chr>                        <dbl>       <dbl>   <dbl>
-#> 1 Active -> Active            0.258        4.48   0.0476
-#> 2 Average -> Active          -0.0602      -1.47   0.333 
-#> 3 Disengaged -> Active        0.156        1.86   0.0952
-#> 4 Active -> Average           0.0341       1.22   0.238 
-#> 5 Average -> Average         -0.190       -1.93   0.0952
-#> 6 Disengaged -> Average      -0.0889      -0.718  0.429 
-#> 7 Active -> Disengaged       -0.292       -5.01   0.0476
-#> 8 Average -> Disengaged       0.25         2.71   0.0476
-#> 9 Disengaged -> Disengaged   -0.0667      -0.709  0.571 
+#> 1 Active -> Active            0.258        3.64   0.0476
+#> 2 Average -> Active          -0.0602      -1.31   0.238 
+#> 3 Disengaged -> Active        0.156        2.18   0.0476
+#> 4 Active -> Average           0.0341       0.990  0.333 
+#> 5 Average -> Average         -0.190       -2.08   0.143 
+#> 6 Disengaged -> Average      -0.0889      -0.898  0.333 
+#> 7 Active -> Disengaged       -0.292       -5.77   0.0476
+#> 8 Average -> Disengaged       0.25         2.64   0.0476
+#> 9 Disengaged -> Disengaged   -0.0667      -0.683  0.476 
 #> 
 ```
