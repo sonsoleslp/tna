@@ -414,7 +414,7 @@ rv_coefficient <- function(x, y) {
 #'   analysis. The default is `5`.
 #' @param test A `logical` value indicating whether to test the differences
 #'   of pattern counts between the groups using a permutation test.
-#'   The default is `FALSE`.
+#'   The default is `TRUE`.
 #' @param iter An `integer` giving the number of iterations for the permutation
 #'   test. The default is `1000`.
 #' @param adjust A `character` string naming the multiple comparison
@@ -448,7 +448,7 @@ compare_sequences <- function(x, ...) {
 #' @export
 #' @rdname compare_sequences
 compare_sequences.default <- function(x, group, sub, min_freq = 5L,
-                                      test = FALSE, iter = 1000L,
+                                      test = TRUE, iter = 1000L,
                                       adjust = "bonferroni", ...) {
   check_missing(group)
   model <- group_tna(x, group = group)
@@ -466,7 +466,7 @@ compare_sequences.default <- function(x, group, sub, min_freq = 5L,
 #' @export
 #' @rdname compare_sequences
 compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
-                                        test = FALSE, iter = 1000L,
+                                        test = TRUE, iter = 1000L,
                                         adjust = "bonferroni", ...) {
   check_missing(x)
   check_class(x, "group_tna")
