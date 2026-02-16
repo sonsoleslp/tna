@@ -117,8 +117,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
       trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
       weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
       p_values[] <- p_values +
-        1L * (weights_boot[i, , ] <= weights * consistency_range[1]) +
-        1L * (weights_boot[i, , ] >= weights * consistency_range[2])
+        1L * (weights_boot[i, , ] <= weights * consistency_range[1] | 
+          weights_boot[i, , ] >= weights * consistency_range[2])
     }
   } else {
     for (i in seq_len(iter)) {
@@ -303,8 +303,8 @@ bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
       numeric(1L)
     )
     p_values <- p_values +
-      1L * (clique_weights_boot[i, ] <= clique_weights * consistency_range[1]) +
-      1L * (clique_weights_boot[i, ] >= clique_weights * consistency_range[2])
+      1L * (clique_weights_boot[i, ] <= clique_weights * consistency_range[1] |
+        clique_weights_boot[i, ] >= clique_weights * consistency_range[2])
   }
   p_values <- (p_values + 1) / (iter + 1)
   ci_lower <- apply(
