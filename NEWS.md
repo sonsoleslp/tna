@@ -1,3 +1,7 @@
+# tna 1.2.1
+
+* The `test` argument of `compare_sequences` is now `TRUE` by default for backward compatibility.
+
 # tna 1.2.0
 
 * Added the function `reliability()` for reliability analysis of `tna` models.
