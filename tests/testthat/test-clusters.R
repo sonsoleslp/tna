@@ -188,24 +188,6 @@ test_that("levenshtein_dist computes edit distance", {
   expect_type(result_all_diff, "integer")
 })
 
-test_that("damerau_levenshtein_dist handles transpositions", {
-  x <- c("a", "b", "c")
-  y <- c("a", "b", "d")
-
-  # Function executes and returns numeric
-  result_same <- damerau_levenshtein_dist(x, x, 3, 3)
-  expect_type(result_same, "integer")
-
-  result_diff <- damerau_levenshtein_dist(x, y, 3, 3)
-  expect_type(result_diff, "integer")
-
-  # Transposition case
-  x2 <- c("a", "b", "c", "d")
-  y2 <- c("a", "c", "b", "d")
-  result_trans <- damerau_levenshtein_dist(x2, y2, 4, 4)
-  expect_type(result_trans, "integer")
-})
-
 test_that("hamming_dist computes hamming distance", {
   x <- c("a", "b", "c")
   y <- c("a", "b", "c")
@@ -223,22 +205,6 @@ test_that("hamming_dist computes hamming distance", {
   weights <- c(1, 0.5, 0.25)
   y <- c("d", "e", "f")
   expect_equal(hamming_dist(x, y, 3, 3, weights = weights), sum(weights))
-})
-
-test_that("lcs_dist computes longest common subsequence distance", {
-  x <- c("a", "b", "c")
-  y <- c("a", "b", "c")
-  expect_equal(lcs_dist(x, y, 3, 3), 0)
-
-  # Partial match
-  y <- c("a", "d", "c")
-  result <- lcs_dist(x, y, 3, 3)
-  expect_true(result >= 0)
-
-  # No common subsequence
-  y <- c("d", "e", "f")
-  result <- lcs_dist(x, y, 3, 3)
-  expect_equal(result, 3)
 })
 
 test_that("qgram_dist computes q-gram distance", {
@@ -334,6 +300,53 @@ test_that("jaro_winkler_dist handles no common prefix", {
   y <- c("d", "e", "f")
   result <- jaro_winkler_dist(x, y, 3, 3)
   expect_equal(result, 1)
+})
+
+test_that("distance implementations match stringdist", {
+  skip_if_not_installed("stringdist")
+  dist_funs <- list(
+    osa = osa_dist,
+    lv = levenshtein_dist,
+    dl = damerau_levenshtein_dist,
+    lcs = lcs_dist,
+    qgram = qgram_dist,
+    cosine = cosine_dist,
+    jaccard = jaccard_dist,
+    jw = jaro_winkler_dist
+  )
+  set.seed(0)
+  for (i in 1:100) {
+    n <- 5 + sample.int(15, 1)
+    m <- 5 + sample.int(15, 1)
+    x <- letters[sample.int(26, n, replace = TRUE)]
+    y <- letters[sample.int(26, m, replace = TRUE)]
+    z <- letters[sample.int(26, n, replace = TRUE)]
+    qx <- get_qgram(x, n, q = 2)
+    qy <- get_qgram(y, m, q = 2)
+    x_str <- paste0(x, collapse = "")
+    y_str <- paste0(y, collapse = "")
+    weights <- 1.0
+    for (dist in names(dist_funs)) {
+      dist_a <- dist_funs[[dist]](
+        x = x, y = y, n = n, m = m, qx = qx, qy = qy, weights = weights
+      )
+      dist_b <- stringdist::stringdist(
+        a = x_str, b = y_str, method = dist, q = 2, p = 0.1
+      )
+      expect_equal(dist_a, dist_b)
+    }
+  }
+  # Hamming
+  for (i in 1:100) {
+    n <- 5 + sample.int(15, 1)
+    x <- letters[sample.int(26, n, replace = TRUE)]
+    y <- letters[sample.int(26, n, replace = TRUE)]
+    x_str <- paste0(x, collapse = "")
+    y_str <- paste0(y, collapse = "")
+    weights <- 1.0
+    dist_a <- hamming_dist(x = x, y = y, n = n, m = n, weights = 1.0)
+    dist_b <- stringdist::stringdist(a = x_str, b = y_str, method = "hamming")
+  }
 })
 
 # Edge cases ------------------------------------------------------------------
