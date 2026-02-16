@@ -1,6 +1,19 @@
 # Changelog
 
+## tna 1.2.1
+
+- The `test` argument of
+  [`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md)
+  is now `TRUE` by default for backward compatibility.
+- Fixed an issue with
+  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md) when
+  the model contained weights that were zero.
+- Fixed issues with several distance measures in
+  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md).
+
 ## tna 1.2.0
+
+CRAN release: 2026-02-12
 
 - Added the function
   [`reliability()`](http://sonsoles.me/tna/reference/reliability.md) for

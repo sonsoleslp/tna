@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1457,10 +1457,10 @@ significance.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Clustering method: pam </span></span>
 <span><span class="co">#&gt; Number of clusters: 3 </span></span>
-<span><span class="co">#&gt; Silhouette score: 0.520094 </span></span>
+<span><span class="co">#&gt; Silhouette score: 0.1678702 </span></span>
 <span><span class="co">#&gt; Cluster sizes:</span></span>
 <span><span class="co">#&gt;  1  2  3 </span></span>
-<span><span class="co">#&gt; 72 64 64</span></span></code></pre>
+<span><span class="co">#&gt; 63 66 71</span></span></code></pre>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pass directly to group_model</span></span>
 <span><span class="va">gmodel_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
@@ -1549,9 +1549,9 @@ significance.</p>
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; IGRAPH 0d3f7f5 DNW- 9 78 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH b2c0180 DNW- 9 78 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), weight (e/n)</span></span>
-<span><span class="co">#&gt; + edges from 0d3f7f5 (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from b2c0180 (vertex names):</span></span>
 <span><span class="co">#&gt;  [1] adapt     -&gt;cohesion   adapt     -&gt;consensus  adapt     -&gt;coregulate</span></span>
 <span><span class="co">#&gt;  [4] adapt     -&gt;discuss    adapt     -&gt;emotion    adapt     -&gt;monitor   </span></span>
 <span><span class="co">#&gt;  [7] adapt     -&gt;plan       cohesion  -&gt;adapt      cohesion  -&gt;cohesion  </span></span>

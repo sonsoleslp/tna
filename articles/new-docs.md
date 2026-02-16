@@ -1330,10 +1330,10 @@ print(result)
 
     #> Clustering method: pam 
     #> Number of clusters: 3 
-    #> Silhouette score: 0.520094 
+    #> Silhouette score: 0.1678702 
     #> Cluster sizes:
     #>  1  2  3 
-    #> 72 64 64
+    #> 63 66 71
 
 ``` r
 # Pass directly to group_model
@@ -1430,9 +1430,9 @@ g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH 0d3f7f5 DNW- 9 78 -- 
+    #> IGRAPH b2c0180 DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from 0d3f7f5 (vertex names):
+    #> + edges from b2c0180 (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  
