@@ -133,7 +133,7 @@ test_that("simulate.group_tna long format binds cleanly and has required columns
 test_that("freq_to_prob handles zero rows with uniform option", {
   # Create a 3x3 matrix with a zero row (row 2)
   prob <- matrix(c(1, 2, 3, 0, 0, 0, 4, 5, 6), nrow = 3, byrow = TRUE)
-  result <- tna:::freq_to_prob(prob, zero_row = "uniform")
+  result <- freq_to_prob(prob, zero_row = "uniform")
 
   # Zero row should have uniform distribution (1/3 each)
   expect_equal(result[2, ], rep(1/3, 3))
@@ -145,7 +145,7 @@ test_that("freq_to_prob handles zero rows with uniform option", {
 test_that("freq_to_prob handles zero rows with self option", {
   # Create a 3x3 matrix with a zero row (row 2)
   prob <- matrix(c(1, 2, 3, 0, 0, 0, 4, 5, 6), nrow = 3, byrow = TRUE)
-  result <- tna:::freq_to_prob(prob, zero_row = "self")
+  result <- freq_to_prob(prob, zero_row = "self")
 
   # Zero row should have self-loop (1 on diagonal, 0 elsewhere)
   expect_equal(result[2, 1], 0)
@@ -156,7 +156,7 @@ test_that("freq_to_prob handles zero rows with self option", {
 test_that("freq_to_prob normalizes rows correctly", {
   # Row sums > 1 should be normalized
   prob <- matrix(c(10, 20, 30, 40), nrow = 2, byrow = TRUE)
-  result <- tna:::freq_to_prob(prob, zero_row = "self")
+  result <- freq_to_prob(prob, zero_row = "self")
 
   # Each row should sum to 1
   expect_equal(rowSums(result), c(1, 1))

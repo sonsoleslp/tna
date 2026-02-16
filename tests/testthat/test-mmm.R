@@ -90,7 +90,7 @@ test_that("mmm_stats_ computes statistics correctly", {
   )
   vc <- diag(c(0.01, 0.04, 0.01, 0.04))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 4) # 2 vars * 2 clusters (excluding ref)
@@ -112,7 +112,7 @@ test_that("mmm_stats_ computes z-values correctly", {
   )
   vc <- diag(c(0.25, 0.25))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   # z = estimate / std_error = 2 / 0.5 = 4
   expect_equal(result$z_value[2], 4)
@@ -127,7 +127,7 @@ test_that("mmm_stats_ computes p-values correctly", {
   )
   vc <- diag(c(1, 1))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   # When z = 0, p-value should be 1 (two-tailed)
   expect_equal(result$p_value, c(1, 1))
@@ -142,7 +142,7 @@ test_that("mmm_stats_ computes confidence intervals correctly", {
   )
   vc <- diag(c(1, 1))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   # 95% CI: estimate +/- 1.96 * se
   # For estimate = 1, se = 1: CI = [1 - 1.96, 1 + 1.96]
@@ -160,8 +160,8 @@ test_that("mmm_stats_ handles different level values", {
   )
   vc <- diag(c(1, 1))
 
-  result_90 <- tna:::mmm_stats_(cf, vc, level = 0.10)
-  result_99 <- tna:::mmm_stats_(cf, vc, level = 0.01)
+  result_90 <- mmm_stats_(cf, vc, level = 0.10)
+  result_99 <- mmm_stats_(cf, vc, level = 0.01)
 
   # 90% CI should be narrower than 99% CI
   width_90 <- result_90$ci_upper[2] - result_90$ci_lower[2]
@@ -178,7 +178,7 @@ test_that("mmm_stats_ preserves cluster and variable names", {
   )
   vc <- diag(rep(1, 3))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   expect_equal(unique(result$cluster), "Active")
   expect_equal(result$variable, c("(Intercept)", "age", "gender"))
@@ -193,7 +193,7 @@ test_that("mmm_stats_ handles multiple clusters", {
   )
   vc <- diag(rep(1, 4))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   expect_equal(nrow(result), 4) # 2 vars * 2 clusters
   expect_equal(result$cluster, c("Cluster A", "Cluster A", "Cluster B", "Cluster B"))
@@ -209,7 +209,7 @@ test_that("mmm_stats_ returns default row names", {
   )
   vc <- diag(c(1, 1))
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   # Row names are reset to default sequential integers
   expect_equal(rownames(result), as.character(seq_len(nrow(result))))
@@ -238,7 +238,7 @@ test_that("mmm_stats_ handles single variable correctly", {
   )
   vc <- diag(1)
 
-  result <- tna:::mmm_stats_(cf, vc, level = 0.05)
+  result <- mmm_stats_(cf, vc, level = 0.05)
 
   expect_equal(nrow(result), 1)
   expect_equal(result$variable, "(Intercept)")

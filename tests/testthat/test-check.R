@@ -199,54 +199,9 @@ test_that("range check variants are correct", {
   )
 })
 
-# Tests for check_em_control
-test_that("check_em_control returns defaults when missing", {
-  result <- tna:::check_em_control()
-  expect_type(result, "list")
-  expect_equal(result$maxiter, 500L)
-  expect_equal(result$maxiter_m, 500L)
-  expect_equal(result$reltol, 1e-10)
-  expect_equal(result$reltol_m, 1e-6)
-  expect_equal(result$restarts, 10L)
-  expect_equal(result$seed, 1L)
-  expect_equal(result$step, 1.0)
-})
-
-test_that("check_em_control merges with defaults", {
-  result <- tna:::check_em_control(list(maxiter = 100L))
-  expect_equal(result$maxiter, 100L)
-  expect_equal(result$maxiter_m, 500L)  # default
-  expect_equal(result$restarts, 10L)  # default
-})
-
-test_that("check_em_control validates maxiter", {
-  expect_error(
-    tna:::check_em_control(list(maxiter = -1)),
-    "positive"
-  )
-})
-
-test_that("check_em_control validates step range", {
-  expect_error(
-    tna:::check_em_control(list(step = 1.5)),
-    "between 0 and 1"
-  )
-  expect_error(
-    tna:::check_em_control(list(step = -0.1)),
-    "between 0 and 1"
-  )
-})
-
-test_that("check_em_control validates reltol", {
-  expect_error(
-    tna:::check_em_control(list(reltol = -1)),
-    "positive"
-  )
-})
-
 test_that("check_numeric validates correctly", {
   f <- function(z) {
-    tna:::check_numeric(z)
+    check_numeric(z)
   }
   expect_error(
     f("not numeric"),
@@ -261,7 +216,7 @@ test_that("check_numeric validates correctly", {
 
 test_that("check_string validates correctly", {
   f <- function(z) {
-    tna:::check_string(z)
+    check_string(z)
   }
   expect_error(
     f(123),
@@ -276,11 +231,11 @@ test_that("check_string validates correctly", {
 
 test_that("check_cols validates correctly", {
   expect_error(
-    tna:::check_cols(missing_ok = FALSE),
+    check_cols(missing_ok = FALSE),
     "is missing"
   )
   expect_error(
-    tna:::check_cols(c("a", "b"), single = TRUE),
+    check_cols(c("a", "b"), single = TRUE),
     "must provide a single column name"
   )
 })
@@ -288,26 +243,26 @@ test_that("check_cols validates correctly", {
 test_that("check_cluster validates correctly", {
   # Invalid character cluster
   expect_error(
-    tna:::check_cluster(mmm_model, "NonExistent"),
+    check_cluster(mmm_model, "NonExistent"),
     "must only contain names of"
   )
   # Invalid numeric cluster
   expect_error(
-    tna:::check_cluster(mmm_model, 99),
+    check_cluster(mmm_model, 99),
     "must contain integers between"
   )
   # Valid cases
-  expect_error(tna:::check_cluster(mmm_model, 1), NA)
-  expect_error(tna:::check_cluster(mmm_model, "Cluster 1"), NA)
+  expect_error(check_cluster(mmm_model, 1), NA)
+  expect_error(check_cluster(mmm_model, "Cluster 1"), NA)
 })
 
 test_that("check_dots validates correctly", {
   expect_error(
-    tna:::check_dots(invalid_arg = 1),
+    check_dots(invalid_arg = 1),
     "not recognized"
   )
   expect_error(
-    tna:::check_dots(cols = 1:3),
+    check_dots(cols = 1:3),
     NA
   )
 })

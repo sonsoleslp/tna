@@ -359,7 +359,7 @@ test_that("import_onehot works with sliding window and aggregate", {
 test_that("parse_time handles milliseconds unix time", {
   time <- c(1609459200000, 1609459260000, 1609459320000)
   rlang::local_options(rlib_message_verbosity = "quiet")
-  result <- tna:::parse_time(
+  result <- parse_time(
     time,
     custom_format = NULL,
     is_unix_time = TRUE,
@@ -371,7 +371,7 @@ test_that("parse_time handles milliseconds unix time", {
 test_that("parse_time handles microseconds unix time", {
   time <- c(1609459200000000, 1609459260000000, 1609459320000000)
   rlang::local_options(rlib_message_verbosity = "quiet")
-  result <- tna:::parse_time(
+  result <- parse_time(
     time,
     custom_format = NULL,
     is_unix_time = TRUE,

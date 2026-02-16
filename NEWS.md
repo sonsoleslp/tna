@@ -1,3 +1,9 @@
+# tna 1.2.1
+
+* The `test` argument of `compare_sequences()` is now `TRUE` by default for backward compatibility.
+* Fixed an issue with `bootstrap()` when the model contained weights that were zero.
+* Fixed issues with several distance measures in `cluster_sequences()`.
+
 # tna 1.2.0
 
 * Added the function `reliability()` for reliability analysis of `tna` models.

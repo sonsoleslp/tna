@@ -35,24 +35,3 @@ usethis::use_data(
   overwrite = TRUE,
   compress = "xz"
 )
-
-# MMM using TNA
-
-# Seed is selected to get the same cluster order as seqHMM
-engagement_tna_mmm <- cluster_mmm(
-  engagement,
-  k = 3,
-  progressbar = FALSE,
-  parallel = TRUE,
-  control = list(
-    maxiter = 1000,
-    restarts = 100,
-    seed = 6000
-  )
-)
-
-usethis::use_data(
-  engagement_tna_mmm,
-  overwrite = TRUE,
-  compress = "xz"
-)

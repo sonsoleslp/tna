@@ -116,13 +116,6 @@ test_that("groupwise models can be constructed with scaling", {
   )
 })
 
-# test_that("group model can be constructed from a mixture Markov model", {
-#   expect_error(
-#     group_model(engagement_tna_mmm),
-#     NA
-#   )
-# })
-
 test_that("group model can be constructed from a clustering result", {
   clust <- cluster_sequences(engagement, k = 3)
   expect_error(
