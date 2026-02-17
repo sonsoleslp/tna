@@ -315,7 +315,12 @@ test_that("distance implementations match stringdist", {
     jw = jaro_winkler_dist
   )
   set.seed(0)
-  for (i in 1:100) {
+  k <- 100
+  p <- length(dist_funs)
+  nm <- names(dist_funs)
+  dist_a <- matrix(NA, nrow = k, ncol = p)
+  dist_b <- matrix(NA, nrow = k, ncol = p)
+  for (i in 1:k) {
     n <- 5 + sample.int(15, 1)
     m <- 5 + sample.int(15, 1)
     x <- letters[sample.int(26, n, replace = TRUE)]
@@ -326,27 +331,32 @@ test_that("distance implementations match stringdist", {
     x_str <- paste0(x, collapse = "")
     y_str <- paste0(y, collapse = "")
     weights <- 1.0
-    for (dist in names(dist_funs)) {
-      dist_a <- dist_funs[[dist]](
+    for (j in 1:p) {
+      dist <- nm[j]
+      dist_a[i, j] <- dist_funs[[dist]](
         x = x, y = y, n = n, m = m, qx = qx, qy = qy, weights = weights
       )
-      dist_b <- stringdist::stringdist(
+      dist_b[i, j] <- stringdist::stringdist(
         a = x_str, b = y_str, method = dist, q = 2, p = 0.1
       )
-      expect_equal(dist_a, dist_b)
     }
   }
+  expect_equal(dist_a, dist_b)
   # Hamming
-  for (i in 1:100) {
+  set.seed(0)
+  dist_a <- numeric(k)
+  dist_b <- numeric(k)
+  for (i in 1:k) {
     n <- 5 + sample.int(15, 1)
     x <- letters[sample.int(26, n, replace = TRUE)]
     y <- letters[sample.int(26, n, replace = TRUE)]
     x_str <- paste0(x, collapse = "")
     y_str <- paste0(y, collapse = "")
     weights <- 1.0
-    dist_a <- hamming_dist(x = x, y = y, n = n, m = n, weights = 1.0)
-    dist_b <- stringdist::stringdist(a = x_str, b = y_str, method = "hamming")
+    dist_a[i] <- hamming_dist(x = x, y = y, n = n, m = n, weights = 1.0)
+    dist_b[i] <- stringdist::stringdist(a = x_str, b = y_str, method = "hamming")
   }
+  expect_equal(dist_a, dist_b)
 })
 
 # Edge cases ------------------------------------------------------------------
