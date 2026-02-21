@@ -9,6 +9,7 @@ import_onehot(
   cols,
   actor,
   session,
+  interval,
   window_size = 1L,
   window_type = "tumbling",
   aggregate = FALSE
@@ -25,6 +26,10 @@ considered as one-hot data.}
 
 \item{session}{An optional \code{character} string giving the column name of
 \code{data} containing the session identifiers.}
+
+\item{interval}{An \code{integer} that defines how many windows can appear
+at most per one row of the output data. If not provided (the default),
+all windows are concatenated per actor/session combination.}
 
 \item{window_size}{An \code{integer} specifying the window size for grouping.}
 

@@ -624,6 +624,9 @@ import_data <- function(data, cols, id_cols,
 #'   `data` containing the actor identifiers.
 #' @param session An optional `character` string giving the column name of
 #'   `data` containing the session identifiers.
+#' @param interval An `integer` that defines how many windows can appear
+#'   at most per one row of the output data. If not provided (the default),
+#'   all windows are concatenated per actor/session combination.
 #' @param window_size An `integer` specifying the window size for grouping.
 #' @param window_type A `character` string. Either `"tumbling"` (the default)
 #'   for non-overlapping windows or `"sliding"` for one-step sliding window.
@@ -643,8 +646,9 @@ import_data <- function(data, cols, id_cols,
 #' onehot1 <- import_onehot(d, feature1:feature3)
 #' onehot2 <- import_onehot(d, feature1:feature3, "actor", "session")
 #'
-import_onehot <- function(data, cols, actor, session, window_size = 1L,
-                          window_type = "tumbling", aggregate = FALSE) {
+import_onehot <- function(data, cols, actor, session, interval,
+                          window_size = 1L, window_type = "tumbling",
+                          aggregate = FALSE) {
   check_missing(data)
   check_class(data, "data.frame")
   check_values(window_size, strict = TRUE)
@@ -653,6 +657,7 @@ import_onehot <- function(data, cols, actor, session, window_size = 1L,
   cols <- get_cols(rlang::enquo(cols), data)
   actor <- get_cols(rlang::enquo(actor), data)
   session <- get_cols(rlang::enquo(session), data)
+  interval <- interval %m% (ncol(data) * nrow(data))
   check_cols(actor, missing_ok = TRUE)
   check_cols(session, missing_ok = TRUE)
   if (missing(actor)) {
@@ -710,28 +715,35 @@ import_onehot <- function(data, cols, actor, session, window_size = 1L,
       )
   }
   out <- out |>
+    dplyr::group_by(!!rlang::sym(actor), !!rlang::sym(session)) |>
+    dplyr::mutate(
+      .window_grp = !!rlang::sym(".window") %/% interval,
+      .window_idx = !!rlang::sym(".window") %% interval
+    ) |>
     dplyr::ungroup() |>
     tidyr::pivot_longer(
       cols = tidyselect::all_of(cols)
     ) |> dplyr::group_by(
       !!rlang::sym(actor),
       !!rlang::sym(session),
-      !!rlang::sym(".window")
+      !!rlang::sym(".window_grp"),
+      !!rlang::sym(".window_idx")
     ) |>
     dplyr::mutate(
       .obs = seq_len(dplyr::n())
-    ) |>
+    )
+  out <- out |>
     dplyr::select(-!!rlang::sym("name")) |>
     dplyr::ungroup() |>
     tidyr::pivot_wider(
-      id_cols = tidyselect::all_of(c(actor, session)),
-      names_from = tidyselect::all_of(c(".window", ".obs")),
-      names_glue = "W{.window}_T{.obs}",
+      id_cols = tidyselect::all_of(c(actor, session, ".window_grp")),
+      names_from = tidyselect::all_of(c(".window_idx", ".obs")),
+      names_glue = "W{.window_idx}_T{.obs}",
       values_from = "value"
     )
   out[[actor]] <- NULL
   out[[session]] <- NULL
-  out[[".window"]] <- NULL
+  out[[".window_grp"]] <- NULL
   # Window properties for modeling
   attr(out, "windowed") <- TRUE
   attr(out, "window_size") <- window_size^(!aggregate)

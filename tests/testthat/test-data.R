@@ -356,6 +356,60 @@ test_that("import_onehot works with sliding window and aggregate", {
   expect_s3_class(result, "data.frame")
 })
 
+test_that("import_onehot can split windows by interval", {
+  d <- data.frame(
+    actor = gl(10, 10),
+    session = gl(5, 20),
+    feature1 = rbinom(100, 1, prob = 0.33),
+    feature2 = rbinom(100, 1, prob = 0.25),
+    feature3 = rbinom(100, 1, prob = 0.50)
+  )
+  result_orig <- import_onehot(
+    d,
+    actor = "actor",
+    session = "session",
+    feature1:feature3,
+    window_size = 2,
+  )
+  result1 <- import_onehot(
+    d,
+    actor = "actor",
+    session = "session",
+    feature1:feature3,
+    interval = 2,
+    window_size = 2,
+  )
+  result2 <- import_onehot(
+    d,
+    actor = "actor",
+    session = "session",
+    feature1:feature3,
+    interval = 3,
+    window_size = 2,
+  )
+  result3 <- import_onehot(
+    d,
+    actor = "actor",
+    session = "session",
+    feature1:feature3,
+    interval = 4,
+    window_size = 2,
+  )
+  result4 <- import_onehot(
+    d,
+    actor = "actor",
+    session = "session",
+    feature1:feature3,
+    interval = 5,
+    window_size = 2,
+  )
+  expect_equal(ncol(result1), 12)
+  expect_equal(ncol(result2), 18)
+  expect_equal(ncol(result3), 24)
+  expect_equal(ncol(result4), 30)
+  expect_equal(result_orig, result4)
+})
+
 test_that("parse_time handles milliseconds unix time", {
   time <- c(1609459200000, 1609459260000, 1609459320000)
   rlang::local_options(rlib_message_verbosity = "quiet")
