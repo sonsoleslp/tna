@@ -110,11 +110,7 @@ centralities_ <- function(x, loops, normalize, invert, measures) {
   measures <- check_measures(measures)
   diag(x) <- ifelse_(loops, diag(x), 0)
   g <- as.igraph(x)
-  w <- ifelse_(
-    invert,
-    1.0 / igraph::E(g)$weight,
-    igraph::E(g)$weight
-  )
+  w <- ifelse_(invert, 1.0 / igraph::E(g)$weight, igraph::E(g)$weight)
   measures_out <- lapply(
     measures,
     function(y) {

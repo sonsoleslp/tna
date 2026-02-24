@@ -5,15 +5,18 @@
 \alias{betweenness_network.tna}
 \title{Build and Visualize a Network with Edge Betweenness}
 \usage{
-betweenness_network(x, directed)
+betweenness_network(x, directed = TRUE, invert = TRUE)
 
-\method{betweenness_network}{tna}(x, directed)
+\method{betweenness_network}{tna}(x, directed = TRUE, invert = TRUE)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
 
 \item{directed}{A \code{logical} value. If \code{TRUE}, the network is considered
 directed.}
+
+\item{invert}{A \code{logical} value indicating whether the weights should be
+inverted for distance-based measures. The default is \code{TRUE}.}
 }
 \value{
 A \code{tna} object where the edge weights are edge betweenness values.
