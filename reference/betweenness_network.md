@@ -6,10 +6,10 @@ object and computes edge betweenness for the network.
 ## Usage
 
 ``` r
-betweenness_network(x, directed)
+betweenness_network(x, directed = TRUE, invert = TRUE)
 
 # S3 method for class 'tna'
-betweenness_network(x, directed)
+betweenness_network(x, directed = TRUE, invert = TRUE)
 ```
 
 ## Arguments
@@ -21,6 +21,11 @@ betweenness_network(x, directed)
 - directed:
 
   A `logical` value. If `TRUE`, the network is considered directed.
+
+- invert:
+
+  A `logical` value indicating whether the weights should be inverted
+  for distance-based measures. The default is `TRUE`.
 
 ## Value
 
@@ -47,23 +52,23 @@ betweenness_network(model)
 #> Edge Betweenness Matrix :
 #> 
 #>            adapt cohesion consensus coregulate discuss emotion monitor plan
-#> adapt          0        0         1          1       0       0       0    3
-#> cohesion       0        0         0          6       0       0       2    0
-#> consensus      0        0         0          0       0       0       0    4
-#> coregulate     8        1         0          0       0       0       0    0
-#> discuss        6        0         1          0       0       0       0    0
-#> emotion        0        0         0          0       1       0       0    0
-#> monitor        0        0         0          0       7       0       0    0
-#> plan          11        3         2          3       0       3       3    8
-#> synthesis      4        4         3          0       5       6       3    0
+#> adapt          0        2         6          0       0       1       0    0
+#> cohesion       0        0         7          0       0       1       0    0
+#> consensus      0        0         0          8      15       0       0   15
+#> coregulate     0        0         0          0       4       2       1    1
+#> discuss        0        0         7          0       0       2       0    0
+#> emotion        0        6         7          0       0       0       0    0
+#> monitor        0        0         0          0       5       2       0    1
+#> plan           0        0         5          0       0       5       7    0
+#> synthesis      9        0         6          0       0       0       0    0
 #>            synthesis
 #> adapt              0
-#> cohesion           3
+#> cohesion           0
 #> consensus          0
-#> coregulate         1
-#> discuss            1
-#> emotion            7
-#> monitor           10
+#> coregulate         0
+#> discuss           15
+#> emotion            0
+#> monitor            0
 #> plan               0
 #> synthesis          0
 #> 

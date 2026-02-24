@@ -569,23 +569,23 @@ print(bn)
     #> Edge Betweenness Matrix :
     #> 
     #>            adapt cohesion consensus coregulate discuss emotion monitor plan
-    #> adapt          0        0         1          1       0       0       0    3
-    #> cohesion       0        0         0          6       0       0       2    0
-    #> consensus      0        0         0          0       0       0       0    4
-    #> coregulate     8        1         0          0       0       0       0    0
-    #> discuss        6        0         1          0       0       0       0    0
-    #> emotion        0        0         0          0       1       0       0    0
-    #> monitor        0        0         0          0       7       0       0    0
-    #> plan          11        3         2          3       0       3       3    8
-    #> synthesis      4        4         3          0       5       6       3    0
+    #> adapt          0        2         6          0       0       1       0    0
+    #> cohesion       0        0         7          0       0       1       0    0
+    #> consensus      0        0         0          8      15       0       0   15
+    #> coregulate     0        0         0          0       4       2       1    1
+    #> discuss        0        0         7          0       0       2       0    0
+    #> emotion        0        6         7          0       0       0       0    0
+    #> monitor        0        0         0          0       5       2       0    1
+    #> plan           0        0         5          0       0       5       7    0
+    #> synthesis      9        0         6          0       0       0       0    0
     #>            synthesis
     #> adapt              0
-    #> cohesion           3
+    #> cohesion           0
     #> consensus          0
-    #> coregulate         1
-    #> discuss            1
-    #> emotion            7
-    #> monitor           10
+    #> coregulate         0
+    #> discuss           15
+    #> emotion            0
+    #> monitor            0
     #> plan               0
     #> synthesis          0
     #> 
@@ -1430,9 +1430,9 @@ g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH a48c6f4 DNW- 9 78 -- 
+    #> IGRAPH dcad90f DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from a48c6f4 (vertex names):
+    #> + edges from dcad90f (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  

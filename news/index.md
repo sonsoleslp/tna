@@ -10,6 +10,8 @@
   the model contained weights that were zero.
 - Fixed issues with several distance measures in
   [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md).
+- Fixed edge ordering in
+  [`betweenness_network()`](http://sonsoles.me/tna/reference/betweenness_network.md).
 
 ## tna 1.2.0
 

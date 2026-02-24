@@ -737,23 +737,23 @@ data.</p>
 <span><span class="co">#&gt; Edge Betweenness Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;            adapt cohesion consensus coregulate discuss emotion monitor plan</span></span>
-<span><span class="co">#&gt; adapt          0        0         1          1       0       0       0    3</span></span>
-<span><span class="co">#&gt; cohesion       0        0         0          6       0       0       2    0</span></span>
-<span><span class="co">#&gt; consensus      0        0         0          0       0       0       0    4</span></span>
-<span><span class="co">#&gt; coregulate     8        1         0          0       0       0       0    0</span></span>
-<span><span class="co">#&gt; discuss        6        0         1          0       0       0       0    0</span></span>
-<span><span class="co">#&gt; emotion        0        0         0          0       1       0       0    0</span></span>
-<span><span class="co">#&gt; monitor        0        0         0          0       7       0       0    0</span></span>
-<span><span class="co">#&gt; plan          11        3         2          3       0       3       3    8</span></span>
-<span><span class="co">#&gt; synthesis      4        4         3          0       5       6       3    0</span></span>
+<span><span class="co">#&gt; adapt          0        2         6          0       0       1       0    0</span></span>
+<span><span class="co">#&gt; cohesion       0        0         7          0       0       1       0    0</span></span>
+<span><span class="co">#&gt; consensus      0        0         0          8      15       0       0   15</span></span>
+<span><span class="co">#&gt; coregulate     0        0         0          0       4       2       1    1</span></span>
+<span><span class="co">#&gt; discuss        0        0         7          0       0       2       0    0</span></span>
+<span><span class="co">#&gt; emotion        0        6         7          0       0       0       0    0</span></span>
+<span><span class="co">#&gt; monitor        0        0         0          0       5       2       0    1</span></span>
+<span><span class="co">#&gt; plan           0        0         5          0       0       5       7    0</span></span>
+<span><span class="co">#&gt; synthesis      9        0         6          0       0       0       0    0</span></span>
 <span><span class="co">#&gt;            synthesis</span></span>
 <span><span class="co">#&gt; adapt              0</span></span>
-<span><span class="co">#&gt; cohesion           3</span></span>
+<span><span class="co">#&gt; cohesion           0</span></span>
 <span><span class="co">#&gt; consensus          0</span></span>
-<span><span class="co">#&gt; coregulate         1</span></span>
-<span><span class="co">#&gt; discuss            1</span></span>
-<span><span class="co">#&gt; emotion            7</span></span>
-<span><span class="co">#&gt; monitor           10</span></span>
+<span><span class="co">#&gt; coregulate         0</span></span>
+<span><span class="co">#&gt; discuss           15</span></span>
+<span><span class="co">#&gt; emotion            0</span></span>
+<span><span class="co">#&gt; monitor            0</span></span>
 <span><span class="co">#&gt; plan               0</span></span>
 <span><span class="co">#&gt; synthesis          0</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1549,9 +1549,9 @@ significance.</p>
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; IGRAPH a48c6f4 DNW- 9 78 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH dcad90f DNW- 9 78 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), weight (e/n)</span></span>
-<span><span class="co">#&gt; + edges from a48c6f4 (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from dcad90f (vertex names):</span></span>
 <span><span class="co">#&gt;  [1] adapt     -&gt;cohesion   adapt     -&gt;consensus  adapt     -&gt;coregulate</span></span>
 <span><span class="co">#&gt;  [4] adapt     -&gt;discuss    adapt     -&gt;emotion    adapt     -&gt;monitor   </span></span>
 <span><span class="co">#&gt;  [7] adapt     -&gt;plan       cohesion  -&gt;adapt      cohesion  -&gt;cohesion  </span></span>

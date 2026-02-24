@@ -10,6 +10,7 @@ import_onehot(
   cols,
   actor,
   session,
+  interval,
   window_size = 1L,
   window_type = "tumbling",
   aggregate = FALSE
@@ -36,6 +37,12 @@ import_onehot(
 
   An optional `character` string giving the column name of `data`
   containing the session identifiers.
+
+- interval:
+
+  An `integer` that defines how many windows can appear at most per one
+  row of the output data. If not provided (the default), all windows are
+  concatenated per actor/session combination.
 
 - window_size:
 
