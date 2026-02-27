@@ -50,6 +50,7 @@ We have also released comprehensive new tutorials for the main TNA features:
 | Tutorial | Link |
 |--------|------|
 | An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | https://sonsoles.me/posts/tna-tutorial/ |
+| TNA Data Preparation: A Comprehensive Guide to `prepare_data()` | https://sonsoles.me/posts/tna-data/ |
 | TNA Group Analysis: Analysis and Comparison of Groups | https://sonsoles.me/posts/tna-group/ |
 | TNA Clustering: Discovering and Analysis of Clusters | https://sonsoles.me/posts/tna-clustering/ |
 | TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | https://sonsoles.me/posts/tna-compare/ |
