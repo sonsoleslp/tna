@@ -18,13 +18,14 @@ more details on TNA.
 We have also released comprehensive new tutorials for the main TNA
 features:
 
-| Tutorial                                                                               | Link                                        |
-|----------------------------------------------------------------------------------------|---------------------------------------------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)                 | <https://sonsoles.me/posts/tna-tutorial/>   |
-| TNA Group Analysis: Analysis and Comparison of Groups                                  | <https://sonsoles.me/posts/tna-group/>      |
-| TNA Clustering: Discovering and Analysis of Clusters                                   | <https://sonsoles.me/posts/tna-clustering/> |
-| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | <https://sonsoles.me/posts/tna-compare/>    |
-| Full reference guide on `tna` functions                                                | <https://sonsoles.me/tna/tna.html>          |
+| Tutorial                                                                                                            | Link                                        |
+|---------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)                                              | <https://sonsoles.me/posts/tna-tutorial/>   |
+| TNA Data Preparation: A Comprehensive Guide to [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md) | <https://sonsoles.me/posts/tna-data/>       |
+| TNA Group Analysis: Analysis and Comparison of Groups                                                               | <https://sonsoles.me/posts/tna-group/>      |
+| TNA Clustering: Discovering and Analysis of Clusters                                                                | <https://sonsoles.me/posts/tna-clustering/> |
+| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison                              | <https://sonsoles.me/posts/tna-compare/>    |
+| Full reference guide on `tna` functions                                                                             | <https://sonsoles.me/tna/tna.html>          |
 
 ### Vignettes
 
@@ -212,15 +213,15 @@ print(comparison$centralities$stats)
 
 |   state    | centrality |   diff_true | effect_size |     p_value |
 |:----------:|:----------:|------------:|------------:|------------:|
-|   adapt    | InStrength | -0.23693341 |   -6.746110 | 0.000999001 |
-|  cohesion  | InStrength |  0.01634987 |    0.345312 | 0.720279720 |
-| consensus  | InStrength |  0.53680793 |    7.777826 | 0.000999001 |
-| coregulate | InStrength | -0.25275371 |   -7.385802 | 0.000999001 |
-|  discuss   | InStrength | -0.09009651 |   -1.930958 | 0.046953047 |
-|  emotion   | InStrength |  0.19288376 |    4.215793 | 0.000999001 |
-|  monitor   | InStrength | -0.09192991 |   -3.454281 | 0.000999001 |
-|    plan    | InStrength |  0.12225988 |    2.745588 | 0.007992008 |
-| synthesis  | InStrength | -0.04909607 |   -3.220131 | 0.002997003 |
+|   adapt    | InStrength | -0.23693341 |  -6.8260733 | 0.000999001 |
+|  cohesion  | InStrength |  0.01634987 |   0.3289292 | 0.756243756 |
+| consensus  | InStrength |  0.53680793 |   7.8381303 | 0.000999001 |
+| coregulate | InStrength | -0.25275371 |  -7.5131165 | 0.000999001 |
+|  discuss   | InStrength | -0.09009651 |  -1.9033617 | 0.053946054 |
+|  emotion   | InStrength |  0.19288376 |   4.0596744 | 0.000999001 |
+|  monitor   | InStrength | -0.09192991 |  -3.4045584 | 0.000999001 |
+|    plan    | InStrength |  0.12225988 |   2.7350365 | 0.005994006 |
+| synthesis  | InStrength | -0.04909607 |  -3.1980640 | 0.000999001 |
 
 # Papers using TNA
 
