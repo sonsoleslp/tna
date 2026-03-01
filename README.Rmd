@@ -55,6 +55,7 @@ We have also released comprehensive new tutorials for the main TNA features:
 | TNA Clustering: Discovering and Analysis of Clusters | https://sonsoles.me/posts/tna-clustering/ |
 | TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | https://sonsoles.me/posts/tna-compare/ |
 | Full reference guide on `tna` functions | https://sonsoles.me/tna/tna.html |
+| Sequence Patterns, Outcomes, and Indices with `codyna` | https://sonsoles.me/posts/codyna-seq-tutorial/ |
 
 
 ### Vignettes
