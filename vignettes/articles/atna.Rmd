@@ -2,7 +2,7 @@
 title: "Attention TNA"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Attention tna}
+  %\VignetteIndexEntry{Attention TNA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,8 +1,8 @@
 ---
-title: "Frequency-based tna"
+title: "Frequency-based TNA"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Frequency-based tna}
+  %\VignetteIndexEntry{Frequency-based TNA}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -150,7 +150,7 @@ cliques_of_two <- cliques(
 
 # Print and visualize the identified 2-cliques (dyads)
 print(cliques_of_two)  # Display details of 2-cliques
-plot(cliques_of_two, ask = F, vsize = 20)   # Visualize 2-cliques in the network
+plot(cliques_of_two, ask = F)   # Visualize 2-cliques in the network
 ```
 ```{r, fig.align='center'}
 layout(matrix(1:6, ncol = 3))

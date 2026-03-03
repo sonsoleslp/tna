@@ -322,7 +322,6 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
   } # nocov end
   for (i in seq(first, max_cliques)) {
     clique_weights <- x$weights[[i]]
-    directed <- !attr(x, "sum_weights")
     diag(clique_weights) <- ifelse_(
       show_loops,
       diag(clique_weights),
@@ -331,7 +330,6 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     plot_args <- list(
       x = clique_weights,
       labels = colnames(clique_weights),
-      directed = directed,
       color = colors[match(rownames(clique_weights), labels)],
       pie = x$inits[[i]]
     )

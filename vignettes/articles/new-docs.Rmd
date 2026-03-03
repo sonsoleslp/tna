@@ -19,7 +19,9 @@ knitr::opts_chunk$set(
   fig.width = 8, fig.height = 6,
   comment = "#>"
 )
-library(tna)
+suppressPackageStartupMessages({
+  library("tna")
+})
 ```
 
 ---
