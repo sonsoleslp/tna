@@ -30,6 +30,10 @@ plot(x, n = 6, first = 1, show_loops = FALSE, colors, ask = TRUE, ...)
   A `logical` value indicating whether to include loops in the plots or
   not.
 
+- colors:
+
+  Optional `character` vector of colors values to use for the nodes.
+
 - ask:
 
   A `logical` value. When `TRUE`, show plots one by one and asks to plot
