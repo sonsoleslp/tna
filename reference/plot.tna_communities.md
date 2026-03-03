@@ -35,11 +35,11 @@ plot(x, colors, method, ...)
 - ...:
 
   Additional arguments passed to
-  [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 ## Value
 
-A `qgraph` object in which the nodes are colored by community.
+A `cograph_network` object in which the nodes are colored by community.
 
 ## See also
 

@@ -27,8 +27,8 @@ plot(x, title, ...)
 
 ## Value
 
-A `list` (invisibly) of `qgraph` objects depicting the significant
-difference between each pair.
+A `list` (invisibly) of `cograph_network` objects depicting the
+significant difference between each pair.
 
 ## See also
 

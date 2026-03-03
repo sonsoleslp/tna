@@ -1,6 +1,6 @@
 # Plot a Grouped Transition Network Analysis Model
 
-Plots a transition network of each cluster using `qgraph`.
+Plots a transition network of each cluster using `cograph`.
 
 ## Usage
 
@@ -42,33 +42,32 @@ plot(x, title, which, ...)
       order in `node_list`. Otherwise, the nodes are ranked based on
       edge weights and ordered according to the rank.
 
-  `x_offset`
-
-  :   An optional `numeric` vector with the same number of elements as
-      there are states. Defines a horizontal offset for each node in the
-      plot when `node_list` is provided.
-
   `labels`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `colors`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `pie`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `cut`
 
   :   Edge color and width emphasis cutoff value. The default is the
       median of the edge weights. See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html)
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md)
       for details.
+
+  `vsize`
+
+  :   See
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `show_pruned`
 
@@ -85,36 +84,17 @@ plot(x, title, which, ...)
   `edge.color`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `edge.labels`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `edge.label.position`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
-
-  `layout`
-
-  :   One of the following:
-
-      - A `character` string describing a `qgraph` layout (e.g.,
-        `"circle"`) or the name of a `igraph` layout function (e.g.,
-        `"layout_on_grid"`).
-
-      - A `matrix` of node positions to use, with a row for each node
-        and `x` and `y` columns for the node positions.
-
-      - A layout function from `igraph`.
-
-  `layout_args`
-
-  :   A `list` of arguments to pass to the `igraph` layout function when
-      `layout` is a function or a character string that specifies a
-      function name.
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `scale_nodes`
 
@@ -122,7 +102,7 @@ plot(x, title, which, ...)
       scale the node size by. See
       [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
       for valid names. If missing (the default), uses default
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html)
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md)
       scaling. The value of `vsize` provided via `...` is used as
       baseline size.
 
@@ -136,12 +116,12 @@ plot(x, title, which, ...)
   `mar`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
   `theme`
 
   :   See
-      [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 ## Value
 

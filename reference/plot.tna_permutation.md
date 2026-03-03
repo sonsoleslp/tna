@@ -17,18 +17,20 @@ plot(x, colors, posCol = "#009900", negCol = "red", ...)
 
 - colors:
 
-  See [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  See
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 - posCol:
 
   Color for plotting edges the difference in edge weights is positive.
-  See [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  See
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 - negCol:
 
   Color for plotting edges when the the difference in edge weights is
   negative. See
-  [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 - ...:
 
@@ -37,8 +39,8 @@ plot(x, colors, posCol = "#009900", negCol = "red", ...)
 
 ## Value
 
-A `qgraph` object containing only the significant edges according to the
-permutation test.
+A `cograph_network` object containing only the significant edges
+according to the permutation test.
 
 ## See also
 

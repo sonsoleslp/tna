@@ -22,7 +22,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/atna.html">Attention TNA</a></li>
     <li><a class="dropdown-item" href="../articles/communities_and_cliques.html">Finding cliques and communities with tna</a></li>
     <li><a class="dropdown-item" href="../articles/complete_tutorial.html">A showcase of the main tna functions</a></li>
-    <li><a class="dropdown-item" href="../articles/ftna.html">Frequency-based tna</a></li>
+    <li><a class="dropdown-item" href="../articles/ftna.html">Frequency-based TNA</a></li>
     <li><a class="dropdown-item" href="../articles/grouped_sequences.html">Using grouped sequence data with tna</a></li>
     <li><a class="dropdown-item" href="../articles/new-docs.html">tna — R Package Documentation</a></li>
     <li><a class="dropdown-item" href="../articles/prepare_data.html">How to prepare data for tna</a></li>
@@ -50,24 +50,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'tna_cliques'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  first <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  show_loops <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  edge.labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  edge.label.position <span class="op">=</span> <span class="fl">0.65</span>,</span>
-<span>  minimum <span class="op">=</span> <span class="fl">1e-05</span>,</span>
-<span>  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">4</span><span class="op">)</span>,</span>
-<span>  layout <span class="op">=</span> <span class="st">"circle"</span>,</span>
-<span>  layout_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  cut <span class="op">=</span> <span class="fl">0.01</span>,</span>
-<span>  normalize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">colors</span>,</span>
-<span>  theme <span class="op">=</span> <span class="st">"colorblind"</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, n <span class="op">=</span> <span class="fl">6</span>, first <span class="op">=</span> <span class="fl">1</span>, show_loops <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">colors</span>, ask <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -93,56 +76,13 @@ The default index is <code>1</code>.</p></dd>
 in the plots or not.</p></dd>
 
 
-<dt id="arg-edge-labels">edge.labels<a class="anchor" aria-label="anchor" href="#arg-edge-labels"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
-
-
-<dt id="arg-edge-label-position">edge.label.position<a class="anchor" aria-label="anchor" href="#arg-edge-label-position"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
-
-
-<dt id="arg-minimum">minimum<a class="anchor" aria-label="anchor" href="#arg-minimum"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
-
-
-<dt id="arg-mar">mar<a class="anchor" aria-label="anchor" href="#arg-mar"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
-
-
-<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p>One of the following:</p><ul><li><p>A <code>character</code> string describing a <code>qgraph</code> layout (e.g., <code>"circle"</code>)
-or the name of a <code>igraph</code> layout function (e.g., <code>"layout_on_grid"</code>).</p></li>
-<li><p>A <code>matrix</code> of node positions to use, with a row for each node and
-<code>x</code> and <code>y</code> columns for the node positions.</p></li>
-<li><p>A layout function from <code>igraph</code>.</p></li>
-</ul></dd>
-
-
-<dt id="arg-layout-args">layout_args<a class="anchor" aria-label="anchor" href="#arg-layout-args"></a></dt>
-<dd><p>A <code>list</code> of arguments to pass to the <code>igraph</code> layout
-function when <code>layout</code> is a function or a character string that specifies
-a function name.</p></dd>
-
-
-<dt id="arg-cut">cut<a class="anchor" aria-label="anchor" href="#arg-cut"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
-
-
-<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
+<dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
+<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
 
 
 <dt id="arg-ask">ask<a class="anchor" aria-label="anchor" href="#arg-ask"></a></dt>
 <dd><p>A <code>logical</code> value. When <code>TRUE</code>, show plots one by one and asks
 to plot the next plot in interactive mode.</p></dd>
-
-
-<dt id="arg-colors">colors<a class="anchor" aria-label="anchor" href="#arg-colors"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
-
-
-<dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
-<dd><p>See <code><a href="https://rdrr.io/pkg/qgraph/man/qgraph.html" class="external-link">qgraph::qgraph()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

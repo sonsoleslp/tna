@@ -12,8 +12,12 @@
   [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md).
 - Fixed edge ordering in
   [`betweenness_network()`](http://sonsoles.me/tna/reference/betweenness_network.md).
+- The packages no longer depends on `qgraph`.
+- Network plotting functionality now relies on `cograph` instead.
 
 ## tna 1.2.0
+
+CRAN release: 2026-02-12
 
 - Added the function
   [`reliability()`](http://sonsoles.me/tna/reference/reliability.md) for
@@ -39,6 +43,8 @@
 
 ## tna 1.1.0
 
+CRAN release: 2025-10-18
+
 - Added the function
   [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md)
   to cluster sequence data using string distance measures of the
@@ -51,6 +57,8 @@
   now accepts a character vector for the `actor` argument.
 
 ## tna 1.0.0
+
+CRAN release: 2025-07-15
 
 - CRAN release
 
@@ -85,6 +93,8 @@
   that resulted in plotting arguments not being passed to `qgraph`.
 
 ## tna 0.5.0
+
+CRAN release: 2025-05-26
 
 - Added a new dataset `group_regulation_long`.
 
@@ -193,6 +203,8 @@
 
 ## tna 0.4.0
 
+CRAN release: 2025-03-01
+
 - The
   [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md)
   function now produces an object of class `tna_data`, which can be
@@ -263,6 +275,8 @@
   sequence data.
 
 ## tna 0.3.0
+
+CRAN release: 2024-12-11
 
 - Added support for grouped sequence data (clusters).
 

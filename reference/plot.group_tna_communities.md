@@ -30,8 +30,8 @@ plot(x, title, colors, ...)
 
 ## Value
 
-A `list` (invisibly) of `qgraph` objects in which the nodes are colored
-by community for each cluster.
+A `list` (invisibly) of `cograph_network` objects in which the nodes are
+colored by community for each cluster.
 
 ## See also
 

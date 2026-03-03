@@ -242,7 +242,7 @@ model_sna <- sna(d)
 
 All TNA analysis objects have
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods
-returning qgraph or ggplot2 objects.
+returning `cograph_network` or `ggplot2` objects.
 
 ### `plot()`
 
@@ -1430,9 +1430,9 @@ g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH 39b377f DNW- 9 78 -- 
+    #> IGRAPH e3629ed DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from 39b377f (vertex names):
+    #> + edges from e3629ed (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  

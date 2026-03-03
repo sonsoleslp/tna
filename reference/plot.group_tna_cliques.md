@@ -27,8 +27,8 @@ plot(x, title, ...)
 ## Value
 
 A `list` (invisibly) with one element per cluster. Each element contains
-a `qgraph` plot when only one clique is present per cluster, otherwise
-the element is `NULL`.
+a `cograph_network` plot when only one clique is present per cluster,
+otherwise the element is `NULL`.
 
 ## See also
 

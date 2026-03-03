@@ -74,6 +74,8 @@ print(cliques_of_two)
 #> consensus     0.082    0.19
 #> discuss       0.321    0.19
 plot(cliques_of_two, vsize = 15, edge.label.cex = 2, esize = 20, ask = FALSE)
+#> Warning: 'esize' is deprecated, use 'edge_size' instead.
+#> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-6-1.png)
@@ -109,6 +111,9 @@ print(cliques_of_three)
 #> coregulate     0.135      0.023    0.27
 #> discuss        0.321      0.084    0.19
 plot(cliques_of_three, vsize = 25, edge.label.cex = 4, esize = 20, ask = FALSE)
+#> Warning: 'esize' is deprecated, use 'edge_size' instead.
+#> Warning: 'esize' is deprecated, use 'edge_size' instead.
+#> Warning: 'esize' is deprecated, use 'edge_size' instead.
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-7-1.png)

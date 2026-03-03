@@ -7,7 +7,7 @@
   tna](http://sonsoles.me/tna/articles/communities_and_cliques.md):
 - [A showcase of the main tna
   functions](http://sonsoles.me/tna/articles/complete_tutorial.md):
-- [Frequency-based tna](http://sonsoles.me/tna/articles/ftna.md):
+- [Frequency-based TNA](http://sonsoles.me/tna/articles/ftna.md):
 - [Using grouped sequence data with
   tna](http://sonsoles.me/tna/articles/grouped_sequences.md):
 - [tna — R Package

@@ -42,7 +42,7 @@
 <li><a class="dropdown-item" href="../articles/atna.html">Attention TNA</a></li>
     <li><a class="dropdown-item" href="../articles/communities_and_cliques.html">Finding cliques and communities with tna</a></li>
     <li><a class="dropdown-item" href="../articles/complete_tutorial.html">A showcase of the main tna functions</a></li>
-    <li><a class="dropdown-item" href="../articles/ftna.html">Frequency-based tna</a></li>
+    <li><a class="dropdown-item" href="../articles/ftna.html">Frequency-based TNA</a></li>
     <li><a class="dropdown-item" href="../articles/grouped_sequences.html">Using grouped sequence data with tna</a></li>
     <li><a class="dropdown-item" href="../articles/new-docs.html">tna — R Package Documentation</a></li>
     <li><a class="dropdown-item" href="../articles/prepare_data.html">How to prepare data for tna</a></li>
@@ -373,7 +373,7 @@ weight).</p>
 <h2 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>
 </h2>
 <p>All TNA analysis objects have <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods returning
-qgraph or ggplot2 objects.</p>
+<code>cograph_network</code> or <code>ggplot2</code> objects.</p>
 <div class="section level3">
 <h3 id="plot">
 <code>plot()</code><a class="anchor" aria-label="anchor" href="#plot"></a>
@@ -1549,9 +1549,9 @@ significance.</p>
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; IGRAPH 39b377f DNW- 9 78 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH e3629ed DNW- 9 78 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), weight (e/n)</span></span>
-<span><span class="co">#&gt; + edges from 39b377f (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from e3629ed (vertex names):</span></span>
 <span><span class="co">#&gt;  [1] adapt     -&gt;cohesion   adapt     -&gt;consensus  adapt     -&gt;coregulate</span></span>
 <span><span class="co">#&gt;  [4] adapt     -&gt;discuss    adapt     -&gt;emotion    adapt     -&gt;monitor   </span></span>
 <span><span class="co">#&gt;  [7] adapt     -&gt;plan       cohesion  -&gt;adapt      cohesion  -&gt;cohesion  </span></span>

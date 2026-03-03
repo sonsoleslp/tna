@@ -30,7 +30,7 @@ plot_associations(x, edge.color, ...)
 
 ## Value
 
-A `qgraph` plot of the network.
+A `cograph_network` object.
 
 ## Examples
 

@@ -32,8 +32,8 @@ plot_compare(x, i = 1L, j = 2L, ...)
 
 ## Value
 
-A `qgraph` object displaying the difference network between the two
-clusters
+A `cograph_network` object displaying the difference network between the
+two clusters
 
 ## See also
 

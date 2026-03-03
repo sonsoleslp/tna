@@ -1,4 +1,4 @@
-# Frequency-based tna
+# Frequency-based TNA
 
 ## FTNA tutorial
 
@@ -200,7 +200,7 @@ print(cliques_of_two)  # Display details of 2-cliques
 #>         monitor plan
 #> monitor    0.01 0.12
 #> plan       0.19 0.92
-plot(cliques_of_two, ask = F, vsize = 20)   # Visualize 2-cliques in the network
+plot(cliques_of_two, ask = F)   # Visualize 2-cliques in the network
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-8-1.png)

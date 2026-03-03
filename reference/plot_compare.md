@@ -12,15 +12,7 @@ otherwise.
 plot_compare(x, ...)
 
 # S3 method for class 'tna'
-plot_compare(
-  x,
-  y,
-  theme = NULL,
-  palette = "colorblind",
-  posCol = "#009900",
-  negCol = "red",
-  ...
-)
+plot_compare(x, y, posCol = "#009900", negCol = "red", ...)
 ```
 
 ## Arguments
@@ -32,36 +24,28 @@ plot_compare(
 - ...:
 
   Additional arguments passed to
-  [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 - y:
 
   A `tna` object. This is the model subtracted from the principal model.
 
-- theme:
-
-  See [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
-
-- palette:
-
-  See [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
-
 - posCol:
 
   Color for plotting edges and pie when the first group has a higher
   value. See
-  [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 - negCol:
 
   Color for plotting edges and pie when the second group has a higher
   value. See
-  [`qgraph::qgraph()`](https://rdrr.io/pkg/qgraph/man/qgraph.html).
+  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 ## Value
 
-A `qgraph` object displaying the difference network between the two
-models.
+A `cograph_network` object displaying the difference network between the
+two models.
 
 ## See also
 
