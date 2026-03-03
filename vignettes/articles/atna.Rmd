@@ -23,7 +23,7 @@ suppressPackageStartupMessages({
   library("dplyr")
   library("ggplot2")
 })
-options(scipen = 999999)
+options(scipen = 9999)
 options(digits = 2)
 options(max.print = 30)
 options(width = 83)
@@ -83,7 +83,7 @@ You get a weight matrix and initial probabilities, just like regular TNA. The di
 ## Plotting the Network
 
 ```{r, fig.width=4, fig.height=4}
-plot(model_atna, minimum = 0.05, cut = 0.1)
+plot(model_atna)
 ```
 
 This produces the same style of network graph you get from `plot()` on a regular TNA model. Nodes are states, edges are weighted connections, and thicker arrows mean stronger relationships.
@@ -150,9 +150,9 @@ Cliques are small groups of states where every state has a strong connection to 
 
 ```{r, fig.width=3,fig.height=1}
 layout(t(1:3)); par(mar = c(0,0,0,0))
-cliq <- cliques(model_atna, size = 2, threshold= 0.2)
+cliq <- cliques(model_atna, size = 2, threshold = 0.2)
 print(cliq)
-plot(cliq, vsize = 20, edge.label.cex = 2)
+plot(cliq)
 ```
 
 The `size` argument sets the minimum clique size (2 means pairs, 3 means triangles, etc.). The `threshold` argument sets the minimum edge weight needed for two states to count as connected.

@@ -131,13 +131,7 @@ summary(tna_model) |>
 
 Plot the transition network
 ```{r tnaplot}
-# Default plot
 plot(tna_model) 
-# Optimized plot
-plot(
-  tna_model, cut = 0.2, minimum = 0.05, 
-  edge.label.position = 0.8, edge.label.cex = 0.7
-)
 ```
 Calculate the centrality measures
 ```{r}

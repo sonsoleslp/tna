@@ -1218,9 +1218,6 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
 #' @export
 #' @param x A square `matrix` of edge weights.
 #' @param labels Optional `character` vector of node labels.
-#'   See [cograph::splot].
-#' @param cut A `numeric` value for the edge emphasis threshold.
-#'   See [cograph::splot].
 #' @param colors An optional `character` vector of node colors to use.
 #' @inheritParams plot.tna
 #' @keywords internal
@@ -1229,7 +1226,7 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
 #' m <- matrix(rexp(25), 5, 5)
 #' plot_model(m)
 #'
-plot_model <- function(x, labels, colors, cut, ...) {
+plot_model <- function(x, labels, colors, ...) {
   stopifnot_(
     is.matrix(x) && ncol(x) == nrow(x),
     "Argument {.arg x} must be a square matrix."
@@ -1237,12 +1234,10 @@ plot_model <- function(x, labels, colors, cut, ...) {
   nc <- ncol(x)
   labels <- labels %m% seq_len(nc)
   colors <- colors %m% color_palette(nc)
-  cut <- cut %m% stats::median(x, na.rm = TRUE)
   cograph::splot(
     x = x,
     node_fill = colors,
     labels = labels,
-    edge_cutoff = cut,
     ...
   )
 }
@@ -2217,7 +2212,7 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
 #' @export
 #' @rdname plot_associations
 #' @param x A `tna` object.
-#' @param edge.color An optional `character` vector of colors for the edges.
+#' @param edge_color An optional `character` vector of colors for the edges.
 #'   By default, the colors are specified by the magnitude of the
 #'   standardized residual.
 #' @param ... Additional arguments passed to [plot_model()].
@@ -2232,7 +2227,7 @@ plot_associations <- function(x, ...) {
 
 #' @export
 #' @rdname plot_associations
-plot_associations.tna <- function(x, edge.color, ...) {
+plot_associations.tna <- function(x, edge_color, ...) {
   check_missing(x)
   check_class(x, "tna")
   stopifnot_(
@@ -2244,13 +2239,13 @@ plot_associations.tna <- function(x, edge.color, ...) {
   chisq <- suppressWarnings(stats::chisq.test(tab))
   res <- as.numeric(chisq$stdres)
   dim(res) <- dim(tab)
-  if (missing(edge.color)) {
-    edge.color <- matrix(NA_character_, ncol = ncol(res))
-    edge.color[res > 4] <- "#4A6FE3"
-    edge.color[res > 2 & res <= 4] <- "#9DA8E2"
-    edge.color[res <= 2 & res >= -2] <- "#E2E2E2"
-    edge.color[res < -2 & res >= -4] <- "#E495A5"
-    edge.color[res < -4] <- "#D33F6A"
+  if (missing(edge_color)) {
+    edge_color <- matrix(NA_character_, ncol = ncol(res))
+    edge_color[res > 4] <- "#4A6FE3"
+    edge_color[res > 2 & res <= 4] <- "#9DA8E2"
+    edge_color[res <= 2 & res >= -2] <- "#E2E2E2"
+    edge_color[res < -2 & res >= -4] <- "#E495A5"
+    edge_color[res < -4] <- "#D33F6A"
   }
-  plot_model(res, edge_color = edge.color, labels = x$labels, ...)
+  plot_model(res, edge_color = edge_color, labels = x$labels, ...)
 }

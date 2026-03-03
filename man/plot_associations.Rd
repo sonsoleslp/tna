@@ -7,14 +7,14 @@
 \usage{
 plot_associations(x, ...)
 
-\method{plot_associations}{tna}(x, edge.color, ...)
+\method{plot_associations}{tna}(x, edge_color, ...)
 }
 \arguments{
 \item{x}{A \code{tna} object.}
 
 \item{...}{Additional arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 
-\item{edge.color}{An optional \code{character} vector of colors for the edges.
+\item{edge_color}{An optional \code{character} vector of colors for the edges.
 By default, the colors are specified by the magnitude of the
 standardized residual.}
 }
