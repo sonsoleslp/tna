@@ -225,6 +225,8 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @family cliques
 #' @inheritParams print.tna_cliques
 #' @inheritParams plot.tna
+#' @param colors Optional `character` vector of colors values to use
+#'   for the nodes.
 #' @param show_loops A `logical` value indicating whether to include loops
 #'   in the plots or not.
 #' @param ask A `logical` value. When `TRUE`, show plots one by one and asks

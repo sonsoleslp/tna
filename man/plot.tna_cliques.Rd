@@ -18,6 +18,9 @@ The default index is \code{1}.}
 \item{show_loops}{A \code{logical} value indicating whether to include loops
 in the plots or not.}
 
+\item{colors}{Optional \code{character} vector of colors values to use
+for the nodes.}
+
 \item{ask}{A \code{logical} value. When \code{TRUE}, show plots one by one and asks
 to plot the next plot in interactive mode.}
 
