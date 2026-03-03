@@ -26,7 +26,7 @@ print(model)
 
 ``` r
 # TNA visualization
-plot(model, minimum = 0.05, cut = 0.1)
+plot(model)
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-4-1.png)
@@ -44,7 +44,7 @@ pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 plot(pruned_threshold)
 plot(pruned_lowest)
 plot(pruned_disparity)
-plot(model, minimum = 0.05, cut = 0.1)
+plot(model)
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-5-1.png)
@@ -73,9 +73,7 @@ print(cliques_of_two)
 #>           consensus discuss
 #> consensus     0.082    0.19
 #> discuss       0.321    0.19
-plot(cliques_of_two, vsize = 15, edge.label.cex = 2, esize = 20, ask = FALSE)
-#> Warning: 'esize' is deprecated, use 'edge_size' instead.
-#> Warning: 'esize' is deprecated, use 'edge_size' instead.
+plot(cliques_of_two, ask = FALSE)
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-6-1.png)
@@ -110,10 +108,7 @@ print(cliques_of_three)
 #> consensus      0.082      0.188    0.19
 #> coregulate     0.135      0.023    0.27
 #> discuss        0.321      0.084    0.19
-plot(cliques_of_three, vsize = 25, edge.label.cex = 4, esize = 20, ask = FALSE)
-#> Warning: 'esize' is deprecated, use 'edge_size' instead.
-#> Warning: 'esize' is deprecated, use 'edge_size' instead.
-#> Warning: 'esize' is deprecated, use 'edge_size' instead.
+plot(cliques_of_three, ask = FALSE)
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-7-1.png)

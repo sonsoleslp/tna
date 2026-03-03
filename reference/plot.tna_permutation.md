@@ -18,19 +18,19 @@ plot(x, colors, posCol = "#009900", negCol = "red", ...)
 - colors:
 
   See
-  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
+  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
 
 - posCol:
 
   Color for plotting edges the difference in edge weights is positive.
   See
-  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
+  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
 
 - negCol:
 
   Color for plotting edges when the the difference in edge weights is
   negative. See
-  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
+  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
 
 - ...:
 

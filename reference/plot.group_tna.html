@@ -82,57 +82,17 @@ defines how the order of the nodes in the plot is defined. A <code>TRUE</code> v
 uses the order in <code>node_list</code>. Otherwise, the nodes are ranked based on
 edge weights and ordered according to the rank.</p></dd>
 
-    <dt><code>labels</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>colors</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>pie</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>cut</code></dt>
-<dd><p>Edge color and width emphasis cutoff value. The default is
-the median of the edge weights. See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code> for details.</p></dd>
-
-    <dt><code>vsize</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>show_pruned</code></dt>
-<dd><p>A <code>logical</code> value indicating if pruned edges removed by
-<code><a href="prune.html">prune()</a></code> should be shown in the plot.  The default is <code>TRUE</code>, and the
-edges are drawn as dashed with a different color to distinguish them.</p></dd>
-
-    <dt><code>pruned_edge_color</code></dt>
-<dd><p>A <code>character</code> string for the color to use for
-pruned edges when <code>show_pruned = TRUE</code>. The default is <code>"pink"</code>.</p></dd>
-
-    <dt><code>edge.color</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>edge.labels</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>edge.label.position</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
     <dt><code>scale_nodes</code></dt>
 <dd><p>A <code>character</code> string giving the name of a centrality
 measure to scale the node size by. See <code><a href="centralities.html">centralities()</a></code> for valid names.
-If missing (the default), uses default <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code> scaling.
-The value of <code>vsize</code> provided via <code>...</code> is used as baseline size.</p></dd>
+If missing (the default), uses default <code><a href="http://sonsoles.me/cograph/reference/splot.html" class="external-link">cograph::splot()</a></code> scaling.
+The value of <code>node_size</code> provided via <code>...</code> is used as baseline size.</p></dd>
 
     <dt><code>scaling_factor</code></dt>
 <dd><p>A <code>numeric</code> value specifying how strongly to scale
 the nodes when <code>scale_nodes</code> is provided. Values
 between 0 and 1 will result in smaller differences and values larger
 than 1 will result in greater differences. The default is <code>0.5</code>.</p></dd>
-
-    <dt><code>mar</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
-
-    <dt><code>theme</code></dt>
-<dd><p>See <code><a href="http://sonsoles.me/cograph/reference/plot_tna.html" class="external-link">cograph::tplot()</a></code>.</p></dd>
 
 
 </dl></dd>

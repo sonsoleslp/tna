@@ -147,7 +147,7 @@ We can also plot the cluster-specific transitions
 
 ``` r
 layout(t(1:3))
-plot(tna_model_clus, vsize = 20, edge.label.cex = 2)
+plot(tna_model_clus)
 ```
 
 ![](grouped_sequences_files/figure-html/unnamed-chunk-10-1.png)
@@ -162,7 +162,7 @@ and plot the cluster transitions after pruning
 
 ``` r
 layout(t(1:3))
-plot(pruned_clus, vsize = 20, edge.label.cex = 2)
+plot(pruned_clus)
 ```
 
 ![](grouped_sequences_files/figure-html/unnamed-chunk-12-1.png)

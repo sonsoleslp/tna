@@ -168,7 +168,7 @@ the 0–1 range by the <code>scaling = "minmax"</code> argument.</p>
 <h2 id="plotting-the-network">Plotting the Network<a class="anchor" aria-label="anchor" href="#plotting-the-network"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_atna</span>, minimum <span class="op">=</span> <span class="fl">0.05</span>, cut <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_atna</span><span class="op">)</span></span></code></pre></div>
 <p><img src="atna_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%"></p>
 <p>This produces the same style of network graph you get from
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on a regular TNA model. Nodes are states, edges are
@@ -277,7 +277,7 @@ though TNA would put them in separate ones.</p>
 connection to every other state in the group.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cliq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">model_atna</span>, size <span class="op">=</span> <span class="fl">2</span>, threshold<span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span><span class="va">cliq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">model_atna</span>, size <span class="op">=</span> <span class="fl">2</span>, threshold <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cliq</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Number of 2-cliques = 3 (weight threshold = 0.2)</span></span>
 <span><span class="co">#&gt; Showing 3 cliques starting from clique number 1</span></span>
@@ -296,7 +296,7 @@ connection to every other state in the group.</p>
 <span><span class="co">#&gt;           consensus discuss</span></span>
 <span><span class="co">#&gt; consensus      0.41    0.51</span></span>
 <span><span class="co">#&gt; discuss        0.54    0.33</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliq</span>, vsize <span class="op">=</span> <span class="fl">20</span>, edge.label.cex <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliq</span><span class="op">)</span></span></code></pre></div>
 <p><img src="atna_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="100%"></p>
 <p>The <code>size</code> argument sets the minimum clique size (2 means
 pairs, 3 means triangles, etc.). The <code>threshold</code> argument

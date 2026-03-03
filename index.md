@@ -116,21 +116,10 @@ summary(tna_model)
 Plot the transition network
 
 ``` r
-# Default plot
 plot(tna_model) 
 ```
 
-![](reference/figures/README-tnaplot-1.svg)
-
-``` r
-# Optimized plot
-plot(
-  tna_model, cut = 0.2, minimum = 0.05, 
-  edge.label.position = 0.8, edge.label.cex = 0.7
-)
-```
-
-![](reference/figures/README-tnaplot-2.svg) Calculate the centrality
+![](reference/figures/README-tnaplot-1.svg) Calculate the centrality
 measures
 
 ``` r
@@ -214,15 +203,15 @@ print(comparison$centralities$stats)
 
 |   state    | centrality |   diff_true | effect_size |     p_value |
 |:----------:|:----------:|------------:|------------:|------------:|
-|   adapt    | InStrength | -0.23693341 |  -6.8833744 | 0.000999001 |
-|  cohesion  | InStrength |  0.01634987 |   0.3393469 | 0.754245754 |
-| consensus  | InStrength |  0.53680793 |   7.4129244 | 0.000999001 |
-| coregulate | InStrength | -0.25275371 |  -7.5766981 | 0.000999001 |
-|  discuss   | InStrength | -0.09009651 |  -1.8205750 | 0.063936064 |
-|  emotion   | InStrength |  0.19288376 |   4.0744239 | 0.000999001 |
-|  monitor   | InStrength | -0.09192991 |  -3.3821256 | 0.000999001 |
-|    plan    | InStrength |  0.12225988 |   2.6871856 | 0.010989011 |
-| synthesis  | InStrength | -0.04909607 |  -3.1462198 | 0.002997003 |
+|   adapt    | InStrength | -0.23693341 |  -6.5741846 | 0.000999001 |
+|  cohesion  | InStrength |  0.01634987 |   0.3369021 | 0.743256743 |
+| consensus  | InStrength |  0.53680793 |   7.7240021 | 0.000999001 |
+| coregulate | InStrength | -0.25275371 |  -7.3308543 | 0.000999001 |
+|  discuss   | InStrength | -0.09009651 |  -1.9372656 | 0.046953047 |
+|  emotion   | InStrength |  0.19288376 |   4.0496273 | 0.000999001 |
+|  monitor   | InStrength | -0.09192991 |  -3.5069394 | 0.000999001 |
+|    plan    | InStrength |  0.12225988 |   2.7153863 | 0.005994006 |
+| synthesis  | InStrength | -0.04909607 |  -3.0577480 | 0.002997003 |
 
 # Papers using TNA
 

@@ -31,10 +31,7 @@ To visualize the model, we can use the standard
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) function.
 
 ``` r
-plot(
-  tna_model, cut = 0.2, minimum = 0.05, 
-  edge.label.position = 0.8, edge.label.cex = 0.7
-)
+plot(tna_model)
 ```
 
 ![](tna_files/figure-html/unnamed-chunk-5-1.png)

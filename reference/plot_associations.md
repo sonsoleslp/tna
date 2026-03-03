@@ -8,7 +8,7 @@ Plot an Association Network
 plot_associations(x, ...)
 
 # S3 method for class 'tna'
-plot_associations(x, edge.color, ...)
+plot_associations(x, edge_color, ...)
 ```
 
 ## Arguments
@@ -22,7 +22,7 @@ plot_associations(x, edge.color, ...)
   Additional arguments passed to
   [`plot_model()`](http://sonsoles.me/tna/reference/plot_model.md).
 
-- edge.color:
+- edge_color:
 
   An optional `character` vector of colors for the edges. By default,
   the colors are specified by the magnitude of the standardized

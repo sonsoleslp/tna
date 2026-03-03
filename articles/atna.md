@@ -98,7 +98,7 @@ the 0–1 range by the `scaling = "minmax"` argument.
 ## Plotting the Network
 
 ``` r
-plot(model_atna, minimum = 0.05, cut = 0.1)
+plot(model_atna)
 ```
 
 ![](atna_files/figure-html/unnamed-chunk-3-1.png)
@@ -221,7 +221,7 @@ connection to every other state in the group.
 
 ``` r
 layout(t(1:3)); par(mar = c(0,0,0,0))
-cliq <- cliques(model_atna, size = 2, threshold= 0.2)
+cliq <- cliques(model_atna, size = 2, threshold = 0.2)
 print(cliq)
 #> Number of 2-cliques = 3 (weight threshold = 0.2)
 #> Showing 3 cliques starting from clique number 1
@@ -240,7 +240,7 @@ print(cliq)
 #>           consensus discuss
 #> consensus      0.41    0.51
 #> discuss        0.54    0.33
-plot(cliq, vsize = 20, edge.label.cex = 2)
+plot(cliq)
 ```
 
 ![](atna_files/figure-html/unnamed-chunk-8-1.png)

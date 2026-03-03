@@ -35,7 +35,7 @@ plot(x, colors, method, ...)
 - ...:
 
   Additional arguments passed to
-  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
+  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
 
 ## Value
 

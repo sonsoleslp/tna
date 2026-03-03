@@ -42,68 +42,14 @@ plot(x, title, which, ...)
       order in `node_list`. Otherwise, the nodes are ranked based on
       edge weights and ordered according to the rank.
 
-  `labels`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `colors`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `pie`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `cut`
-
-  :   Edge color and width emphasis cutoff value. The default is the
-      median of the edge weights. See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md)
-      for details.
-
-  `vsize`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `show_pruned`
-
-  :   A `logical` value indicating if pruned edges removed by
-      [`prune()`](http://sonsoles.me/tna/reference/prune.md) should be
-      shown in the plot. The default is `TRUE`, and the edges are drawn
-      as dashed with a different color to distinguish them.
-
-  `pruned_edge_color`
-
-  :   A `character` string for the color to use for pruned edges when
-      `show_pruned = TRUE`. The default is `"pink"`.
-
-  `edge.color`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `edge.labels`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `edge.label.position`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
   `scale_nodes`
 
   :   A `character` string giving the name of a centrality measure to
       scale the node size by. See
       [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
       for valid names. If missing (the default), uses default
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md)
-      scaling. The value of `vsize` provided via `...` is used as
+      [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md)
+      scaling. The value of `node_size` provided via `...` is used as
       baseline size.
 
   `scaling_factor`
@@ -112,16 +58,6 @@ plot(x, title, which, ...)
       `scale_nodes` is provided. Values between 0 and 1 will result in
       smaller differences and values larger than 1 will result in
       greater differences. The default is `0.5`.
-
-  `mar`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
-
-  `theme`
-
-  :   See
-      [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md).
 
 ## Value
 

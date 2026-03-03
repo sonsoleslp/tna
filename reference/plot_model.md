@@ -5,7 +5,7 @@ Plot a Transition Network Model from a Matrix of Edge Weights
 ## Usage
 
 ``` r
-plot_model(x, labels, colors, cut, ...)
+plot_model(x, labels, colors, ...)
 ```
 
 ## Arguments
@@ -16,23 +16,16 @@ plot_model(x, labels, colors, cut, ...)
 
 - labels:
 
-  Optional `character` vector of node labels. See
-  [cograph::tplot](http://sonsoles.me/cograph/reference/plot_tna.md).
+  Optional `character` vector of node labels.
 
 - colors:
 
   An optional `character` vector of node colors to use.
 
-- cut:
-
-  A `numeric` value for the edge emphasis threshold. See
-  [cograph::tplot](http://sonsoles.me/cograph/reference/plot_tna.md).
-
 - ...:
 
   Additional arguments passed to
-  [`cograph::tplot()`](http://sonsoles.me/cograph/reference/plot_tna.md)
-  or
+  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md) or
   [`cograph::plot_htna()`](http://sonsoles.me/cograph/reference/plot_htna.md).
 
 ## Value

@@ -147,7 +147,7 @@ pruned_disparity <- prune(model_scaled, method = "disparity", alpha = 0.5)
 plot(pruned_threshold)
 plot(pruned_lowest)
 plot(pruned_disparity)
-plot(model_scaled, minimum = 0.05, cut = 0.1)
+plot(model_scaled)
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-7-1.png)
@@ -454,7 +454,7 @@ plot(edge_between)
 
 ``` r
 detected_communities <- communities(model_scaled)
-plot(detected_communities, minimum = 0.05)
+plot(detected_communities)
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-18-1.png)
@@ -531,7 +531,7 @@ plot_compare(Hi, Lo, minimum = 0.0001)
 Permutation <- permutation_test(Hi, Lo, it = 1000)
 
 # Plot the significant differences identified in the permutation test
-plot(Permutation, minimum = 0.01)
+plot(Permutation)
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-20-2.png)
