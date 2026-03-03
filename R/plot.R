@@ -57,199 +57,62 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' Plot a Transition Network Analysis Model
 #'
 #' This function plots a transition network analysis (TNA) model using
-#' the `qgraph` package. The nodes in the graph represent states, with node
+#' the `cograph` package. The nodes in the graph represent states, with node
 #' sizes corresponding to initial state probabilities. Edge labels represent
 #' the edge weights of the network.
 #'
 #' @export
 #' @family basic
-#' @param x A `tna` object from [tna()].
+#' @param x A `tna` object from [build_model()].
 #' @param node_list An optional `list` of two `character` vectors that define
 #'   two mutually exclusive groups of node labels.
 #' @param use_list_order A `logical` value. If `node_list` is provided,
 #'   defines how the order of the nodes in the plot is defined. A `TRUE` value
 #'   uses the order in `node_list`. Otherwise, the nodes are ranked based on
 #'   edge weights and ordered according to the rank.
-#' @param x_offset An optional `numeric` vector with the same number of
-#'   elements as there are states. Defines a horizontal offset for each node
-#'   in the plot when `node_list` is provided.
-#' @param labels See [qgraph::qgraph()].
-#' @param colors See [qgraph::qgraph()].
-#' @param pie See [qgraph::qgraph()].
+#' @param labels See [cograph::tplot()].
+#' @param colors See [cograph::tplot()].
+#' @param pie See [cograph::tplot()].
 #' @param cut Edge color and width emphasis cutoff value. The default is
-#'   the median of the edge weights. See [qgraph::qgraph()] for details.
+#'   the median of the edge weights. See [cograph::tplot()] for details.
+#' @param vsize See [cograph::tplot()].
 #' @param show_pruned A `logical` value indicating if pruned edges removed by
 #'   [prune()] should be shown in the plot.  The default is `TRUE`, and the
 #'   edges are drawn as dashed with a different color to distinguish them.
 #' @param pruned_edge_color A `character` string for the color to use for
 #'   pruned edges when `show_pruned = TRUE`. The default is `"pink"`.
-#' @param edge.color See [qgraph::qgraph()].
-#' @param edge.labels See [qgraph::qgraph()].
-#' @param edge.label.position See [qgraph::qgraph()].
-#' @param layout One of the following:
-#'   * A `character` string describing a `qgraph` layout (e.g., `"circle"`)
-#'     or the name of a `igraph` layout function (e.g., `"layout_on_grid"`).
-#'   * A `matrix` of node positions to use, with a row for each node and
-#'     `x` and `y` columns for the node positions.
-#'   * A layout function from `igraph`.
-#' @param layout_args A `list` of arguments to pass to the `igraph` layout
-#'   function when `layout` is a function or a character string that specifies
-#'   a function name.
+#' @param edge.color See [cograph::tplot()].
+#' @param edge.labels See [cograph::tplot()].
+#' @param edge.label.position See [cograph::tplot()].
 #' @param scale_nodes A `character` string giving the name of a centrality
 #'   measure to scale the node size by. See [centralities()] for valid names.
-#'   If missing (the default), uses default [qgraph::qgraph()] scaling.
+#'   If missing (the default), uses default [cograph::tplot()] scaling.
 #'   The value of `vsize` provided via `...` is used as baseline size.
 #' @param scaling_factor A `numeric` value specifying how strongly to scale
 #'   the nodes when `scale_nodes` is provided. Values
 #'   between 0 and 1 will result in smaller differences and values larger
 #'   than 1 will result in greater differences. The default is `0.5`.
-#' @param mar See [qgraph::qgraph()].
-#' @param theme See [qgraph::qgraph()].
-#' @param ... Additional arguments passed to [qgraph::qgraph()].
-#' @return A `qgraph` plot of the transition network.
+#' @param mar See [cograph::tplot()].
+#' @param theme See [cograph::tplot()].
+#' @param ... Additional arguments passed to [cograph::tplot()] or
+#'   [cograph::plot_htna()].
+#' @return A `cograph_network` plot of the transition network.
 #' @examples
 #' model <- tna(group_regulation)
 #' plot(model)
 #'
-plot.tna <- function(x, node_list, use_list_order = TRUE, x_offset,
-                     labels, colors, pie, cut,
+plot.tna <- function(x, node_list, use_list_order = TRUE,
+                     labels, colors, pie, cut, vsize = 7, 
                      show_pruned = TRUE, pruned_edge_color = "pink",
-                     edge.color = NA, edge.labels = TRUE,
-                     edge.label.position = 0.65, layout = "circle",
-                     layout_args = list(), scale_nodes, scaling_factor = 0.5,
-                     mar = rep(5, 4), theme = "colorblind", ...) {
+                     edge.color = "#003355", edge.labels = TRUE,
+                     edge.label.position = 0.65, scale_nodes, 
+                     scaling_factor = 0.5, mar = rep(0.1, 4), 
+                     theme = "colorblind", ...) {
   check_missing(x)
   check_class(x, "tna")
-  if (missing(node_list)) {
-    out <- plot_tna_(
-      x, labels, colors, pie, cut, show_pruned, pruned_edge_color,
-      edge.color, edge.labels, edge.label.position, layout,
-      layout_args, scale_nodes, scaling_factor, mar, theme, ...
-    )
-  } else {
-    out <- plot_htna_(
-      x = x,
-      node_list = node_list,
-      use_list_order = use_list_order,
-      x_offset = x_offset,
-      layout = NULL,
-      colors = NULL,
-      shape = NULL,
-      labels = labels,
-      pie = pie,
-      cut = cut,
-      show_pruned = show_pruned,
-      pruned_edge_color = pruned_edge_color,
-      edge.color = edge.color,
-      edge.labels = edge.labels,
-      edge.label.position = edge.label.position,
-      layout_args = list(),
-      scale_nodes = scale_nodes,
-      scaling_factor = scaling_factor,
-      mar = mar,
-      theme = theme,
-      ...
-    )
-  }
-  invisible(out)
-}
-
-plot_htna_ <- function(x, node_list, use_list_order = TRUE, x_offset,
-                       layout, colors, shape, ...) {
-  stopifnot_(
-    length(node_list) == 2L,
-    "Argument {.arg node_list} must be a {.cls list} of length 2."
-  )
-  stopifnot_(
-    is.character(node_list[[1L]]) && is.character(node_list[[2L]]),
-    "Elements of {.arg node_list} must be {.cls character} vectors."
-  )
-  check_flag(use_list_order)
-  lab <- x$labels
-  lhs <- node_list[[1L]]
-  rhs <- node_list[[2L]]
-  common <- intersect(rhs, lhs)
-  stopifnot_(
-    length(common) == 0,
-    "The groups defined by {.arg node_list} must not contain common states."
-  )
-  lhs_idx <- match(lhs, lab)
-  rhs_idx <- match(rhs, lab)
-  missing <- lhs[is.na(lhs_idx)]
-  stopifnot_(
-    length(missing) == 0,
-    "Nodes {.val {missing}} are not present in the model."
-  )
-  missing <- rhs[is.na(rhs_idx)]
-  stopifnot_(
-    length(missing) == 0,
-    "Nodes {.val {missing}} are not present in the model."
-  )
-  n_lhs <- length(lhs_idx)
-  n_rhs <- length(rhs_idx)
-  n <- length(lab)
-  missing <- lab[!lab %in% union(lhs, rhs)]
-  stopifnot_(
-    n_lhs + n_rhs == n,
-    c(
-      "Every state must belong to one of the
-      groups defined by {.arg node_list}.",
-      `x` = "No group has been specified for node{?s} {.val {missing}}."
-    )
-  )
-  colors <- rep("lightgray", n)
-  shape <- rep("circle", n)
-  colors[lhs_idx] <- "#ffd89d"
-  colors[rhs_idx] <- "#a68ba5"
-  shape[lhs_idx] <- "circle"
-  shape[rhs_idx] <- "square"
-  x_pos <- rep(0, n)
-  x_pos[lhs_idx] <- -0.5
-  x_pos[rhs_idx] <- 0.5
-  if (!missing(x_offset)) {
-    stopifnot_(
-      length(x_offset) == n,
-      "Argument {.arg x_offset} must be of length {n} (the number of nodes)."
-    )
-    x_pos[lhs_idx] <- x_offset[1:n_lhs]
-    x_pos[rhs_idx] <- x_offset[(n_lhs + 1):n]
-  }
-  y_pos <- rep(0, n)
-  y_pos[lhs_idx] <- seq(1, -1, length.out = n_lhs)
-  y_pos[rhs_idx] <- seq(1, -1, length.out = n_rhs)
-  if (!use_list_order) {
-    w <- x$weights
-    edges <- w[lhs_idx, rhs_idx, drop = FALSE]
-    out_str <- rowSums(edges)
-    in_str <- colSums(edges)
-    rank_in <- rank(-in_str)
-    rank_out <- rank(-out_str)
-    pos_lhs <- rowSums(edges * rank_in[col(edges)]) / out_str
-    pos_rhs <- colSums(edges * rank_out) / in_str
-    y_pos[lhs_idx] <- y_pos[lhs_idx][rank(pos_lhs, ties.method = "first")]
-    y_pos[rhs_idx] <- y_pos[rhs_idx][rank(pos_rhs, ties.method = "first")]
-  }
-  layout_mat <- cbind(x = x_pos, y = y_pos)
-  plot_tna_(
-    x = x,
-    layout = layout_mat,
-    colors = colors,
-    shape = shape,
-    ...
-  )
-}
-
-plot_tna_ <- function(x, labels, colors, pie, cut,
-                      show_pruned = TRUE, pruned_edge_color = "pink",
-                      edge.color = NA, edge.labels = TRUE,
-                      edge.label.position = 0.65, layout = "circle",
-                      layout_args = list(), scale_nodes, scaling_factor = 0.5,
-                      mar = rep(5, 4), theme = "colorblind", ...) {
   check_flag(show_pruned)
   check_flag(edge.labels)
   check_range(edge.label.position, scalar = FALSE)
-  layout <- check_layout(x, layout = layout, layout_args)
-  vsize <- list(...)$vsize
   pie <- pie %m% x$inits
   labels <- labels %m% x$labels
   if (missing(colors)) {
@@ -293,14 +156,74 @@ plot_tna_ <- function(x, labels, colors, pie, cut,
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
     vsize <- vsize * (1 + cent)^scaling_factor
   }
-  qgraph::qgraph(
-    input = weights,
-    color = colors,
+  if (missing(node_list)) {
+    return(
+      cograph::tplot(
+        x = weights,
+        color = colors,
+        edge.color = edge.color,
+        edge.labels = edge.labels,
+        edge.label.position = edge.label.position,
+        labels = labels,
+        theme = theme,
+        vsize = vsize,
+        pie = pie,
+        mar = mar,
+        lty = lty,
+        cut = cut,
+        ...
+      )
+    )
+  }
+  stopifnot_(
+    length(node_list) == 2L,
+    "Argument {.arg node_list} must be a {.cls list} of length 2."
+  )
+  stopifnot_(
+    is.character(node_list[[1L]]) && is.character(node_list[[2L]]),
+    "Elements of {.arg node_list} must be {.cls character} vectors."
+  )
+  check_flag(use_list_order)
+  lab <- x$labels
+  lhs <- node_list[[1L]]
+  rhs <- node_list[[2L]]
+  common <- intersect(rhs, lhs)
+  stopifnot_(
+    length(common) == 0,
+    "The groups defined by {.arg node_list} must not contain common states."
+  )
+  lhs_idx <- match(lhs, lab)
+  rhs_idx <- match(rhs, lab)
+  missing <- lhs[is.na(lhs_idx)]
+  stopifnot_(
+    length(missing) == 0,
+    "Nodes {.val {missing}} are not present in the model."
+  )
+  missing <- rhs[is.na(rhs_idx)]
+  stopifnot_(
+    length(missing) == 0,
+    "Nodes {.val {missing}} are not present in the model."
+  )
+  n_lhs <- length(lhs_idx)
+  n_rhs <- length(rhs_idx)
+  n <- length(lab)
+  missing <- lab[!lab %in% union(lhs, rhs)]
+  stopifnot_(
+    n_lhs + n_rhs == n,
+    c(
+      "Every state must belong to one of the
+        groups defined by {.arg node_list}.",
+      `x` = "No group has been specified for node{?s} {.val {missing}}."
+    )
+  )
+  cograph::plot_htna(
+    x = weights,
+    node_list = node_list,
+    use_list_order = use_list_order,
     edge.color = edge.color,
     edge.labels = edge.labels,
     edge.label.position = edge.label.position,
     labels = labels,
-    layout = layout,
     theme = theme,
     vsize = vsize,
     pie = pie,
@@ -371,11 +294,8 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @family cliques
 #' @inheritParams print.tna_cliques
 #' @inheritParams plot.tna
-#' @param cut See [qgraph::qgraph()].
-#' @param normalize See [qgraph::qgraph()].
 #' @param show_loops A `logical` value indicating whether to include loops
 #'   in the plots or not.
-#' @param minimum See [qgraph::qgraph()].
 #' @param ask A `logical` value. When `TRUE`, show plots one by one and asks
 #'   to plot the next plot in interactive mode.
 #' @return `NULL` (invisibly).
@@ -385,11 +305,7 @@ plot.tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' plot(cliq, n = 1, ask = FALSE)
 #'
 plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
-                             edge.labels = TRUE, edge.label.position = 0.65,
-                             minimum = 0.00001, mar = rep(5, 4),
-                             layout = "circle", layout_args = list(),
-                             cut = 0.01, normalize = TRUE,
-                             ask = TRUE, colors, theme = "colorblind", ...) {
+                             colors, ask = TRUE, ...) {
   check_class(x, "tna_cliques")
   n_cliques <- length(x$weights)
   size <- attr(x, "size")
@@ -412,29 +328,15 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
       diag(clique_weights),
       0
     )
-    layout <- check_layout(
-      x = clique_weights,
-      layout = layout,
-      args = layout_args,
-      directed = directed
-    )
     plot_args <- list(
-      input = clique_weights,
+      x = clique_weights,
       labels = colnames(clique_weights),
-      edge.labels = edge.labels,
-      edge.label.position = edge.label.position,
       directed = directed,
-      mar = mar,
-      minimum = minimum,
-      theme = theme,
-      cut = cut,
-      normalize = normalize,
-      layout = layout,
       color = colors[match(rownames(clique_weights), labels)],
       pie = x$inits[[i]]
     )
     plot_args <- utils::modifyList(plot_args, list(...))
-    do.call(qgraph::qgraph, args = plot_args)
+    do.call(cograph::tplot, args = plot_args)
   }
   invisible(NULL)
 }
@@ -455,8 +357,9 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' @param method A `character` string naming a community detection method to
 #'   use for coloring the plot. The default is to use the first available 
 #'   method in `x`. See [communities()] for details.
-#' @param ... Additional arguments passed to [qgraph::qgraph()].
-#' @return A `qgraph` object in which the nodes are colored by community.
+#' @param ... Additional arguments passed to [cograph::tplot()].
+#' @return A `cograph_network` object in which the nodes are colored by 
+#'   community.
 #' @examples
 #' model <- tna(group_regulation)
 #' comm <- communities(model)
@@ -476,7 +379,7 @@ plot.tna_communities <- function(x, colors, method, ...) {
   )
   y <- attr(x, "tna")
   colors <- colors %m% default_colors
-  plot(y, colors = map_to_color(x$assignment[[method]], colors), ...)
+  plot(y, color = map_to_color(x$assignment[[method]], colors), ...)
 }
 
 #' Plot the Comparison of Two TNA Models or Matrices
@@ -643,14 +546,14 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' @export
 #' @family validation
 #' @param x A `tna_permutation` object.
-#' @param colors See [qgraph::qgraph()].
+#' @param colors See [cograph::tplot()].
 #' @param ... Arguments passed to [plot_model()].
 #' @param posCol Color for plotting edges
-#'   the difference in edge weights is positive. See [qgraph::qgraph()].
+#'   the difference in edge weights is positive. See [cograph::tplot()].
 #' @param negCol Color for plotting edges when
-#'   the the difference in edge weights is negative. See [qgraph::qgraph()].
-#' @return A `qgraph` object containing only the significant edges according
-#'   to the permutation test.
+#'   the the difference in edge weights is negative. See [cograph::tplot()].
+#' @return A `cograph_network` object containing only the significant edges 
+#'   according to the permutation test.
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
@@ -658,7 +561,7 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' perm <- permutation_test(model_x, model_y, iter = 20)
 #' plot(perm)
 #'
-plot.tna_permutation <- function(x, colors,
+plot.tna_permutation <- function(x, colors, 
                                  posCol = "#009900", negCol = "red", ...) {
   check_missing(x)
   check_class(x, "tna_permutation")
@@ -1253,15 +1156,13 @@ plot_centralities_multiple <- function(x, reorder, ncol, scales,
 #' @param x A `tna` object. This is the the principal model.
 #' @param y A `tna` object. This is the model subtracted from the
 #'   principal model.
-#' @param theme See [qgraph::qgraph()].
-#' @param palette See [qgraph::qgraph()].
 #' @param posCol Color for plotting edges and pie when
-#'   the first group has a higher value. See [qgraph::qgraph()].
+#'   the first group has a higher value. See [cograph::tplot()].
 #' @param negCol Color for plotting edges and pie when
-#'   the second group has a higher value. See [qgraph::qgraph()].
-#' @param ... Additional arguments passed to [qgraph::qgraph()].
-#' @return A `qgraph` object displaying the difference network between the
-#'   two models.
+#'   the second group has a higher value. See [cograph::tplot()].
+#' @param ... Additional arguments passed to [cograph::tplot()].
+#' @return A `cograph_network` object displaying the difference network 
+#'   between the two models.
 #' @examples
 #' model_x <- tna(group_regulation[group_regulation[, 1] == "plan", ])
 #' model_y <- tna(group_regulation[group_regulation[, 1] != "plan", ])
@@ -1273,8 +1174,7 @@ plot_compare <- function(x, ...) {
 
 #' @export
 #' @rdname plot_compare
-plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
-                             posCol = "#009900", negCol = "red", ...) {
+plot_compare.tna <- function(x, y, posCol = "#009900", negCol = "red", ...) {
   check_class(x, "tna")
   check_class(y, "tna")
   stopifnot_(
@@ -1295,8 +1195,6 @@ plot_compare.tna <- function(x, y, theme = NULL, palette = "colorblind",
     x = diff,
     pie = pie,
     pieColor = piesign,
-    palette = palette,
-    theme = theme,
     posCol = posCol,
     negCol = negCol,
     ...
@@ -1390,6 +1288,11 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
 #'
 #' @export
 #' @param x A square `matrix` of edge weights.
+#' @param labels Optional `character` vector of node labels. 
+#'   See [cograph::tplot].
+#' @param cut A `numeric` value for the edge emphasis threshold. 
+#'   See [cograph::tplot].
+#' @param colors An optional `character` vector of node colors to use.
 #' @inheritParams plot.tna
 #' @keywords internal
 #' @return See [plot.tna()].
@@ -1397,10 +1300,7 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
 #' m <- matrix(rexp(25), 5, 5)
 #' plot_model(m)
 #'
-plot_model <- function(x, labels, colors, cut,
-                       edge.labels = TRUE, edge.label.position = 0.65,
-                       layout = "circle", layout_args = list(),
-                       mar = rep(5, 4), theme = "colorblind", ...) {
+plot_model <- function(x, labels, colors, cut, ...) {
   stopifnot_(
     is.matrix(x) && ncol(x) == nrow(x),
     "Argument {.arg x} must be a square matrix."
@@ -1409,16 +1309,10 @@ plot_model <- function(x, labels, colors, cut,
   labels <- labels %m% seq_len(nc)
   colors <- colors %m% color_palette(nc)
   cut <- cut %m% stats::median(x, na.rm = TRUE)
-  layout <- check_layout(x, layout, layout_args)
-  qgraph::qgraph(
-    input = x,
+  cograph::tplot(
+    x = x,
     color = colors,
-    edge.labels = edge.labels,
-    edge.label.position = edge.label.position,
     labels = labels,
-    layout = layout,
-    theme = theme,
-    mar = mar,
     cut = cut,
     ...
   )
@@ -1956,7 +1850,7 @@ hist.group_tna <- function(x, ...) {
 
 #' Plot a Grouped Transition Network Analysis Model
 #'
-#' Plots a transition network of each cluster using `qgraph`.
+#' Plots a transition network of each cluster using `cograph`.
 #'
 #' @export
 #' @family basic
@@ -2042,8 +1936,8 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param title A `character` vector of titles to use for each plot.
 #' @param ... Arguments passed to [plot.tna_cliques()].
 #' @return A `list` (invisibly) with one element per cluster. Each element
-#'   contains a `qgraph` plot when only one clique is present per cluster,
-#'   otherwise the element is `NULL`.
+#'   contains a `cograph_network` plot when only one clique is present per 
+#'   cluster, otherwise the element is `NULL`.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' cliq <- cliques(model, size = 2)
@@ -2067,8 +1961,8 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' @param title A `character` vector of titles to use for each plot.
 #' @param colors A `character` vector of colors to use.
 #' @param ... Arguments passed to [plot.tna_communities()].
-#' @return A `list` (invisibly) of `qgraph` objects in which the nodes are
-#'   colored by community for each cluster.
+#' @return A `list` (invisibly) of `cograph_network` objects in which the 
+#'   nodes are colored by community for each cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' comm <- communities(model)
@@ -2127,8 +2021,8 @@ plot.group_tna_stability <- function(x, ...) {
 #'   When not provided, the title shows the names of the clusters being
 #'   contrasted.
 #' @param ... Arguments passed to [plot.tna_permutation()].
-#' @return A `list` (invisibly) of `qgraph` objects depicting the significant
-#'   difference between each pair.
+#' @return A `list` (invisibly) of `cograph_network` objects depicting the 
+#'   significant difference between each pair.
 #' @examples
 #' model <- group_tna(engagement_mmm)
 #' # Small number of iterations for CRAN
@@ -2157,8 +2051,8 @@ plot.group_tna_permutation <- function(x, title, ...) {
 #' @param j An `integer` index or the name of the secondary cluster as a
 #' `character` string.
 #' @param ... Additional arguments passed to [plot_compare.tna()].
-#' @return A `qgraph` object displaying the difference network between the
-#'   two clusters
+#' @return A `cograph_network` object displaying the difference network between 
+#'   the two clusters
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot_compare(model)
@@ -2398,7 +2292,7 @@ plot_sequences.group_tna <- function(x, type = "index", scale = "proportion",
 #'   By default, the colors are specified by the magnitude of the
 #'   standardized residual.
 #' @param ... Additional arguments passed to [plot_model()].
-#' @return A `qgraph` plot of the network.
+#' @return A `cograph_network` object.
 #' @examples
 #' model <- ftna(group_regulation)
 #' plot_associations(model)

@@ -201,57 +201,6 @@ check_flag <- function(x) {
   )
 }
 
-#' Check a `layout` Argument
-#'
-#' @param x A `tna` or a `tna_cliques` object.
-#' @param layout A `character` string, a `matrix`, or a `function`.
-#' @param args A `list` of arguments to pass to the layout function.
-#' @param ... Additional arguments passed to `as.igraph`.
-#' @noRd
-check_layout <- function(x, layout, args = list(), ...) {
-  if (is.character(layout)) {
-    layout <- tolower(layout)
-    layout_parsed <- try_(match.arg(layout, c("circle", "groups", "spring")))
-    if (inherits(layout_parsed, "try-error")) {
-      layout_fun <- str2lang(paste0("igraph::", layout))
-      args$graph <- as.igraph(x, ...)
-      layout_parsed <- try_(
-        do.call(eval(layout_fun), args)
-      )
-    }
-    stopifnot_(
-      !inherits(layout_parsed, "try-error"),
-      "A {.cls character} layout must be either {.val circle}, {.val groups},
-      {.val spring}, or the name of an {.pkg igraph} layout."
-    )
-    return(layout_parsed)
-  }
-  if (is.matrix(layout)) {
-    stopifnot_(
-      ncol(layout) == 2L,
-      c(
-        "A {.cls matrix} layout must have two columns:",
-        `x` = "Found {ncol(layout)} columns instead."
-      )
-    )
-    stopifnot_(
-      nrow(layout) == nodes(x),
-      c(
-        "A {.cls matrix} layout must have exactly one row for each node:",
-        `x` = "Expected {nodes(x)} rows but {nrow(layout)} were supplied."
-      )
-    )
-    return(layout)
-  }
-  stopifnot_(
-    is.function(layout),
-    "Argument {.arg layout} must be a {.cls character} string,
-     a {.cls matrix}, or a {.cls function}."
-  )
-  args$graph <- as.igraph(x, ...)
-  do.call(what = layout, args = args)
-}
-
 #' Check Edge Weight Matrix based on TNA Type
 #'
 #' @param x A `matrix` of edge weights.

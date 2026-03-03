@@ -45,6 +45,7 @@ that identified dynamics are meaningful. See [(Saqr et al., 2025)](https://doi.o
 ## Resources
 
 ### Companion tutorials
+
 We have also released comprehensive new tutorials for the main TNA features:
 
 | Tutorial | Link |
@@ -59,6 +60,7 @@ We have also released comprehensive new tutorials for the main TNA features:
 
 
 ### Vignettes
+
 Check out the `tna` R package vignettes:
 
 | Vignette | Link |
@@ -73,6 +75,7 @@ Check out the `tna` R package vignettes:
 
 
 ### Book chapters
+
 Do not forget to check out our tutorials in the "Advanced learning analytics methods" book:
 
 | Title | Pages | Tutorial |
@@ -175,7 +178,7 @@ plot(cqs)
 ```{r, out.width="100%", fig.width=6, fig.height=2, echo = FALSE}
 layout(t(1:3))
 cqs <- cliques(tna_model, threshold = 0.12)
-plot(cqs, vsize = 30, edge.label.cex = 3)
+plot(cqs)
 ```
 
 Compare high achievers (first 1000) with low achievers (last 1000)
@@ -215,6 +218,7 @@ comparison$centralities$stats |>
 * Tikka, S., Lopez-Pernas, S., & Saqr, M. (2025). tna: An R Package for Transition Network Analysis. Applied Psychological Measurement (online ahead of print). doi:10.1177/01466216251348840
 * López-Pernas, S., Misiejuk, K., Kaliisa, R., & Saqr, M. (2025). Capturing the process of students’ AI interactions when creating and learning complex network structures. IEEE Transactions on Learning Technologies, 1–13. https://doi.org/10.1109/tlt.2025.3568599
 * Törmänen, T., Saqr, M., López-Pernas, S., Mänty, K., Suoraniemi, J., Heikkala, N., & Järvenoja, H. (2025). Emotional dynamics and regulation in collaborative learning. Learning and Instruction, 100, 102188. https://doi.org/10.1016/j.learninstruc.2025.102188
-* López-Pernas, S., Misiejuk, K., Oliveira, E., & Saqr, M. (2025). The dynamics of the self-regulation process in student-AI interactions: The case of problem-solving in programming education. Proceedings of the 25th Koli Calling International Conference on Computing Education Research, 1–12. https://doi.org/10.1145/3769994.3770043
+* López-Pernas, S., Misiejuk, K., Oliveira, E., & Saqr, M. (2025). The dynamics of the self-regulation process in student-AI interactions: The case of problem-solving in programming education. Proceedings of the 
+25th Koli Calling International Conference on Computing Education Research, 1–12. https://doi.org/10.1145/3769994.3770043
 * Misiejuk, K., Kaliisa, R., Lopez-Pernas, S., & Saqr, M. (2026). Expanding the Quantitative Ethnography Toolkit with Transition Network Analysis: Exploring Methodological Synergies and Boundaries. In Advances in Quantitative Ethnography. ICQE 2025, CCIS vol. 2677. Springer. https://doi.org/10.1007/978-3-032-12229-2_10
 * Lopez-Pernas, S., Misiejuk, K., Tikka, S., & Saqr, M. (2026). Role Dynamics in Student-AI Collaboration: A Heterogeneous Transition Network Analysis Approach. SSRN preprint. https://doi.org/10.2139/ssrn.6082190

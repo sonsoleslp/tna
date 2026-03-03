@@ -145,25 +145,6 @@ test_that("invalid logical fails", {
   )
 })
 
-test_that("invalid plotting layout fails", {
-  expect_error(
-    check_layout(mock_tna, "unknown"),
-    "A <character> layout must be either \"circle\", \"groups\", \"spring\", or the name of an igraph layout\\."
-  )
-  expect_error(
-    check_layout(mock_tna, matrix(0, 2, 1000)),
-    "A <matrix> layout must have two columns:"
-  )
-  expect_error(
-    check_layout(mock_tna, matrix(0, 1000, 2)),
-    "A <matrix> layout must have exactly one row for each node"
-  )
-  expect_error(
-    check_layout(mock_tna, data.frame()),
-    "Argument `layout` must be a <character> string, a <matrix>, or a <function>\\."
-  )
-})
-
 test_that("cluster check fails on invalid clusters", {
   expect_error(
     check_clusters(mmm_model, i = 1, j = 1),

@@ -4,52 +4,21 @@
 \alias{plot_model}
 \title{Plot a Transition Network Model from a Matrix of Edge Weights}
 \usage{
-plot_model(
-  x,
-  labels,
-  colors,
-  cut,
-  edge.labels = TRUE,
-  edge.label.position = 0.65,
-  layout = "circle",
-  layout_args = list(),
-  mar = rep(5, 4),
-  theme = "colorblind",
-  ...
-)
+plot_model(x, labels, colors, cut, ...)
 }
 \arguments{
 \item{x}{A square \code{matrix} of edge weights.}
 
-\item{labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{labels}{Optional \code{character} vector of node labels.
+See \link[cograph:plot_tna]{cograph::tplot}.}
 
-\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{colors}{An optional \code{character} vector of node colors to use.}
 
-\item{cut}{Edge color and width emphasis cutoff value. The default is
-the median of the edge weights. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}} for details.}
+\item{cut}{A \code{numeric} value for the edge emphasis threshold.
+See \link[cograph:plot_tna]{cograph::tplot}.}
 
-\item{edge.labels}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{edge.label.position}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{layout}{One of the following:
-\itemize{
-\item A \code{character} string describing a \code{qgraph} layout (e.g., \code{"circle"})
-or the name of a \code{igraph} layout function (e.g., \code{"layout_on_grid"}).
-\item A \code{matrix} of node positions to use, with a row for each node and
-\code{x} and \code{y} columns for the node positions.
-\item A layout function from \code{igraph}.
-}}
-
-\item{layout_args}{A \code{list} of arguments to pass to the \code{igraph} layout
-function when \code{layout} is a function or a character string that specifies
-a function name.}
-
-\item{mar}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}} or
+\code{\link[cograph:plot_htna]{cograph::plot_htna()}}.}
 }
 \value{
 See \code{\link[=plot.tna]{plot.tna()}}.

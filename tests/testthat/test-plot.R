@@ -117,49 +117,6 @@ test_that("frequencies can be plotted", {
   )
 })
 
-test_that("plotting with different layouts works", {
-  expect_error(
-    plot.tna(mock_tna, layout = "circle"),
-    NA
-  )
-  expect_error(
-    plot.tna(mock_tna, layout = matrix(rnorm(8), 4, 2)),
-    NA
-  )
-  expect_error(
-    plot.tna(mock_tna, layout = igraph::layout_nicely),
-    NA
-  )
-  expect_error(
-    plot.tna(
-      mock_tna,
-      layout = igraph::layout_as_tree,
-      layout_args = list(flip.y = FALSE)
-    ),
-    NA
-  )
-  expect_error(
-    plot_model(mock_matrix, layout = "circle"),
-    NA
-  )
-  expect_error(
-    plot_model(mock_matrix, layout = matrix(rnorm(8), 4, 2)),
-    NA
-  )
-  expect_error(
-    plot_model(mock_matrix, layout = igraph::layout_nicely),
-    NA
-  )
-  expect_error(
-    plot_model(
-      mock_matrix,
-      layout = igraph::layout_as_tree,
-      layout_args = list(flip.y = FALSE)
-    ),
-    NA
-  )
-})
-
 test_that("warning is issued by plot if no cliques are found", {
   cliq <- cliques(mock_tna, size = 2, threshold = 0.5)
   expect_warning(
@@ -423,10 +380,6 @@ test_that("heterogenous tna can be plotted", {
   )
   expect_error(
     plot(mock_tna_seq, node_list = groups, use_list_order = FALSE),
-    NA
-  )
-  expect_error(
-    plot(mock_tna_seq, node_list = groups, x_offset = c(-1, 1, 2)),
     NA
   )
 })

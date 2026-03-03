@@ -7,37 +7,25 @@
 \usage{
 plot_compare(x, ...)
 
-\method{plot_compare}{tna}(
-  x,
-  y,
-  theme = NULL,
-  palette = "colorblind",
-  posCol = "#009900",
-  negCol = "red",
-  ...
-)
+\method{plot_compare}{tna}(x, y, posCol = "#009900", negCol = "red", ...)
 }
 \arguments{
 \item{x}{A \code{tna} object. This is the the principal model.}
 
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 
 \item{y}{A \code{tna} object. This is the model subtracted from the
 principal model.}
 
-\item{theme}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
-\item{palette}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
-
 \item{posCol}{Color for plotting edges and pie when
-the first group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+the first group has a higher value. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 
 \item{negCol}{Color for plotting edges and pie when
-the second group has a higher value. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+the second group has a higher value. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 }
 \value{
-A \code{qgraph} object displaying the difference network between the
-two models.
+A \code{cograph_network} object displaying the difference network
+between the two models.
 }
 \description{
 Plots the difference network between model \code{x} and model \code{y}. The edges are

@@ -18,10 +18,11 @@ community assignments.}
 use for coloring the plot. The default is to use the first available
 method in \code{x}. See \code{\link[=communities]{communities()}} for details.}
 
-\item{...}{Additional arguments passed to \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 }
 \value{
-A \code{qgraph} object in which the nodes are colored by community.
+A \code{cograph_network} object in which the nodes are colored by
+community.
 }
 \description{
 This function visualizes the communities detected within a \code{tna} object

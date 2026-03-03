@@ -19,7 +19,7 @@ By default, the colors are specified by the magnitude of the
 standardized residual.}
 }
 \value{
-A \code{qgraph} plot of the network.
+A \code{cograph_network} object.
 }
 \description{
 Plot an Association Network

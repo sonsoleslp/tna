@@ -125,7 +125,7 @@ model_sna <- sna(d)
 
 # Plotting
 
-All TNA analysis objects have `plot()` methods returning qgraph or ggplot2 objects.
+All TNA analysis objects have `plot()` methods returning `cograph_network` or `ggplot2` objects.
 
 ## `plot()`
 

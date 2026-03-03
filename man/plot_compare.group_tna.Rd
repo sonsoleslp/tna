@@ -18,8 +18,8 @@
 \item{...}{Additional arguments passed to \code{\link[=plot_compare.tna]{plot_compare.tna()}}.}
 }
 \value{
-A \code{qgraph} object displaying the difference network between the
-two clusters
+A \code{cograph_network} object displaying the difference network between
+the two clusters
 }
 \description{
 Plot the Difference Network Between Two Groups

@@ -15,8 +15,8 @@
 }
 \value{
 A \code{list} (invisibly) with one element per cluster. Each element
-contains a \code{qgraph} plot when only one clique is present per cluster,
-otherwise the element is \code{NULL}.
+contains a \code{cograph_network} plot when only one clique is present per
+cluster, otherwise the element is \code{NULL}.
 }
 \description{
 Plot Found Cliques

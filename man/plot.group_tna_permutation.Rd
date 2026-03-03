@@ -16,8 +16,8 @@ contrasted.}
 \item{...}{Arguments passed to \code{\link[=plot.tna_permutation]{plot.tna_permutation()}}.}
 }
 \value{
-A \code{list} (invisibly) of \code{qgraph} objects depicting the significant
-difference between each pair.
+A \code{list} (invisibly) of \code{cograph_network} objects depicting the
+significant difference between each pair.
 }
 \description{
 Plot Permutation Test Results

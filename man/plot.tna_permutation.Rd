@@ -9,19 +9,19 @@
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
 
-\item{colors}{See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+\item{colors}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 
 \item{posCol}{Color for plotting edges
-the difference in edge weights is positive. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+the difference in edge weights is positive. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 
 \item{negCol}{Color for plotting edges when
-the the difference in edge weights is negative. See \code{\link[qgraph:qgraph]{qgraph::qgraph()}}.}
+the the difference in edge weights is negative. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
 
 \item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }
 \value{
-A \code{qgraph} object containing only the significant edges according
-to the permutation test.
+A \code{cograph_network} object containing only the significant edges
+according to the permutation test.
 }
 \description{
 Plot the Significant Differences from a Permutation Test
