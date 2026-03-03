@@ -59,7 +59,8 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' This function plots a transition network analysis (TNA) model using
 #' the `cograph` package. The nodes in the graph represent states, with node
 #' sizes corresponding to initial state probabilities. Edge labels represent
-#' the edge weights of the network.
+#' the edge weights of the network. See [cograph::splot()] for details on
+#' how to further configure the plot.
 #'
 #' @export
 #' @family basic
@@ -70,31 +71,15 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #'   defines how the order of the nodes in the plot is defined. A `TRUE` value
 #'   uses the order in `node_list`. Otherwise, the nodes are ranked based on
 #'   edge weights and ordered according to the rank.
-#' @param labels See [cograph::tplot()].
-#' @param colors See [cograph::tplot()].
-#' @param pie See [cograph::tplot()].
-#' @param cut Edge color and width emphasis cutoff value. The default is
-#'   the median of the edge weights. See [cograph::tplot()] for details.
-#' @param vsize See [cograph::tplot()].
-#' @param show_pruned A `logical` value indicating if pruned edges removed by
-#'   [prune()] should be shown in the plot.  The default is `TRUE`, and the
-#'   edges are drawn as dashed with a different color to distinguish them.
-#' @param pruned_edge_color A `character` string for the color to use for
-#'   pruned edges when `show_pruned = TRUE`. The default is `"pink"`.
-#' @param edge.color See [cograph::tplot()].
-#' @param edge.labels See [cograph::tplot()].
-#' @param edge.label.position See [cograph::tplot()].
 #' @param scale_nodes A `character` string giving the name of a centrality
 #'   measure to scale the node size by. See [centralities()] for valid names.
-#'   If missing (the default), uses default [cograph::tplot()] scaling.
-#'   The value of `vsize` provided via `...` is used as baseline size.
+#'   If missing (the default), uses default [cograph::splot()] scaling.
+#'   The value of `node_size` provided via `...` is used as baseline size.
 #' @param scaling_factor A `numeric` value specifying how strongly to scale
 #'   the nodes when `scale_nodes` is provided. Values
 #'   between 0 and 1 will result in smaller differences and values larger
 #'   than 1 will result in greater differences. The default is `0.5`.
-#' @param mar See [cograph::tplot()].
-#' @param theme See [cograph::tplot()].
-#' @param ... Additional arguments passed to [cograph::tplot()] or
+#' @param ... Additional arguments passed to [cograph::splot()] or
 #'   [cograph::plot_htna()].
 #' @return A `cograph_network` plot of the transition network.
 #' @examples
@@ -102,42 +87,9 @@ hist.tna <- function(x, breaks, col = "lightblue",
 #' plot(model)
 #'
 plot.tna <- function(x, node_list, use_list_order = TRUE,
-                     labels, colors, pie, cut, vsize = 7, 
-                     show_pruned = TRUE, pruned_edge_color = "pink",
-                     edge.color = "#003355", edge.labels = TRUE,
-                     edge.label.position = 0.65, scale_nodes, 
-                     scaling_factor = 0.5, mar = rep(0.1, 4), 
-                     theme = "colorblind", ...) {
+                     scale_nodes, scaling_factor = 0.5, ...) {
   check_missing(x)
   check_class(x, "tna")
-  check_flag(show_pruned)
-  check_flag(edge.labels)
-  check_range(edge.label.position, scalar = FALSE)
-  pie <- pie %m% x$inits
-  labels <- labels %m% x$labels
-  if (missing(colors)) {
-    colors <- ifelse_(
-      is.null(x$data),
-      color_palette(length(x$labels)),
-      attr(x$data, "colors")
-    )
-  }
-  cut <- cut %m% stats::median(x$weights, na.rm = TRUE)
-  lty <- 1
-  if (!is.null(attr(x, "pruning")) && show_pruned) {
-    lty <- x$weights
-    lty[x$weights == 0] <- 2
-    lty[x$weights > 0] <- 1
-    edge_color_mat <- attr(x, "pruning")$original
-    edge_color_mat[x$weights == 0] <- pruned_edge_color
-    edge_color_mat[x$weights > 0] <- edge.color
-    edge.color <- edge_color_mat
-  }
-  weights <- ifelse_(
-    !is.null(attr(x, "pruning")) && show_pruned,
-    attr(x, "pruning")$original,
-    x$weights
-  )
   n <- nodes(x)
   scale_nodes <- ifelse_(
     missing(scale_nodes) || isFALSE(scale_nodes),
@@ -149,31 +101,21 @@ plot.tna <- function(x, node_list, use_list_order = TRUE,
     "InStrength",
     scale_nodes
   )
-  vsize <- ifelse_(is.null(vsize), rep(8 * exp(-n / 80)), vsize)
+  args <- list(...)
+  args$node_size <- ifelse_(
+    is.null(args$node_size),
+    rep(8 * exp(-n / 80)),
+    args$node_size
+  )
   if (length(scale_nodes) > 0) {
     check_string(scale_nodes)
     check_range(scaling_factor, lower = 0)
     cent <- centralities(x, measures = scale_nodes, normalize = TRUE)[[2L]]
-    vsize <- vsize * (1 + cent)^scaling_factor
+    args$node_size <- args$node_size * (1 + cent)^scaling_factor
   }
+  args$x <- x
   if (missing(node_list)) {
-    return(
-      cograph::tplot(
-        x = weights,
-        color = colors,
-        edge.color = edge.color,
-        edge.labels = edge.labels,
-        edge.label.position = edge.label.position,
-        labels = labels,
-        theme = theme,
-        vsize = vsize,
-        pie = pie,
-        mar = mar,
-        lty = lty,
-        cut = cut,
-        ...
-      )
-    )
+    return(do.call(cograph::splot, args))
   }
   stopifnot_(
     length(node_list) == 2L,
@@ -216,22 +158,11 @@ plot.tna <- function(x, node_list, use_list_order = TRUE,
       `x` = "No group has been specified for node{?s} {.val {missing}}."
     )
   )
-  cograph::plot_htna(
-    x = weights,
-    node_list = node_list,
-    use_list_order = use_list_order,
-    edge.color = edge.color,
-    edge.labels = edge.labels,
-    edge.label.position = edge.label.position,
-    labels = labels,
-    theme = theme,
-    vsize = vsize,
-    pie = pie,
-    mar = mar,
-    lty = lty,
-    cut = cut,
-    ...
-  )
+  args$vsize <- args$node_size
+  args$node_size <- NULL
+  args$use_list_order <- use_list_order
+  args$node_list <- node_list
+  do.call(cograph::plot_htna, args)
 }
 
 #' Plot a Bootstrapped Transition Network Analysis Model
@@ -330,11 +261,11 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
     plot_args <- list(
       x = clique_weights,
       labels = colnames(clique_weights),
-      color = colors[match(rownames(clique_weights), labels)],
-      pie = x$inits[[i]]
+      node_fill = colors[match(rownames(clique_weights), labels)],
+      donut_fill = x$inits[[i]]
     )
     plot_args <- utils::modifyList(plot_args, list(...))
-    do.call(cograph::tplot, args = plot_args)
+    do.call(cograph::splot, args = plot_args)
   }
   invisible(NULL)
 }
@@ -353,10 +284,10 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
 #' @param colors A `character` vector of color values used for visualizing
 #'   community assignments.
 #' @param method A `character` string naming a community detection method to
-#'   use for coloring the plot. The default is to use the first available 
+#'   use for coloring the plot. The default is to use the first available
 #'   method in `x`. See [communities()] for details.
-#' @param ... Additional arguments passed to [cograph::tplot()].
-#' @return A `cograph_network` object in which the nodes are colored by 
+#' @param ... Additional arguments passed to [cograph::splot()].
+#' @return A `cograph_network` object in which the nodes are colored by
 #'   community.
 #' @examples
 #' model <- tna(group_regulation)
@@ -377,7 +308,7 @@ plot.tna_communities <- function(x, colors, method, ...) {
   )
   y <- attr(x, "tna")
   colors <- colors %m% default_colors
-  plot(y, color = map_to_color(x$assignment[[method]], colors), ...)
+  plot(y, node_fill = map_to_color(x$assignment[[method]], colors), ...)
 }
 
 #' Plot the Comparison of Two TNA Models or Matrices
@@ -544,13 +475,13 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' @export
 #' @family validation
 #' @param x A `tna_permutation` object.
-#' @param colors See [cograph::tplot()].
+#' @param colors See [cograph::splot()].
 #' @param ... Arguments passed to [plot_model()].
 #' @param posCol Color for plotting edges
-#'   the difference in edge weights is positive. See [cograph::tplot()].
+#'   the difference in edge weights is positive. See [cograph::splot()].
 #' @param negCol Color for plotting edges when
-#'   the the difference in edge weights is negative. See [cograph::tplot()].
-#' @return A `cograph_network` object containing only the significant edges 
+#'   the the difference in edge weights is negative. See [cograph::splot()].
+#' @return A `cograph_network` object containing only the significant edges
 #'   according to the permutation test.
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
@@ -559,7 +490,7 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' perm <- permutation_test(model_x, model_y, iter = 20)
 #' plot(perm)
 #'
-plot.tna_permutation <- function(x, colors, 
+plot.tna_permutation <- function(x, colors,
                                  posCol = "#009900", negCol = "red", ...) {
   check_missing(x)
   check_class(x, "tna_permutation")
@@ -568,8 +499,8 @@ plot.tna_permutation <- function(x, colors,
     x$edges$diffs_sig,
     labels = attr(x, "labels"),
     colors = colors,
-    posCol = posCol,
-    negCol = negCol,
+    edge_positive_color = posCol,
+    edge_negative_color = negCol,
     ...
   )
 }
@@ -1155,11 +1086,11 @@ plot_centralities_multiple <- function(x, reorder, ncol, scales,
 #' @param y A `tna` object. This is the model subtracted from the
 #'   principal model.
 #' @param posCol Color for plotting edges and pie when
-#'   the first group has a higher value. See [cograph::tplot()].
+#'   the first group has a higher value. See [cograph::splot()].
 #' @param negCol Color for plotting edges and pie when
-#'   the second group has a higher value. See [cograph::tplot()].
-#' @param ... Additional arguments passed to [cograph::tplot()].
-#' @return A `cograph_network` object displaying the difference network 
+#'   the second group has a higher value. See [cograph::splot()].
+#' @param ... Additional arguments passed to [cograph::splot()].
+#' @return A `cograph_network` object displaying the difference network
 #'   between the two models.
 #' @examples
 #' model_x <- tna(group_regulation[group_regulation[, 1] == "plan", ])
@@ -1191,10 +1122,10 @@ plot_compare.tna <- function(x, y, posCol = "#009900", negCol = "red", ...) {
   q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
   plot.tna(
     x = diff,
-    pie = pie,
-    pieColor = piesign,
-    posCol = posCol,
-    negCol = negCol,
+    donut_fill = pie,
+    donut_color = piesign,
+    edge_positive_color = posCol,
+    edge_negative_color = negCol,
     ...
   )
 }
@@ -1286,10 +1217,10 @@ plot_frequencies.tna <- function(x, width = 0.7, hjust = 1.2,
 #'
 #' @export
 #' @param x A square `matrix` of edge weights.
-#' @param labels Optional `character` vector of node labels. 
-#'   See [cograph::tplot].
-#' @param cut A `numeric` value for the edge emphasis threshold. 
-#'   See [cograph::tplot].
+#' @param labels Optional `character` vector of node labels.
+#'   See [cograph::splot].
+#' @param cut A `numeric` value for the edge emphasis threshold.
+#'   See [cograph::splot].
 #' @param colors An optional `character` vector of node colors to use.
 #' @inheritParams plot.tna
 #' @keywords internal
@@ -1307,11 +1238,11 @@ plot_model <- function(x, labels, colors, cut, ...) {
   labels <- labels %m% seq_len(nc)
   colors <- colors %m% color_palette(nc)
   cut <- cut %m% stats::median(x, na.rm = TRUE)
-  cograph::tplot(
+  cograph::splot(
     x = x,
-    color = colors,
+    node_fill = colors,
     labels = labels,
-    cut = cut,
+    edge_cutoff = cut,
     ...
   )
 }
@@ -1934,7 +1865,7 @@ plot.group_tna_centralities <- function(x, reorder = TRUE, ncol = 3,
 #' @param title A `character` vector of titles to use for each plot.
 #' @param ... Arguments passed to [plot.tna_cliques()].
 #' @return A `list` (invisibly) with one element per cluster. Each element
-#'   contains a `cograph_network` plot when only one clique is present per 
+#'   contains a `cograph_network` plot when only one clique is present per
 #'   cluster, otherwise the element is `NULL`.
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -1959,7 +1890,7 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' @param title A `character` vector of titles to use for each plot.
 #' @param colors A `character` vector of colors to use.
 #' @param ... Arguments passed to [plot.tna_communities()].
-#' @return A `list` (invisibly) of `cograph_network` objects in which the 
+#' @return A `list` (invisibly) of `cograph_network` objects in which the
 #'   nodes are colored by community for each cluster.
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -2019,7 +1950,7 @@ plot.group_tna_stability <- function(x, ...) {
 #'   When not provided, the title shows the names of the clusters being
 #'   contrasted.
 #' @param ... Arguments passed to [plot.tna_permutation()].
-#' @return A `list` (invisibly) of `cograph_network` objects depicting the 
+#' @return A `list` (invisibly) of `cograph_network` objects depicting the
 #'   significant difference between each pair.
 #' @examples
 #' model <- group_tna(engagement_mmm)
@@ -2049,7 +1980,7 @@ plot.group_tna_permutation <- function(x, title, ...) {
 #' @param j An `integer` index or the name of the secondary cluster as a
 #' `character` string.
 #' @param ... Additional arguments passed to [plot_compare.tna()].
-#' @return A `cograph_network` object displaying the difference network between 
+#' @return A `cograph_network` object displaying the difference network between
 #'   the two clusters
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -2321,5 +2252,5 @@ plot_associations.tna <- function(x, edge.color, ...) {
     edge.color[res < -2 & res >= -4] <- "#E495A5"
     edge.color[res < -4] <- "#D33F6A"
   }
-  plot_model(res, edge.color = edge.color, labels = x$labels, ...)
+  plot_model(res, edge_color = edge.color, labels = x$labels, ...)
 }

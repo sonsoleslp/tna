@@ -8,20 +8,8 @@
   x,
   node_list,
   use_list_order = TRUE,
-  labels,
-  colors,
-  pie,
-  cut,
-  vsize = 7,
-  show_pruned = TRUE,
-  pruned_edge_color = "pink",
-  edge.color = "#003355",
-  edge.labels = TRUE,
-  edge.label.position = 0.65,
   scale_nodes,
   scaling_factor = 0.5,
-  mar = rep(0.1, 4),
-  theme = "colorblind",
   ...
 )
 }
@@ -36,45 +24,17 @@ defines how the order of the nodes in the plot is defined. A \code{TRUE} value
 uses the order in \code{node_list}. Otherwise, the nodes are ranked based on
 edge weights and ordered according to the rank.}
 
-\item{labels}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{colors}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{pie}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{cut}{Edge color and width emphasis cutoff value. The default is
-the median of the edge weights. See \code{\link[cograph:plot_tna]{cograph::tplot()}} for details.}
-
-\item{vsize}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{show_pruned}{A \code{logical} value indicating if pruned edges removed by
-\code{\link[=prune]{prune()}} should be shown in the plot.  The default is \code{TRUE}, and the
-edges are drawn as dashed with a different color to distinguish them.}
-
-\item{pruned_edge_color}{A \code{character} string for the color to use for
-pruned edges when \code{show_pruned = TRUE}. The default is \code{"pink"}.}
-
-\item{edge.color}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{edge.labels}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{edge.label.position}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
 \item{scale_nodes}{A \code{character} string giving the name of a centrality
 measure to scale the node size by. See \code{\link[=centralities]{centralities()}} for valid names.
-If missing (the default), uses default \code{\link[cograph:plot_tna]{cograph::tplot()}} scaling.
-The value of \code{vsize} provided via \code{...} is used as baseline size.}
+If missing (the default), uses default \code{\link[cograph:splot]{cograph::splot()}} scaling.
+The value of \code{node_size} provided via \code{...} is used as baseline size.}
 
 \item{scaling_factor}{A \code{numeric} value specifying how strongly to scale
 the nodes when \code{scale_nodes} is provided. Values
 between 0 and 1 will result in smaller differences and values larger
 than 1 will result in greater differences. The default is \code{0.5}.}
 
-\item{mar}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{theme}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
-
-\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}} or
+\item{...}{Additional arguments passed to \code{\link[cograph:splot]{cograph::splot()}} or
 \code{\link[cograph:plot_htna]{cograph::plot_htna()}}.}
 }
 \value{
@@ -84,7 +44,8 @@ A \code{cograph_network} plot of the transition network.
 This function plots a transition network analysis (TNA) model using
 the \code{cograph} package. The nodes in the graph represent states, with node
 sizes corresponding to initial state probabilities. Edge labels represent
-the edge weights of the network.
+the edge weights of the network. See \code{\link[cograph:splot]{cograph::splot()}} for details on
+how to further configure the plot.
 }
 \examples{
 model <- tna(group_regulation)

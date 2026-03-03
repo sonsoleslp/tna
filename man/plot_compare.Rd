@@ -12,16 +12,16 @@ plot_compare(x, ...)
 \arguments{
 \item{x}{A \code{tna} object. This is the the principal model.}
 
-\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+\item{...}{Additional arguments passed to \code{\link[cograph:splot]{cograph::splot()}}.}
 
 \item{y}{A \code{tna} object. This is the model subtracted from the
 principal model.}
 
 \item{posCol}{Color for plotting edges and pie when
-the first group has a higher value. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+the first group has a higher value. See \code{\link[cograph:splot]{cograph::splot()}}.}
 
 \item{negCol}{Color for plotting edges and pie when
-the second group has a higher value. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+the second group has a higher value. See \code{\link[cograph:splot]{cograph::splot()}}.}
 }
 \value{
 A \code{cograph_network} object displaying the difference network

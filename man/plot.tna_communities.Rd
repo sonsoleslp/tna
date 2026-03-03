@@ -18,7 +18,7 @@ community assignments.}
 use for coloring the plot. The default is to use the first available
 method in \code{x}. See \code{\link[=communities]{communities()}} for details.}
 
-\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+\item{...}{Additional arguments passed to \code{\link[cograph:splot]{cograph::splot()}}.}
 }
 \value{
 A \code{cograph_network} object in which the nodes are colored by

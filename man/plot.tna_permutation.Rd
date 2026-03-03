@@ -9,13 +9,13 @@
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
 
-\item{colors}{See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+\item{colors}{See \code{\link[cograph:splot]{cograph::splot()}}.}
 
 \item{posCol}{Color for plotting edges
-the difference in edge weights is positive. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+the difference in edge weights is positive. See \code{\link[cograph:splot]{cograph::splot()}}.}
 
 \item{negCol}{Color for plotting edges when
-the the difference in edge weights is negative. See \code{\link[cograph:plot_tna]{cograph::tplot()}}.}
+the the difference in edge weights is negative. See \code{\link[cograph:splot]{cograph::splot()}}.}
 
 \item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }

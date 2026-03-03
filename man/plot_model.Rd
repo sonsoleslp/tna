@@ -10,14 +10,14 @@ plot_model(x, labels, colors, cut, ...)
 \item{x}{A square \code{matrix} of edge weights.}
 
 \item{labels}{Optional \code{character} vector of node labels.
-See \link[cograph:plot_tna]{cograph::tplot}.}
+See \link[cograph:splot]{cograph::splot}.}
 
 \item{colors}{An optional \code{character} vector of node colors to use.}
 
 \item{cut}{A \code{numeric} value for the edge emphasis threshold.
-See \link[cograph:plot_tna]{cograph::tplot}.}
+See \link[cograph:splot]{cograph::splot}.}
 
-\item{...}{Additional arguments passed to \code{\link[cograph:plot_tna]{cograph::tplot()}} or
+\item{...}{Additional arguments passed to \code{\link[cograph:splot]{cograph::splot()}} or
 \code{\link[cograph:plot_htna]{cograph::plot_htna()}}.}
 }
 \value{

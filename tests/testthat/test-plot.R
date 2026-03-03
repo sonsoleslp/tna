@@ -4,6 +4,7 @@ test_that("tna models can be plotted", {
     plot.tna(mock_tna),
     NA
   )
+  dev.off()
 })
 
 test_that("histogram of edge weights can be plotted", {
@@ -12,6 +13,7 @@ test_that("histogram of edge weights can be plotted", {
     hist.tna(mock_tna),
     NA
   )
+  dev.off()
 })
 
 test_that("bootstrapped model can be plotted", {
@@ -38,6 +40,7 @@ test_that("centralities can be plotted", {
     plot.tna_centralities(cm, colors = "red"),
     NA
   )
+  dev.off()
 })
 
 test_that("cliques can be plotted", {
@@ -47,6 +50,7 @@ test_that("cliques can be plotted", {
     plot.tna_cliques(cliq),
     NA
   )
+  dev.off()
 })
 
 test_that("communities can be plotted", {
@@ -56,6 +60,7 @@ test_that("communities can be plotted", {
     plot.tna_communities(comm),
     NA
   )
+  dev.off()
 })
 
 test_that("centrality stability can be plotted", {
@@ -66,6 +71,7 @@ test_that("centrality stability can be plotted", {
     plot.tna_stability(out),
     NA
   )
+  dev.off()
 })
 
 test_that("permutation test significant edges can be plotted", {
@@ -77,6 +83,7 @@ test_that("permutation test significant edges can be plotted", {
     plot.tna_permutation(perm),
     NA
   )
+  dev.off()
 })
 
 test_that("permutation test significant edges can be plotted with groups", {
@@ -86,6 +93,7 @@ test_that("permutation test significant edges can be plotted with groups", {
     plot.group_tna_permutation(perm),
     NA
   )
+  dev.off()
 })
 
 test_that("model comparison can be plotted", {
@@ -100,6 +108,7 @@ test_that("model comparison can be plotted", {
     plot_compare(mmm_model),
     NA
   )
+  dev.off()
 })
 
 test_that("edge weight matrix can be plotted", {
@@ -108,6 +117,7 @@ test_that("edge weight matrix can be plotted", {
     plot_model(mock_matrix),
     NA
   )
+  dev.off()
 })
 
 test_that("frequencies can be plotted", {
@@ -195,6 +205,7 @@ test_that("histogram of edge weights can be plotted", {
     hist(mmm_model),
     NA
   )
+  dev.off()
 })
 
 test_that("comparison results can be plotted", {
@@ -422,8 +433,8 @@ test_that("reliability analysis can be plotted", {
     NA
   )
   rel2 <- reliability(
-    mock_tna_seq, 
-    types = c("relative", "frequency"), 
+    mock_tna_seq,
+    types = c("relative", "frequency"),
     iter = 50
   )
   expect_error(
