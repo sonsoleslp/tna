@@ -67,10 +67,10 @@ rel <- reliability(model, iter = 20)
 print(rel)
 #> Reliability summary
 #> # A tibble: 4 × 8
-#>   metric               mean       sd  median     min    max     q25     q75
-#>   <chr>               <dbl>    <dbl>   <dbl>   <dbl>  <dbl>   <dbl>   <dbl>
-#> 1 Mean Abs. Diff.   0.00757 0.00237  0.00734 0.00344 0.0120 0.00591 0.00885
-#> 2 Median Abs. Diff. 0.00586 0.00244  0.00588 0.00272 0.0120 0.00376 0.00759
-#> 3 Pearson           1.000   0.000318 1.000   0.999   1.000  0.999   1.000  
-#> 4 Bray-Curtis       0.0113  0.00355  0.0110  0.00517 0.0180 0.00886 0.0133 
+#>   metric               mean       sd  median     min     max     q25     q75
+#>   <chr>               <dbl>    <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+#> 1 Mean Abs. Diff.   0.00729 0.00235  0.00718 0.00298 0.0120  0.00567 0.00893
+#> 2 Median Abs. Diff. 0.00627 0.00240  0.00642 0.00201 0.00982 0.00396 0.00803
+#> 3 Pearson           1.000   0.000300 1.000   0.999   1.000   1.000   1.000  
+#> 4 Bray-Curtis       0.0109  0.00353  0.0108  0.00446 0.0180  0.00851 0.0134 
 ```

@@ -66,14 +66,14 @@ print(perm)
 #>    edge_name           diff_true effect_size p_value
 #>    <chr>                   <dbl>       <dbl>   <dbl>
 #>  1 adapt -> adapt       0            NaN      1     
-#>  2 cohesion -> adapt    0.00541        0.950  0.857 
-#>  3 consensus -> adapt  -0.000679      -0.186  0.714 
-#>  4 coregulate -> adapt  0.00769        0.627  0.524 
-#>  5 discuss -> adapt    -0.130         -6.97   0.0476
-#>  6 emotion -> adapt     0.0101         1.51   0.333 
-#>  7 monitor -> adapt    -0.00480       -0.365  0.952 
-#>  8 plan -> adapt        0.00339        1.49   0.0952
-#>  9 synthesis -> adapt  -0.159         -2.07   0.0952
-#> 10 adapt -> cohesion   -0.0907        -0.897  0.429 
+#>  2 cohesion -> adapt    0.00541        0.956  0.714 
+#>  3 consensus -> adapt  -0.000679      -0.205  0.524 
+#>  4 coregulate -> adapt  0.00769        0.580  0.619 
+#>  5 discuss -> adapt    -0.130         -8.08   0.0476
+#>  6 emotion -> adapt     0.0101         1.36   0.429 
+#>  7 monitor -> adapt    -0.00480       -0.353  0.952 
+#>  8 plan -> adapt        0.00339        1.45   0.0952
+#>  9 synthesis -> adapt  -0.159         -1.93   0.0952
+#> 10 adapt -> cohesion   -0.0907        -1.02   0.429 
 #> # ℹ 71 more rows
 ```

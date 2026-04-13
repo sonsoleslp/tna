@@ -72,39 +72,39 @@ print(comp)
 #> 28                                              plan->plan       948     1356
 #> 29                                        synthesis->adapt        40      113
 #> 31                                         synthesis->plan        40        9
-#> 33                                      consensus->monitor       120      175
-#> 34                                  coregulate->coregulate        12       34
-#> 36                                           plan->discuss       174      244
-#> 38                                       cohesion->monitor        16       40
-#> 39                                       emotion->cohesion       505      418
+#> 33                                       cohesion->monitor        16       40
+#> 34                                      consensus->monitor       120      175
+#> 35                                  coregulate->coregulate        12       34
+#> 36                                       emotion->cohesion       505      418
+#> 38                                           plan->discuss       174      244
+#> 39                                          cohesion->plan       142       97
 #> 40                                      synthesis->discuss         8       33
 #> 41                                        monitor->discuss       234      304
-#> 43                                          cohesion->plan       142       97
-#> 44                                        discuss->discuss       339      431
+#> 43                                        discuss->discuss       339      431
 #> 45                                          adapt->emotion        20       41
-#> 46                              adapt->cohesion->consensus        22       49
-#> 48                            adapt->consensus->coregulate        14       42
-#> 49                                  adapt->consensus->plan        21       61
-#> 50                            cohesion->consensus->discuss       129       44
-#> 51                          consensus->cohesion->consensus        33       10
-#> 52                            consensus->discuss->cohesion        39        7
-#> 53                           consensus->discuss->consensus       291       87
-#> 54                             consensus->discuss->discuss       140       79
-#> 55                             consensus->discuss->emotion        92       33
-#> 56                                consensus->plan->emotion       202      139
-#> 57                                   consensus->plan->plan       382      495
-#> 58                              coregulate->discuss->adapt         6       32
-#> 59                            coregulate->discuss->discuss        27       65
-#> 60                          coregulate->discuss->synthesis        20       63
-#> 61                                discuss->adapt->cohesion        12       58
-#> 62                               discuss->adapt->consensus        26       96
-#> 64                                 discuss->adapt->emotion         6       25
-#> 65                            discuss->cohesion->consensus        64       30
-#> 66                             discuss->consensus->discuss       198       41
-#> 67                                discuss->consensus->plan       302      181
-#> 68                                 discuss->discuss->adapt         6       49
-#> 69                             discuss->discuss->consensus       144       86
-#> 70                               discuss->synthesis->adapt        29       89
+#> 47                            adapt->consensus->coregulate        14       42
+#> 48                                  adapt->consensus->plan        21       61
+#> 49                            cohesion->consensus->discuss       129       44
+#> 50                          consensus->cohesion->consensus        33       10
+#> 51                            consensus->discuss->cohesion        39        7
+#> 52                           consensus->discuss->consensus       291       87
+#> 53                             consensus->discuss->discuss       140       79
+#> 54                             consensus->discuss->emotion        92       33
+#> 55                                consensus->plan->emotion       202      139
+#> 56                                   consensus->plan->plan       382      495
+#> 57                              coregulate->discuss->adapt         6       32
+#> 58                            coregulate->discuss->discuss        27       65
+#> 59                          coregulate->discuss->synthesis        20       63
+#> 60                                discuss->adapt->cohesion        12       58
+#> 61                               discuss->adapt->consensus        26       96
+#> 63                                 discuss->adapt->emotion         6       25
+#> 64                            discuss->cohesion->consensus        64       30
+#> 65                             discuss->consensus->discuss       198       41
+#> 66                                discuss->consensus->plan       302      181
+#> 67                                 discuss->discuss->adapt         6       49
+#> 68                             discuss->discuss->consensus       144       86
+#> 69                               discuss->synthesis->adapt        29       89
+#> 71                                discuss->synthesis->plan        28        9
 #> 73                            emotion->cohesion->consensus       235      164
 #> 74                             emotion->consensus->discuss       111       57
 #> 75                             emotion->discuss->consensus        75       19
@@ -117,9 +117,9 @@ print(comp)
 #> 84                                        plan->plan->plan       282      510
 #> 85                              synthesis->adapt->cohesion         6       29
 #> 87                                       cohesion->discuss        38       63
-#> 89                                        discuss->monitor        33       55
-#> 90                                                 discuss      2166     2101
-#> 94                                       cohesion->emotion       111       85
+#> 88                                        discuss->monitor        33       55
+#> 89                                                 discuss      2166     2101
+#> 93                                       cohesion->emotion       111       85
 #> 95                                        consensus->adapt        14       16
 #> 96                                    consensus->consensus       283      236
 #> 97                                   consensus->coregulate       580      608
@@ -152,133 +152,133 @@ print(comp)
 #> 126                                    synthesis->cohesion         8       14
 #> 127                                   synthesis->consensus       160      144
 #> 128                                     synthesis->emotion        18       28
-#> 138                              adapt->consensus->discuss        18       17
-#> 160                              adapt->emotion->consensus        10        8
-#> 187                         cohesion->consensus->consensus        44       27
-#> 188                        cohesion->consensus->coregulate        67       69
-#> 189                           cohesion->consensus->emotion        46       22
-#> 190                           cohesion->consensus->monitor        11       13
-#> 191                              cohesion->consensus->plan       169      135
-#> 195                        cohesion->coregulate->consensus         7       21
-#> 197                          cohesion->coregulate->discuss        15       31
-#> 198                          cohesion->coregulate->emotion        15       20
-#> 200                             cohesion->coregulate->plan        20       26
-#> 204                           cohesion->discuss->consensus        15       12
-#> 208                           cohesion->discuss->synthesis         8        5
-#> 210                            cohesion->emotion->cohesion        30       27
-#> 211                           cohesion->emotion->consensus        36       18
-#> 213                             cohesion->emotion->discuss        13        9
-#> 214                             cohesion->emotion->emotion         5        6
-#> 216                                cohesion->emotion->plan        10       10
-#> 221                             cohesion->monitor->discuss        10       17
-#> 225                              cohesion->plan->consensus        36       31
-#> 228                                cohesion->plan->emotion        28        9
-#> 229                                cohesion->plan->monitor         8        5
-#> 230                                   cohesion->plan->plan        43       36
-#> 236                             consensus->adapt->cohesion         6        7
-#> 237                            consensus->adapt->consensus         5        8
-#> 239                        consensus->cohesion->coregulate         8        5
-#> 246                        consensus->consensus->consensus        27       19
-#> 247                       consensus->consensus->coregulate        41       40
-#> 248                          consensus->consensus->discuss        56       26
-#> 249                          consensus->consensus->emotion        25       17
-#> 250                          consensus->consensus->monitor        15       11
-#> 251                             consensus->consensus->plan        82      105
-#> 253                           consensus->coregulate->adapt        15        8
-#> 254                        consensus->coregulate->cohesion        19       19
-#> 255                       consensus->coregulate->consensus        53       90
-#> 256                      consensus->coregulate->coregulate        11       24
-#> 257                         consensus->coregulate->discuss       135      166
-#> 258                         consensus->coregulate->emotion       110       85
-#> 259                         consensus->coregulate->monitor        52       41
-#> 260                            consensus->coregulate->plan       141      116
-#> 261                       consensus->coregulate->synthesis         7        8
-#> 262                              consensus->discuss->adapt        22       43
-#> 263                         consensus->discuss->coregulate        56       35
-#> 264                            consensus->discuss->monitor        11        8
-#> 265                               consensus->discuss->plan         7        5
-#> 266                          consensus->discuss->synthesis        72       76
-#> 268                           consensus->emotion->cohesion        72       52
-#> 269                          consensus->emotion->consensus        86       52
-#> 271                            consensus->emotion->discuss        33       17
-#> 272                            consensus->emotion->emotion        18       16
-#> 273                            consensus->emotion->monitor        13        9
-#> 274                               consensus->emotion->plan        19       19
-#> 277                           consensus->monitor->cohesion         6       12
-#> 278                          consensus->monitor->consensus        17       23
-#> 279                         consensus->monitor->coregulate         5        6
-#> 280                            consensus->monitor->discuss        40       70
-#> 281                            consensus->monitor->emotion         9       14
-#> 283                               consensus->monitor->plan        30       27
-#> 286                              consensus->plan->cohesion        37       18
-#> 287                             consensus->plan->consensus       352      334
-#> 288                            consensus->plan->coregulate        29       14
-#> 289                               consensus->plan->discuss        67       91
-#> 290                               consensus->plan->monitor        86       86
-#> 294                        consensus->synthesis->consensus         9        5
-#> 300                           coregulate->adapt->consensus         8        6
-#> 306                        coregulate->cohesion->consensus        16       15
-#> 311                             coregulate->cohesion->plan         5        5
-#> 313                       coregulate->consensus->consensus        10       20
-#> 314                      coregulate->consensus->coregulate        14       36
-#> 315                         coregulate->consensus->discuss        16       20
-#> 316                         coregulate->consensus->emotion        14        9
-#> 318                            coregulate->consensus->plan        34       67
-#> 328                          coregulate->discuss->cohesion         9        8
-#> 329                         coregulate->discuss->consensus        86       68
-#> 330                        coregulate->discuss->coregulate        16       27
-#> 331                           coregulate->discuss->emotion        16       29
-#> 332                           coregulate->discuss->monitor         5        6
-#> 335                          coregulate->emotion->cohesion        56       44
-#> 336                         coregulate->emotion->consensus        45       34
-#> 338                           coregulate->emotion->discuss        25       18
-#> 339                           coregulate->emotion->emotion        11       13
-#> 341                              coregulate->emotion->plan        19       18
-#> 345                         coregulate->monitor->consensus        14       16
-#> 347                           coregulate->monitor->discuss        30       25
-#> 350                              coregulate->monitor->plan        21       16
-#> 353                             coregulate->plan->cohesion         6        5
-#> 354                            coregulate->plan->consensus        64       56
-#> 356                              coregulate->plan->discuss        16       12
-#> 357                              coregulate->plan->emotion        36       29
-#> 358                              coregulate->plan->monitor        19       15
-#> 359                                 coregulate->plan->plan        71       99
-#> 362                       coregulate->synthesis->consensus         6        8
-#> 373                          discuss->cohesion->coregulate         7       10
-#> 374                             discuss->cohesion->discuss         5        8
-#> 375                             discuss->cohesion->emotion        12        6
-#> 377                                discuss->cohesion->plan        13        5
-#> 380                          discuss->consensus->consensus        59       28
-#> 381                         discuss->consensus->coregulate       128       78
-#> 382                            discuss->consensus->emotion        54       30
-#> 383                            discuss->consensus->monitor        27       26
-#> 386                          discuss->coregulate->cohesion         7        7
-#> 387                         discuss->coregulate->consensus        17       20
-#> 389                           discuss->coregulate->discuss        32       64
-#> 390                           discuss->coregulate->emotion        25       20
-#> 391                           discuss->coregulate->monitor         9       18
-#> 392                              discuss->coregulate->plan        32       38
-#> 394                             discuss->discuss->cohesion        14       17
-#> 395                           discuss->discuss->coregulate        16       33
-#> 396                              discuss->discuss->discuss        53       98
-#> 397                              discuss->discuss->emotion        33       41
-#> 398                              discuss->discuss->monitor         5        8
-#> 399                                 discuss->discuss->plan         7        5
-#> 400                            discuss->discuss->synthesis        31       60
-#> 401                             discuss->emotion->cohesion        62       61
-#> 402                            discuss->emotion->consensus        70       63
-#> 403                           discuss->emotion->coregulate         5        9
-#> 404                              discuss->emotion->discuss        26       11
-#> 405                              discuss->emotion->emotion         9       10
-#> 406                              discuss->emotion->monitor         5        5
-#> 407                                 discuss->emotion->plan        24       16
-#> 413                              discuss->monitor->discuss        16       20
-#> 419                               discuss->plan->consensus         8        7
-#> 423                                    discuss->plan->plan         5        6
-#> 424                           discuss->synthesis->cohesion         5       12
-#> 425                          discuss->synthesis->consensus       113      122
-#> 427                            discuss->synthesis->emotion         8       23
-#> 429                               discuss->synthesis->plan        28        9
+#> 130                             adapt->cohesion->consensus        22       49
+#> 139                              adapt->consensus->discuss        18       17
+#> 161                              adapt->emotion->consensus        10        8
+#> 188                         cohesion->consensus->consensus        44       27
+#> 189                        cohesion->consensus->coregulate        67       69
+#> 190                           cohesion->consensus->emotion        46       22
+#> 191                           cohesion->consensus->monitor        11       13
+#> 192                              cohesion->consensus->plan       169      135
+#> 196                        cohesion->coregulate->consensus         7       21
+#> 198                          cohesion->coregulate->discuss        15       31
+#> 199                          cohesion->coregulate->emotion        15       20
+#> 201                             cohesion->coregulate->plan        20       26
+#> 205                           cohesion->discuss->consensus        15       12
+#> 209                           cohesion->discuss->synthesis         8        5
+#> 211                            cohesion->emotion->cohesion        30       27
+#> 212                           cohesion->emotion->consensus        36       18
+#> 214                             cohesion->emotion->discuss        13        9
+#> 215                             cohesion->emotion->emotion         5        6
+#> 217                                cohesion->emotion->plan        10       10
+#> 222                             cohesion->monitor->discuss        10       17
+#> 226                              cohesion->plan->consensus        36       31
+#> 229                                cohesion->plan->emotion        28        9
+#> 230                                cohesion->plan->monitor         8        5
+#> 231                                   cohesion->plan->plan        43       36
+#> 237                             consensus->adapt->cohesion         6        7
+#> 238                            consensus->adapt->consensus         5        8
+#> 240                        consensus->cohesion->coregulate         8        5
+#> 247                        consensus->consensus->consensus        27       19
+#> 248                       consensus->consensus->coregulate        41       40
+#> 249                          consensus->consensus->discuss        56       26
+#> 250                          consensus->consensus->emotion        25       17
+#> 251                          consensus->consensus->monitor        15       11
+#> 252                             consensus->consensus->plan        82      105
+#> 254                           consensus->coregulate->adapt        15        8
+#> 255                        consensus->coregulate->cohesion        19       19
+#> 256                       consensus->coregulate->consensus        53       90
+#> 257                      consensus->coregulate->coregulate        11       24
+#> 258                         consensus->coregulate->discuss       135      166
+#> 259                         consensus->coregulate->emotion       110       85
+#> 260                         consensus->coregulate->monitor        52       41
+#> 261                            consensus->coregulate->plan       141      116
+#> 262                       consensus->coregulate->synthesis         7        8
+#> 263                              consensus->discuss->adapt        22       43
+#> 264                         consensus->discuss->coregulate        56       35
+#> 265                            consensus->discuss->monitor        11        8
+#> 266                               consensus->discuss->plan         7        5
+#> 267                          consensus->discuss->synthesis        72       76
+#> 269                           consensus->emotion->cohesion        72       52
+#> 270                          consensus->emotion->consensus        86       52
+#> 272                            consensus->emotion->discuss        33       17
+#> 273                            consensus->emotion->emotion        18       16
+#> 274                            consensus->emotion->monitor        13        9
+#> 275                               consensus->emotion->plan        19       19
+#> 278                           consensus->monitor->cohesion         6       12
+#> 279                          consensus->monitor->consensus        17       23
+#> 280                         consensus->monitor->coregulate         5        6
+#> 281                            consensus->monitor->discuss        40       70
+#> 282                            consensus->monitor->emotion         9       14
+#> 284                               consensus->monitor->plan        30       27
+#> 287                              consensus->plan->cohesion        37       18
+#> 288                             consensus->plan->consensus       352      334
+#> 289                            consensus->plan->coregulate        29       14
+#> 290                               consensus->plan->discuss        67       91
+#> 291                               consensus->plan->monitor        86       86
+#> 295                        consensus->synthesis->consensus         9        5
+#> 301                           coregulate->adapt->consensus         8        6
+#> 307                        coregulate->cohesion->consensus        16       15
+#> 312                             coregulate->cohesion->plan         5        5
+#> 314                       coregulate->consensus->consensus        10       20
+#> 315                      coregulate->consensus->coregulate        14       36
+#> 316                         coregulate->consensus->discuss        16       20
+#> 317                         coregulate->consensus->emotion        14        9
+#> 319                            coregulate->consensus->plan        34       67
+#> 329                          coregulate->discuss->cohesion         9        8
+#> 330                         coregulate->discuss->consensus        86       68
+#> 331                        coregulate->discuss->coregulate        16       27
+#> 332                           coregulate->discuss->emotion        16       29
+#> 333                           coregulate->discuss->monitor         5        6
+#> 336                          coregulate->emotion->cohesion        56       44
+#> 337                         coregulate->emotion->consensus        45       34
+#> 339                           coregulate->emotion->discuss        25       18
+#> 340                           coregulate->emotion->emotion        11       13
+#> 342                              coregulate->emotion->plan        19       18
+#> 346                         coregulate->monitor->consensus        14       16
+#> 348                           coregulate->monitor->discuss        30       25
+#> 351                              coregulate->monitor->plan        21       16
+#> 354                             coregulate->plan->cohesion         6        5
+#> 355                            coregulate->plan->consensus        64       56
+#> 357                              coregulate->plan->discuss        16       12
+#> 358                              coregulate->plan->emotion        36       29
+#> 359                              coregulate->plan->monitor        19       15
+#> 360                                 coregulate->plan->plan        71       99
+#> 363                       coregulate->synthesis->consensus         6        8
+#> 374                          discuss->cohesion->coregulate         7       10
+#> 375                             discuss->cohesion->discuss         5        8
+#> 376                             discuss->cohesion->emotion        12        6
+#> 378                                discuss->cohesion->plan        13        5
+#> 381                          discuss->consensus->consensus        59       28
+#> 382                         discuss->consensus->coregulate       128       78
+#> 383                            discuss->consensus->emotion        54       30
+#> 384                            discuss->consensus->monitor        27       26
+#> 387                          discuss->coregulate->cohesion         7        7
+#> 388                         discuss->coregulate->consensus        17       20
+#> 390                           discuss->coregulate->discuss        32       64
+#> 391                           discuss->coregulate->emotion        25       20
+#> 392                           discuss->coregulate->monitor         9       18
+#> 393                              discuss->coregulate->plan        32       38
+#> 395                             discuss->discuss->cohesion        14       17
+#> 396                           discuss->discuss->coregulate        16       33
+#> 397                              discuss->discuss->discuss        53       98
+#> 398                              discuss->discuss->emotion        33       41
+#> 399                              discuss->discuss->monitor         5        8
+#> 400                                 discuss->discuss->plan         7        5
+#> 401                            discuss->discuss->synthesis        31       60
+#> 402                             discuss->emotion->cohesion        62       61
+#> 403                            discuss->emotion->consensus        70       63
+#> 404                           discuss->emotion->coregulate         5        9
+#> 405                              discuss->emotion->discuss        26       11
+#> 406                              discuss->emotion->emotion         9       10
+#> 407                              discuss->emotion->monitor         5        5
+#> 408                                 discuss->emotion->plan        24       16
+#> 414                              discuss->monitor->discuss        16       20
+#> 420                               discuss->plan->consensus         8        7
+#> 424                                    discuss->plan->plan         5        6
+#> 425                           discuss->synthesis->cohesion         5       12
+#> 426                          discuss->synthesis->consensus       113      122
+#> 428                            discuss->synthesis->emotion         8       23
 #> 433                          emotion->cohesion->coregulate        40       65
 #> 434                             emotion->cohesion->discuss        20       35
 #> 435                             emotion->cohesion->emotion        64       45
@@ -960,923 +960,923 @@ print(comp)
 #> 9682                       plan->plan->plan->plan->monitor         6       13
 #> 9683                          plan->plan->plan->plan->plan        31       76
 #> 9890                synthesis->consensus->plan->plan->plan        11       13
-#>         prop_High     prop_Low  effect_size     p_value
-#> 1    0.0112965527 0.0288879235 15.738021068 0.008991009
-#> 2    0.0741928431 0.0594410657  7.221853130 0.008991009
-#> 3    0.2660884775 0.2277729511 14.179755681 0.008991009
-#> 4    0.0698928650 0.0849985520  6.390945680 0.008991009
-#> 5    0.1228773413 0.1005647263  8.892595830 0.008991009
-#> 6    0.0486844982 0.0613958876  6.809381705 0.008991009
-#> 7    0.2260768166 0.2549232551  6.036493149 0.008991009
-#> 8    0.0230303914 0.0299015349  4.506165258 0.008991009
-#> 9    0.0029085764 0.0079612863  8.181878683 0.077922078
-#> 10   0.0057385426 0.0132688105  8.615111170 0.077922078
-#> 11   0.0003930509 0.0019512957  4.969305489 0.077922078
-#> 12   0.0032230171 0.0003902591  6.878896481 0.077922078
-#> 13   0.0395409166 0.0266156728  9.402610661 0.077922078
-#> 14   0.0059743731 0.0098345301  4.368270413 0.077922078
-#> 15   0.0052668815 0.0021073993  5.506625001 0.077922078
-#> 16   0.0620234258 0.0312987824 16.904165892 0.077922078
-#> 17   0.0216964075 0.0143615361  6.537271474 0.077922078
-#> 18   0.0076251867 0.0131127068  5.781174186 0.077922078
-#> 19   0.0165081362 0.0256790509  6.895393967 0.077922078
-#> 20   0.0037732883 0.0182641274 16.909013282 0.077922078
-#> 21   0.0097476613 0.0049953169  6.338934597 0.077922078
-#> 22   0.0668972565 0.0326256634 19.356943412 0.077922078
-#> 23   0.0167439667 0.0268498283  7.678816967 0.077922078
-#> 24   0.0409558997 0.0302841086  6.467353937 0.077922078
-#> 25   0.0148573225 0.0078051826  7.595240957 0.077922078
-#> 26   0.0054241019 0.0028879176  4.245926781 0.077922078
-#> 27   0.0414275607 0.0294255386  7.639613100 0.077922078
-#> 28   0.0745224432 0.1058382766  9.367465243 0.077922078
-#> 29   0.0031444069 0.0088198564  8.389947506 0.077922078
-#> 31   0.0031444069 0.0007024664  5.927100612 0.077922078
-#> 33   0.0094332207 0.0136590696  4.113919832 0.155844156
-#> 34   0.0009433221 0.0026537621  3.665356461 0.155844156
-#> 36   0.0136781700 0.0190446456  4.746741341 0.155844156
-#> 38   0.0012577628 0.0031220731  3.809753812 0.233766234
-#> 39   0.0396981369 0.0326256634  3.829968779 0.233766234
-#> 40   0.0006288814 0.0025757103  4.678539766 0.233766234
-#> 41   0.0183947803 0.0237277552  3.922126072 0.311688312
-#> 43   0.0111626444 0.0075710272  3.389862308 0.389610390
-#> 44   0.0266488484 0.0336403372  3.161566700 0.389610390
-#> 45   0.0015722034 0.0032001249  3.210027997 0.545454545
-#> 46   0.0018769730 0.0041483237  4.058141577 0.573426573
-#> 48   0.0011944373 0.0035557061  4.766698994 0.573426573
-#> 49   0.0017916560 0.0051642398  5.745687261 0.573426573
-#> 50   0.0110058869 0.0037250254  9.910456348 0.573426573
-#> 51   0.0028154594 0.0008465967  4.622440777 0.573426573
-#> 52   0.0033273611 0.0005926177  6.315961269 0.573426573
-#> 53   0.0248272332 0.0073653911 15.963763110 0.573426573
-#> 54   0.0119443733 0.0066881138  5.677624820 0.573426573
-#> 55   0.0078491596 0.0027937690  7.507102218 0.573426573
-#> 56   0.0172340244 0.0117676939  4.240110346 0.573426573
-#> 57   0.0325910758 0.0419065357  5.612868015 0.573426573
-#> 58   0.0005119017 0.0027091094  6.025118166 0.573426573
-#> 59   0.0023035577 0.0055028784  5.078878957 0.573426573
-#> 60   0.0017063390 0.0053335591  6.517053948 0.573426573
-#> 61   0.0010238034 0.0049102608  7.904444242 0.573426573
-#> 62   0.0022182408 0.0081273281  8.670069898 0.573426573
-#> 64   0.0005119017 0.0021164917  4.364089832 0.573426573
-#> 65   0.0054602850 0.0025397900  5.049292903 0.573426573
-#> 66   0.0168927566 0.0034710464 13.400535849 0.573426573
-#> 67   0.0257657196 0.0153233999  8.538624474 0.573426573
-#> 68   0.0005119017 0.0041483237  8.028313726 0.573426573
-#> 69   0.0122856412 0.0072807315  4.876077265 0.573426573
-#> 70   0.0024741916 0.0075347105  7.886559536 0.573426573
-#> 73   0.0200494838 0.0138841856  5.005036111 0.573426573
-#> 74   0.0094701817 0.0048256011  5.881836482 0.573426573
-#> 75   0.0063987714 0.0016085337  7.991745701 0.573426573
-#> 77   0.0023035577 0.0055028784  5.433196904 0.573426573
-#> 78   0.0045217985 0.0020318320  4.395861105 0.573426573
-#> 79   0.0023888747 0.0049949204  4.116161114 0.573426573
-#> 81   0.0142479311 0.0090585845  5.112653229 0.573426573
-#> 82   0.0052043341 0.0020318320  5.346597794 0.573426573
-#> 83   0.0218411398 0.0307314595  6.023971681 0.573426573
-#> 84   0.0240593806 0.0431764307  8.239660643 0.573426573
-#> 85   0.0005119017 0.0024551304  5.216744808 0.573426573
-#> 87   0.0029871865 0.0049172651  2.927780143 0.779220779
-#> 89   0.0025941357 0.0042928505  2.714253944 0.935064935
-#> 90   0.1578602143 0.1521141037  0.687470972 1.000000000
-#> 94   0.0087257291 0.0066344052  2.041705107 1.000000000
-#> 95   0.0011005424 0.0012488292 -0.735818940 1.000000000
-#> 96   0.0222466787 0.0184202310  1.979517612 1.000000000
-#> 97   0.0455938999 0.0474555105 -0.129649361 1.000000000
-#> 98   0.0971621728 0.0990477677 -0.337375111 1.000000000
-#> 99   0.0021224746 0.0016390884  0.189827431 1.000000000
-#> 100  0.0015722034 0.0009366219  1.076219329 1.000000000
-#> 101  0.0025155255 0.0030440212  0.051386928 1.000000000
-#> 102  0.0143070513 0.0122541367  1.081404822 1.000000000
-#> 103  0.0067604748 0.0065563534 -0.980592800 1.000000000
-#> 104  0.0187092210 0.0181860756 -0.797371923 1.000000000
-#> 105  0.0013363729 0.0015610365 -0.557972356 1.000000000
-#> 106  0.0113984750 0.0146737434  2.324391405 1.000000000
-#> 107  0.0176872887 0.0150640025  1.531311003 1.000000000
-#> 108  0.0019652543 0.0016390884 -0.319430612 1.000000000
-#> 110  0.0028299662 0.0047611614  2.724466578 1.000000000
-#> 111  0.0076251867 0.0094442710  0.915438772 1.000000000
-#> 112  0.0038518984 0.0042147986 -0.525245019 1.000000000
-#> 113  0.0110054241 0.0111614112 -1.104305352 1.000000000
-#> 114  0.0005502712 0.0007024664 -0.488381042 1.000000000
-#> 115  0.0024369153 0.0038245395  1.889526559 1.000000000
-#> 116  0.0079396274 0.0099125820  1.539619331 1.000000000
-#> 117  0.0025155255 0.0039806431  2.168308267 1.000000000
-#> 118  0.0047952205 0.0053855760 -0.171058783 1.000000000
-#> 119  0.0009433221 0.0010927256 -0.699623782 1.000000000
-#> 120  0.0112412546 0.0129566032  0.763808147 1.000000000
-#> 121  0.0009433221 0.0008585701 -0.995460543 1.000000000
-#> 123  0.0071535257 0.0049953169  2.296200552 1.000000000
-#> 124  0.0668186463 0.0732126132  2.223832617 1.000000000
-#> 125  0.0172156277 0.0192007493  0.721344821 1.000000000
-#> 126  0.0006288814 0.0010927256  0.693574442 1.000000000
-#> 127  0.0125776275 0.0112394630  0.357420797 1.000000000
-#> 128  0.0014149831 0.0021854511  1.118602233 1.000000000
-#> 138  0.0015357051 0.0014392144 -0.994438407 1.000000000
-#> 160  0.0008531695 0.0006772773 -0.465152449 1.000000000
-#> 187  0.0037539459 0.0022858110  2.010082428 1.000000000
-#> 188  0.0057162358 0.0058415171 -1.118388226 1.000000000
-#> 189  0.0039245798 0.0018625127  3.641342611 1.000000000
-#> 190  0.0009384865 0.0011005757 -0.655983343 1.000000000
-#> 191  0.0144185650 0.0114290552  2.147782468 1.000000000
-#> 195  0.0005972187 0.0017778530  3.136578333 1.000000000
-#> 197  0.0012797543 0.0026244497  2.458802330 1.000000000
-#> 198  0.0012797543 0.0016931934  0.057807405 1.000000000
-#> 200  0.0017063390 0.0022011514  0.180582402 1.000000000
-#> 204  0.0012797543 0.0010159160 -0.325851134 1.000000000
-#> 208  0.0006825356 0.0004232983  0.062635111 1.000000000
-#> 210  0.0025595086 0.0022858110 -0.568213321 1.000000000
-#> 211  0.0030714103 0.0015238740  2.905580247 1.000000000
-#> 213  0.0011091204 0.0007619370  0.112340453 1.000000000
-#> 214  0.0004265848 0.0005079580 -0.958865251 1.000000000
-#> 216  0.0008531695 0.0008465967 -1.350267734 1.000000000
-#> 221  0.0008531695 0.0014392144  0.768975475 1.000000000
-#> 225  0.0030714103 0.0026244497 -0.199114300 1.000000000
-#> 228  0.0023888747 0.0007619370  3.687984403 1.000000000
-#> 229  0.0006825356 0.0004232983  0.061616693 1.000000000
-#> 230  0.0036686290 0.0030477481  0.092004969 1.000000000
-#> 236  0.0005119017 0.0005926177 -0.931190220 1.000000000
-#> 237  0.0004265848 0.0006772773  0.014120323 1.000000000
-#> 239  0.0006825356 0.0004232983  0.094512362 1.000000000
-#> 246  0.0023035577 0.0016085337  0.631953290 1.000000000
-#> 247  0.0034979951 0.0033863867 -1.047622251 1.000000000
-#> 248  0.0047777493 0.0022011514  4.080007496 1.000000000
-#> 249  0.0021329238 0.0014392144  0.714042031 1.000000000
-#> 250  0.0012797543 0.0009312563  0.076486607 1.000000000
-#> 251  0.0069959901 0.0088892652  1.277386833 1.000000000
-#> 253  0.0012797543 0.0006772773  1.078064297 1.000000000
-#> 254  0.0016210221 0.0016085337 -1.329284434 1.000000000
-#> 255  0.0045217985 0.0076193701  3.686507760 1.000000000
-#> 256  0.0009384865 0.0020318320  2.160799476 1.000000000
-#> 257  0.0115177886 0.0140535049  1.541412469 1.000000000
-#> 258  0.0093848648 0.0071960718  1.778158918 1.000000000
-#> 259  0.0044364815 0.0034710464  0.567511159 1.000000000
-#> 260  0.0120296903 0.0098205215  1.377249336 1.000000000
-#> 261  0.0005972187 0.0006772773 -0.983757913 1.000000000
-#> 262  0.0018769730 0.0036403657  3.050640792 1.000000000
-#> 263  0.0047777493 0.0029630884  2.473582528 1.000000000
-#> 264  0.0009384865 0.0006772773 -0.178837270 1.000000000
-#> 265  0.0005972187 0.0004232983 -0.348752979 1.000000000
-#> 266  0.0061428206 0.0064341348 -0.840479606 1.000000000
-#> 268  0.0061428206 0.0044023027  1.800104339 1.000000000
-#> 269  0.0073372579 0.0044023027  3.635435265 1.000000000
-#> 271  0.0028154594 0.0014392144  2.607269425 1.000000000
-#> 272  0.0015357051 0.0013545547 -0.729508296 1.000000000
-#> 273  0.0011091204 0.0007619370  0.120611798 1.000000000
-#> 274  0.0016210221 0.0016085337 -1.279093475 1.000000000
-#> 277  0.0005119017 0.0010159160  0.910878557 1.000000000
-#> 278  0.0014503882 0.0019471724  0.225472466 1.000000000
-#> 279  0.0004265848 0.0005079580 -0.907312842 1.000000000
-#> 280  0.0034126781 0.0059261768  3.507619905 1.000000000
-#> 281  0.0007678526 0.0011852354  0.353952013 1.000000000
-#> 283  0.0025595086 0.0022858110 -0.584264864 1.000000000
-#> 286  0.0031567272 0.0015238740  2.968506081 1.000000000
-#> 287  0.0300315673 0.0282763292 -0.018746999 1.000000000
-#> 288  0.0024741916 0.0011852354  2.738471061 1.000000000
-#> 289  0.0057162358 0.0077040298  1.689898066 1.000000000
-#> 290  0.0073372579 0.0072807315 -1.228942359 1.000000000
-#> 294  0.0007678526 0.0004232983  0.469425594 1.000000000
-#> 300  0.0006825356 0.0005079580 -0.414168754 1.000000000
-#> 306  0.0013650712 0.0012698950 -1.013615977 1.000000000
-#> 311  0.0004265848 0.0004232983 -1.245136005 1.000000000
-#> 313  0.0008531695 0.0016931934  1.690420992 1.000000000
-#> 314  0.0011944373 0.0030477481  3.613560303 1.000000000
-#> 315  0.0013650712 0.0016931934 -0.244626711 1.000000000
-#> 316  0.0011944373 0.0007619370  0.552312878 1.000000000
-#> 318  0.0029007764 0.0056721978  4.133072128 1.000000000
-#> 328  0.0007678526 0.0006772773 -0.916459791 1.000000000
-#> 329  0.0073372579 0.0057568574  1.275483995 1.000000000
-#> 330  0.0013650712 0.0022858110  1.230730369 1.000000000
-#> 331  0.0013650712 0.0024551304  1.690120046 1.000000000
-#> 332  0.0004265848 0.0005079580 -0.945540473 1.000000000
-#> 335  0.0047777493 0.0037250254  0.778528387 1.000000000
-#> 336  0.0038392629 0.0028784287  0.755914240 1.000000000
-#> 338  0.0021329238 0.0015238740  0.434755662 1.000000000
-#> 339  0.0009384865 0.0011005757 -0.681662631 1.000000000
-#> 341  0.0016210221 0.0015238740 -0.992849748 1.000000000
-#> 345  0.0011944373 0.0013545547 -0.734693460 1.000000000
-#> 347  0.0025595086 0.0021164917 -0.157248733 1.000000000
-#> 350  0.0017916560 0.0013545547  0.148672226 1.000000000
-#> 353  0.0005119017 0.0004232983 -0.815638226 1.000000000
-#> 354  0.0054602850 0.0047409414 -0.075495159 1.000000000
-#> 356  0.0013650712 0.0010159160 -0.029143812 1.000000000
-#> 357  0.0030714103 0.0024551304  0.215888003 1.000000000
-#> 358  0.0016210221 0.0012698950 -0.115226985 1.000000000
-#> 359  0.0060575036 0.0083813071  2.188835129 1.000000000
-#> 362  0.0005119017 0.0006772773 -0.437197648 1.000000000
-#> 373  0.0005972187 0.0008465967 -0.174265649 1.000000000
-#> 374  0.0004265848 0.0006772773 -0.106511617 1.000000000
-#> 375  0.0010238034 0.0005079580  1.083049070 1.000000000
-#> 377  0.0011091204 0.0004232983  1.906055098 1.000000000
-#> 380  0.0050337002 0.0023704707  4.302169123 1.000000000
-#> 381  0.0109205699 0.0066034541  4.456541741 1.000000000
-#> 382  0.0046071154 0.0025397900  3.164314717 1.000000000
-#> 383  0.0023035577 0.0022011514 -1.054572224 1.000000000
-#> 386  0.0005972187 0.0005926177 -1.309106399 1.000000000
-#> 387  0.0014503882 0.0016931934 -0.531105253 1.000000000
-#> 389  0.0027301425 0.0054182188  3.544679438 1.000000000
-#> 390  0.0021329238 0.0016931934 -0.003181324 1.000000000
-#> 391  0.0007678526 0.0015238740  1.421361001 1.000000000
-#> 392  0.0027301425 0.0032170674 -0.187995090 1.000000000
-#> 394  0.0011944373 0.0014392144 -0.456197191 1.000000000
-#> 395  0.0013650712 0.0027937690  2.631145478 1.000000000
-#> 396  0.0045217985 0.0082966475  3.885676822 1.000000000
-#> 397  0.0028154594 0.0034710464  0.163033194 1.000000000
-#> 398  0.0004265848 0.0006772773 -0.082517599 1.000000000
-#> 399  0.0005972187 0.0004232983 -0.376511423 1.000000000
-#> 400  0.0026448255 0.0050795801  3.791649809 1.000000000
-#> 401  0.0052896511 0.0051642398 -1.095909460 1.000000000
-#> 402  0.0059721867 0.0053335591 -0.241018270 1.000000000
-#> 403  0.0004265848 0.0007619370  0.452467667 1.000000000
-#> 404  0.0022182408 0.0009312563  2.775705504 1.000000000
-#> 405  0.0007678526 0.0008465967 -0.998066612 1.000000000
-#> 406  0.0004265848 0.0004232983 -1.244116274 1.000000000
-#> 407  0.0020476069 0.0013545547  0.796131602 1.000000000
-#> 413  0.0013650712 0.0016931934 -0.250381773 1.000000000
-#> 419  0.0006825356 0.0005926177 -0.924054233 1.000000000
-#> 423  0.0004265848 0.0005079580 -0.908552249 1.000000000
-#> 424  0.0004265848 0.0010159160  1.368088684 1.000000000
-#> 425  0.0096408156 0.0103284795 -0.408312841 1.000000000
-#> 427  0.0006825356 0.0019471724  3.116474392 1.000000000
-#> 429  0.0023888747 0.0007619370  3.785416904 1.000000000
-#> 433  0.0034126781 0.0055028784  2.637680679 1.000000000
-#> 434  0.0017063390 0.0029630884  2.028745945 1.000000000
-#> 435  0.0054602850 0.0038096851  1.908575999 1.000000000
-#> 436  0.0005972187 0.0020318320  3.680689042 1.000000000
-#> 437  0.0059721867 0.0038943447  2.433368300 1.000000000
-#> 441  0.0043511646 0.0022858110  3.324201249 1.000000000
-#> 442  0.0074225749 0.0060108364  0.929413602 1.000000000
-#> 443  0.0024741916 0.0013545547  1.925166824 1.000000000
-#> 444  0.0015357051 0.0020318320  0.218682716 1.000000000
-#> 445  0.0140772972 0.0131222486 -0.302410513 1.000000000
-#> 450  0.0004265848 0.0016931934  3.719950192 1.000000000
-#> 451  0.0006825356 0.0005079580 -0.525771457 1.000000000
-#> 452  0.0005972187 0.0006772773 -0.951979729 1.000000000
-#> 453  0.0008531695 0.0009312563 -1.070997277 1.000000000
-#> 457  0.0006825356 0.0007619370 -0.947594178 1.000000000
-#> 458  0.0029007764 0.0017778530  1.607036728 1.000000000
-#> 459  0.0016210221 0.0006772773  2.044672106 1.000000000
-#> 462  0.0017916560 0.0013545547  0.119586977 1.000000000
-#> 464  0.0029860933 0.0030477481 -1.141296073 1.000000000
-#> 465  0.0024741916 0.0027937690 -0.517858690 1.000000000
-#> 467  0.0007678526 0.0004232983  0.458931368 1.000000000
-#> 468  0.0007678526 0.0014392144  0.824171302 1.000000000
-#> 473  0.0004265848 0.0008465967  0.686741202 1.000000000
-#> 475  0.0012797543 0.0015238740 -0.487927819 1.000000000
-#> 476  0.0004265848 0.0004232983 -1.279848398 1.000000000
-#> 481  0.0032420442 0.0031324077 -1.063183369 1.000000000
-#> 483  0.0008531695 0.0008465967 -1.335826233 1.000000000
-#> 484  0.0017916560 0.0011852354  0.665176261 1.000000000
-#> 485  0.0007678526 0.0011852354  0.374912905 1.000000000
-#> 486  0.0036686290 0.0044869624  0.299645992 1.000000000
-#> 495  0.0013650712 0.0018625127  0.215740216 1.000000000
-#> 502  0.0004265848 0.0010159160  1.577857965 1.000000000
-#> 503  0.0017063390 0.0017778530 -1.135134972 1.000000000
-#> 504  0.0023035577 0.0015238740  1.021262121 1.000000000
-#> 506  0.0004265848 0.0008465967  0.772519119 1.000000000
-#> 507  0.0026448255 0.0044023027  2.459252820 1.000000000
-#> 511  0.0004265848 0.0007619370  0.503390543 1.000000000
-#> 513  0.0006825356 0.0009312563 -0.171025801 1.000000000
-#> 516  0.0005972187 0.0007619370 -0.482069807 1.000000000
-#> 518  0.0019622899 0.0013545547  0.565066179 1.000000000
-#> 519  0.0075078918 0.0045716221  3.795452016 1.000000000
-#> 520  0.0012797543 0.0023704707  1.750286679 1.000000000
-#> 521  0.0021329238 0.0027091094  0.216943463 1.000000000
-#> 524  0.0021329238 0.0042329834  3.391525866 1.000000000
-#> 525  0.0010238034 0.0019471724  1.721242113 1.000000000
-#> 526  0.0017916560 0.0018625127 -1.104604468 1.000000000
-#> 531  0.0008531695 0.0004232983  0.832312664 1.000000000
-#> 539  0.0028154594 0.0041483237  1.466552706 1.000000000
-#> 541  0.0004265848 0.0008465967  0.772280646 1.000000000
-#> 542  0.0020476069 0.0016931934 -0.355800302 1.000000000
-#> 543  0.0006825356 0.0006772773 -1.257156107 1.000000000
-#> 544  0.0048630663 0.0050795801 -0.908613962 1.000000000
-#> 558  0.0007678526 0.0006772773 -0.964160556 1.000000000
-#> 560  0.0010238034 0.0007619370 -0.247533433 1.000000000
-#> 562  0.0010238034 0.0008465967 -0.533841591 1.000000000
-#> 563  0.0052896511 0.0055028784 -1.000254323 1.000000000
-#> 564  0.0125415920 0.0155773789  2.024911662 1.000000000
-#> 565  0.0137360293 0.0099051812  3.114194770 1.000000000
-#> 566  0.0060575036 0.0050795801  0.437188305 1.000000000
-#> 567  0.0246565993 0.0299695225  2.482363791 1.000000000
-#> 568  0.0005119017 0.0008465967  0.308719945 1.000000000
-#> 571  0.0008531695 0.0011005757 -0.288149173 1.000000000
-#> 572  0.0011091204 0.0004232983  1.742993774 1.000000000
-#> 574  0.0019622899 0.0006772773  3.311883833 1.000000000
-#> 576  0.0005119017 0.0005926177 -1.027565486 1.000000000
-#> 577  0.0059721867 0.0039790044  2.298910430 1.000000000
-#> 578  0.0017063390 0.0021164917 -0.110843821 1.000000000
-#> 579  0.0022182408 0.0044023027  3.834558398 1.000000000
-#> 580  0.0011944373 0.0016931934  0.260895696 1.000000000
-#> 583  0.0015357051 0.0030477481  2.769668993 1.000000000
-#> 585  0.0137360293 0.0090585845  4.320542732 1.000000000
-#> 586  0.0009384865 0.0018625127  1.708566123 1.000000000
-#> 587  0.0025595086 0.0029630884 -0.340882049 1.000000000
-#> 588  0.0007678526 0.0011852354  0.392212107 1.000000000
-#> 589  0.0036686290 0.0031324077 -0.216390003 1.000000000
-#> 592  0.0007678526 0.0008465967 -1.015601146 1.000000000
-#> 593  0.0029007764 0.0037250254  0.586866039 1.000000000
-#> 594  0.0007678526 0.0015238740  1.509675678 1.000000000
-#> 595  0.0064840884 0.0063494751 -1.120022400 1.000000000
-#> 596  0.0018769730 0.0013545547  0.344949240 1.000000000
-#> 598  0.0038392629 0.0046562817  0.307673626 1.000000000
-#> 601  0.0019622899 0.0022858110 -0.488758804 1.000000000
-#> 602  0.0014503882 0.0013545547 -1.037994016 1.000000000
-#> 603  0.0043511646 0.0078733491  4.876824298 1.000000000
-#> 604  0.0139919802 0.0115983745  1.542554254 1.000000000
-#> 605  0.0059721867 0.0077886895  1.521947325 1.000000000
-#> 611  0.0017063390 0.0040636641  4.254367503 1.000000000
-#> 624  0.0007678526 0.0011005757  0.145960697 1.000000000
-#> 625  0.0018769730 0.0019471724 -1.112645251 1.000000000
-#> 626  0.0026448255 0.0022011514 -0.252717217 1.000000000
-#> 629  0.0049483832 0.0049102608 -1.219095481 1.000000000
-#> 646  0.0004265848 0.0008465967  0.856775637 1.000000000
-#> 647  0.0006825356 0.0007619370 -0.983562501 1.000000000
-#> 661  0.0008531695 0.0004232983  0.853454562 1.000000000
-#> 669  0.0008358098 0.0015658101  1.302160471 1.000000000
-#> 702  0.0005572065 0.0013815971  1.799821934 1.000000000
-#> 726  0.0004643388 0.0011052777  1.450304424 1.000000000
-#> 731  0.0005572065 0.0031316202  5.694261697 1.000000000
-#> 845  0.0010215453 0.0011973842 -0.669994164 1.000000000
-#> 850  0.0016716196 0.0021184489 -0.102980969 1.000000000
-#> 851  0.0009286776 0.0004605324  0.831134291 1.000000000
-#> 853  0.0011144131 0.0009210648 -0.549622936 1.000000000
-#> 856  0.0039004458 0.0011052777  5.700396437 1.000000000
-#> 857  0.0009286776 0.0005526389  0.447900537 1.000000000
-#> 858  0.0025074294 0.0011973842  2.332143127 1.000000000
-#> 859  0.0008358098 0.0004605324  0.489554885 1.000000000
-#> 864  0.0016716196 0.0005526389  2.896402377 1.000000000
-#> 876  0.0048291233 0.0034079396  1.426885002 1.000000000
-#> 878  0.0009286776 0.0008289583 -0.931956720 1.000000000
-#> 879  0.0026002972 0.0017500230  0.940067883 1.000000000
-#> 880  0.0006500743 0.0011052777  0.537191499 1.000000000
-#> 881  0.0045505201 0.0042368979 -0.791814701 1.000000000
-#> 899  0.0004643388 0.0004605324 -1.247366158 1.000000000
-#> 942  0.0007429421 0.0004605324  0.019526760 1.000000000
-#> 962  0.0010215453 0.0015658101  0.583970061 1.000000000
-#> 974  0.0008358098 0.0008289583 -1.269828511 1.000000000
-#> 1035 0.0008358098 0.0005526389  0.003982556 1.000000000
-#> 1039 0.0012072808 0.0011052777 -0.949916372 1.000000000
-#> 1065 0.0014858841 0.0007368518  1.419153711 1.000000000
-#> 1067 0.0006500743 0.0004605324 -0.276296174 1.000000000
-#> 1069 0.0010215453 0.0014737036  0.244117761 1.000000000
-#> 1119 0.0011144131 0.0008289583 -0.205122860 1.000000000
-#> 1123 0.0005572065 0.0011052777  0.971342189 1.000000000
-#> 1124 0.0011144131 0.0006447453  0.583778286 1.000000000
-#> 1126 0.0012072808 0.0008289583  0.126290147 1.000000000
-#> 1130 0.0022288262 0.0005526389  3.714168728 1.000000000
-#> 1134 0.0004643388 0.0007368518  0.020328646 1.000000000
-#> 1136 0.0005572065 0.0004605324 -0.847118467 1.000000000
-#> 1145 0.0007429421 0.0005526389 -0.354281589 1.000000000
-#> 1149 0.0033432392 0.0030395137 -0.676005437 1.000000000
-#> 1152 0.0012072808 0.0009210648 -0.297371590 1.000000000
-#> 1154 0.0018573551 0.0032237266  2.006757391 1.000000000
-#> 1165 0.0008358098 0.0004605324  0.404988681 1.000000000
-#> 1170 0.0006500743 0.0009210648 -0.185552247 1.000000000
-#> 1171 0.0006500743 0.0022105554  3.464194936 1.000000000
-#> 1172 0.0009286776 0.0011973842 -0.342402550 1.000000000
-#> 1175 0.0017644874 0.0030395137  1.761907908 1.000000000
-#> 1187 0.0055720654 0.0032237266  3.095056910 1.000000000
-#> 1188 0.0008358098 0.0011052777 -0.312137599 1.000000000
-#> 1189 0.0011144131 0.0029474072  3.680589429 1.000000000
-#> 1190 0.0008358098 0.0011052777 -0.263630879 1.000000000
-#> 1193 0.0013001486 0.0030395137  3.092036549 1.000000000
-#> 1194 0.0030646360 0.0016579166  2.193812984 1.000000000
-#> 1195 0.0026002972 0.0021184489 -0.103058212 1.000000000
-#> 1197 0.0013930163 0.0009210648  0.273670791 1.000000000
-#> 1198 0.0005572065 0.0006447453 -0.921657789 1.000000000
-#> 1200 0.0011144131 0.0009210648 -0.529308925 1.000000000
-#> 1204 0.0009286776 0.0009210648 -1.273497485 1.000000000
-#> 1206 0.0015787519 0.0009210648  0.885463076 1.000000000
-#> 1208 0.0012072808 0.0009210648 -0.203915969 1.000000000
-#> 1212 0.0034361070 0.0023947684  1.088984311 1.000000000
-#> 1214 0.0006500743 0.0006447453 -1.297069426 1.000000000
-#> 1215 0.0020430906 0.0016579166 -0.215762510 1.000000000
-#> 1216 0.0013001486 0.0004605324  2.374934582 1.000000000
-#> 1217 0.0036218425 0.0045132173  0.431521059 1.000000000
-#> 1224 0.0011144131 0.0018421295  0.970445484 1.000000000
-#> 1240 0.0039004458 0.0012894907  5.042842105 1.000000000
-#> 1241 0.0058506686 0.0009210648  7.899928833 1.000000000
-#> 1242 0.0014858841 0.0005526389  2.235846621 1.000000000
-#> 1243 0.0006500743 0.0010131712  0.220219945 1.000000000
-#> 1244 0.0095653789 0.0033158331  8.421957891 1.000000000
-#> 1249 0.0011144131 0.0013815971 -0.402457377 1.000000000
-#> 1252 0.0012072808 0.0008289583  0.174186655 1.000000000
-#> 1255 0.0047362556 0.0009210648  7.197353006 1.000000000
-#> 1256 0.0005572065 0.0007368518 -0.454742905 1.000000000
-#> 1257 0.0024145617 0.0014737036  1.253485810 1.000000000
-#> 1258 0.0014858841 0.0006447453  1.850155606 1.000000000
-#> 1261 0.0013001486 0.0012894907 -1.298741898 1.000000000
-#> 1262 0.0021359584 0.0011052777  1.816002354 1.000000000
-#> 1263 0.0030646360 0.0010131712  4.085801939 1.000000000
-#> 1281 0.0008358098 0.0023947684  3.442546020 1.000000000
-#> 1283 0.0037147103 0.0025789813  0.984390288 1.000000000
-#> 1291 0.0034361070 0.0013815971  4.116329436 1.000000000
-#> 1292 0.0006500743 0.0008289583 -0.578659299 1.000000000
-#> 1294 0.0009286776 0.0004605324  0.876196531 1.000000000
-#> 1296 0.0006500743 0.0009210648 -0.104343895 1.000000000
-#> 1299 0.0019502229 0.0009210648  2.013970484 1.000000000
-#> 1300 0.0015787519 0.0009210648  1.018818268 1.000000000
-#> 1303 0.0022288262 0.0018421295 -0.218923933 1.000000000
-#> 1316 0.0008358098 0.0005526389 -0.001776514 1.000000000
-#> 1332 0.0005572065 0.0005526389 -1.330270444 1.000000000
-#> 1354 0.0014858841 0.0014737036 -1.327497643 1.000000000
-#> 1360 0.0004643388 0.0011973842  1.815960026 1.000000000
-#> 1372 0.0006500743 0.0007368518 -0.993447249 1.000000000
-#> 1377 0.0013001486 0.0008289583  0.453772595 1.000000000
-#> 1384 0.0023216939 0.0006447453  3.948266630 1.000000000
-#> 1391 0.0007429421 0.0004605324  0.110096888 1.000000000
-#> 1392 0.0028789004 0.0018421295  1.087497813 1.000000000
-#> 1393 0.0059435364 0.0060790274 -1.103650258 1.000000000
-#> 1394 0.0059435364 0.0049737497  0.247436536 1.000000000
-#> 1395 0.0031575037 0.0018421295  1.888049234 1.000000000
-#> 1396 0.0012072808 0.0013815971 -0.733601534 1.000000000
-#> 1397 0.0100297177 0.0110527770 -0.184110461 1.000000000
-#> 1408 0.0027860327 0.0018421295  0.936398293 1.000000000
-#> 1409 0.0008358098 0.0005526389 -0.057552049 1.000000000
-#> 1410 0.0012072808 0.0020263425  1.228731494 1.000000000
-#> 1411 0.0005572065 0.0005526389 -1.235879446 1.000000000
-#> 1415 0.0062221397 0.0040526849  2.306874056 1.000000000
-#> 1416 0.0059435364 0.0037763655  2.309529749 1.000000000
-#> 1418 0.0016716196 0.0005526389  2.785849349 1.000000000
-#> 1419 0.0011144131 0.0007368518  0.213032346 1.000000000
-#> 1420 0.0004643388 0.0005526389 -0.889005086 1.000000000
-#> 1421 0.0013001486 0.0012894907 -1.325744277 1.000000000
-#> 1425 0.0007429421 0.0014737036  1.298891162 1.000000000
-#> 1427 0.0031575037 0.0022105554  0.923940718 1.000000000
-#> 1430 0.0016716196 0.0022105554  0.170159961 1.000000000
-#> 1433 0.0007429421 0.0009210648 -0.578792295 1.000000000
-#> 1434 0.0085438336 0.0129870130  3.887688917 1.000000000
-#> 1435 0.0009286776 0.0005526389  0.376802502 1.000000000
-#> 1436 0.0023216939 0.0029474072  0.135342014 1.000000000
-#> 1437 0.0057578009 0.0043290043  1.312491578 1.000000000
-#> 1438 0.0028789004 0.0031316202 -0.786301903 1.000000000
-#> 1439 0.0109583952 0.0172239108  5.330906451 1.000000000
-#> 1484 0.0004643388 0.0007368518  0.062818227 1.000000000
-#> 1520 0.0008358098 0.0006447453 -0.446606609 1.000000000
-#> 1535 0.0009286776 0.0012894907  0.052323511 1.000000000
-#> 1538 0.0004643388 0.0009210648  0.822622500 1.000000000
-#> 1540 0.0010215453 0.0030395137  4.317693840 1.000000000
-#> 1573 0.0006500743 0.0006447453 -1.318605475 1.000000000
-#> 1574 0.0012072808 0.0012894907 -1.059332987 1.000000000
-#> 1576 0.0004643388 0.0004605324 -1.290611571 1.000000000
-#> 1578 0.0028789004 0.0026710878 -0.860001532 1.000000000
-#> 1580 0.0004643388 0.0008289583  0.287435790 1.000000000
-#> 1587 0.0013930163 0.0015658101 -0.722544681 1.000000000
-#> 1593 0.0004643388 0.0008289583  0.427682966 1.000000000
-#> 1610 0.0012072808 0.0026710878  2.682971316 1.000000000
-#> 1618 0.0020430906 0.0018421295 -0.729752343 1.000000000
-#> 1621 0.0008358098 0.0004605324  0.520309119 1.000000000
-#> 1626 0.0004643388 0.0004605324 -1.247119028 1.000000000
-#> 1627 0.0007429421 0.0004605324  0.044388735 1.000000000
-#> 1630 0.0016716196 0.0014737036 -0.761611948 1.000000000
-#> 1660 0.0004643388 0.0005526389 -0.906388047 1.000000000
-#> 1684 0.0012072808 0.0005526389  1.506871174 1.000000000
-#> 1694 0.0005572065 0.0004605324 -0.863384751 1.000000000
-#> 1698 0.0006500743 0.0004605324 -0.297148474 1.000000000
-#> 1709 0.0009286776 0.0008289583 -0.931319497 1.000000000
-#> 1710 0.0011144131 0.0006447453  0.676428735 1.000000000
-#> 1711 0.0005572065 0.0008289583 -0.035518485 1.000000000
-#> 1713 0.0016716196 0.0018421295 -0.824330238 1.000000000
-#> 1725 0.0013930163 0.0004605324  2.367413381 1.000000000
-#> 1726 0.0007429421 0.0011052777  0.176587682 1.000000000
-#> 1735 0.0004643388 0.0007368518 -0.058094186 1.000000000
-#> 1739 0.0019502229 0.0023947684 -0.157073288 1.000000000
-#> 1742 0.0016716196 0.0010131712  0.907685454 1.000000000
-#> 1743 0.0005572065 0.0009210648  0.340554704 1.000000000
-#> 1744 0.0014858841 0.0028553007  2.400041595 1.000000000
-#> 1760 0.0007429421 0.0025789813  4.244573650 1.000000000
-#> 1769 0.0005572065 0.0021184489  3.926665593 1.000000000
-#> 1770 0.0006500743 0.0006447453 -1.235448088 1.000000000
-#> 1773 0.0004643388 0.0029474072  5.389992503 1.000000000
-#> 1805 0.0008358098 0.0010131712 -0.574154845 1.000000000
-#> 1806 0.0018573551 0.0006447453  2.947810832 1.000000000
-#> 1809 0.0019502229 0.0006447453  3.373427247 1.000000000
-#> 1843 0.0007429421 0.0005526389 -0.422646099 1.000000000
-#> 1847 0.0019502229 0.0011973842  0.867171890 1.000000000
-#> 1850 0.0010215453 0.0010131712 -1.325060702 1.000000000
-#> 1852 0.0026931649 0.0011973842  2.832505106 1.000000000
-#> 1853 0.0021359584 0.0011973842  1.548634417 1.000000000
-#> 1854 0.0010215453 0.0007368518 -0.218587770 1.000000000
-#> 1855 0.0029717682 0.0014737036  2.546062679 1.000000000
-#> 1859 0.0063150074 0.0007368518  9.730127339 1.000000000
-#> 1861 0.0033432392 0.0005526389  6.150101150 1.000000000
-#> 1865 0.0015787519 0.0008289583  1.393348692 1.000000000
-#> 1866 0.0014858841 0.0007368518  1.369830382 1.000000000
-#> 1867 0.0015787519 0.0005526389  2.558890694 1.000000000
-#> 1869 0.0006500743 0.0004605324 -0.336235423 1.000000000
-#> 1877 0.0010215453 0.0004605324  1.240131786 1.000000000
-#> 1884 0.0082652303 0.0041447914  4.935316433 1.000000000
-#> 1886 0.0013001486 0.0011052777 -0.637819770 1.000000000
-#> 1887 0.0042719168 0.0017500230  4.425427061 1.000000000
-#> 1888 0.0022288262 0.0007368518  3.381285345 1.000000000
-#> 1889 0.0088224368 0.0074606245  0.619176970 1.000000000
-#> 1903 0.0005572065 0.0007368518 -0.413634759 1.000000000
-#> 1905 0.0009286776 0.0012894907  0.008519602 1.000000000
-#> 1906 0.0005572065 0.0005526389 -1.355945349 1.000000000
-#> 1907 0.0005572065 0.0011052777  1.008240548 1.000000000
-#> 1910 0.0009286776 0.0008289583 -0.987355456 1.000000000
-#> 1924 0.0008358098 0.0010131712 -0.578461694 1.000000000
-#> 1929 0.0011144131 0.0011973842 -1.025243878 1.000000000
-#> 1940 0.0007429421 0.0008289583 -0.937359758 1.000000000
-#> 1947 0.0005572065 0.0006447453 -1.005692136 1.000000000
-#> 1948 0.0018573551 0.0011973842  0.678413312 1.000000000
-#> 1949 0.0033432392 0.0006447453  5.684920884 1.000000000
-#> 1950 0.0013930163 0.0008289583  0.707106718 1.000000000
-#> 1952 0.0047362556 0.0034079396  1.261714229 1.000000000
-#> 1963 0.0014858841 0.0023947684  1.243458186 1.000000000
-#> 1965 0.0007429421 0.0017500230  1.704465070 1.000000000
-#> 1966 0.0007429421 0.0005526389 -0.383098079 1.000000000
-#> 1969 0.0005572065 0.0011973842  1.365882018 1.000000000
-#> 1970 0.0009286776 0.0012894907 -0.086124672 1.000000000
-#> 1971 0.0008358098 0.0012894907  0.408973874 1.000000000
-#> 1987 0.0004643388 0.0011973842  1.675637243 1.000000000
-#> 1989 0.0012072808 0.0019342360  0.996899984 1.000000000
-#> 1997 0.0028789004 0.0025789813 -0.630524917 1.000000000
-#> 1998 0.0005572065 0.0008289583 -0.069611137 1.000000000
-#> 2000 0.0004643388 0.0007368518  0.015947443 1.000000000
-#> 2005 0.0005572065 0.0007368518 -0.416646909 1.000000000
-#> 2006 0.0007429421 0.0011052777  0.181167934 1.000000000
-#> 2010 0.0026931649 0.0023026619 -0.361172451 1.000000000
-#> 2033 0.0006500743 0.0007368518 -1.002208847 1.000000000
-#> 2036 0.0004643388 0.0006447453 -0.369675397 1.000000000
-#> 2082 0.0004643388 0.0022105554  4.712046590 1.000000000
-#> 2083 0.0012072808 0.0032237266  4.075681750 1.000000000
-#> 2097 0.0016716196 0.0018421295 -0.814968727 1.000000000
-#> 2098 0.0021359584 0.0018421295 -0.533796682 1.000000000
-#> 2101 0.0037147103 0.0044211108  0.078323191 1.000000000
-#> 2130 0.0004643388 0.0004605324 -1.314370584 1.000000000
-#> 2145 0.0021359584 0.0014737036  0.548160206 1.000000000
-#> 2146 0.0028789004 0.0028553007 -1.241386932 1.000000000
-#> 2147 0.0056649331 0.0017500230  6.827714906 1.000000000
-#> 2148 0.0022288262 0.0008289583  3.136917463 1.000000000
-#> 2150 0.0073365527 0.0064474533  0.017023883 1.000000000
-#> 2153 0.0005572065 0.0011052777  1.099610157 1.000000000
-#> 2155 0.0004643388 0.0018421295  3.407405732 1.000000000
-#> 2156 0.0008358098 0.0008289583 -1.211856568 1.000000000
-#> 2158 0.0007429421 0.0010131712 -0.199498226 1.000000000
-#> 2162 0.0004643388 0.0007368518  0.027496505 1.000000000
-#> 2168 0.0014858841 0.0011973842 -0.342156741 1.000000000
-#> 2169 0.0019502229 0.0008289583  2.337041504 1.000000000
-#> 2171 0.0008358098 0.0005526389 -0.018128005 1.000000000
-#> 2183 0.0015787519 0.0011973842  0.023441048 1.000000000
-#> 2186 0.0012072808 0.0005526389  1.368574202 1.000000000
-#> 2188 0.0020430906 0.0013815971  0.710755405 1.000000000
-#> 2199 0.0007429421 0.0005526389 -0.425886071 1.000000000
-#> 2203 0.0012072808 0.0009210648 -0.270679484 1.000000000
-#> 2207 0.0005572065 0.0008289583 -0.080237529 1.000000000
-#> 2209 0.0020430906 0.0018421295 -0.778749800 1.000000000
-#> 2210 0.0016716196 0.0011052777  0.522984241 1.000000000
-#> 2212 0.0020430906 0.0010131712  1.953179112 1.000000000
-#> 2214 0.0006500743 0.0005526389 -0.909004327 1.000000000
-#> 2216 0.0038075780 0.0008289583  6.514807181 1.000000000
-#> 2217 0.0006500743 0.0006447453 -1.319308042 1.000000000
-#> 2218 0.0018573551 0.0007368518  2.577467651 1.000000000
-#> 2219 0.0013001486 0.0004605324  2.233665459 1.000000000
-#> 2222 0.0010215453 0.0012894907 -0.320017942 1.000000000
-#> 2224 0.0012072808 0.0004605324  1.852097615 1.000000000
-#> 2238 0.0043647845 0.0039605784 -0.559691111 1.000000000
-#> 2240 0.0006500743 0.0010131712  0.207898505 1.000000000
-#> 2241 0.0023216939 0.0017500230  0.217105511 1.000000000
-#> 2242 0.0013001486 0.0008289583  0.482152227 1.000000000
-#> 2243 0.0047362556 0.0051579626 -0.553545629 1.000000000
-#> 2292 0.0012072808 0.0005526389  1.362127245 1.000000000
-#> 2296 0.0025074294 0.0009210648  3.390088916 1.000000000
-#> 2323 0.0013001486 0.0004605324  2.268194822 1.000000000
-#> 2330 0.0016716196 0.0006447453  2.437530067 1.000000000
-#> 2333 0.0004643388 0.0006447453 -0.427447553 1.000000000
-#> 2338 0.0004643388 0.0005526389 -0.887076881 1.000000000
-#> 2341 0.0013930163 0.0019342360  0.349104565 1.000000000
-#> 2355 0.0006500743 0.0004605324 -0.323385480 1.000000000
-#> 2408 0.0007429421 0.0006447453 -0.901619836 1.000000000
-#> 2412 0.0007429421 0.0012894907  0.714659526 1.000000000
-#> 2422 0.0009286776 0.0004605324  0.872089253 1.000000000
-#> 2436 0.0008358098 0.0009210648 -0.995183312 1.000000000
-#> 2441 0.0010215453 0.0018421295  1.408830067 1.000000000
-#> 2461 0.0005572065 0.0004605324 -0.871523119 1.000000000
-#> 2510 0.0011144131 0.0014737036 -0.103633348 1.000000000
-#> 2515 0.0006500743 0.0021184489  3.359973973 1.000000000
-#> 2558 0.0010215453 0.0004605324  1.196913801 1.000000000
-#> 2565 0.0007429421 0.0005526389 -0.344816994 1.000000000
-#> 2566 0.0012072808 0.0007368518  0.524987903 1.000000000
-#> 2567 0.0019502229 0.0009210648  2.042809580 1.000000000
-#> 2570 0.0025074294 0.0021184489 -0.307701640 1.000000000
-#> 2575 0.0004643388 0.0007368518 -0.043768251 1.000000000
-#> 2581 0.0012072808 0.0011052777 -0.977399380 1.000000000
-#> 2587 0.0004643388 0.0008289583  0.392596037 1.000000000
-#> 2588 0.0008358098 0.0011052777 -0.274312323 1.000000000
-#> 2603 0.0013001486 0.0018421295  0.303123712 1.000000000
-#> 2609 0.0006500743 0.0008289583 -0.482975300 1.000000000
-#> 2621 0.0007429421 0.0005526389 -0.369873305 1.000000000
-#> 2656 0.0004643388 0.0010131712  1.140387524 1.000000000
-#> 2660 0.0011144131 0.0018421295  0.869527948 1.000000000
-#> 2669 0.0006500743 0.0008289583 -0.508897995 1.000000000
-#> 2682 0.0017644874 0.0013815971 -0.103961335 1.000000000
-#> 2685 0.0008358098 0.0005526389 -0.020401288 1.000000000
-#> 2687 0.0015787519 0.0021184489  0.248741344 1.000000000
-#> 2722 0.0013930163 0.0010131712  0.005686050 1.000000000
-#> 2754 0.0005572065 0.0007368518 -0.462209158 1.000000000
-#> 2755 0.0012072808 0.0010131712 -0.591318363 1.000000000
-#> 2756 0.0006500743 0.0008289583 -0.490247566 1.000000000
-#> 2759 0.0016716196 0.0023026619  0.291049057 1.000000000
-#> 2763 0.0015787519 0.0031316202  2.648843355 1.000000000
-#> 2765 0.0032503715 0.0042368979  0.639206213 1.000000000
-#> 2766 0.0027860327 0.0021184489  0.300289788 1.000000000
-#> 2767 0.0011144131 0.0012894907 -0.799520721 1.000000000
-#> 2768 0.0033432392 0.0037763655 -0.449595160 1.000000000
-#> 2772 0.0052005944 0.0019342360  5.352669735 1.000000000
-#> 2773 0.0007429421 0.0010131712 -0.196838231 1.000000000
-#> 2774 0.0030646360 0.0022105554  0.746664189 1.000000000
-#> 2775 0.0023216939 0.0010131712  2.683139592 1.000000000
-#> 2778 0.0013930163 0.0020263425  0.532537508 1.000000000
-#> 2780 0.0016716196 0.0019342360 -0.592165734 1.000000000
-#> 2781 0.0017644874 0.0012894907  0.168115042 1.000000000
-#> 2783 0.0007429421 0.0005526389 -0.389210496 1.000000000
-#> 2784 0.0004643388 0.0007368518  0.050540353 1.000000000
-#> 2788 0.0004643388 0.0006447453 -0.356764518 1.000000000
-#> 2790 0.0007429421 0.0021184489  3.047381138 1.000000000
-#> 2793 0.0006500743 0.0010131712  0.266387861 1.000000000
-#> 2796 0.0005572065 0.0007368518 -0.545554254 1.000000000
-#> 2797 0.0058506686 0.0086580087  2.394801628 1.000000000
-#> 2798 0.0006500743 0.0005526389 -0.906142895 1.000000000
-#> 2799 0.0017644874 0.0023026619  0.038277586 1.000000000
-#> 2800 0.0048291233 0.0033158331  1.571566166 1.000000000
-#> 2801 0.0023216939 0.0026710878 -0.511647781 1.000000000
-#> 2802 0.0090081724 0.0117896288  1.893822026 1.000000000
-#> 2848 0.0007429421 0.0010131712 -0.218071987 1.000000000
-#> 2852 0.0027860327 0.0018421295  1.125168086 1.000000000
-#> 2859 0.0005572065 0.0004605324 -0.844657986 1.000000000
-#> 2863 0.0011144131 0.0008289583 -0.166141838 1.000000000
-#> 2869 0.0004643388 0.0006447453 -0.349404168 1.000000000
-#> 2871 0.0005572065 0.0008289583 -0.098028536 1.000000000
-#> 2888 0.0006500743 0.0006447453 -1.290290861 1.000000000
-#> 2895 0.0070579495 0.0042368979  3.408968223 1.000000000
-#> 2896 0.0007429421 0.0013815971  1.075809767 1.000000000
-#> 2897 0.0009286776 0.0005526389  0.371546204 1.000000000
-#> 2898 0.0020430906 0.0011973842  1.188142694 1.000000000
-#> 2900 0.0018573551 0.0012894907  0.329111196 1.000000000
-#> 2903 0.0014858841 0.0007368518  1.425658961 1.000000000
-#> 2904 0.0026002972 0.0020263425  0.207796761 1.000000000
-#> 2905 0.0034361070 0.0016579166  2.912171128 1.000000000
-#> 2907 0.0006500743 0.0006447453 -1.241861434 1.000000000
-#> 2908 0.0043647845 0.0033158331  0.714171155 1.000000000
-#> 2927 0.0008358098 0.0010131712 -0.602263081 1.000000000
-#> 2928 0.0007429421 0.0009210648 -0.592089580 1.000000000
-#> 2942 0.0013001486 0.0007368518  0.888688454 1.000000000
-#> 2947 0.0013001486 0.0013815971 -1.104165632 1.000000000
-#> 2959 0.0006500743 0.0004605324 -0.273019447 1.000000000
-#> 2960 0.0006500743 0.0006447453 -1.291230210 1.000000000
-#> 2963 0.0008358098 0.0018421295  2.172689303 1.000000000
-#> 2973 0.0020430906 0.0011052777  1.626077449 1.000000000
-#> 2974 0.0004643388 0.0007368518  0.004134909 1.000000000
-#> 2975 0.0012072808 0.0018421295  0.694414569 1.000000000
-#> 2976 0.0012072808 0.0004605324  1.847586998 1.000000000
-#> 2979 0.0006500743 0.0008289583 -0.563395975 1.000000000
-#> 2980 0.0004643388 0.0006447453 -0.358425384 1.000000000
-#> 2981 0.0005572065 0.0004605324 -0.867170567 1.000000000
-#> 2993 0.0006500743 0.0012894907  1.124465786 1.000000000
-#> 2996 0.0007429421 0.0005526389 -0.423684892 1.000000000
-#> 2998 0.0017644874 0.0017500230 -1.258092044 1.000000000
-#> 3006 0.0010215453 0.0008289583 -0.500401413 1.000000000
-#> 3014 0.0016716196 0.0027631943  1.582747297 1.000000000
-#> 3015 0.0035289747 0.0069079856  4.293325160 1.000000000
-#> 3016 0.0043647845 0.0036842590 -0.048572840 1.000000000
-#> 3017 0.0014858841 0.0022105554  0.672381851 1.000000000
-#> 3018 0.0007429421 0.0024868748  4.073884044 1.000000000
-#> 3019 0.0091939079 0.0123422677  2.500121683 1.000000000
-#> 3028 0.0004643388 0.0005526389 -1.026966121 1.000000000
-#> 3029 0.0016716196 0.0019342360 -0.522504658 1.000000000
-#> 3031 0.0006500743 0.0013815971  1.572267495 1.000000000
-#> 3035 0.0006500743 0.0007368518 -0.945798694 1.000000000
-#> 3036 0.0038075780 0.0030395137  0.325404097 1.000000000
-#> 3037 0.0052005944 0.0034079396  2.025463160 1.000000000
-#> 3038 0.0005572065 0.0006447453 -0.982485135 1.000000000
-#> 3039 0.0020430906 0.0009210648  2.178958210 1.000000000
-#> 3040 0.0010215453 0.0017500230  1.076943083 1.000000000
-#> 3042 0.0013001486 0.0013815971 -1.060011623 1.000000000
-#> 3045 0.0013001486 0.0015658101 -0.441590927 1.000000000
-#> 3047 0.0018573551 0.0022105554 -0.371424556 1.000000000
-#> 3048 0.0006500743 0.0006447453 -1.246808368 1.000000000
-#> 3050 0.0013930163 0.0020263425  0.566534382 1.000000000
-#> 3053 0.0006500743 0.0006447453 -1.267449869 1.000000000
-#> 3054 0.0072436850 0.0118817353  4.497600044 1.000000000
-#> 3056 0.0008358098 0.0037763655  6.735239573 1.000000000
-#> 3057 0.0046433878 0.0049737497 -0.751570597 1.000000000
-#> 3058 0.0018573551 0.0028553007  1.197072061 1.000000000
-#> 3059 0.0077080238 0.0179607626  6.215154174 1.000000000
-#> 3078 0.0005572065 0.0005526389 -1.285963592 1.000000000
-#> 3081 0.0005572065 0.0015658101  2.482166782 1.000000000
-#> 3134 0.0009286776 0.0007368518 -0.506143543 1.000000000
-#> 3153 0.0010215453 0.0011973842 -0.653483894 1.000000000
-#> 3154 0.0004643388 0.0005526389 -0.914299024 1.000000000
-#> 3157 0.0020430906 0.0021184489 -1.121106962 1.000000000
-#> 3265 0.0005051015 0.0007022472 -0.382764130 1.000000000
-#> 3575 0.0007071421 0.0005016051 -0.336986506 1.000000000
-#> 3610 0.0014142843 0.0005016051  2.264200013 1.000000000
-#> 3675 0.0005051015 0.0011035313  1.134586611 1.000000000
-#> 3676 0.0010102031 0.0005016051  0.802846998 1.000000000
-#> 3679 0.0016163249 0.0011035313  0.302115944 1.000000000
-#> 3688 0.0008081624 0.0012038523  0.060570977 1.000000000
-#> 3702 0.0015153046 0.0014044944 -0.992670643 1.000000000
-#> 3704 0.0010102031 0.0007022472 -0.098232411 1.000000000
-#> 3706 0.0015153046 0.0010032103  0.318955420 1.000000000
-#> 4010 0.0006061218 0.0006019262 -1.243806113 1.000000000
-#> 4250 0.0013132640 0.0015048154 -0.711861566 1.000000000
-#> 4272 0.0009091827 0.0012038523 -0.320562210 1.000000000
-#> 4277 0.0005051015 0.0010032103  0.791536069 1.000000000
-#> 4340 0.0005051015 0.0007022472 -0.299275829 1.000000000
-#> 4344 0.0006061218 0.0015048154  2.022113548 1.000000000
-#> 4377 0.0008081624 0.0007022472 -0.915306224 1.000000000
-#> 4381 0.0022224467 0.0014044944  0.964028036 1.000000000
-#> 4389 0.0006061218 0.0010032103  0.326005751 1.000000000
-#> 4395 0.0005051015 0.0005016051 -1.307155190 1.000000000
-#> 4411 0.0009091827 0.0012038523 -0.252372537 1.000000000
-#> 4417 0.0014142843 0.0008025682  0.925376430 1.000000000
-#> 4428 0.0011112234 0.0011035313 -1.253870451 1.000000000
-#> 4496 0.0014142843 0.0009028892  0.401120884 1.000000000
-#> 4520 0.0011112234 0.0013041734 -0.674132630 1.000000000
-#> 4525 0.0010102031 0.0016051364  0.646008959 1.000000000
-#> 4589 0.0007071421 0.0005016051 -0.319843095 1.000000000
-#> 4612 0.0030306092 0.0009028892  4.294767224 1.000000000
-#> 4617 0.0030306092 0.0016051364  2.245519213 1.000000000
-#> 4695 0.0012122437 0.0007022472  0.509773663 1.000000000
-#> 4740 0.0005051015 0.0005016051 -1.264755000 1.000000000
-#> 4753 0.0013132640 0.0018057785  0.124052980 1.000000000
-#> 4777 0.0010102031 0.0009028892 -0.902574522 1.000000000
-#> 4835 0.0006061218 0.0010032103  0.364365084 1.000000000
-#> 4954 0.0005051015 0.0006019262 -0.930800340 1.000000000
-#> 5049 0.0007071421 0.0005016051 -0.273229602 1.000000000
-#> 5053 0.0009091827 0.0006019262 -0.021696459 1.000000000
-#> 5058 0.0015153046 0.0018057785 -0.493317627 1.000000000
-#> 5059 0.0014142843 0.0008025682  0.755863343 1.000000000
-#> 5060 0.0005051015 0.0006019262 -0.918571139 1.000000000
-#> 5061 0.0018183655 0.0012038523  0.546550699 1.000000000
-#> 5065 0.0018183655 0.0011035313  0.856513485 1.000000000
-#> 5067 0.0015153046 0.0011035313  0.016527783 1.000000000
-#> 5068 0.0010102031 0.0005016051  0.829989428 1.000000000
-#> 5071 0.0007071421 0.0008025682 -0.949707013 1.000000000
-#> 5073 0.0008081624 0.0005016051  0.040299232 1.000000000
-#> 5074 0.0011112234 0.0005016051  1.267864883 1.000000000
-#> 5086 0.0026265279 0.0036115570  0.467579942 1.000000000
-#> 5088 0.0006061218 0.0013041734  1.244574077 1.000000000
-#> 5089 0.0021214264 0.0009028892  2.263946350 1.000000000
-#> 5090 0.0008081624 0.0009028892 -0.949957395 1.000000000
-#> 5091 0.0034346904 0.0043138042  0.302007383 1.000000000
-#> 5123 0.0010102031 0.0007022472 -0.079533986 1.000000000
-#> 5152 0.0034346904 0.0021067416  1.690634498 1.000000000
-#> 5157 0.0008081624 0.0006019262 -0.425403160 1.000000000
-#> 5159 0.0010102031 0.0007022472 -0.063654479 1.000000000
-#> 5160 0.0018183655 0.0005016051  3.215669290 1.000000000
-#> 5163 0.0013132640 0.0015048154 -0.724338730 1.000000000
-#> 5235 0.0007071421 0.0009028892 -0.492726056 1.000000000
-#> 5244 0.0008081624 0.0014044944  0.778154661 1.000000000
-#> 5245 0.0014142843 0.0031099518  2.823222877 1.000000000
-#> 5246 0.0016163249 0.0017054575 -1.128014277 1.000000000
-#> 5247 0.0007071421 0.0008025682 -0.978429990 1.000000000
-#> 5249 0.0036367310 0.0047150883  0.648232861 1.000000000
-#> 5258 0.0008081624 0.0005016051  0.087464924 1.000000000
-#> 5265 0.0016163249 0.0011035313  0.305451786 1.000000000
-#> 5266 0.0019193858 0.0016051364 -0.474897633 1.000000000
-#> 5269 0.0008081624 0.0007022472 -0.933008241 1.000000000
-#> 5273 0.0007071421 0.0007022472 -1.237408668 1.000000000
-#> 5275 0.0008081624 0.0007022472 -0.877621381 1.000000000
-#> 5277 0.0007071421 0.0008025682 -0.960309753 1.000000000
-#> 5281 0.0037377513 0.0042134831 -0.490457111 1.000000000
-#> 5284 0.0021214264 0.0020064205 -1.014425794 1.000000000
-#> 5285 0.0010102031 0.0011035313 -1.088734636 1.000000000
-#> 5286 0.0025255076 0.0073234350  6.636678297 1.000000000
-#> 5567 0.0009091827 0.0011035313 -0.598431950 1.000000000
-#> 5572 0.0009091827 0.0011035313 -0.564979403 1.000000000
-#> 5601 0.0006061218 0.0006019262 -1.271246392 1.000000000
-#> 5680 0.0008081624 0.0013041734  0.508463198 1.000000000
-#> 5919 0.0006061218 0.0008025682 -0.433493160 1.000000000
-#> 6018 0.0006061218 0.0009028892 -0.027017537 1.000000000
-#> 6253 0.0009091827 0.0005016051  0.457935969 1.000000000
-#> 6278 0.0005051015 0.0005016051 -1.316876350 1.000000000
-#> 6297 0.0008081624 0.0009028892 -0.976589829 1.000000000
-#> 6341 0.0010102031 0.0005016051  0.891104947 1.000000000
-#> 6397 0.0020204061 0.0013041734  0.723666265 1.000000000
-#> 6398 0.0017173452 0.0012038523  0.248266303 1.000000000
-#> 6401 0.0026265279 0.0012038523  2.474258679 1.000000000
-#> 6414 0.0019193858 0.0006019262  3.074985098 1.000000000
-#> 6429 0.0024244873 0.0024077047 -1.301434683 1.000000000
-#> 6432 0.0020204061 0.0007022472  2.935050944 1.000000000
-#> 6433 0.0007071421 0.0011035313  0.185185617 1.000000000
-#> 6434 0.0030306092 0.0030096308 -1.299710639 1.000000000
-#> 6634 0.0017173452 0.0011035313  0.637100084 1.000000000
-#> 6639 0.0016163249 0.0018057785 -0.796143150 1.000000000
-#> 6748 0.0008081624 0.0007022472 -0.892784960 1.000000000
-#> 6768 0.0008081624 0.0005016051  0.005217466 1.000000000
-#> 6771 0.0009091827 0.0009028892 -1.326270373 1.000000000
-#> 6819 0.0008081624 0.0006019262 -0.379168821 1.000000000
-#> 6822 0.0009091827 0.0010032103 -1.028194226 1.000000000
-#> 6973 0.0005051015 0.0011035313  1.155956003 1.000000000
-#> 7016 0.0007071421 0.0007022472 -1.285737276 1.000000000
-#> 7033 0.0011112234 0.0010032103 -0.952827794 1.000000000
-#> 7037 0.0016163249 0.0018057785 -0.746690084 1.000000000
-#> 7141 0.0008081624 0.0005016051  0.087320598 1.000000000
-#> 7146 0.0012122437 0.0009028892 -0.283885583 1.000000000
-#> 7152 0.0020204061 0.0006019262  3.501489360 1.000000000
-#> 7154 0.0014142843 0.0005016051  2.131615917 1.000000000
-#> 7169 0.0022224467 0.0020064205 -0.798108580 1.000000000
-#> 7172 0.0012122437 0.0012038523 -1.265747618 1.000000000
-#> 7174 0.0021214264 0.0025080257 -0.386393260 1.000000000
-#> 7236 0.0008081624 0.0009028892 -0.922934702 1.000000000
-#> 7313 0.0005051015 0.0006019262 -0.920896147 1.000000000
-#> 7396 0.0009091827 0.0005016051  0.526564546 1.000000000
-#> 7408 0.0011112234 0.0006019262  0.783749008 1.000000000
-#> 7479 0.0009091827 0.0011035313 -0.649226679 1.000000000
-#> 7480 0.0008081624 0.0005016051  0.072126000 1.000000000
-#> 7483 0.0016163249 0.0014044944 -0.676379005 1.000000000
-#> 7494 0.0006061218 0.0007022472 -0.939903295 1.000000000
-#> 7495 0.0010102031 0.0006019262  0.337580266 1.000000000
-#> 7508 0.0013132640 0.0012038523 -1.030507913 1.000000000
-#> 7509 0.0006061218 0.0005016051 -0.911807334 1.000000000
-#> 7512 0.0016163249 0.0025080257  1.010895702 1.000000000
-#> 7614 0.0008081624 0.0008025682 -1.278905882 1.000000000
-#> 7723 0.0005051015 0.0006019262 -0.892342003 1.000000000
-#> 8195 0.0006061218 0.0005016051 -0.881018283 1.000000000
-#> 8200 0.0007071421 0.0009028892 -0.447478408 1.000000000
-#> 8230 0.0005051015 0.0005016051 -1.251158391 1.000000000
-#> 8479 0.0008081624 0.0005016051  0.045581209 1.000000000
-#> 8492 0.0005051015 0.0006019262 -0.880992851 1.000000000
-#> 8496 0.0009091827 0.0008025682 -0.924692970 1.000000000
-#> 8643 0.0009091827 0.0009028892 -1.388697525 1.000000000
-#> 8648 0.0005051015 0.0011035313  1.135003558 1.000000000
-#> 8660 0.0008081624 0.0012038523  0.129795532 1.000000000
-#> 8670 0.0016163249 0.0010032103  0.673390085 1.000000000
-#> 8676 0.0013132640 0.0005016051  1.807191088 1.000000000
-#> 8677 0.0005051015 0.0007022472 -0.393112960 1.000000000
-#> 8691 0.0009091827 0.0008025682 -0.895445299 1.000000000
-#> 8694 0.0007071421 0.0009028892 -0.501185870 1.000000000
-#> 8696 0.0010102031 0.0018057785  1.258843778 1.000000000
-#> 8711 0.0028285685 0.0007022472  4.294623473 1.000000000
-#> 8738 0.0012122437 0.0010032103 -0.629240222 1.000000000
-#> 8745 0.0010102031 0.0005016051  0.883676371 1.000000000
-#> 8788 0.0005051015 0.0005016051 -1.254018060 1.000000000
-#> 8815 0.0006061218 0.0005016051 -0.866268679 1.000000000
-#> 8816 0.0015153046 0.0012038523 -0.359445277 1.000000000
-#> 8817 0.0011112234 0.0019060995  1.063304519 1.000000000
-#> 8818 0.0006061218 0.0007022472 -0.945198216 1.000000000
-#> 8820 0.0018183655 0.0032102729  1.700643971 1.000000000
-#> 8830 0.0009091827 0.0006019262 -0.127762040 1.000000000
-#> 8835 0.0018183655 0.0006019262  2.792551588 1.000000000
-#> 8836 0.0013132640 0.0015048154 -0.781173772 1.000000000
-#> 8847 0.0011112234 0.0006019262  0.720614463 1.000000000
-#> 8850 0.0006061218 0.0012038523  1.007324580 1.000000000
-#> 8853 0.0020204061 0.0040128411  2.839086232 1.000000000
-#> 8855 0.0007071421 0.0009028892 -0.499661988 1.000000000
-#> 8856 0.0013132640 0.0012038523 -0.993356551 1.000000000
-#> 8857 0.0012122437 0.0006019262  1.110304948 1.000000000
-#> 8858 0.0030306092 0.0048154093  2.032299230 1.000000000
-#> 8977 0.0015153046 0.0008025682  1.197474759 1.000000000
-#> 9085 0.0007071421 0.0008025682 -1.005756386 1.000000000
-#> 9086 0.0006061218 0.0011035313  0.724098580 1.000000000
-#> 9087 0.0020204061 0.0005016051  3.729668592 1.000000000
-#> 9090 0.0024244873 0.0015048154  1.106040716 1.000000000
-#> 9118 0.0005051015 0.0005016051 -1.242015914 1.000000000
-#> 9132 0.0005051015 0.0005016051 -1.277113143 1.000000000
-#> 9134 0.0007071421 0.0005016051 -0.364165757 1.000000000
-#> 9160 0.0009091827 0.0011035313 -0.584467028 1.000000000
-#> 9164 0.0005051015 0.0005016051 -1.244554640 1.000000000
-#> 9165 0.0019193858 0.0011035313  1.173852268 1.000000000
-#> 9338 0.0006061218 0.0006019262 -1.265373252 1.000000000
-#> 9412 0.0006061218 0.0008025682 -0.467298841 1.000000000
-#> 9416 0.0006061218 0.0007022472 -0.949023315 1.000000000
-#> 9459 0.0009091827 0.0012038523 -0.300306358 1.000000000
-#> 9461 0.0009091827 0.0015048154  0.631724583 1.000000000
-#> 9462 0.0006061218 0.0010032103  0.282101701 1.000000000
-#> 9464 0.0008081624 0.0022070626  2.778530165 1.000000000
-#> 9468 0.0020204061 0.0008025682  2.643216103 1.000000000
-#> 9470 0.0008081624 0.0010032103 -0.554352616 1.000000000
-#> 9474 0.0005051015 0.0009028892  0.446507818 1.000000000
-#> 9490 0.0020204061 0.0034109149  1.930388380 1.000000000
-#> 9492 0.0011112234 0.0008025682 -0.228083429 1.000000000
-#> 9493 0.0018183655 0.0010032103  1.253637287 1.000000000
-#> 9494 0.0011112234 0.0012038523 -1.006326828 1.000000000
-#> 9495 0.0028285685 0.0045144462  1.926653527 1.000000000
-#> 9527 0.0010102031 0.0011035313 -1.012739094 1.000000000
-#> 9556 0.0015153046 0.0012038523 -0.350274672 1.000000000
-#> 9559 0.0006061218 0.0009028892 -0.042608185 1.000000000
-#> 9564 0.0010102031 0.0006019262  0.385592407 1.000000000
-#> 9565 0.0009091827 0.0007022472 -0.457331952 1.000000000
-#> 9568 0.0020204061 0.0014044944  0.466309420 1.000000000
-#> 9605 0.0005051015 0.0006019262 -0.887751145 1.000000000
-#> 9612 0.0005051015 0.0007022472 -0.380298333 1.000000000
-#> 9614 0.0006061218 0.0006019262 -1.263446641 1.000000000
-#> 9630 0.0007071421 0.0007022472 -1.216658172 1.000000000
-#> 9643 0.0009091827 0.0028089888  3.686766537 1.000000000
-#> 9644 0.0012122437 0.0013041734 -1.040547561 1.000000000
-#> 9647 0.0030306092 0.0052166934  2.564435344 1.000000000
-#> 9655 0.0005051015 0.0010032103  0.860294180 1.000000000
-#> 9662 0.0008081624 0.0014044944  0.839792167 1.000000000
-#> 9663 0.0017173452 0.0014044944 -0.438398830 1.000000000
-#> 9665 0.0006061218 0.0005016051 -0.875053576 1.000000000
-#> 9668 0.0010102031 0.0007022472 -0.085822821 1.000000000
-#> 9673 0.0006061218 0.0008025682 -0.398823172 1.000000000
-#> 9675 0.0005051015 0.0007022472 -0.336808386 1.000000000
-#> 9678 0.0018183655 0.0056179775  6.064323727 1.000000000
-#> 9681 0.0019193858 0.0020064205 -1.128520166 1.000000000
-#> 9682 0.0006061218 0.0013041734  1.369015131 1.000000000
-#> 9683 0.0031316295 0.0076243981  3.614988845 1.000000000
-#> 9890 0.0011112234 0.0013041734 -0.685925259 1.000000000
+#>         prop_High     prop_Low   effect_size     p_value
+#> 1    0.0112965527 0.0288879235 15.4866444466 0.008991009
+#> 2    0.0741928431 0.0594410657  7.1740022385 0.008991009
+#> 3    0.2660884775 0.2277729511 14.1996850823 0.008991009
+#> 4    0.0698928650 0.0849985520  6.3310325884 0.008991009
+#> 5    0.1228773413 0.1005647263  8.9867614687 0.008991009
+#> 6    0.0486844982 0.0613958876  6.7269068166 0.008991009
+#> 7    0.2260768166 0.2549232551  6.0087848061 0.008991009
+#> 8    0.0230303914 0.0299015349  4.4845554626 0.008991009
+#> 9    0.0029085764 0.0079612863  8.0117822341 0.077922078
+#> 10   0.0057385426 0.0132688105  8.9268233904 0.077922078
+#> 11   0.0003930509 0.0019512957  4.8256861201 0.077922078
+#> 12   0.0032230171 0.0003902591  7.0409551876 0.077922078
+#> 13   0.0395409166 0.0266156728  9.3880427150 0.077922078
+#> 14   0.0059743731 0.0098345301  4.2006244881 0.077922078
+#> 15   0.0052668815 0.0021073993  5.6185005971 0.077922078
+#> 16   0.0620234258 0.0312987824 16.8765140607 0.077922078
+#> 17   0.0216964075 0.0143615361  6.6319801096 0.077922078
+#> 18   0.0076251867 0.0131127068  5.6798726573 0.077922078
+#> 19   0.0165081362 0.0256790509  6.7423267204 0.077922078
+#> 20   0.0037732883 0.0182641274 16.9138084908 0.077922078
+#> 21   0.0097476613 0.0049953169  6.2683598810 0.077922078
+#> 22   0.0668972565 0.0326256634 19.2924830520 0.077922078
+#> 23   0.0167439667 0.0268498283  7.5302964091 0.077922078
+#> 24   0.0409558997 0.0302841086  6.4648588661 0.077922078
+#> 25   0.0148573225 0.0078051826  7.7370324979 0.077922078
+#> 26   0.0054241019 0.0028879176  4.1428888504 0.077922078
+#> 27   0.0414275607 0.0294255386  7.7025040066 0.077922078
+#> 28   0.0745224432 0.1058382766  9.2228352293 0.077922078
+#> 29   0.0031444069 0.0088198564  8.3689997778 0.077922078
+#> 31   0.0031444069 0.0007024664  6.0503134120 0.077922078
+#> 33   0.0012577628 0.0031220731  3.7619704423 0.155844156
+#> 34   0.0094332207 0.0136590696  4.0244825697 0.155844156
+#> 35   0.0009433221 0.0026537621  3.8057504644 0.155844156
+#> 36   0.0396981369 0.0326256634  3.7860362603 0.155844156
+#> 38   0.0136781700 0.0190446456  4.8150379509 0.155844156
+#> 39   0.0111626444 0.0075710272  3.4317470980 0.233766234
+#> 40   0.0006288814 0.0025757103  4.7569441529 0.233766234
+#> 41   0.0183947803 0.0237277552  4.0290900732 0.311688312
+#> 43   0.0266488484 0.0336403372  3.2505181238 0.389610390
+#> 45   0.0015722034 0.0032001249  3.1308768117 0.545454545
+#> 47   0.0011944373 0.0035557061  4.8146264877 0.573426573
+#> 48   0.0017916560 0.0051642398  5.6901151409 0.573426573
+#> 49   0.0110058869 0.0037250254  9.7863471018 0.573426573
+#> 50   0.0028154594 0.0008465967  4.6702473256 0.573426573
+#> 51   0.0033273611 0.0005926177  6.4844997108 0.573426573
+#> 52   0.0248272332 0.0073653911 15.8684998444 0.573426573
+#> 53   0.0119443733 0.0066881138  5.7887633493 0.573426573
+#> 54   0.0078491596 0.0027937690  7.4440196761 0.573426573
+#> 55   0.0172340244 0.0117676939  4.2963365125 0.573426573
+#> 56   0.0325910758 0.0419065357  5.5120383472 0.573426573
+#> 57   0.0005119017 0.0027091094  6.0481716847 0.573426573
+#> 58   0.0023035577 0.0055028784  5.1660103883 0.573426573
+#> 59   0.0017063390 0.0053335591  6.5496394424 0.573426573
+#> 60   0.0010238034 0.0049102608  8.0571333871 0.573426573
+#> 61   0.0022182408 0.0081273281  8.9632306183 0.573426573
+#> 63   0.0005119017 0.0021164917  4.4108036678 0.573426573
+#> 64   0.0054602850 0.0025397900  5.1473957139 0.573426573
+#> 65   0.0168927566 0.0034710464 13.0520160192 0.573426573
+#> 66   0.0257657196 0.0153233999  8.2679680828 0.573426573
+#> 67   0.0005119017 0.0041483237  7.9630958995 0.573426573
+#> 68   0.0122856412 0.0072807315  4.9451280278 0.573426573
+#> 69   0.0024741916 0.0075347105  7.7643195981 0.573426573
+#> 71   0.0023888747 0.0007619370  3.8334007949 0.573426573
+#> 73   0.0200494838 0.0138841856  4.9813034938 0.573426573
+#> 74   0.0094701817 0.0048256011  5.9276525952 0.573426573
+#> 75   0.0063987714 0.0016085337  8.2320471794 0.573426573
+#> 77   0.0023035577 0.0055028784  5.3775371086 0.573426573
+#> 78   0.0045217985 0.0020318320  4.4196623749 0.573426573
+#> 79   0.0023888747 0.0049949204  4.2148641927 0.573426573
+#> 81   0.0142479311 0.0090585845  4.9675590941 0.573426573
+#> 82   0.0052043341 0.0020318320  5.3085609887 0.573426573
+#> 83   0.0218411398 0.0307314595  6.2010396184 0.573426573
+#> 84   0.0240593806 0.0431764307  8.0873389790 0.573426573
+#> 85   0.0005119017 0.0024551304  5.1245420689 0.573426573
+#> 87   0.0029871865 0.0049172651  2.9239359806 0.701298701
+#> 88   0.0025941357 0.0042928505  2.7381871309 0.935064935
+#> 89   0.1578602143 0.1521141037  0.6709016018 1.000000000
+#> 93   0.0087257291 0.0066344052  1.9987330688 1.000000000
+#> 95   0.0011005424 0.0012488292 -0.7468360177 1.000000000
+#> 96   0.0222466787 0.0184202310  1.9249552616 1.000000000
+#> 97   0.0455938999 0.0474555105 -0.1161942287 1.000000000
+#> 98   0.0971621728 0.0990477677 -0.3418033133 1.000000000
+#> 99   0.0021224746 0.0016390884  0.1747706178 1.000000000
+#> 100  0.0015722034 0.0009366219  1.0829357474 1.000000000
+#> 101  0.0025155255 0.0030440212  0.0741827367 1.000000000
+#> 102  0.0143070513 0.0122541367  1.0239362108 1.000000000
+#> 103  0.0067604748 0.0065563534 -0.9980058623 1.000000000
+#> 104  0.0187092210 0.0181860756 -0.7923343344 1.000000000
+#> 105  0.0013363729 0.0015610365 -0.5689840168 1.000000000
+#> 106  0.0113984750 0.0146737434  2.3822989213 1.000000000
+#> 107  0.0176872887 0.0150640025  1.5193770912 1.000000000
+#> 108  0.0019652543 0.0016390884 -0.3132182566 1.000000000
+#> 110  0.0028299662 0.0047611614  2.6679350670 1.000000000
+#> 111  0.0076251867 0.0094442710  0.8900955501 1.000000000
+#> 112  0.0038518984 0.0042147986 -0.5172457811 1.000000000
+#> 113  0.0110054241 0.0111614112 -1.1026687414 1.000000000
+#> 114  0.0005502712 0.0007024664 -0.5161031022 1.000000000
+#> 115  0.0024369153 0.0038245395  1.8834436567 1.000000000
+#> 116  0.0079396274 0.0099125820  1.5231568049 1.000000000
+#> 117  0.0025155255 0.0039806431  2.1674682443 1.000000000
+#> 118  0.0047952205 0.0053855760 -0.2069114042 1.000000000
+#> 119  0.0009433221 0.0010927256 -0.6991125009 1.000000000
+#> 120  0.0112412546 0.0129566032  0.8078903270 1.000000000
+#> 121  0.0009433221 0.0008585701 -1.0140554869 1.000000000
+#> 123  0.0071535257 0.0049953169  2.2779171560 1.000000000
+#> 124  0.0668186463 0.0732126132  2.1919575293 1.000000000
+#> 125  0.0172156277 0.0192007493  0.7356230632 1.000000000
+#> 126  0.0006288814 0.0010927256  0.7270079035 1.000000000
+#> 127  0.0125776275 0.0112394630  0.3252557566 1.000000000
+#> 128  0.0014149831 0.0021854511  1.1080072090 1.000000000
+#> 130  0.0018769730 0.0041483237  4.0524997858 1.000000000
+#> 139  0.0015357051 0.0014392144 -0.9846846096 1.000000000
+#> 161  0.0008531695 0.0006772773 -0.4469026879 1.000000000
+#> 188  0.0037539459 0.0022858110  2.0589167123 1.000000000
+#> 189  0.0057162358 0.0058415171 -1.1261312782 1.000000000
+#> 190  0.0039245798 0.0018625127  3.6304198476 1.000000000
+#> 191  0.0009384865 0.0011005757 -0.6735069033 1.000000000
+#> 192  0.0144185650 0.0114290552  2.0906582587 1.000000000
+#> 196  0.0005972187 0.0017778530  3.0922486739 1.000000000
+#> 198  0.0012797543 0.0026244497  2.4498093116 1.000000000
+#> 199  0.0012797543 0.0016931934  0.0394969203 1.000000000
+#> 201  0.0017063390 0.0022011514  0.1676089715 1.000000000
+#> 205  0.0012797543 0.0010159160 -0.3598240092 1.000000000
+#> 209  0.0006825356 0.0004232983  0.0631877458 1.000000000
+#> 211  0.0025595086 0.0022858110 -0.5977968495 1.000000000
+#> 212  0.0030714103 0.0015238740  2.8704115665 1.000000000
+#> 214  0.0011091204 0.0007619370  0.1175030390 1.000000000
+#> 215  0.0004265848 0.0005079580 -0.9442027787 1.000000000
+#> 217  0.0008531695 0.0008465967 -1.3467950332 1.000000000
+#> 222  0.0008531695 0.0014392144  0.7457694517 1.000000000
+#> 226  0.0030714103 0.0026244497 -0.2137477328 1.000000000
+#> 229  0.0023888747 0.0007619370  3.6883922607 1.000000000
+#> 230  0.0006825356 0.0004232983  0.0801611170 1.000000000
+#> 231  0.0036686290 0.0030477481  0.1077357237 1.000000000
+#> 237  0.0005119017 0.0005926177 -0.9479644728 1.000000000
+#> 238  0.0004265848 0.0006772773  0.0532891405 1.000000000
+#> 240  0.0006825356 0.0004232983  0.1077502287 1.000000000
+#> 247  0.0023035577 0.0016085337  0.6287670954 1.000000000
+#> 248  0.0034979951 0.0033863867 -1.0578365845 1.000000000
+#> 249  0.0047777493 0.0022011514  4.2252543379 1.000000000
+#> 250  0.0021329238 0.0014392144  0.7592540847 1.000000000
+#> 251  0.0012797543 0.0009312563  0.0673158567 1.000000000
+#> 252  0.0069959901 0.0088892652  1.2568476302 1.000000000
+#> 254  0.0012797543 0.0006772773  1.0938615341 1.000000000
+#> 255  0.0016210221 0.0016085337 -1.3095558002 1.000000000
+#> 256  0.0045217985 0.0076193701  3.6969434973 1.000000000
+#> 257  0.0009384865 0.0020318320  2.2164805000 1.000000000
+#> 258  0.0115177886 0.0140535049  1.5584701021 1.000000000
+#> 259  0.0093848648 0.0071960718  1.6840661528 1.000000000
+#> 260  0.0044364815 0.0034710464  0.5978174902 1.000000000
+#> 261  0.0120296903 0.0098205215  1.3618847795 1.000000000
+#> 262  0.0005972187 0.0006772773 -0.9743492255 1.000000000
+#> 263  0.0018769730 0.0036403657  2.9738289562 1.000000000
+#> 264  0.0047777493 0.0029630884  2.3725773774 1.000000000
+#> 265  0.0009384865 0.0006772773 -0.1935566908 1.000000000
+#> 266  0.0005972187 0.0004232983 -0.3674440929 1.000000000
+#> 267  0.0061428206 0.0064341348 -0.8265597284 1.000000000
+#> 269  0.0061428206 0.0044023027  1.8427077655 1.000000000
+#> 270  0.0073372579 0.0044023027  3.5830598716 1.000000000
+#> 272  0.0028154594 0.0014392144  2.5022102516 1.000000000
+#> 273  0.0015357051 0.0013545547 -0.7291356813 1.000000000
+#> 274  0.0011091204 0.0007619370  0.0783718060 1.000000000
+#> 275  0.0016210221 0.0016085337 -1.3046080187 1.000000000
+#> 278  0.0005119017 0.0010159160  0.9469580365 1.000000000
+#> 279  0.0014503882 0.0019471724  0.2288375200 1.000000000
+#> 280  0.0004265848 0.0005079580 -0.9062859043 1.000000000
+#> 281  0.0034126781 0.0059261768  3.4429545553 1.000000000
+#> 282  0.0007678526 0.0011852354  0.3521506893 1.000000000
+#> 284  0.0025595086 0.0022858110 -0.5837337303 1.000000000
+#> 287  0.0031567272 0.0015238740  3.0424991955 1.000000000
+#> 288  0.0300315673 0.0282763292 -0.0001161218 1.000000000
+#> 289  0.0024741916 0.0011852354  2.6399152457 1.000000000
+#> 290  0.0057162358 0.0077040298  1.7326782805 1.000000000
+#> 291  0.0073372579 0.0072807315 -1.2218407811 1.000000000
+#> 295  0.0007678526 0.0004232983  0.4935212948 1.000000000
+#> 301  0.0006825356 0.0005079580 -0.4184190165 1.000000000
+#> 307  0.0013650712 0.0012698950 -1.0028458673 1.000000000
+#> 312  0.0004265848 0.0004232983 -1.2545934236 1.000000000
+#> 314  0.0008531695 0.0016931934  1.7183923421 1.000000000
+#> 315  0.0011944373 0.0030477481  3.5470288828 1.000000000
+#> 316  0.0013650712 0.0016931934 -0.2663534840 1.000000000
+#> 317  0.0011944373 0.0007619370  0.5683314666 1.000000000
+#> 319  0.0029007764 0.0056721978  4.0695476319 1.000000000
+#> 329  0.0007678526 0.0006772773 -0.9205319829 1.000000000
+#> 330  0.0073372579 0.0057568574  1.1930034629 1.000000000
+#> 331  0.0013650712 0.0022858110  1.2461786198 1.000000000
+#> 332  0.0013650712 0.0024551304  1.6233580899 1.000000000
+#> 333  0.0004265848 0.0005079580 -0.8977667595 1.000000000
+#> 336  0.0047777493 0.0037250254  0.7254623209 1.000000000
+#> 337  0.0038392629 0.0028784287  0.6939360078 1.000000000
+#> 339  0.0021329238 0.0015238740  0.4090879366 1.000000000
+#> 340  0.0009384865 0.0011005757 -0.7080581527 1.000000000
+#> 342  0.0016210221 0.0015238740 -1.0052223788 1.000000000
+#> 346  0.0011944373 0.0013545547 -0.7549314249 1.000000000
+#> 348  0.0025595086 0.0021164917 -0.1303959467 1.000000000
+#> 351  0.0017916560 0.0013545547  0.1771628331 1.000000000
+#> 354  0.0005119017 0.0004232983 -0.8294265916 1.000000000
+#> 355  0.0054602850 0.0047409414 -0.0829431119 1.000000000
+#> 357  0.0013650712 0.0010159160 -0.0427085915 1.000000000
+#> 358  0.0030714103 0.0024551304  0.2163430622 1.000000000
+#> 359  0.0016210221 0.0012698950 -0.1026213243 1.000000000
+#> 360  0.0060575036 0.0083813071  2.2314521917 1.000000000
+#> 363  0.0005119017 0.0006772773 -0.4320419851 1.000000000
+#> 374  0.0005972187 0.0008465967 -0.1618503805 1.000000000
+#> 375  0.0004265848 0.0006772773 -0.1251275062 1.000000000
+#> 376  0.0010238034 0.0005079580  1.0892051791 1.000000000
+#> 378  0.0011091204 0.0004232983  1.9039032043 1.000000000
+#> 381  0.0050337002 0.0023704707  4.2247650068 1.000000000
+#> 382  0.0109205699 0.0066034541  4.4150914730 1.000000000
+#> 383  0.0046071154 0.0025397900  3.1536515219 1.000000000
+#> 384  0.0023035577 0.0022011514 -1.0551070738 1.000000000
+#> 387  0.0005972187 0.0005926177 -1.2769326614 1.000000000
+#> 388  0.0014503882 0.0016931934 -0.5443457112 1.000000000
+#> 390  0.0027301425 0.0054182188  3.5262411819 1.000000000
+#> 391  0.0021329238 0.0016931934 -0.0174930834 1.000000000
+#> 392  0.0007678526 0.0015238740  1.4684158856 1.000000000
+#> 393  0.0027301425 0.0032170674 -0.1739663330 1.000000000
+#> 395  0.0011944373 0.0014392144 -0.4560070289 1.000000000
+#> 396  0.0013650712 0.0027937690  2.6645633456 1.000000000
+#> 397  0.0045217985 0.0082966475  3.8456411140 1.000000000
+#> 398  0.0028154594 0.0034710464  0.1805348586 1.000000000
+#> 399  0.0004265848 0.0006772773 -0.1140657238 1.000000000
+#> 400  0.0005972187 0.0004232983 -0.3468728481 1.000000000
+#> 401  0.0026448255 0.0050795801  3.7929328088 1.000000000
+#> 402  0.0052896511 0.0051642398 -1.1358804287 1.000000000
+#> 403  0.0059721867 0.0053335591 -0.2215947570 1.000000000
+#> 404  0.0004265848 0.0007619370  0.4496854658 1.000000000
+#> 405  0.0022182408 0.0009312563  2.7166952410 1.000000000
+#> 406  0.0007678526 0.0008465967 -0.9813809090 1.000000000
+#> 407  0.0004265848 0.0004232983 -1.2577345128 1.000000000
+#> 408  0.0020476069 0.0013545547  0.8176714603 1.000000000
+#> 414  0.0013650712 0.0016931934 -0.2393320921 1.000000000
+#> 420  0.0006825356 0.0005926177 -0.9401216059 1.000000000
+#> 424  0.0004265848 0.0005079580 -0.9210987073 1.000000000
+#> 425  0.0004265848 0.0010159160  1.3936306398 1.000000000
+#> 426  0.0096408156 0.0103284795 -0.4266443708 1.000000000
+#> 428  0.0006825356 0.0019471724  3.1432440660 1.000000000
+#> 433  0.0034126781 0.0055028784  2.5570696356 1.000000000
+#> 434  0.0017063390 0.0029630884  2.0782528181 1.000000000
+#> 435  0.0054602850 0.0038096851  1.8393831361 1.000000000
+#> 436  0.0005972187 0.0020318320  3.6500055655 1.000000000
+#> 437  0.0059721867 0.0038943447  2.4177547215 1.000000000
+#> 441  0.0043511646 0.0022858110  3.3114097013 1.000000000
+#> 442  0.0074225749 0.0060108364  0.9105957381 1.000000000
+#> 443  0.0024741916 0.0013545547  1.9271765377 1.000000000
+#> 444  0.0015357051 0.0020318320  0.2243045291 1.000000000
+#> 445  0.0140772972 0.0131222486 -0.2992797556 1.000000000
+#> 450  0.0004265848 0.0016931934  3.7355552834 1.000000000
+#> 451  0.0006825356 0.0005079580 -0.5037951866 1.000000000
+#> 452  0.0005972187 0.0006772773 -0.9574549295 1.000000000
+#> 453  0.0008531695 0.0009312563 -1.0315032733 1.000000000
+#> 457  0.0006825356 0.0007619370 -0.9351377214 1.000000000
+#> 458  0.0029007764 0.0017778530  1.6224188758 1.000000000
+#> 459  0.0016210221 0.0006772773  2.0717512755 1.000000000
+#> 462  0.0017916560 0.0013545547  0.1409836943 1.000000000
+#> 464  0.0029860933 0.0030477481 -1.1320754284 1.000000000
+#> 465  0.0024741916 0.0027937690 -0.5186603013 1.000000000
+#> 467  0.0007678526 0.0004232983  0.4864500322 1.000000000
+#> 468  0.0007678526 0.0014392144  0.7812469158 1.000000000
+#> 473  0.0004265848 0.0008465967  0.7175230442 1.000000000
+#> 475  0.0012797543 0.0015238740 -0.5022625321 1.000000000
+#> 476  0.0004265848 0.0004232983 -1.2598597982 1.000000000
+#> 481  0.0032420442 0.0031324077 -1.0590380604 1.000000000
+#> 483  0.0008531695 0.0008465967 -1.3262122005 1.000000000
+#> 484  0.0017916560 0.0011852354  0.6971244603 1.000000000
+#> 485  0.0007678526 0.0011852354  0.4066182792 1.000000000
+#> 486  0.0036686290 0.0044869624  0.3114763459 1.000000000
+#> 495  0.0013650712 0.0018625127  0.2481373613 1.000000000
+#> 502  0.0004265848 0.0010159160  1.5352466810 1.000000000
+#> 503  0.0017063390 0.0017778530 -1.1350446149 1.000000000
+#> 504  0.0023035577 0.0015238740  0.9823005178 1.000000000
+#> 506  0.0004265848 0.0008465967  0.7834153920 1.000000000
+#> 507  0.0026448255 0.0044023027  2.4455874045 1.000000000
+#> 511  0.0004265848 0.0007619370  0.4784073005 1.000000000
+#> 513  0.0006825356 0.0009312563 -0.1422735374 1.000000000
+#> 516  0.0005972187 0.0007619370 -0.4781335030 1.000000000
+#> 518  0.0019622899 0.0013545547  0.5903922311 1.000000000
+#> 519  0.0075078918 0.0045716221  3.7845485612 1.000000000
+#> 520  0.0012797543 0.0023704707  1.7603087707 1.000000000
+#> 521  0.0021329238 0.0027091094  0.2474575304 1.000000000
+#> 524  0.0021329238 0.0042329834  3.4082845193 1.000000000
+#> 525  0.0010238034 0.0019471724  1.7675440892 1.000000000
+#> 526  0.0017916560 0.0018625127 -1.1166940966 1.000000000
+#> 531  0.0008531695 0.0004232983  0.8227098262 1.000000000
+#> 539  0.0028154594 0.0041483237  1.4455625553 1.000000000
+#> 541  0.0004265848 0.0008465967  0.8029926588 1.000000000
+#> 542  0.0020476069 0.0016931934 -0.3403978365 1.000000000
+#> 543  0.0006825356 0.0006772773 -1.2817815274 1.000000000
+#> 544  0.0048630663 0.0050795801 -0.9260767077 1.000000000
+#> 558  0.0007678526 0.0006772773 -0.9374678936 1.000000000
+#> 560  0.0010238034 0.0007619370 -0.2742271602 1.000000000
+#> 562  0.0010238034 0.0008465967 -0.5375206738 1.000000000
+#> 563  0.0052896511 0.0055028784 -0.9931561855 1.000000000
+#> 564  0.0125415920 0.0155773789  2.0234975873 1.000000000
+#> 565  0.0137360293 0.0099051812  3.0507426785 1.000000000
+#> 566  0.0060575036 0.0050795801  0.4280664720 1.000000000
+#> 567  0.0246565993 0.0299695225  2.5586620143 1.000000000
+#> 568  0.0005119017 0.0008465967  0.3140583777 1.000000000
+#> 571  0.0008531695 0.0011005757 -0.2831735989 1.000000000
+#> 572  0.0011091204 0.0004232983  1.7359422389 1.000000000
+#> 574  0.0019622899 0.0006772773  3.2711934577 1.000000000
+#> 576  0.0005119017 0.0005926177 -0.9910335852 1.000000000
+#> 577  0.0059721867 0.0039790044  2.3824819924 1.000000000
+#> 578  0.0017063390 0.0021164917 -0.1266943054 1.000000000
+#> 579  0.0022182408 0.0044023027  3.8142509492 1.000000000
+#> 580  0.0011944373 0.0016931934  0.2513892740 1.000000000
+#> 583  0.0015357051 0.0030477481  2.7832796651 1.000000000
+#> 585  0.0137360293 0.0090585845  4.2493862954 1.000000000
+#> 586  0.0009384865 0.0018625127  1.6767401517 1.000000000
+#> 587  0.0025595086 0.0029630884 -0.3450926810 1.000000000
+#> 588  0.0007678526 0.0011852354  0.3886004582 1.000000000
+#> 589  0.0036686290 0.0031324077 -0.1895134419 1.000000000
+#> 592  0.0007678526 0.0008465967 -1.0316027927 1.000000000
+#> 593  0.0029007764 0.0037250254  0.6015687660 1.000000000
+#> 594  0.0007678526 0.0015238740  1.4884222173 1.000000000
+#> 595  0.0064840884 0.0063494751 -1.1265068942 1.000000000
+#> 596  0.0018769730 0.0013545547  0.3355993298 1.000000000
+#> 598  0.0038392629 0.0046562817  0.2852429249 1.000000000
+#> 601  0.0019622899 0.0022858110 -0.5121944266 1.000000000
+#> 602  0.0014503882 0.0013545547 -0.9957145675 1.000000000
+#> 603  0.0043511646 0.0078733491  4.8542918061 1.000000000
+#> 604  0.0139919802 0.0115983745  1.5118763796 1.000000000
+#> 605  0.0059721867 0.0077886895  1.5644346686 1.000000000
+#> 611  0.0017063390 0.0040636641  4.2801442997 1.000000000
+#> 624  0.0007678526 0.0011005757  0.1055304026 1.000000000
+#> 625  0.0018769730 0.0019471724 -1.0977008706 1.000000000
+#> 626  0.0026448255 0.0022011514 -0.2478074045 1.000000000
+#> 629  0.0049483832 0.0049102608 -1.2170710863 1.000000000
+#> 646  0.0004265848 0.0008465967  0.9030300843 1.000000000
+#> 647  0.0006825356 0.0007619370 -0.9789857192 1.000000000
+#> 661  0.0008531695 0.0004232983  0.8466948522 1.000000000
+#> 669  0.0008358098 0.0015658101  1.2667101655 1.000000000
+#> 702  0.0005572065 0.0013815971  1.8656859940 1.000000000
+#> 726  0.0004643388 0.0011052777  1.4438305718 1.000000000
+#> 731  0.0005572065 0.0031316202  5.7298546932 1.000000000
+#> 845  0.0010215453 0.0011973842 -0.6837895926 1.000000000
+#> 850  0.0016716196 0.0021184489 -0.1076785389 1.000000000
+#> 851  0.0009286776 0.0004605324  0.8219834508 1.000000000
+#> 853  0.0011144131 0.0009210648 -0.5525292948 1.000000000
+#> 856  0.0039004458 0.0011052777  5.4224330724 1.000000000
+#> 857  0.0009286776 0.0005526389  0.4369883712 1.000000000
+#> 858  0.0025074294 0.0011973842  2.4060712666 1.000000000
+#> 859  0.0008358098 0.0004605324  0.4865482944 1.000000000
+#> 864  0.0016716196 0.0005526389  2.8181495727 1.000000000
+#> 876  0.0048291233 0.0034079396  1.4213261937 1.000000000
+#> 878  0.0009286776 0.0008289583 -0.9286886150 1.000000000
+#> 879  0.0026002972 0.0017500230  0.8890930558 1.000000000
+#> 880  0.0006500743 0.0011052777  0.5295238492 1.000000000
+#> 881  0.0045505201 0.0042368979 -0.7720596135 1.000000000
+#> 899  0.0004643388 0.0004605324 -1.2411331993 1.000000000
+#> 942  0.0007429421 0.0004605324  0.0179655825 1.000000000
+#> 962  0.0010215453 0.0015658101  0.5288912511 1.000000000
+#> 974  0.0008358098 0.0008289583 -1.2880210274 1.000000000
+#> 1035 0.0008358098 0.0005526389 -0.0051701596 1.000000000
+#> 1039 0.0012072808 0.0011052777 -0.9686372130 1.000000000
+#> 1065 0.0014858841 0.0007368518  1.4771690439 1.000000000
+#> 1067 0.0006500743 0.0004605324 -0.3076627916 1.000000000
+#> 1069 0.0010215453 0.0014737036  0.2570736674 1.000000000
+#> 1119 0.0011144131 0.0008289583 -0.1998501312 1.000000000
+#> 1123 0.0005572065 0.0011052777  0.9549733963 1.000000000
+#> 1124 0.0011144131 0.0006447453  0.5853796084 1.000000000
+#> 1126 0.0012072808 0.0008289583  0.1072426708 1.000000000
+#> 1130 0.0022288262 0.0005526389  3.7582617114 1.000000000
+#> 1134 0.0004643388 0.0007368518  0.0227940024 1.000000000
+#> 1136 0.0005572065 0.0004605324 -0.8405983683 1.000000000
+#> 1145 0.0007429421 0.0005526389 -0.3800830093 1.000000000
+#> 1149 0.0033432392 0.0030395137 -0.6910679471 1.000000000
+#> 1152 0.0012072808 0.0009210648 -0.2982736047 1.000000000
+#> 1154 0.0018573551 0.0032237266  1.9480963268 1.000000000
+#> 1165 0.0008358098 0.0004605324  0.4648190886 1.000000000
+#> 1170 0.0006500743 0.0009210648 -0.1942790019 1.000000000
+#> 1171 0.0006500743 0.0022105554  3.4839574463 1.000000000
+#> 1172 0.0009286776 0.0011973842 -0.3383161087 1.000000000
+#> 1175 0.0017644874 0.0030395137  1.8202118308 1.000000000
+#> 1187 0.0055720654 0.0032237266  3.0081401218 1.000000000
+#> 1188 0.0008358098 0.0011052777 -0.2946456084 1.000000000
+#> 1189 0.0011144131 0.0029474072  3.7825961974 1.000000000
+#> 1190 0.0008358098 0.0011052777 -0.2825464283 1.000000000
+#> 1193 0.0013001486 0.0030395137  3.2180883245 1.000000000
+#> 1194 0.0030646360 0.0016579166  2.1182453587 1.000000000
+#> 1195 0.0026002972 0.0021184489 -0.1119416495 1.000000000
+#> 1197 0.0013930163 0.0009210648  0.2396724707 1.000000000
+#> 1198 0.0005572065 0.0006447453 -0.9249803072 1.000000000
+#> 1200 0.0011144131 0.0009210648 -0.5143218455 1.000000000
+#> 1204 0.0009286776 0.0009210648 -1.2966669004 1.000000000
+#> 1206 0.0015787519 0.0009210648  0.8981317731 1.000000000
+#> 1208 0.0012072808 0.0009210648 -0.1960387627 1.000000000
+#> 1212 0.0034361070 0.0023947684  1.0591829200 1.000000000
+#> 1214 0.0006500743 0.0006447453 -1.3034242799 1.000000000
+#> 1215 0.0020430906 0.0016579166 -0.2119201968 1.000000000
+#> 1216 0.0013001486 0.0004605324  2.3775364720 1.000000000
+#> 1217 0.0036218425 0.0045132173  0.3986836711 1.000000000
+#> 1224 0.0011144131 0.0018421295  0.9983676140 1.000000000
+#> 1240 0.0039004458 0.0012894907  5.1186299014 1.000000000
+#> 1241 0.0058506686 0.0009210648  7.8174300578 1.000000000
+#> 1242 0.0014858841 0.0005526389  2.2786422092 1.000000000
+#> 1243 0.0006500743 0.0010131712  0.2416905414 1.000000000
+#> 1244 0.0095653789 0.0033158331  8.1657954640 1.000000000
+#> 1249 0.0011144131 0.0013815971 -0.4358350834 1.000000000
+#> 1252 0.0012072808 0.0008289583  0.1558396386 1.000000000
+#> 1255 0.0047362556 0.0009210648  7.3559174393 1.000000000
+#> 1256 0.0005572065 0.0007368518 -0.4408079597 1.000000000
+#> 1257 0.0024145617 0.0014737036  1.2936584052 1.000000000
+#> 1258 0.0014858841 0.0006447453  1.9029123632 1.000000000
+#> 1261 0.0013001486 0.0012894907 -1.3116403661 1.000000000
+#> 1262 0.0021359584 0.0011052777  1.7594539234 1.000000000
+#> 1263 0.0030646360 0.0010131712  4.0913408341 1.000000000
+#> 1281 0.0008358098 0.0023947684  3.4668664047 1.000000000
+#> 1283 0.0037147103 0.0025789813  1.0076660698 1.000000000
+#> 1291 0.0034361070 0.0013815971  3.9522262343 1.000000000
+#> 1292 0.0006500743 0.0008289583 -0.5738871973 1.000000000
+#> 1294 0.0009286776 0.0004605324  0.8364896252 1.000000000
+#> 1296 0.0006500743 0.0009210648 -0.1107285271 1.000000000
+#> 1299 0.0019502229 0.0009210648  1.9775233160 1.000000000
+#> 1300 0.0015787519 0.0009210648  0.9958513835 1.000000000
+#> 1303 0.0022288262 0.0018421295 -0.2211876673 1.000000000
+#> 1316 0.0008358098 0.0005526389  0.0082561994 1.000000000
+#> 1332 0.0005572065 0.0005526389 -1.3347011668 1.000000000
+#> 1354 0.0014858841 0.0014737036 -1.3214701651 1.000000000
+#> 1360 0.0004643388 0.0011973842  1.7815163493 1.000000000
+#> 1372 0.0006500743 0.0007368518 -1.0303794269 1.000000000
+#> 1377 0.0013001486 0.0008289583  0.4480049353 1.000000000
+#> 1384 0.0023216939 0.0006447453  3.9277848071 1.000000000
+#> 1391 0.0007429421 0.0004605324  0.1417386635 1.000000000
+#> 1392 0.0028789004 0.0018421295  1.0611449588 1.000000000
+#> 1393 0.0059435364 0.0060790274 -1.0949365295 1.000000000
+#> 1394 0.0059435364 0.0049737497  0.2320829473 1.000000000
+#> 1395 0.0031575037 0.0018421295  1.8800922283 1.000000000
+#> 1396 0.0012072808 0.0013815971 -0.7336255880 1.000000000
+#> 1397 0.0100297177 0.0110527770 -0.1431406057 1.000000000
+#> 1408 0.0027860327 0.0018421295  0.9593994668 1.000000000
+#> 1409 0.0008358098 0.0005526389 -0.0788280117 1.000000000
+#> 1410 0.0012072808 0.0020263425  1.2248089609 1.000000000
+#> 1411 0.0005572065 0.0005526389 -1.2471048342 1.000000000
+#> 1415 0.0062221397 0.0040526849  2.2838925948 1.000000000
+#> 1416 0.0059435364 0.0037763655  2.2857574030 1.000000000
+#> 1418 0.0016716196 0.0005526389  2.7605968700 1.000000000
+#> 1419 0.0011144131 0.0007368518  0.2015900352 1.000000000
+#> 1420 0.0004643388 0.0005526389 -0.8990007817 1.000000000
+#> 1421 0.0013001486 0.0012894907 -1.2988303154 1.000000000
+#> 1425 0.0007429421 0.0014737036  1.2824902583 1.000000000
+#> 1427 0.0031575037 0.0022105554  0.9291925958 1.000000000
+#> 1430 0.0016716196 0.0022105554  0.1558742376 1.000000000
+#> 1433 0.0007429421 0.0009210648 -0.6050196149 1.000000000
+#> 1434 0.0085438336 0.0129870130  3.8650887009 1.000000000
+#> 1435 0.0009286776 0.0005526389  0.3998688891 1.000000000
+#> 1436 0.0023216939 0.0029474072  0.1668020139 1.000000000
+#> 1437 0.0057578009 0.0043290043  1.2801946296 1.000000000
+#> 1438 0.0028789004 0.0031316202 -0.7715041935 1.000000000
+#> 1439 0.0109583952 0.0172239108  5.2874909104 1.000000000
+#> 1484 0.0004643388 0.0007368518  0.0639823177 1.000000000
+#> 1520 0.0008358098 0.0006447453 -0.4260285740 1.000000000
+#> 1535 0.0009286776 0.0012894907  0.0567057479 1.000000000
+#> 1538 0.0004643388 0.0009210648  0.7914896454 1.000000000
+#> 1540 0.0010215453 0.0030395137  4.2602700272 1.000000000
+#> 1573 0.0006500743 0.0006447453 -1.2755911006 1.000000000
+#> 1574 0.0012072808 0.0012894907 -1.0678413566 1.000000000
+#> 1576 0.0004643388 0.0004605324 -1.2793441665 1.000000000
+#> 1578 0.0028789004 0.0026710878 -0.8673895372 1.000000000
+#> 1580 0.0004643388 0.0008289583  0.3042271937 1.000000000
+#> 1587 0.0013930163 0.0015658101 -0.7205562903 1.000000000
+#> 1593 0.0004643388 0.0008289583  0.4105798295 1.000000000
+#> 1610 0.0012072808 0.0026710878  2.6578684427 1.000000000
+#> 1618 0.0020430906 0.0018421295 -0.7479395592 1.000000000
+#> 1621 0.0008358098 0.0004605324  0.5273284675 1.000000000
+#> 1626 0.0004643388 0.0004605324 -1.2886023474 1.000000000
+#> 1627 0.0007429421 0.0004605324  0.0655858282 1.000000000
+#> 1630 0.0016716196 0.0014737036 -0.7679025609 1.000000000
+#> 1660 0.0004643388 0.0005526389 -0.8993257766 1.000000000
+#> 1684 0.0012072808 0.0005526389  1.5479324132 1.000000000
+#> 1694 0.0005572065 0.0004605324 -0.8968838963 1.000000000
+#> 1698 0.0006500743 0.0004605324 -0.2786717421 1.000000000
+#> 1709 0.0009286776 0.0008289583 -0.9110490280 1.000000000
+#> 1710 0.0011144131 0.0006447453  0.6460574897 1.000000000
+#> 1711 0.0005572065 0.0008289583 -0.0422464715 1.000000000
+#> 1713 0.0016716196 0.0018421295 -0.8282405288 1.000000000
+#> 1725 0.0013930163 0.0004605324  2.4433544904 1.000000000
+#> 1726 0.0007429421 0.0011052777  0.1890156619 1.000000000
+#> 1735 0.0004643388 0.0007368518 -0.0440256011 1.000000000
+#> 1739 0.0019502229 0.0023947684 -0.1419906473 1.000000000
+#> 1742 0.0016716196 0.0010131712  0.9632880046 1.000000000
+#> 1743 0.0005572065 0.0009210648  0.3129083383 1.000000000
+#> 1744 0.0014858841 0.0028553007  2.4071899699 1.000000000
+#> 1760 0.0007429421 0.0025789813  4.3408179084 1.000000000
+#> 1769 0.0005572065 0.0021184489  3.9566232641 1.000000000
+#> 1770 0.0006500743 0.0006447453 -1.2401443160 1.000000000
+#> 1773 0.0004643388 0.0029474072  5.3720322339 1.000000000
+#> 1805 0.0008358098 0.0010131712 -0.5857327535 1.000000000
+#> 1806 0.0018573551 0.0006447453  2.8702205340 1.000000000
+#> 1809 0.0019502229 0.0006447453  3.3397765493 1.000000000
+#> 1843 0.0007429421 0.0005526389 -0.4159028285 1.000000000
+#> 1847 0.0019502229 0.0011973842  0.9139614304 1.000000000
+#> 1850 0.0010215453 0.0010131712 -1.3299254901 1.000000000
+#> 1852 0.0026931649 0.0011973842  2.8655261225 1.000000000
+#> 1853 0.0021359584 0.0011973842  1.5847102054 1.000000000
+#> 1854 0.0010215453 0.0007368518 -0.2026609814 1.000000000
+#> 1855 0.0029717682 0.0014737036  2.5374231971 1.000000000
+#> 1859 0.0063150074 0.0007368518  9.3417687982 1.000000000
+#> 1861 0.0033432392 0.0005526389  6.2765078283 1.000000000
+#> 1865 0.0015787519 0.0008289583  1.3633777987 1.000000000
+#> 1866 0.0014858841 0.0007368518  1.3748384064 1.000000000
+#> 1867 0.0015787519 0.0005526389  2.6194968115 1.000000000
+#> 1869 0.0006500743 0.0004605324 -0.3383453713 1.000000000
+#> 1877 0.0010215453 0.0004605324  1.2837305766 1.000000000
+#> 1884 0.0082652303 0.0041447914  5.0336154206 1.000000000
+#> 1886 0.0013001486 0.0011052777 -0.6513841284 1.000000000
+#> 1887 0.0042719168 0.0017500230  4.4127537392 1.000000000
+#> 1888 0.0022288262 0.0007368518  3.3678168919 1.000000000
+#> 1889 0.0088224368 0.0074606245  0.5820202005 1.000000000
+#> 1903 0.0005572065 0.0007368518 -0.4612637359 1.000000000
+#> 1905 0.0009286776 0.0012894907  0.0218367273 1.000000000
+#> 1906 0.0005572065 0.0005526389 -1.3242294440 1.000000000
+#> 1907 0.0005572065 0.0011052777  0.9904067554 1.000000000
+#> 1910 0.0009286776 0.0008289583 -0.9828283643 1.000000000
+#> 1924 0.0008358098 0.0010131712 -0.5643986170 1.000000000
+#> 1929 0.0011144131 0.0011973842 -1.0378408493 1.000000000
+#> 1940 0.0007429421 0.0008289583 -0.9479256573 1.000000000
+#> 1947 0.0005572065 0.0006447453 -1.0001770606 1.000000000
+#> 1948 0.0018573551 0.0011973842  0.7203441908 1.000000000
+#> 1949 0.0033432392 0.0006447453  5.8855063245 1.000000000
+#> 1950 0.0013930163 0.0008289583  0.6989559658 1.000000000
+#> 1952 0.0047362556 0.0034079396  1.2000515350 1.000000000
+#> 1963 0.0014858841 0.0023947684  1.2183676411 1.000000000
+#> 1965 0.0007429421 0.0017500230  1.6679997934 1.000000000
+#> 1966 0.0007429421 0.0005526389 -0.3841866961 1.000000000
+#> 1969 0.0005572065 0.0011973842  1.3542918985 1.000000000
+#> 1970 0.0009286776 0.0012894907 -0.0898615736 1.000000000
+#> 1971 0.0008358098 0.0012894907  0.4284608068 1.000000000
+#> 1987 0.0004643388 0.0011973842  1.7383474854 1.000000000
+#> 1989 0.0012072808 0.0019342360  1.0122586425 1.000000000
+#> 1997 0.0028789004 0.0025789813 -0.6331660357 1.000000000
+#> 1998 0.0005572065 0.0008289583 -0.0555694128 1.000000000
+#> 2000 0.0004643388 0.0007368518  0.0526956022 1.000000000
+#> 2005 0.0005572065 0.0007368518 -0.4709921445 1.000000000
+#> 2006 0.0007429421 0.0011052777  0.2029388015 1.000000000
+#> 2010 0.0026931649 0.0023026619 -0.3472649811 1.000000000
+#> 2033 0.0006500743 0.0007368518 -0.9960719333 1.000000000
+#> 2036 0.0004643388 0.0006447453 -0.3535229094 1.000000000
+#> 2082 0.0004643388 0.0022105554  4.5402687402 1.000000000
+#> 2083 0.0012072808 0.0032237266  4.0022099053 1.000000000
+#> 2097 0.0016716196 0.0018421295 -0.8195801160 1.000000000
+#> 2098 0.0021359584 0.0018421295 -0.5391456083 1.000000000
+#> 2101 0.0037147103 0.0044211108  0.0870077062 1.000000000
+#> 2130 0.0004643388 0.0004605324 -1.3179314743 1.000000000
+#> 2145 0.0021359584 0.0014737036  0.5439214998 1.000000000
+#> 2146 0.0028789004 0.0028553007 -1.2457109056 1.000000000
+#> 2147 0.0056649331 0.0017500230  6.7404300264 1.000000000
+#> 2148 0.0022288262 0.0008289583  3.0509704126 1.000000000
+#> 2150 0.0073365527 0.0064474533  0.0194347377 1.000000000
+#> 2153 0.0005572065 0.0011052777  1.0500304772 1.000000000
+#> 2155 0.0004643388 0.0018421295  3.3012584388 1.000000000
+#> 2156 0.0008358098 0.0008289583 -1.2388977474 1.000000000
+#> 2158 0.0007429421 0.0010131712 -0.2033447224 1.000000000
+#> 2162 0.0004643388 0.0007368518  0.0042556026 1.000000000
+#> 2168 0.0014858841 0.0011973842 -0.3494348460 1.000000000
+#> 2169 0.0019502229 0.0008289583  2.3010363750 1.000000000
+#> 2171 0.0008358098 0.0005526389 -0.0103760848 1.000000000
+#> 2183 0.0015787519 0.0011973842  0.0017098829 1.000000000
+#> 2186 0.0012072808 0.0005526389  1.3642480097 1.000000000
+#> 2188 0.0020430906 0.0013815971  0.7300492256 1.000000000
+#> 2199 0.0007429421 0.0005526389 -0.4363942277 1.000000000
+#> 2203 0.0012072808 0.0009210648 -0.2669187052 1.000000000
+#> 2207 0.0005572065 0.0008289583 -0.0593075644 1.000000000
+#> 2209 0.0020430906 0.0018421295 -0.7882882306 1.000000000
+#> 2210 0.0016716196 0.0011052777  0.5288029826 1.000000000
+#> 2212 0.0020430906 0.0010131712  1.9093071631 1.000000000
+#> 2214 0.0006500743 0.0005526389 -0.8957886785 1.000000000
+#> 2216 0.0038075780 0.0008289583  6.1731954852 1.000000000
+#> 2217 0.0006500743 0.0006447453 -1.2888674027 1.000000000
+#> 2218 0.0018573551 0.0007368518  2.5316892259 1.000000000
+#> 2219 0.0013001486 0.0004605324  2.1872997070 1.000000000
+#> 2222 0.0010215453 0.0012894907 -0.3369340768 1.000000000
+#> 2224 0.0012072808 0.0004605324  1.8679922342 1.000000000
+#> 2238 0.0043647845 0.0039605784 -0.5321777328 1.000000000
+#> 2240 0.0006500743 0.0010131712  0.2033814710 1.000000000
+#> 2241 0.0023216939 0.0017500230  0.2822190508 1.000000000
+#> 2242 0.0013001486 0.0008289583  0.4646234087 1.000000000
+#> 2243 0.0047362556 0.0051579626 -0.5773561040 1.000000000
+#> 2292 0.0012072808 0.0005526389  1.3785634696 1.000000000
+#> 2296 0.0025074294 0.0009210648  3.5040264322 1.000000000
+#> 2323 0.0013001486 0.0004605324  2.2783184565 1.000000000
+#> 2330 0.0016716196 0.0006447453  2.5042012945 1.000000000
+#> 2333 0.0004643388 0.0006447453 -0.4600850965 1.000000000
+#> 2338 0.0004643388 0.0005526389 -0.9115659053 1.000000000
+#> 2341 0.0013930163 0.0019342360  0.3336494633 1.000000000
+#> 2355 0.0006500743 0.0004605324 -0.3374670595 1.000000000
+#> 2408 0.0007429421 0.0006447453 -0.8781429092 1.000000000
+#> 2412 0.0007429421 0.0012894907  0.7238516012 1.000000000
+#> 2422 0.0009286776 0.0004605324  0.8504877332 1.000000000
+#> 2436 0.0008358098 0.0009210648 -1.0109289555 1.000000000
+#> 2441 0.0010215453 0.0018421295  1.4488329710 1.000000000
+#> 2461 0.0005572065 0.0004605324 -0.8782854997 1.000000000
+#> 2510 0.0011144131 0.0014737036 -0.0631398474 1.000000000
+#> 2515 0.0006500743 0.0021184489  3.3958037135 1.000000000
+#> 2558 0.0010215453 0.0004605324  1.2297463025 1.000000000
+#> 2565 0.0007429421 0.0005526389 -0.3525985112 1.000000000
+#> 2566 0.0012072808 0.0007368518  0.5107428018 1.000000000
+#> 2567 0.0019502229 0.0009210648  2.0020200701 1.000000000
+#> 2570 0.0025074294 0.0021184489 -0.3021598933 1.000000000
+#> 2575 0.0004643388 0.0007368518 -0.0181317933 1.000000000
+#> 2581 0.0012072808 0.0011052777 -0.9996582373 1.000000000
+#> 2587 0.0004643388 0.0008289583  0.3783150791 1.000000000
+#> 2588 0.0008358098 0.0011052777 -0.2736102819 1.000000000
+#> 2603 0.0013001486 0.0018421295  0.2767830095 1.000000000
+#> 2609 0.0006500743 0.0008289583 -0.4478762191 1.000000000
+#> 2621 0.0007429421 0.0005526389 -0.3751805086 1.000000000
+#> 2656 0.0004643388 0.0010131712  1.0951000436 1.000000000
+#> 2660 0.0011144131 0.0018421295  0.8635670552 1.000000000
+#> 2669 0.0006500743 0.0008289583 -0.5296710954 1.000000000
+#> 2682 0.0017644874 0.0013815971 -0.1323742917 1.000000000
+#> 2685 0.0008358098 0.0005526389 -0.0164937121 1.000000000
+#> 2687 0.0015787519 0.0021184489  0.2511339098 1.000000000
+#> 2722 0.0013930163 0.0010131712  0.0269332970 1.000000000
+#> 2754 0.0005572065 0.0007368518 -0.4547620776 1.000000000
+#> 2755 0.0012072808 0.0010131712 -0.5664403934 1.000000000
+#> 2756 0.0006500743 0.0008289583 -0.4914592697 1.000000000
+#> 2759 0.0016716196 0.0023026619  0.3031167522 1.000000000
+#> 2763 0.0015787519 0.0031316202  2.5336128707 1.000000000
+#> 2765 0.0032503715 0.0042368979  0.6251751451 1.000000000
+#> 2766 0.0027860327 0.0021184489  0.2734862470 1.000000000
+#> 2767 0.0011144131 0.0012894907 -0.7951471662 1.000000000
+#> 2768 0.0033432392 0.0037763655 -0.4677102997 1.000000000
+#> 2772 0.0052005944 0.0019342360  5.4978912387 1.000000000
+#> 2773 0.0007429421 0.0010131712 -0.2436136654 1.000000000
+#> 2774 0.0030646360 0.0022105554  0.7416170873 1.000000000
+#> 2775 0.0023216939 0.0010131712  2.6374500316 1.000000000
+#> 2778 0.0013930163 0.0020263425  0.5539794893 1.000000000
+#> 2780 0.0016716196 0.0019342360 -0.5680181400 1.000000000
+#> 2781 0.0017644874 0.0012894907  0.1467393776 1.000000000
+#> 2783 0.0007429421 0.0005526389 -0.3977045641 1.000000000
+#> 2784 0.0004643388 0.0007368518  0.0604056444 1.000000000
+#> 2788 0.0004643388 0.0006447453 -0.3614583840 1.000000000
+#> 2790 0.0007429421 0.0021184489  2.9870433740 1.000000000
+#> 2793 0.0006500743 0.0010131712  0.2433389706 1.000000000
+#> 2796 0.0005572065 0.0007368518 -0.5664282940 1.000000000
+#> 2797 0.0058506686 0.0086580087  2.4243412765 1.000000000
+#> 2798 0.0006500743 0.0005526389 -0.8932889434 1.000000000
+#> 2799 0.0017644874 0.0023026619  0.0264111601 1.000000000
+#> 2800 0.0048291233 0.0033158331  1.5829770311 1.000000000
+#> 2801 0.0023216939 0.0026710878 -0.4848171685 1.000000000
+#> 2802 0.0090081724 0.0117896288  1.9161301013 1.000000000
+#> 2848 0.0007429421 0.0010131712 -0.2312294004 1.000000000
+#> 2852 0.0027860327 0.0018421295  1.1341987105 1.000000000
+#> 2859 0.0005572065 0.0004605324 -0.8479129268 1.000000000
+#> 2863 0.0011144131 0.0008289583 -0.1528725494 1.000000000
+#> 2869 0.0004643388 0.0006447453 -0.3695308785 1.000000000
+#> 2871 0.0005572065 0.0008289583 -0.0986444422 1.000000000
+#> 2888 0.0006500743 0.0006447453 -1.2858278766 1.000000000
+#> 2895 0.0070579495 0.0042368979  3.4368297996 1.000000000
+#> 2896 0.0007429421 0.0013815971  1.0631794808 1.000000000
+#> 2897 0.0009286776 0.0005526389  0.3797757665 1.000000000
+#> 2898 0.0020430906 0.0011973842  1.2328206991 1.000000000
+#> 2900 0.0018573551 0.0012894907  0.3401733696 1.000000000
+#> 2903 0.0014858841 0.0007368518  1.4675287427 1.000000000
+#> 2904 0.0026002972 0.0020263425  0.1994953849 1.000000000
+#> 2905 0.0034361070 0.0016579166  2.8800816257 1.000000000
+#> 2907 0.0006500743 0.0006447453 -1.2515848019 1.000000000
+#> 2908 0.0043647845 0.0033158331  0.6816755807 1.000000000
+#> 2927 0.0008358098 0.0010131712 -0.6019677939 1.000000000
+#> 2928 0.0007429421 0.0009210648 -0.6113018248 1.000000000
+#> 2942 0.0013001486 0.0007368518  0.8957514398 1.000000000
+#> 2947 0.0013001486 0.0013815971 -1.0851180684 1.000000000
+#> 2959 0.0006500743 0.0004605324 -0.2738631075 1.000000000
+#> 2960 0.0006500743 0.0006447453 -1.3173824225 1.000000000
+#> 2963 0.0008358098 0.0018421295  2.2032371328 1.000000000
+#> 2973 0.0020430906 0.0011052777  1.6167402152 1.000000000
+#> 2974 0.0004643388 0.0007368518  0.0395844811 1.000000000
+#> 2975 0.0012072808 0.0018421295  0.6840991434 1.000000000
+#> 2976 0.0012072808 0.0004605324  1.8761173123 1.000000000
+#> 2979 0.0006500743 0.0008289583 -0.5327987548 1.000000000
+#> 2980 0.0004643388 0.0006447453 -0.3430283255 1.000000000
+#> 2981 0.0005572065 0.0004605324 -0.8756062861 1.000000000
+#> 2993 0.0006500743 0.0012894907  1.1317775806 1.000000000
+#> 2996 0.0007429421 0.0005526389 -0.4218307516 1.000000000
+#> 2998 0.0017644874 0.0017500230 -1.2484987923 1.000000000
+#> 3006 0.0010215453 0.0008289583 -0.5228613281 1.000000000
+#> 3014 0.0016716196 0.0027631943  1.5930606465 1.000000000
+#> 3015 0.0035289747 0.0069079856  4.3667868722 1.000000000
+#> 3016 0.0043647845 0.0036842590 -0.0405125341 1.000000000
+#> 3017 0.0014858841 0.0022105554  0.7584395613 1.000000000
+#> 3018 0.0007429421 0.0024868748  4.2251595809 1.000000000
+#> 3019 0.0091939079 0.0123422677  2.4715422307 1.000000000
+#> 3028 0.0004643388 0.0005526389 -0.9990331786 1.000000000
+#> 3029 0.0016716196 0.0019342360 -0.5181264142 1.000000000
+#> 3031 0.0006500743 0.0013815971  1.6213768027 1.000000000
+#> 3035 0.0006500743 0.0007368518 -0.9542334737 1.000000000
+#> 3036 0.0038075780 0.0030395137  0.3290631698 1.000000000
+#> 3037 0.0052005944 0.0034079396  2.0280267347 1.000000000
+#> 3038 0.0005572065 0.0006447453 -0.9783757057 1.000000000
+#> 3039 0.0020430906 0.0009210648  2.1651206225 1.000000000
+#> 3040 0.0010215453 0.0017500230  1.0294846988 1.000000000
+#> 3042 0.0013001486 0.0013815971 -1.0833422383 1.000000000
+#> 3045 0.0013001486 0.0015658101 -0.4465581657 1.000000000
+#> 3047 0.0018573551 0.0022105554 -0.3413988926 1.000000000
+#> 3048 0.0006500743 0.0006447453 -1.2678357866 1.000000000
+#> 3050 0.0013930163 0.0020263425  0.5728405308 1.000000000
+#> 3053 0.0006500743 0.0006447453 -1.2826652713 1.000000000
+#> 3054 0.0072436850 0.0118817353  4.5888225923 1.000000000
+#> 3056 0.0008358098 0.0037763655  6.5485534767 1.000000000
+#> 3057 0.0046433878 0.0049737497 -0.7439621199 1.000000000
+#> 3058 0.0018573551 0.0028553007  1.2110583090 1.000000000
+#> 3059 0.0077080238 0.0179607626  6.1055918664 1.000000000
+#> 3078 0.0005572065 0.0005526389 -1.2584253006 1.000000000
+#> 3081 0.0005572065 0.0015658101  2.5827429440 1.000000000
+#> 3134 0.0009286776 0.0007368518 -0.4972288862 1.000000000
+#> 3153 0.0010215453 0.0011973842 -0.6372091601 1.000000000
+#> 3154 0.0004643388 0.0005526389 -0.8927523257 1.000000000
+#> 3157 0.0020430906 0.0021184489 -1.1256615285 1.000000000
+#> 3265 0.0005051015 0.0007022472 -0.3920952551 1.000000000
+#> 3575 0.0007071421 0.0005016051 -0.3074876152 1.000000000
+#> 3610 0.0014142843 0.0005016051  2.1601194485 1.000000000
+#> 3675 0.0005051015 0.0011035313  1.1747827715 1.000000000
+#> 3676 0.0010102031 0.0005016051  0.8616098325 1.000000000
+#> 3679 0.0016163249 0.0011035313  0.3004945873 1.000000000
+#> 3688 0.0008081624 0.0012038523  0.0335962342 1.000000000
+#> 3702 0.0015153046 0.0014044944 -1.0325186798 1.000000000
+#> 3704 0.0010102031 0.0007022472 -0.1135545031 1.000000000
+#> 3706 0.0015153046 0.0010032103  0.3664553307 1.000000000
+#> 4010 0.0006061218 0.0006019262 -1.2739572229 1.000000000
+#> 4250 0.0013132640 0.0015048154 -0.7086185150 1.000000000
+#> 4272 0.0009091827 0.0012038523 -0.3204965331 1.000000000
+#> 4277 0.0005051015 0.0010032103  0.7892335360 1.000000000
+#> 4340 0.0005051015 0.0007022472 -0.2689457645 1.000000000
+#> 4344 0.0006061218 0.0015048154  2.0654839732 1.000000000
+#> 4377 0.0008081624 0.0007022472 -0.9078512458 1.000000000
+#> 4381 0.0022224467 0.0014044944  0.9233000836 1.000000000
+#> 4389 0.0006061218 0.0010032103  0.3634935175 1.000000000
+#> 4395 0.0005051015 0.0005016051 -1.2975247462 1.000000000
+#> 4411 0.0009091827 0.0012038523 -0.2318277203 1.000000000
+#> 4417 0.0014142843 0.0008025682  0.9153112805 1.000000000
+#> 4428 0.0011112234 0.0011035313 -1.2562503147 1.000000000
+#> 4496 0.0014142843 0.0009028892  0.4520601963 1.000000000
+#> 4520 0.0011112234 0.0013041734 -0.6771655140 1.000000000
+#> 4525 0.0010102031 0.0016051364  0.6427163221 1.000000000
+#> 4589 0.0007071421 0.0005016051 -0.2845615222 1.000000000
+#> 4612 0.0030306092 0.0009028892  4.4068615224 1.000000000
+#> 4617 0.0030306092 0.0016051364  2.1988692889 1.000000000
+#> 4695 0.0012122437 0.0007022472  0.5403349383 1.000000000
+#> 4740 0.0005051015 0.0005016051 -1.2501787419 1.000000000
+#> 4753 0.0013132640 0.0018057785  0.1367343158 1.000000000
+#> 4777 0.0010102031 0.0009028892 -0.9104455636 1.000000000
+#> 4835 0.0006061218 0.0010032103  0.3330052647 1.000000000
+#> 4954 0.0005051015 0.0006019262 -0.9094870300 1.000000000
+#> 5049 0.0007071421 0.0005016051 -0.2754748346 1.000000000
+#> 5053 0.0009091827 0.0006019262 -0.0022998328 1.000000000
+#> 5058 0.0015153046 0.0018057785 -0.4987604508 1.000000000
+#> 5059 0.0014142843 0.0008025682  0.7562255984 1.000000000
+#> 5060 0.0005051015 0.0006019262 -0.8995818380 1.000000000
+#> 5061 0.0018183655 0.0012038523  0.5273097783 1.000000000
+#> 5065 0.0018183655 0.0011035313  0.8985006655 1.000000000
+#> 5067 0.0015153046 0.0011035313  0.0271660577 1.000000000
+#> 5068 0.0010102031 0.0005016051  0.8230244056 1.000000000
+#> 5071 0.0007071421 0.0008025682 -0.9287955613 1.000000000
+#> 5073 0.0008081624 0.0005016051  0.0457581975 1.000000000
+#> 5074 0.0011112234 0.0005016051  1.2485337019 1.000000000
+#> 5086 0.0026265279 0.0036115570  0.4964415178 1.000000000
+#> 5088 0.0006061218 0.0013041734  1.2995434075 1.000000000
+#> 5089 0.0021214264 0.0009028892  2.3063785078 1.000000000
+#> 5090 0.0008081624 0.0009028892 -0.9684183102 1.000000000
+#> 5091 0.0034346904 0.0043138042  0.3218952402 1.000000000
+#> 5123 0.0010102031 0.0007022472 -0.0709743238 1.000000000
+#> 5152 0.0034346904 0.0021067416  1.6522181837 1.000000000
+#> 5157 0.0008081624 0.0006019262 -0.4240347105 1.000000000
+#> 5159 0.0010102031 0.0007022472 -0.0687341300 1.000000000
+#> 5160 0.0018183655 0.0005016051  3.1025786593 1.000000000
+#> 5163 0.0013132640 0.0015048154 -0.7408186992 1.000000000
+#> 5235 0.0007071421 0.0009028892 -0.4692882496 1.000000000
+#> 5244 0.0008081624 0.0014044944  0.7922662211 1.000000000
+#> 5245 0.0014142843 0.0031099518  2.7933475868 1.000000000
+#> 5246 0.0016163249 0.0017054575 -1.1080343807 1.000000000
+#> 5247 0.0007071421 0.0008025682 -0.9416724441 1.000000000
+#> 5249 0.0036367310 0.0047150883  0.6290135971 1.000000000
+#> 5258 0.0008081624 0.0005016051  0.0899454680 1.000000000
+#> 5265 0.0016163249 0.0011035313  0.3148818469 1.000000000
+#> 5266 0.0019193858 0.0016051364 -0.4702597005 1.000000000
+#> 5269 0.0008081624 0.0007022472 -0.9379432182 1.000000000
+#> 5273 0.0007071421 0.0007022472 -1.2654233532 1.000000000
+#> 5275 0.0008081624 0.0007022472 -0.8924573159 1.000000000
+#> 5277 0.0007071421 0.0008025682 -0.9352249867 1.000000000
+#> 5281 0.0037377513 0.0042134831 -0.4590018808 1.000000000
+#> 5284 0.0021214264 0.0020064205 -1.0213079269 1.000000000
+#> 5285 0.0010102031 0.0011035313 -1.0775945395 1.000000000
+#> 5286 0.0025255076 0.0073234350  6.5949844036 1.000000000
+#> 5567 0.0009091827 0.0011035313 -0.5909771754 1.000000000
+#> 5572 0.0009091827 0.0011035313 -0.5658198086 1.000000000
+#> 5601 0.0006061218 0.0006019262 -1.2622688794 1.000000000
+#> 5680 0.0008081624 0.0013041734  0.5163815336 1.000000000
+#> 5919 0.0006061218 0.0008025682 -0.4403755595 1.000000000
+#> 6018 0.0006061218 0.0009028892 -0.0420967718 1.000000000
+#> 6253 0.0009091827 0.0005016051  0.4751775881 1.000000000
+#> 6278 0.0005051015 0.0005016051 -1.2743398218 1.000000000
+#> 6297 0.0008081624 0.0009028892 -0.9965921975 1.000000000
+#> 6341 0.0010102031 0.0005016051  0.8573914093 1.000000000
+#> 6397 0.0020204061 0.0013041734  0.7275557768 1.000000000
+#> 6398 0.0017173452 0.0012038523  0.2511602394 1.000000000
+#> 6401 0.0026265279 0.0012038523  2.4785939592 1.000000000
+#> 6414 0.0019193858 0.0006019262  3.0368641427 1.000000000
+#> 6429 0.0024244873 0.0024077047 -1.3197252705 1.000000000
+#> 6432 0.0020204061 0.0007022472  2.8958621552 1.000000000
+#> 6433 0.0007071421 0.0011035313  0.2035401046 1.000000000
+#> 6434 0.0030306092 0.0030096308 -1.2882624722 1.000000000
+#> 6634 0.0017173452 0.0011035313  0.6736782475 1.000000000
+#> 6639 0.0016163249 0.0018057785 -0.8159638560 1.000000000
+#> 6748 0.0008081624 0.0007022472 -0.8744274779 1.000000000
+#> 6768 0.0008081624 0.0005016051  0.0376999147 1.000000000
+#> 6771 0.0009091827 0.0009028892 -1.2999425600 1.000000000
+#> 6819 0.0008081624 0.0006019262 -0.3760814282 1.000000000
+#> 6822 0.0009091827 0.0010032103 -1.0303135899 1.000000000
+#> 6973 0.0005051015 0.0011035313  1.2264399210 1.000000000
+#> 7016 0.0007071421 0.0007022472 -1.2539207601 1.000000000
+#> 7033 0.0011112234 0.0010032103 -0.9296899049 1.000000000
+#> 7037 0.0016163249 0.0018057785 -0.7637776585 1.000000000
+#> 7141 0.0008081624 0.0005016051  0.0540054850 1.000000000
+#> 7146 0.0012122437 0.0009028892 -0.2948078703 1.000000000
+#> 7152 0.0020204061 0.0006019262  3.4206390165 1.000000000
+#> 7154 0.0014142843 0.0005016051  2.1586540658 1.000000000
+#> 7169 0.0022224467 0.0020064205 -0.7944927013 1.000000000
+#> 7172 0.0012122437 0.0012038523 -1.2765023196 1.000000000
+#> 7174 0.0021214264 0.0025080257 -0.3659176444 1.000000000
+#> 7236 0.0008081624 0.0009028892 -0.9264966537 1.000000000
+#> 7313 0.0005051015 0.0006019262 -0.9308827717 1.000000000
+#> 7396 0.0009091827 0.0005016051  0.5141567547 1.000000000
+#> 7408 0.0011112234 0.0006019262  0.7450856718 1.000000000
+#> 7479 0.0009091827 0.0011035313 -0.6451607814 1.000000000
+#> 7480 0.0008081624 0.0005016051  0.0754067286 1.000000000
+#> 7483 0.0016163249 0.0014044944 -0.6605541614 1.000000000
+#> 7494 0.0006061218 0.0007022472 -0.9078957973 1.000000000
+#> 7495 0.0010102031 0.0006019262  0.3673364350 1.000000000
+#> 7508 0.0013132640 0.0012038523 -1.0212024130 1.000000000
+#> 7509 0.0006061218 0.0005016051 -0.8895944913 1.000000000
+#> 7512 0.0016163249 0.0025080257  0.9291092839 1.000000000
+#> 7614 0.0008081624 0.0008025682 -1.2633748562 1.000000000
+#> 7723 0.0005051015 0.0006019262 -0.9034082027 1.000000000
+#> 8195 0.0006061218 0.0005016051 -0.8662946156 1.000000000
+#> 8200 0.0007071421 0.0009028892 -0.4719011096 1.000000000
+#> 8230 0.0005051015 0.0005016051 -1.2304085144 1.000000000
+#> 8479 0.0008081624 0.0005016051  0.0194550755 1.000000000
+#> 8492 0.0005051015 0.0006019262 -0.8940098292 1.000000000
+#> 8496 0.0009091827 0.0008025682 -0.9320532668 1.000000000
+#> 8643 0.0009091827 0.0009028892 -1.3911451291 1.000000000
+#> 8648 0.0005051015 0.0011035313  1.1693705673 1.000000000
+#> 8660 0.0008081624 0.0012038523  0.1163166976 1.000000000
+#> 8670 0.0016163249 0.0010032103  0.7108428413 1.000000000
+#> 8676 0.0013132640 0.0005016051  1.7253881653 1.000000000
+#> 8677 0.0005051015 0.0007022472 -0.3843932418 1.000000000
+#> 8691 0.0009091827 0.0008025682 -0.9087975235 1.000000000
+#> 8694 0.0007071421 0.0009028892 -0.5000022869 1.000000000
+#> 8696 0.0010102031 0.0018057785  1.1831892655 1.000000000
+#> 8711 0.0028285685 0.0007022472  4.2847339472 1.000000000
+#> 8738 0.0012122437 0.0010032103 -0.6159632864 1.000000000
+#> 8745 0.0010102031 0.0005016051  0.8926087916 1.000000000
+#> 8788 0.0005051015 0.0005016051 -1.2575106472 1.000000000
+#> 8815 0.0006061218 0.0005016051 -0.8551683601 1.000000000
+#> 8816 0.0015153046 0.0012038523 -0.3740682564 1.000000000
+#> 8817 0.0011112234 0.0019060995  1.1045173088 1.000000000
+#> 8818 0.0006061218 0.0007022472 -0.9286935080 1.000000000
+#> 8820 0.0018183655 0.0032102729  1.7487159046 1.000000000
+#> 8830 0.0009091827 0.0006019262 -0.1395732282 1.000000000
+#> 8835 0.0018183655 0.0006019262  2.8191712825 1.000000000
+#> 8836 0.0013132640 0.0015048154 -0.7835231712 1.000000000
+#> 8847 0.0011112234 0.0006019262  0.6858270222 1.000000000
+#> 8850 0.0006061218 0.0012038523  1.0426113569 1.000000000
+#> 8853 0.0020204061 0.0040128411  2.8026823749 1.000000000
+#> 8855 0.0007071421 0.0009028892 -0.4904774679 1.000000000
+#> 8856 0.0013132640 0.0012038523 -0.9882772002 1.000000000
+#> 8857 0.0012122437 0.0006019262  1.1620030853 1.000000000
+#> 8858 0.0030306092 0.0048154093  2.0341499512 1.000000000
+#> 8977 0.0015153046 0.0008025682  1.2160964120 1.000000000
+#> 9085 0.0007071421 0.0008025682 -0.9992736806 1.000000000
+#> 9086 0.0006061218 0.0011035313  0.7540269964 1.000000000
+#> 9087 0.0020204061 0.0005016051  3.7099345909 1.000000000
+#> 9090 0.0024244873 0.0015048154  1.0936730657 1.000000000
+#> 9118 0.0005051015 0.0005016051 -1.2291859562 1.000000000
+#> 9132 0.0005051015 0.0005016051 -1.3174359363 1.000000000
+#> 9134 0.0007071421 0.0005016051 -0.3505021347 1.000000000
+#> 9160 0.0009091827 0.0011035313 -0.5754497994 1.000000000
+#> 9164 0.0005051015 0.0005016051 -1.2456358040 1.000000000
+#> 9165 0.0019193858 0.0011035313  1.1363243500 1.000000000
+#> 9338 0.0006061218 0.0006019262 -1.2553555198 1.000000000
+#> 9412 0.0006061218 0.0008025682 -0.4534492024 1.000000000
+#> 9416 0.0006061218 0.0007022472 -0.9581127409 1.000000000
+#> 9459 0.0009091827 0.0012038523 -0.2892477746 1.000000000
+#> 9461 0.0009091827 0.0015048154  0.6524250785 1.000000000
+#> 9462 0.0006061218 0.0010032103  0.2809200532 1.000000000
+#> 9464 0.0008081624 0.0022070626  2.7065208441 1.000000000
+#> 9468 0.0020204061 0.0008025682  2.6443139320 1.000000000
+#> 9470 0.0008081624 0.0010032103 -0.5440829793 1.000000000
+#> 9474 0.0005051015 0.0009028892  0.5095545715 1.000000000
+#> 9490 0.0020204061 0.0034109149  1.8967979433 1.000000000
+#> 9492 0.0011112234 0.0008025682 -0.2386546209 1.000000000
+#> 9493 0.0018183655 0.0010032103  1.2652450173 1.000000000
+#> 9494 0.0011112234 0.0012038523 -1.0149220176 1.000000000
+#> 9495 0.0028285685 0.0045144462  1.9130357996 1.000000000
+#> 9527 0.0010102031 0.0011035313 -1.0158729482 1.000000000
+#> 9556 0.0015153046 0.0012038523 -0.3312648290 1.000000000
+#> 9559 0.0006061218 0.0009028892 -0.0606283926 1.000000000
+#> 9564 0.0010102031 0.0006019262  0.3745372214 1.000000000
+#> 9565 0.0009091827 0.0007022472 -0.4196846705 1.000000000
+#> 9568 0.0020204061 0.0014044944  0.4821059810 1.000000000
+#> 9605 0.0005051015 0.0006019262 -0.8704529671 1.000000000
+#> 9612 0.0005051015 0.0007022472 -0.3724279539 1.000000000
+#> 9614 0.0006061218 0.0006019262 -1.2524854815 1.000000000
+#> 9630 0.0007071421 0.0007022472 -1.2205713234 1.000000000
+#> 9643 0.0009091827 0.0028089888  3.7177938480 1.000000000
+#> 9644 0.0012122437 0.0013041734 -1.0635376000 1.000000000
+#> 9647 0.0030306092 0.0052166934  2.5740586297 1.000000000
+#> 9655 0.0005051015 0.0010032103  0.9054719494 1.000000000
+#> 9662 0.0008081624 0.0014044944  0.8457244658 1.000000000
+#> 9663 0.0017173452 0.0014044944 -0.4055869698 1.000000000
+#> 9665 0.0006061218 0.0005016051 -0.8984586715 1.000000000
+#> 9668 0.0010102031 0.0007022472 -0.0956222864 1.000000000
+#> 9673 0.0006061218 0.0008025682 -0.4095009557 1.000000000
+#> 9675 0.0005051015 0.0007022472 -0.3455544943 1.000000000
+#> 9678 0.0018183655 0.0056179775  6.0474910936 1.000000000
+#> 9681 0.0019193858 0.0020064205 -1.1634267860 1.000000000
+#> 9682 0.0006061218 0.0013041734  1.3771338892 1.000000000
+#> 9683 0.0031316295 0.0076243981  3.6060076552 1.000000000
+#> 9890 0.0011112234 0.0013041734 -0.6507366925 1.000000000
 ```

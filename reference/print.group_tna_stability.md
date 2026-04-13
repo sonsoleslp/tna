@@ -76,7 +76,7 @@ print(stability)
 #> Centrality Stability Coefficients
 #> 
 #>  InStrength OutStrength Betweenness 
-#>         0.9         0.9         0.0 
+#>         0.7         0.9         0.0 
 #> 
 #> Cluster 3 :
 #> Centrality Stability Coefficients

@@ -2,6 +2,10 @@
 
 ## tna 1.2.1
 
+- Fix bug in `plot.tna_sequence_comparison`
+
+## tna 1.2.1
+
 - The `test` argument of
   [`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md)
   is now `TRUE` by default for backward compatibility.
