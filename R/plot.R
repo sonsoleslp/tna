@@ -270,7 +270,8 @@ plot.tna_cliques <- function(x, n = 6, first = 1, show_loops = FALSE,
       x = clique_weights,
       labels = colnames(clique_weights),
       node_fill = colors[match(rownames(clique_weights), labels)],
-      donut_fill = x$inits[[i]]
+      donut_fill = x$inits[[i]],
+      edge_labels = TRUE
     )
     plot_args <- utils::modifyList(plot_args, list(...))
     do.call(cograph::splot, args = plot_args)
@@ -489,6 +490,8 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #'   the difference in edge weights is positive. See [cograph::splot()].
 #' @param negCol Color for plotting edges when
 #'   the the difference in edge weights is negative. See [cograph::splot()].
+#' @param edge_labels Boolean indicating whether edge labels should be 
+#'   ploted. Defaults to `TRUE`
 #' @return A `cograph_network` object containing only the significant edges
 #'   according to the permutation test.
 #' @examples
@@ -499,7 +502,9 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' plot(perm)
 #'
 plot.tna_permutation <- function(x, colors,
-                                 posCol = "#009900", negCol = "red", ...) {
+                                 posCol = "#009900", 
+                                 negCol = "red", 
+                                 edge_labels = TRUE, ...) {
   check_missing(x)
   check_class(x, "tna_permutation")
   colors <- colors %m% attr(x, "colors")
@@ -509,6 +514,7 @@ plot.tna_permutation <- function(x, colors,
     colors = colors,
     edge_positive_color = posCol,
     edge_negative_color = negCol,
+    edge_labels = edge_labels,
     ...
   )
 }
@@ -1118,23 +1124,8 @@ plot_compare.tna <- function(x, y, posCol = "#009900", negCol = "red", ...) {
     all(x$labels == y$labels),
     "{.arg x} and {.arg y} must have the same labels."
   )
-  pie <- abs(x$inits - y$inits)
-  piesign <- ifelse(x$inits > y$inits, posCol, negCol)
-  diff <- build_model_(
-    x$weights - y$weights,
-    type = attr(x, "type"),
-    labels = x$labels,
-    inits = pie
-  )
-  weights_abs <- abs(x$weights)
-  q <- stats::quantile(weights_abs, probs = c(0.2, 0.3))
-  plot.tna(
-    x = diff,
-    donut_fill = pie,
-    donut_color = piesign,
-    edge_positive_color = posCol,
-    edge_negative_color = negCol,
-    ...
+  cograph::plot_compare(
+    x = x, y = y, pos_color = posCol, neg_color = negCol, ...
   )
 }
 
@@ -1979,21 +1970,22 @@ plot.group_tna_permutation <- function(x, title, ...) {
 #' @family comparison
 #' @param x A `group_tna` object.
 #' @param i An `integer` index or the name of the principal cluster as a
-#' `character` string.
+#'   `character` string. When `NULL`, defaults are chosen automatically (see
+#'   [cograph::plot_compare()]).
 #' @param j An `integer` index or the name of the secondary cluster as a
-#' `character` string.
-#' @param ... Additional arguments passed to [plot_compare.tna()].
+#'   `character` string. When `NULL`, defaults are chosen automatically (see
+#'   [cograph::plot_compare()]).
+#' @param ... Additional arguments passed to [cograph::plot_compare()].
 #' @return A `cograph_network` object displaying the difference network between
 #'   the two clusters
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' plot_compare(model)
 #'
-plot_compare.group_tna <- function(x, i = 1L, j = 2L, ...) {
+plot_compare.group_tna <- function(x, i = NULL, j = NULL, ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  check_clusters(x, i, j)
-  plot_compare(x = x[[i]], y = x[[j]], ...)
+  cograph::plot_compare(x = x, i = i, j = j, ...)
 }
 
 #' Plot the Frequency Distribution of States

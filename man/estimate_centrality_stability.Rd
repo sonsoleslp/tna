@@ -20,7 +20,8 @@ estimate_cs(
   drop_prop,
   threshold,
   certainty,
-  progressbar
+  progressbar = NULL,
+  detailed = NULL
 )
 
 estimate_centrality_stability(
@@ -34,7 +35,8 @@ estimate_centrality_stability(
   drop_prop,
   threshold,
   certainty,
-  progressbar
+  progressbar = NULL,
+  detailed = NULL
 )
 
 \method{estimate_cs}{tna}(
@@ -48,7 +50,8 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 
 \method{estimate_centrality_stability}{tna}(
@@ -62,7 +65,8 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 
 \method{estimate_cs}{group_tna}(
@@ -76,7 +80,8 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 
 \method{estimate_centrality_stability}{group_tna}(
@@ -90,7 +95,8 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 }
 \arguments{
@@ -129,6 +135,9 @@ for the CS-coefficient. Default is 0.95.}
 
 \item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed
 Defaults to \code{FALSE}}
+
+\item{detailed}{Deprecated. This argument is ignored and will be removed in
+a future version.}
 }
 \value{
 A \code{tna_stability} object which is a \code{list} with an element for each

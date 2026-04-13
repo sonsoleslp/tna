@@ -4,7 +4,7 @@
 \alias{plot.tna_permutation}
 \title{Plot the Significant Differences from a Permutation Test}
 \usage{
-\method{plot}{tna_permutation}(x, colors, posCol = "#009900", negCol = "red", ...)
+\method{plot}{tna_permutation}(x, colors, posCol = "#009900", negCol = "red", edge_labels = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{tna_permutation} object.}
@@ -16,6 +16,9 @@ the difference in edge weights is positive. See \code{\link[cograph:splot]{cogra
 
 \item{negCol}{Color for plotting edges when
 the the difference in edge weights is negative. See \code{\link[cograph:splot]{cograph::splot()}}.}
+
+\item{edge_labels}{Boolean indicating whether edge labels should be
+ploted. Defaults to \code{TRUE}}
 
 \item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
 }

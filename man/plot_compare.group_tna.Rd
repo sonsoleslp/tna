@@ -4,18 +4,20 @@
 \alias{plot_compare.group_tna}
 \title{Plot the Difference Network Between Two Groups}
 \usage{
-\method{plot_compare}{group_tna}(x, i = 1L, j = 2L, ...)
+\method{plot_compare}{group_tna}(x, i = NULL, j = NULL, ...)
 }
 \arguments{
 \item{x}{A \code{group_tna} object.}
 
 \item{i}{An \code{integer} index or the name of the principal cluster as a
-\code{character} string.}
+\code{character} string. When \code{NULL}, defaults are chosen automatically (see
+\code{\link[cograph:plot_compare]{cograph::plot_compare()}}).}
 
 \item{j}{An \code{integer} index or the name of the secondary cluster as a
-\code{character} string.}
+\code{character} string. When \code{NULL}, defaults are chosen automatically (see
+\code{\link[cograph:plot_compare]{cograph::plot_compare()}}).}
 
-\item{...}{Additional arguments passed to \code{\link[=plot_compare.tna]{plot_compare.tna()}}.}
+\item{...}{Additional arguments passed to \code{\link[cograph:plot_compare]{cograph::plot_compare()}}.}
 }
 \value{
 A \code{cograph_network} object displaying the difference network between

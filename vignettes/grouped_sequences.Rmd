@@ -26,7 +26,9 @@ suppressPackageStartupMessages({
 })
 ```
 
-TNA also enables the analysis of transition networks constructed from grouped sequence data. In this example, we first fit a mixed Markov model to the `engagement` data using the `seqHMM` package and build a grouped TNA model based on this model. First, we load the packages we will use for this example.
+TNA supports the analysis of transition networks constructed from grouped sequence data. Groups can be defined in several ways, but mainly: using a pre-existing grouping variable in the data (e.g., a demographic or experimental condition), or by clustering the sequences themselves based on their similarity. This vignette demonstrates both approaches using the `group_regulation_long` dataset.
+
+First, we load the packages we will use for this example.
 
 ```{r, eval = FALSE}
 library("tna")
@@ -34,64 +36,116 @@ library("tibble")
 library("dplyr")
 library("gt")
 library("seqHMM")
-data("engagement", package = "tna")
 ```
 
-We simulate transition probabilities to initialize the model.
-```{r, eval = FALSE}
-set.seed(265)
-tna_model <- tna(engagement)
-n_var <- length(tna_model$labels)
-n_clusters <- 3
-trans_probs <- simulate_transition_probs(n_var, n_clusters)
-init_probs <- list(
-  c(0.70, 0.20, 0.10),
-  c(0.15, 0.70, 0.15),
-  c(0.10, 0.20, 0.70)
+## Data preparation
+
+We import the data in long format and prepare it for analysis. The `prepare_data()` function converts the long-format event log into wide-format sequences. The unused columns in the dataset are stored in the metadata of `prepared` and we can use them later on.
+
+```{r, message = F}
+data("group_regulation_long", package = "tna")
+prepared <- prepare_data(group_regulation_long,
+                         actor = "Actor",
+                         action = "Action",
+                         time = "Time")
+```
+
+## Groups from a pre-existing variable
+
+When the data contains a grouping variable, we can build separate TNA models for each group directly. Here, the `"Achiever"` column in the metadata splits the sequences into two groups (high vs. low achievers).
+
+```{r, fig.width=9, fig.height=4}
+layout(t(1:2))
+achievers <- group_tna(prepared, group = "Achiever")
+plot(achievers)
+```
+
+### Comparing groups
+
+The `plot_compare()` function visualizes the difference network between the two groups. Green edges and donut segments indicate that the first group (High achievers) has higher values, while red indicates the opposite (Low achievers have higher values).
+
+```{r}
+plot_compare(achievers)
+```
+
+### Permutation test
+
+A permutation test can be used to assess whether the observed differences between the two groups are statistically significant.
+
+```{r}
+permutation_test_results <- permutation_test(achievers)
+plot(permutation_test_results)
+```
+
+### Subsequence comparison
+
+We can also compare the frequency of subsequences across groups. Here we look at subsequences of length 3 to 5, keeping only those that appear at least 5 times, and apply FDR correction for multiple comparisons.
+
+```{r}
+subsequence_comparison  <- compare_sequences(achievers,
+                                                  sub = 3:5,
+                                                  min_freq = 5,
+                                                  correction = "fdr")
+plot(subsequence_comparison, cells = TRUE)
+```
+
+## Groups from sequence clustering
+
+When no pre-existing grouping variable is available, we can cluster the sequences based on their pairwise dissimilarity. The `cluster_sequences()`.
+
+```{r}
+clustering_results <- cluster_sequences(prepared, k = 3)
+```
+
+To choose an appropriate number of clusters, we can plot the silhouette score for different values of *k*. Higher silhouette values indicate better-separated clusters.
+
+```{r}
+plot(
+  2:8,
+  sapply(2:8, \(k) cluster_sequences(prepared, k = k)$silhouette),
+  type = "b",
+  xlab = "Number of clusters (k)",
+  ylab = "Silhouette",
+  xaxt = "n"
 )
 ```
 
-Next, we build and fit the model (this step takes some time to compute, the final model object is also available in the `tna` package as `engagement_mmm`).
-```{r, eval = FALSE}
-mmm <- build_mmm(
-  engagement,
-  transition_probs = trans_probs,
-  initial_probs = init_probs
-)
-fit_mmm <- fit_model(
-  modelTrans,
-  global_step = TRUE,
-  control_global = list(algorithm = "NLOPT_GD_STOGO_RAND"),
-  local_step = TRUE,
-  threads = 60,
-  control_em = list(restart = list(times = 100, n_optimum = 101))
-)
+Once we have chosen *k*, we build the grouped TNA model using the cluster assignments.
+
+```{r}
+tna_model_clus <- group_tna(prepared, group = clustering_results$assignments)
 ```
 
-Now, we create a new model using the cluster information from the model. Alternatively, if sequence data is provided to `group_model()`, the group assignments can be provided with the `group` argument.
-```{r, eval = TRUE, echo = FALSE}
-tna_model_clus <- group_model(engagement_mmm)
+```{r, fig.width=9, fig.height=9}
+layout(matrix(1:4, byrow = T, ncol = 2))
+plot(tna_model_clus)
 ```
 
-```{r, eval = FALSE}
-tna_model_clus <- group_model(fit_mmm$model)
-```
+### Summarizing the cluster-specific models
 
-We can summarize the cluster-specific models
+We can summarize the cluster-specific models to compare their overall characteristics.
+
 ```{r}
 summary(tna_model_clus) |>
   gt() |>
   fmt_number(decimals = 2)
 ```
 
-and their initial probabilities
+Initial probabilities show which states are most common at the start of the sequences in each cluster.
+
 ```{r}
-bind_rows(lapply(tna_model_clus, \(x) x$inits), .id = "Cluster") |>
-  gt() |>
-  fmt_percent()
+mat <- sapply(
+  tna_model_clus,
+  \(x) setNames(x$inits, x$labels)
+)
+
+df <- data.frame(label = rownames(mat), mat, row.names = NULL)
+
+gt(df, rowname_col = "label") |> fmt_percent(columns = -label)
 ```
 
-as well as transition probabilities.
+The full transition probability matrices can also be inspected for each cluster.
+
 ```{r}
 transitions <- lapply(
   tna_model_clus,
@@ -100,33 +154,32 @@ transitions <- lapply(
       data.frame() |>
       rownames_to_column("From\\To") |>
       gt() |>
-      tab_header(title = names(tna_model_clus)[1]) |>
       fmt_percent()
   }
 )
-transitions[[1]]
-transitions[[2]]
-transitions[[3]]
+
+transitions[[1]] |> tab_header(title = names(tna_model_clus)[1])
+transitions[[2]] |> tab_header(title = names(tna_model_clus)[2])
+transitions[[3]] |> tab_header(title = names(tna_model_clus)[3])
 ```
 
-We can also plot the cluster-specific transitions
-```{r, fig.width=6, fig.height=2}
-layout(t(1:3))
-plot(tna_model_clus)
-```
+### Pruning with bootstrap
 
-Just like ordinary TNA models, we can prune the rare transitions
+Just like ordinary TNA models, we can retain only the statistically robust edges.
+
 ```{r}
-pruned_clus <- prune(tna_model_clus, threshold = 0.1)
+cluster_boot <- bootstrap(tna_model_clus)
 ```
 
-and plot the cluster transitions after pruning
-```{r, fig.width=6, fig.height=2, message = FALSE}
-layout(t(1:3))
-plot(pruned_clus)
+```{r, fig.width=9, fig.height=9, message = F}
+layout(matrix(1:4, byrow = T, ncol = 2))
+plot(cluster_boot)
 ```
- 
-Centrality measures can also be computed for each cluster directly.
+
+### Centrality measures
+
+Centrality measures can be computed for each cluster to identify which states play central roles in each group's transition dynamics.
+
 ```{r, fig.width=9, fig.height=4}
 centrality_measures <- c(
   "BetweennessRSP",
@@ -143,3 +196,13 @@ plot(
   colors = c("purple", "orange", "pink")
 )
 ```
+
+### Subsequence comparison across clusters
+
+Finally, we can compare subsequence frequencies across the clusters, just as we did for the pre-existing groups above.
+
+```{r}
+subsequence_comparison  <- compare_sequences(tna_model_clus, sub = 3:5, min_freq = 5, correction = "fdr")
+plot(subsequence_comparison, cells = TRUE)
+```
+

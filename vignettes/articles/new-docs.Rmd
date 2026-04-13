@@ -10,9 +10,8 @@ output:
     highlight: tango
     code_folding: hide
     number_sections: false
-#knit: (function(input, ...) rmarkdown::render(input, output_file = "tna_knit.html", ...))
 ---
-
+#knit: (function(input, ...) rmarkdown::render(input, output_file = "tna_knit.html", ...))
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE, warning = FALSE,
@@ -20,6 +19,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 suppressPackageStartupMessages({
+  library("cograph")
   library("tna")
 })
 ```
@@ -389,7 +389,8 @@ Identify cliques (complete subgraphs) of a given size.
 cliques(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 ```
 
-```{r}
+```{r, fig.width=6, fig.height=2}
+layout(t(1:3))
 model <- tna(group_regulation)
 cliq <- cliques(model, size = 2)
 print(cliq)
@@ -460,8 +461,11 @@ bootstrap(x, iter = 1000, level = 0.05, method = "stability",
 ```{r}
 model <- tna(group_regulation)
 boot <- bootstrap(model, iter = 100)
-print(boot)
 plot(boot)
+
+```
+```{r, fig.height=11}
+plot_bootstrap_forest(boot)
 ```
 
 ## `bootstrap_cliques()`

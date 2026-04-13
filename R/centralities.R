@@ -151,7 +151,8 @@ diffusion <- function(mat) {
 #' @export
 #' @rdname estimate_centrality_stability
 estimate_cs <- function(x, loops, normalize, invert, measures, iter, method,
-                        drop_prop, threshold, certainty, progressbar) {
+                        drop_prop, threshold, certainty, progressbar = NULL, 
+                        detailed = NULL) {
   UseMethod("estimate_cs")
 }
 
@@ -207,7 +208,8 @@ estimate_centrality_stability <- estimate_cs
 #'   for the CS-coefficient. Default is 0.95.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
 #'   Defaults to `FALSE`
-#'
+#' @param detailed Deprecated. This argument is ignored and will be removed in 
+#'   a future version.
 #' @return A `tna_stability` object which is a `list` with an element for each
 #' `measure` with the following elements:
 #'
@@ -235,7 +237,7 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE, invert = TRUE,
                             ), iter = 1000, method = "pearson",
                             drop_prop = seq(0.1, 0.9, by = 0.1),
                             threshold = 0.7, certainty = 0.95,
-                            progressbar = FALSE) {
+                            progressbar = FALSE, detailed = NULL) {
   check_tna_seq(x)
   check_flag(loops)
   check_flag(normalize)
@@ -245,6 +247,9 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE, invert = TRUE,
   check_range(threshold, lower = 0, upper = 1)
   check_range(certainty, lower = 0, upper = 1)
   check_measures(measures)
+  if (!is.null(detailed)) {
+    .Deprecated(msg = "'detailed' is deprecated and will be ignored.")
+  }
   d <- x$data
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
@@ -466,9 +471,12 @@ estimate_cs.group_tna <- function(x, loops = FALSE, normalize = FALSE,
                                   ), iter = 1000, method = "pearson",
                                   drop_prop = seq(0.1, 0.9, by = 0.1),
                                   threshold = 0.7, certainty = 0.95,
-                                  progressbar = FALSE) {
+                                  progressbar = FALSE, detailed = NULL) {
   check_missing(x)
   check_class(x, "group_tna")
+  if (!is.null(detailed)) {
+    .Deprecated(msg = "'detailed' is deprecated and will be ignored.")
+  }
   structure(
     lapply(
       x,

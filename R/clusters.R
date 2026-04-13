@@ -5,7 +5,8 @@
 #' and compared using the dissimilarity measures available in the
 #' `stringdist` package.
 #'
-#' @param data A `data.frame` or a `matrix` in wide format.
+#' @param data A `data.frame`, a `matrix` in wide format, or a `tna_data`
+#'   object (in which case, the sequence data is extracted automatically).
 #' @param k An `integer` giving the number of clusters.
 #' @param dissimilarity A `character` string specifying the
 #'   dissimilarity measure. The available options are: `"osa"`, `"lv"`, `"dl"`,
@@ -51,9 +52,13 @@
 cluster_data <- function(data, k, dissimilarity = "hamming",
                          method = "pam", na_syms = c("*", "%"),
                          weighted = FALSE, lambda = 1.0, ...) {
+  if (inherits(data, "tna_data")) {
+    data <- data$sequence_data
+  }
   stopifnot_(
     is.data.frame(data) || is.matrix(data),
-    "Argument {.arg data} must be a {.cls data.frame} or a {.cls matrix}."
+    "Argument {.arg data} must be a {.cls data.frame}, a {.cls matrix},
+    or a {.cls tna_data} object."
   )
   check_range(k, type = "integer", lower = 2L, upper = nrow(data) - 1L)
   dissimilarity <- check_match(dissimilarity, available_clustering_metrics)

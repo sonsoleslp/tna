@@ -28,7 +28,8 @@ cluster_sequences(
 )
 }
 \arguments{
-\item{data}{A \code{data.frame} or a \code{matrix} in wide format.}
+\item{data}{A \code{data.frame}, a \code{matrix} in wide format, or a \code{tna_data}
+object (in which case, the sequence data is extracted automatically).}
 
 \item{k}{An \code{integer} giving the number of clusters.}
 
