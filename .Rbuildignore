@@ -9,6 +9,7 @@
 ^Meta$
 ^_pkgdown\.yml$
 ^docs$
+^\.claude$
 ^pkgdown$
 Rplots.pdf
 ^doc$

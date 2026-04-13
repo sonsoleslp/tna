@@ -103,10 +103,11 @@ plot.tna <- function(x, node_list, use_list_order = TRUE,
   )
   args <- list(...)
   args$node_size <- ifelse_(
-    is.null(args$node_size),
+    is.null(args$node_size) & is.null(args$vsize),
     rep(8 * exp(-n / 80)),
-    args$node_size
+    args$node_size | args$vsize
   )
+ 
   if (length(scale_nodes) > 0) {
     check_string(scale_nodes)
     check_range(scaling_factor, lower = 0)
@@ -158,6 +159,7 @@ plot.tna <- function(x, node_list, use_list_order = TRUE,
       `x` = "No group has been specified for node{?s} {.val {missing}}."
     )
   )
+  
   args$vsize <- args$node_size
   args$node_size <- NULL
   args$use_list_order <- use_list_order
@@ -180,7 +182,11 @@ plot.tna <- function(x, node_list, use_list_order = TRUE,
 plot.tna_bootstrap <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna_bootstrap")
-  plot(x$model, ...)
+  if (requireNamespace("cograph", quietly = TRUE)) {
+    cograph::splot(x, ...)
+  } else {
+    plot(x$model, ...)
+  }
 }
 
 #' Plot Centrality Measures
@@ -681,7 +687,7 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
   expected <- outer(rs, cs) / n
   v <- function(r, c, n) c * r * (n - r) * (n - c) / n^3
   cell_var <- outer(rs, cs, v, n)
-  resid <- (x - expected) / cell_var
+  resid <- (x - expected) / sqrt(cell_var)
   n <- nrow(resid)
   m <- ncol(resid)
   d <- data.frame(xmin = rep(0.0, n * m), xmax = 0.0, ymin = 0.0, ymax = 0.0)
