@@ -6,7 +6,7 @@ Plot the Significant Differences from a Permutation Test
 
 ``` r
 # S3 method for class 'tna_permutation'
-plot(x, colors, posCol = "#009900", negCol = "red", ...)
+plot(x, colors, posCol = "#009900", negCol = "red", edge_labels = TRUE, ...)
 ```
 
 ## Arguments
@@ -31,6 +31,11 @@ plot(x, colors, posCol = "#009900", negCol = "red", ...)
   Color for plotting edges when the the difference in edge weights is
   negative. See
   [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+
+- edge_labels:
+
+  Boolean indicating whether edge labels should be ploted. Defaults to
+  `TRUE`
 
 - ...:
 

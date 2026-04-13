@@ -35,7 +35,8 @@ cluster_sequences(
 
 - data:
 
-  A `data.frame` or a `matrix` in wide format.
+  A `data.frame`, a `matrix` in wide format, or a `tna_data` object (in
+  which case, the sequence data is extracted automatically).
 
 - k:
 

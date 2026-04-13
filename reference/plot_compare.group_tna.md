@@ -6,7 +6,7 @@ Plot the Difference Network Between Two Groups
 
 ``` r
 # S3 method for class 'group_tna'
-plot_compare(x, i = 1L, j = 2L, ...)
+plot_compare(x, i = NULL, j = NULL, ...)
 ```
 
 ## Arguments
@@ -18,17 +18,21 @@ plot_compare(x, i = 1L, j = 2L, ...)
 - i:
 
   An `integer` index or the name of the principal cluster as a
-  `character` string.
+  `character` string. When `NULL`, defaults are chosen automatically
+  (see
+  [`cograph::plot_compare()`](http://sonsoles.me/cograph/reference/plot_compare.md)).
 
 - j:
 
   An `integer` index or the name of the secondary cluster as a
-  `character` string.
+  `character` string. When `NULL`, defaults are chosen automatically
+  (see
+  [`cograph::plot_compare()`](http://sonsoles.me/cograph/reference/plot_compare.md)).
 
 - ...:
 
   Additional arguments passed to
-  [`plot_compare.tna()`](http://sonsoles.me/tna/reference/plot_compare.md).
+  [`cograph::plot_compare()`](http://sonsoles.me/cograph/reference/plot_compare.md).
 
 ## Value
 

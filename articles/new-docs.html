@@ -78,6 +78,8 @@ Network Analysis</h3>
 
     
     
+<p>#knit: (function(input, …) rmarkdown::render(input, output_file =
+“tna_knit.html”, …))</p>
 <hr>
 <p><strong>tna</strong> provides tools for performing Transition Network
 Analysis (TNA) to study relational dynamics. Build Markov models from
@@ -902,7 +904,8 @@ data.</p>
 <p>Identify cliques (complete subgraphs) of a given size.</p>
 <pre><code><span><span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">x</span>, size <span class="op">=</span> <span class="fl">2</span>, threshold <span class="op">=</span> <span class="fl">0</span>, sum_weights <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">cliq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">model</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cliq</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Number of 2-cliques = 35 (weight threshold = 0)</span></span>
@@ -939,7 +942,7 @@ data.</p>
 <span><span class="co">#&gt; plan    0.06789021 0.37420822</span></span></code></pre>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliq</span>, n <span class="op">=</span> <span class="fl">3</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-26-2.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-26-3.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="" width="1080"></p>
 <hr>
 </div>
 </div>
@@ -1106,182 +1109,18 @@ significance.</p>
 <div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Significant Edges</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;          from         to      weight    p_value    cr_lower    cr_upper</span></span>
-<span><span class="co">#&gt; 5     discuss      adapt 0.071374336 0.00990099 0.053530752 0.089217920</span></span>
-<span><span class="co">#&gt; 9   synthesis      adapt 0.234662577 0.00990099 0.175996933 0.293328221</span></span>
-<span><span class="co">#&gt; 10      adapt   cohesion 0.273084479 0.00990099 0.204813360 0.341355599</span></span>
-<span><span class="co">#&gt; 12  consensus   cohesion 0.014852267 0.02970297 0.011139201 0.018565334</span></span>
-<span><span class="co">#&gt; 13 coregulate   cohesion 0.036040609 0.02970297 0.027030457 0.045050761</span></span>
-<span><span class="co">#&gt; 14    discuss   cohesion 0.047582890 0.00990099 0.035687168 0.059478613</span></span>
-<span><span class="co">#&gt; 15    emotion   cohesion 0.325343673 0.00990099 0.244007755 0.406679591</span></span>
-<span><span class="co">#&gt; 16    monitor   cohesion 0.055826936 0.01980198 0.041870202 0.069783671</span></span>
-<span><span class="co">#&gt; 17       plan   cohesion 0.025174598 0.00990099 0.018880949 0.031468248</span></span>
-<span><span class="co">#&gt; 19      adapt  consensus 0.477406680 0.00990099 0.358055010 0.596758350</span></span>
-<span><span class="co">#&gt; 20   cohesion  consensus 0.497935103 0.00990099 0.373451327 0.622418879</span></span>
-<span><span class="co">#&gt; 21  consensus  consensus 0.082003476 0.00990099 0.061502607 0.102504345</span></span>
-<span><span class="co">#&gt; 22 coregulate  consensus 0.134517766 0.00990099 0.100888325 0.168147208</span></span>
-<span><span class="co">#&gt; 23    discuss  consensus 0.321184510 0.00990099 0.240888383 0.401480638</span></span>
-<span><span class="co">#&gt; 24    emotion  consensus 0.320408883 0.00990099 0.240306662 0.400511103</span></span>
-<span><span class="co">#&gt; 25    monitor  consensus 0.159106769 0.00990099 0.119330077 0.198883461</span></span>
-<span><span class="co">#&gt; 26       plan  consensus 0.290401169 0.00990099 0.217800877 0.363001462</span></span>
-<span><span class="co">#&gt; 27  synthesis  consensus 0.466257669 0.00990099 0.349693252 0.582822086</span></span>
-<span><span class="co">#&gt; 29   cohesion coregulate 0.119174041 0.00990099 0.089380531 0.148967552</span></span>
-<span><span class="co">#&gt; 30  consensus coregulate 0.187707379 0.00990099 0.140780534 0.234634223</span></span>
-<span><span class="co">#&gt; 32    discuss coregulate 0.084282460 0.00990099 0.063211845 0.105353075</span></span>
-<span><span class="co">#&gt; 33    emotion coregulate 0.034191047 0.02970297 0.025643285 0.042738809</span></span>
-<span><span class="co">#&gt; 34    monitor coregulate 0.057920447 0.04950495 0.043440335 0.072400558</span></span>
-<span><span class="co">#&gt; 35       plan coregulate 0.017216177 0.02970297 0.012912133 0.021520221</span></span>
-<span><span class="co">#&gt; 38   cohesion    discuss 0.059587021 0.03960396 0.044690265 0.074483776</span></span>
-<span><span class="co">#&gt; 39  consensus    discuss 0.188023384 0.00990099 0.141017538 0.235029231</span></span>
-<span><span class="co">#&gt; 40 coregulate    discuss 0.273604061 0.00990099 0.205203046 0.342005076</span></span>
-<span><span class="co">#&gt; 41    discuss    discuss 0.194887370 0.00990099 0.146165528 0.243609213</span></span>
-<span><span class="co">#&gt; 42    emotion    discuss 0.101868171 0.00990099 0.076401128 0.127335213</span></span>
-<span><span class="co">#&gt; 43    monitor    discuss 0.375436148 0.00990099 0.281577111 0.469295185</span></span>
-<span><span class="co">#&gt; 44       plan    discuss 0.067890206 0.00990099 0.050917655 0.084862758</span></span>
-<span><span class="co">#&gt; 46      adapt    emotion 0.119842829 0.02970297 0.089882122 0.149803536</span></span>
-<span><span class="co">#&gt; 47   cohesion    emotion 0.115634218 0.00990099 0.086725664 0.144542773</span></span>
-<span><span class="co">#&gt; 48  consensus    emotion 0.072681308 0.00990099 0.054510981 0.090851635</span></span>
-<span><span class="co">#&gt; 49 coregulate    emotion 0.172081218 0.00990099 0.129060914 0.215101523</span></span>
-<span><span class="co">#&gt; 50    discuss    emotion 0.105796001 0.00990099 0.079347001 0.132245001</span></span>
-<span><span class="co">#&gt; 51    emotion    emotion 0.076841734 0.00990099 0.057631301 0.096052168</span></span>
-<span><span class="co">#&gt; 52    monitor    emotion 0.090718772 0.00990099 0.068039079 0.113398465</span></span>
-<span><span class="co">#&gt; 53       plan    emotion 0.146824752 0.00990099 0.110118564 0.183530940</span></span>
-<span><span class="co">#&gt; 56   cohesion    monitor 0.033038348 0.00990099 0.024778761 0.041297935</span></span>
-<span><span class="co">#&gt; 57  consensus    monitor 0.046610839 0.00990099 0.034958129 0.058263549</span></span>
-<span><span class="co">#&gt; 58 coregulate    monitor 0.086294416 0.00990099 0.064720812 0.107868020</span></span>
-<span><span class="co">#&gt; 59    discuss    monitor 0.022272842 0.01980198 0.016704632 0.027841053</span></span>
-<span><span class="co">#&gt; 60    emotion    monitor 0.036305957 0.02970297 0.027229468 0.045382446</span></span>
-<span><span class="co">#&gt; 62       plan    monitor 0.075523794 0.00990099 0.056642846 0.094404743</span></span>
-<span><span class="co">#&gt; 65   cohesion       plan 0.141002950 0.00990099 0.105752212 0.176253687</span></span>
-<span><span class="co">#&gt; 66  consensus       plan 0.395797124 0.00990099 0.296847843 0.494746405</span></span>
-<span><span class="co">#&gt; 67 coregulate       plan 0.239086294 0.00990099 0.179314721 0.298857868</span></span>
-<span><span class="co">#&gt; 69    emotion       plan 0.099753260 0.00990099 0.074814945 0.124691576</span></span>
-<span><span class="co">#&gt; 70    monitor       plan 0.215631542 0.00990099 0.161723657 0.269539428</span></span>
-<span><span class="co">#&gt; 71       plan       plan 0.374208218 0.00990099 0.280656164 0.467760273</span></span>
-<span><span class="co">#&gt; 75  consensus  synthesis 0.007584137 0.03960396 0.005688102 0.009480171</span></span>
-<span><span class="co">#&gt; 77    discuss  synthesis 0.140976968 0.00990099 0.105732726 0.176221210</span></span>
-<span><span class="co">#&gt;      ci_lower    ci_upper</span></span>
-<span><span class="co">#&gt; 5  0.06407889 0.079344928</span></span>
-<span><span class="co">#&gt; 9  0.20262467 0.264048305</span></span>
-<span><span class="co">#&gt; 10 0.24380220 0.314926878</span></span>
-<span><span class="co">#&gt; 12 0.01193752 0.018068638</span></span>
-<span><span class="co">#&gt; 13 0.02952048 0.044112519</span></span>
-<span><span class="co">#&gt; 14 0.04280475 0.053696710</span></span>
-<span><span class="co">#&gt; 15 0.30818151 0.342433084</span></span>
-<span><span class="co">#&gt; 16 0.04542922 0.064855990</span></span>
-<span><span class="co">#&gt; 17 0.02135775 0.028599051</span></span>
-<span><span class="co">#&gt; 19 0.43259186 0.519204837</span></span>
-<span><span class="co">#&gt; 20 0.47311528 0.526584348</span></span>
-<span><span class="co">#&gt; 21 0.07543133 0.088993732</span></span>
-<span><span class="co">#&gt; 22 0.11755793 0.146710534</span></span>
-<span><span class="co">#&gt; 23 0.30940929 0.334669305</span></span>
-<span><span class="co">#&gt; 24 0.30239585 0.344578689</span></span>
-<span><span class="co">#&gt; 25 0.14216494 0.179275984</span></span>
-<span><span class="co">#&gt; 26 0.27704422 0.299862613</span></span>
-<span><span class="co">#&gt; 27 0.42656828 0.502648353</span></span>
-<span><span class="co">#&gt; 29 0.10566010 0.137197312</span></span>
-<span><span class="co">#&gt; 30 0.17851849 0.197319481</span></span>
-<span><span class="co">#&gt; 32 0.07678818 0.093205612</span></span>
-<span><span class="co">#&gt; 33 0.02854022 0.041050446</span></span>
-<span><span class="co">#&gt; 34 0.04829558 0.073368129</span></span>
-<span><span class="co">#&gt; 35 0.01375824 0.020252806</span></span>
-<span><span class="co">#&gt; 38 0.04987027 0.071966294</span></span>
-<span><span class="co">#&gt; 39 0.17650930 0.197521347</span></span>
-<span><span class="co">#&gt; 40 0.25792588 0.294943074</span></span>
-<span><span class="co">#&gt; 41 0.18333907 0.207986047</span></span>
-<span><span class="co">#&gt; 42 0.09196349 0.115948320</span></span>
-<span><span class="co">#&gt; 43 0.35770062 0.397109371</span></span>
-<span><span class="co">#&gt; 44 0.06080519 0.075366257</span></span>
-<span><span class="co">#&gt; 46 0.09246119 0.147375312</span></span>
-<span><span class="co">#&gt; 47 0.09993669 0.128714912</span></span>
-<span><span class="co">#&gt; 48 0.06691024 0.078537406</span></span>
-<span><span class="co">#&gt; 49 0.15404252 0.187475446</span></span>
-<span><span class="co">#&gt; 50 0.09607444 0.114939118</span></span>
-<span><span class="co">#&gt; 51 0.06651007 0.086992191</span></span>
-<span><span class="co">#&gt; 52 0.07796681 0.106183534</span></span>
-<span><span class="co">#&gt; 53 0.13876175 0.156942499</span></span>
-<span><span class="co">#&gt; 56 0.02632770 0.040716148</span></span>
-<span><span class="co">#&gt; 57 0.04158792 0.052427852</span></span>
-<span><span class="co">#&gt; 58 0.07501262 0.101438198</span></span>
-<span><span class="co">#&gt; 59 0.01763099 0.025829327</span></span>
-<span><span class="co">#&gt; 60 0.02973201 0.044847101</span></span>
-<span><span class="co">#&gt; 62 0.06829108 0.080602613</span></span>
-<span><span class="co">#&gt; 65 0.12200665 0.159920483</span></span>
-<span><span class="co">#&gt; 66 0.38459224 0.408894398</span></span>
-<span><span class="co">#&gt; 67 0.22235480 0.255320592</span></span>
-<span><span class="co">#&gt; 69 0.08994246 0.109128945</span></span>
-<span><span class="co">#&gt; 70 0.19349054 0.235120538</span></span>
-<span><span class="co">#&gt; 71 0.36318028 0.386516509</span></span>
-<span><span class="co">#&gt; 75 0.00586061 0.009504858</span></span>
-<span><span class="co">#&gt; 77 0.13132376 0.153049585</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Non-significant Edges</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;          from         to       weight    p_value     cr_lower    cr_upper</span></span>
-<span><span class="co">#&gt; 2    cohesion      adapt 0.0029498525 0.48514851 0.0022123894 0.003687316</span></span>
-<span><span class="co">#&gt; 3   consensus      adapt 0.0047400853 0.13861386 0.0035550640 0.005925107</span></span>
-<span><span class="co">#&gt; 4  coregulate      adapt 0.0162436548 0.15841584 0.0121827411 0.020304569</span></span>
-<span><span class="co">#&gt; 6     emotion      adapt 0.0024673951 0.49504950 0.0018505464 0.003084244</span></span>
-<span><span class="co">#&gt; 7     monitor      adapt 0.0111653873 0.38613861 0.0083740405 0.013956734</span></span>
-<span><span class="co">#&gt; 8        plan      adapt 0.0009745006 0.52475248 0.0007308754 0.001218126</span></span>
-<span><span class="co">#&gt; 11   cohesion   cohesion 0.0271386431 0.12871287 0.0203539823 0.033923304</span></span>
-<span><span class="co">#&gt; 18  synthesis   cohesion 0.0337423313 0.18811881 0.0253067485 0.042177914</span></span>
-<span><span class="co">#&gt; 28      adapt coregulate 0.0216110020 0.39603960 0.0162082515 0.027013752</span></span>
-<span><span class="co">#&gt; 31 coregulate coregulate 0.0233502538 0.07920792 0.0175126904 0.029187817</span></span>
-<span><span class="co">#&gt; 36  synthesis coregulate 0.0444785276 0.21782178 0.0333588957 0.055598160</span></span>
-<span><span class="co">#&gt; 37      adapt    discuss 0.0589390963 0.14851485 0.0442043222 0.073673870</span></span>
-<span><span class="co">#&gt; 45  synthesis    discuss 0.0628834356 0.09900990 0.0471625767 0.078604294</span></span>
-<span><span class="co">#&gt; 54  synthesis    emotion 0.0705521472 0.07920792 0.0529141104 0.088190184</span></span>
-<span><span class="co">#&gt; 55      adapt    monitor 0.0333988212 0.24752475 0.0250491159 0.041748527</span></span>
-<span><span class="co">#&gt; 61    monitor    monitor 0.0181437544 0.18811881 0.0136078158 0.022679693</span></span>
-<span><span class="co">#&gt; 63  synthesis    monitor 0.0122699387 0.46534653 0.0092024540 0.015337423</span></span>
-<span><span class="co">#&gt; 64      adapt       plan 0.0157170923 0.42574257 0.0117878193 0.019646365</span></span>
-<span><span class="co">#&gt; 68    discuss       plan 0.0116426221 0.11881188 0.0087319666 0.014553278</span></span>
-<span><span class="co">#&gt; 72  synthesis       plan 0.0751533742 0.10891089 0.0563650307 0.093941718</span></span>
-<span><span class="co">#&gt; 74   cohesion  synthesis 0.0035398230 0.51485149 0.0026548673 0.004424779</span></span>
-<span><span class="co">#&gt; 76 coregulate  synthesis 0.0187817259 0.12871287 0.0140862944 0.023477157</span></span>
-<span><span class="co">#&gt; 78    emotion  synthesis 0.0028198802 0.41584158 0.0021149101 0.003524850</span></span>
-<span><span class="co">#&gt; 79    monitor  synthesis 0.0160502442 0.26732673 0.0120376832 0.020062805</span></span>
-<span><span class="co">#&gt; 80       plan  synthesis 0.0017865844 0.41584158 0.0013399383 0.002233230</span></span>
-<span><span class="co">#&gt;        ci_lower    ci_upper</span></span>
-<span><span class="co">#&gt; 2  0.0005753743 0.005349977</span></span>
-<span><span class="co">#&gt; 3  0.0034687585 0.006278361</span></span>
-<span><span class="co">#&gt; 4  0.0098108520 0.020646139</span></span>
-<span><span class="co">#&gt; 6  0.0010528071 0.004212903</span></span>
-<span><span class="co">#&gt; 7  0.0057816442 0.015234127</span></span>
-<span><span class="co">#&gt; 8  0.0001632893 0.001757592</span></span>
-<span><span class="co">#&gt; 11 0.0202648251 0.035016631</span></span>
-<span><span class="co">#&gt; 18 0.0229575499 0.046770918</span></span>
-<span><span class="co">#&gt; 28 0.0079738048 0.034568888</span></span>
-<span><span class="co">#&gt; 31 0.0174920382 0.030689101</span></span>
-<span><span class="co">#&gt; 36 0.0255617245 0.062541457</span></span>
-<span><span class="co">#&gt; 37 0.0420007471 0.077659237</span></span>
-<span><span class="co">#&gt; 45 0.0431674805 0.082822958</span></span>
-<span><span class="co">#&gt; 54 0.0532226587 0.093211422</span></span>
-<span><span class="co">#&gt; 55 0.0198099674 0.050070748</span></span>
-<span><span class="co">#&gt; 61 0.0100512338 0.024489377</span></span>
-<span><span class="co">#&gt; 63 0.0063206033 0.020124590</span></span>
-<span><span class="co">#&gt; 64 0.0069561163 0.028798166</span></span>
-<span><span class="co">#&gt; 68 0.0083982748 0.014872118</span></span>
-<span><span class="co">#&gt; 72 0.0584608476 0.099699375</span></span>
-<span><span class="co">#&gt; 74 0.0005983651 0.005961536</span></span>
-<span><span class="co">#&gt; 76 0.0135304505 0.025452780</span></span>
-<span><span class="co">#&gt; 78 0.0010456607 0.004767214</span></span>
-<span><span class="co">#&gt; 79 0.0096810848 0.024359445</span></span>
-<span><span class="co">#&gt; 80 0.0009564382 0.003008823</span></span></code></pre>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-30-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">plot_bootstrap_forest</span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="bootstrap_cliques">
 <code>bootstrap_cliques()</code><a class="anchor" aria-label="anchor" href="#bootstrap_cliques"></a>
 </h3>
 <p>Bootstrap cliques to assess stability.</p>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap_cliques.html">bootstrap_cliques</a></span><span class="op">(</span><span class="va">model</span>, size <span class="op">=</span> <span class="fl">2</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bc</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;                  clique mean_weight   p_values   sig    cr_lower   cr_upper</span></span>
@@ -1366,7 +1205,7 @@ significance.</p>
 <p>Remove weak edges. Four methods available.</p>
 <pre><code><span><span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"threshold"</span>, threshold <span class="op">=</span> <span class="fl">0.1</span>, lowest <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>      level <span class="op">=</span> <span class="fl">0.5</span>, boot <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pruned_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">model</span>, method <span class="op">=</span> <span class="st">"threshold"</span>, threshold <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
@@ -1432,10 +1271,10 @@ significance.</p>
 <span><span class="co">#&gt; 47    emotion  synthesis 0.0028198802</span></span>
 <span><span class="co">#&gt; 48    monitor  synthesis 0.0160502442</span></span>
 <span><span class="co">#&gt; 49       plan  synthesis 0.0017865844</span></span></code></pre>
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_t</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="" width="1440"></p>
-<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<p><img src="new-docs_files/figure-html/unnamed-chunk-34-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Restore and reapply</span></span>
 <span><span class="va">restored</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprune.html">deprune</a></span><span class="op">(</span><span class="va">pruned_t</span><span class="op">)</span></span>
 <span><span class="va">repruned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reprune.html">reprune</a></span><span class="op">(</span><span class="va">restored</span><span class="op">)</span></span></code></pre></div>
@@ -1452,7 +1291,7 @@ significance.</p>
 <p>Cluster sequences using string distance-based dissimilarity.</p>
 <pre><code><span><span class="fu"><a href="../reference/cluster_data.html">cluster_sequences</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">k</span>, dissimilarity <span class="op">=</span> <span class="st">"hamming"</span>, method <span class="op">=</span> <span class="st">"pam"</span>,</span>
 <span>                  na_syms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"*"</span>, <span class="st">"%"</span><span class="op">)</span>, weighted <span class="op">=</span> <span class="cn">FALSE</span>, lambda <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cluster_data.html">cluster_sequences</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">200</span>, <span class="op">]</span>, k <span class="op">=</span> <span class="fl">3</span>, dissimilarity <span class="op">=</span> <span class="st">"osa"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Clustering method: pam </span></span>
@@ -1461,22 +1300,22 @@ significance.</p>
 <span><span class="co">#&gt; Cluster sizes:</span></span>
 <span><span class="co">#&gt;  1  2  3 </span></span>
 <span><span class="co">#&gt; 63 66 71</span></span></code></pre>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Pass directly to group_model</span></span>
 <span><span class="va">gmodel_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gmodel_clust</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-35-1.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-35-2.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-35-3.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-36-1.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-36-2.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-36-3.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="rename_groups">
 <code>rename_groups()</code><a class="anchor" aria-label="anchor" href="#rename_groups"></a>
 </h3>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
 <span><span class="va">gmodel_renamed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rename_groups.html">rename_groups</a></span><span class="op">(</span><span class="va">gmodel</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Original:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Original: Cluster 1 Cluster 2 Cluster 3</span></span></code></pre>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Renamed:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gmodel_renamed</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Renamed: A B C</span></span></code></pre>
 </div>
@@ -1484,7 +1323,7 @@ significance.</p>
 <h3 id="mmm_stats">
 <code>mmm_stats()</code><a class="anchor" aria-label="anchor" href="#mmm_stats"></a>
 </h3>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmm_stats.html">mmm_stats</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;     cluster    variable  estimate std_error  ci_lower  ci_upper   z_value</span></span>
 <span><span class="co">#&gt; 1 Cluster 2 (Intercept) -2.640329 0.1274911 -2.890207 -2.390451 -20.70991</span></span>
@@ -1502,7 +1341,7 @@ significance.</p>
 <h3 id="summary">
 <code>summary()</code><a class="anchor" aria-label="anchor" href="#summary"></a>
 </h3>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 2</span></span></span>
@@ -1521,7 +1360,7 @@ significance.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree) 1.56<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)  1.56<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                 9.86<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span></code></pre>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 4</span></span></span>
@@ -1545,13 +1384,13 @@ significance.</p>
 <h3 id="as-igraph">
 <code>as.igraph()</code><a class="anchor" aria-label="anchor" href="#as-igraph"></a>
 </h3>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; IGRAPH a83b46d DNW- 9 78 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH 9da4312 DNW- 9 78 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), weight (e/n)</span></span>
-<span><span class="co">#&gt; + edges from a83b46d (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from 9da4312 (vertex names):</span></span>
 <span><span class="co">#&gt;  [1] adapt     -&gt;cohesion   adapt     -&gt;consensus  adapt     -&gt;coregulate</span></span>
 <span><span class="co">#&gt;  [4] adapt     -&gt;discuss    adapt     -&gt;emotion    adapt     -&gt;monitor   </span></span>
 <span><span class="co">#&gt;  [7] adapt     -&gt;plan       cohesion  -&gt;adapt      cohesion  -&gt;cohesion  </span></span>

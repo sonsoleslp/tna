@@ -19,7 +19,8 @@ estimate_cs(
   drop_prop,
   threshold,
   certainty,
-  progressbar
+  progressbar = NULL,
+  detailed = NULL
 )
 
 estimate_centrality_stability(
@@ -33,7 +34,8 @@ estimate_centrality_stability(
   drop_prop,
   threshold,
   certainty,
-  progressbar
+  progressbar = NULL,
+  detailed = NULL
 )
 
 # S3 method for class 'tna'
@@ -48,7 +50,8 @@ estimate_cs(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 
 # S3 method for class 'tna'
@@ -63,7 +66,8 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 
 # S3 method for class 'group_tna'
@@ -78,7 +82,8 @@ estimate_cs(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 
 # S3 method for class 'group_tna'
@@ -93,7 +98,8 @@ estimate_centrality_stability(
   drop_prop = seq(0.1, 0.9, by = 0.1),
   threshold = 0.7,
   certainty = 0.95,
-  progressbar = FALSE
+  progressbar = FALSE,
+  detailed = NULL
 )
 ```
 
@@ -158,6 +164,11 @@ estimate_centrality_stability(
 
   A `logical` value. If `TRUE`, a progress bar is displayed Defaults to
   `FALSE`
+
+- detailed:
+
+  Deprecated. This argument is ignored and will be removed in a future
+  version.
 
 ## Value
 

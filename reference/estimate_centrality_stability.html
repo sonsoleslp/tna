@@ -69,7 +69,8 @@ centralities and those computed using sampled subsets.</p>
 <span>  <span class="va">drop_prop</span>,</span>
 <span>  <span class="va">threshold</span>,</span>
 <span>  <span class="va">certainty</span>,</span>
-<span>  <span class="va">progressbar</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  detailed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">estimate_centrality_stability</span><span class="op">(</span></span>
@@ -83,7 +84,8 @@ centralities and those computed using sampled subsets.</p>
 <span>  <span class="va">drop_prop</span>,</span>
 <span>  <span class="va">threshold</span>,</span>
 <span>  <span class="va">certainty</span>,</span>
-<span>  <span class="va">progressbar</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  detailed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
@@ -98,7 +100,8 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  detailed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'tna'</span></span>
@@ -113,7 +116,8 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  detailed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'group_tna'</span></span>
@@ -128,7 +132,8 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  detailed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'group_tna'</span></span>
@@ -143,7 +148,8 @@ centralities and those computed using sampled subsets.</p>
 <span>  drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  certainty <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  progressbar <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  detailed <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -207,6 +213,11 @@ for the CS-coefficient. Default is 0.95.</p></dd>
 <dt id="arg-progressbar">progressbar<a class="anchor" aria-label="anchor" href="#arg-progressbar"></a></dt>
 <dd><p>A <code>logical</code> value. If <code>TRUE</code>, a progress bar is displayed
 Defaults to <code>FALSE</code></p></dd>
+
+
+<dt id="arg-detailed">detailed<a class="anchor" aria-label="anchor" href="#arg-detailed"></a></dt>
+<dd><p>Deprecated. This argument is ignored and will be removed in
+a future version.</p></dd>
 
 </dl></div>
     <div class="section level2">
