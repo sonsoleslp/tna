@@ -18,7 +18,7 @@ License: MIT + file LICENSE
 URL: https://github.com/sonsoleslp/tna/, http://sonsoles.me/tna/
 BugReports: https://github.com/sonsoleslp/tna/issues/
 Depends:
-    R (>= 4.5.0)
+    R (>= 4.4.0)
 Imports:
     checkmate,
     cli,
