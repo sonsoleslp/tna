@@ -35,7 +35,7 @@ plot(x, colors, method, ...)
 - ...:
 
   Additional arguments passed to
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 ## Value
 

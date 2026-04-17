@@ -168,7 +168,10 @@ the 0–1 range by the <code>scaling = "minmax"</code> argument.</p>
 <h2 id="plotting-the-network">Plotting the Network<a class="anchor" aria-label="anchor" href="#plotting-the-network"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_atna</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_atna</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'cograph':</span></span>
+<span><span class="co">#&gt;   method             from</span></span>
+<span><span class="co">#&gt;   plot.tna_bootstrap tna</span></span></code></pre></div>
 <p><img src="atna_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="100%"></p>
 <p>This produces the same style of network graph you get from
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on a regular TNA model. Nodes are states, edges are

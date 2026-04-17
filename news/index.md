@@ -1,6 +1,8 @@
 # Changelog
 
-## tna 1.2.1
+## tna 1.2.2
+
+CRAN release: 2026-04-15
 
 - Fix bug in `plot.tna_sequence_comparison`
 

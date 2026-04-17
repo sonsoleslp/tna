@@ -48,6 +48,9 @@ print(tna_model)
 #>       plan  synthesis 
 #>     0.2045     0.0195
 plot(tna_model)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna
 ```
 
 ![](communities_and_cliques_files/figure-html/unnamed-chunk-3-1.png)

@@ -78,8 +78,6 @@ Network Analysis</h3>
 
     
     
-<p>#knit: (function(input, …) rmarkdown::render(input, output_file =
-“tna_knit.html”, …))</p>
 <hr>
 <p><strong>tna</strong> provides tools for performing Transition Network
 Analysis (TNA) to study relational dynamics. Build Markov models from
@@ -279,8 +277,8 @@ specify groups again.</p>
 <span>            groupwise <span class="op">=</span> <span class="cn">FALSE</span>, cols <span class="op">=</span> <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>, params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># From mixture Markov model</span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">mmm_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">mmm_model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Cluster 1 :</span></span>
 <span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -332,7 +330,7 @@ specify groups again.</p>
 <span><span class="co">#&gt;     Active    Average Disengaged </span></span>
 <span><span class="co">#&gt;          0          0          1</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mmm_model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 4</span></span></span>
 <span><span class="co">#&gt;    metric                      `Cluster 1` `Cluster 2` `Cluster 3`</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -352,7 +350,7 @@ specify groups again.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Manual groups</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"High"</span>, <span class="fl">1000</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">group_regulation</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">group_regulation</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="sna">
@@ -386,17 +384,16 @@ weight).</p>
 <span>     layout <span class="op">=</span> <span class="st">"circle"</span>, layout_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">scale_nodes</span>, scaling_factor <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>     mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">4</span><span class="op">)</span>, theme <span class="op">=</span> <span class="st">"colorblind"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model</span>, layout <span class="op">=</span> <span class="st">"spring"</span>, scale_nodes <span class="op">=</span> <span class="st">"OutStrength"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Group model — side-by-side panels</span></span>
-<span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Group model — side-by-side panels</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-8-2.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-8-3.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="2160"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_frequencies">
@@ -404,12 +401,10 @@ weight).</p>
 </h3>
 <p>Bar plot of state frequency distribution.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_frequencies.html">plot_frequencies</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_frequencies.html">plot_frequencies</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Group comparison</span></span>
-<span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_frequencies.html">plot_frequencies</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
@@ -420,8 +415,7 @@ weight).</p>
 <p>Mosaic plot with chi-square test results. Requires frequency model
 (<code><a href="../reference/build_model.html">ftna()</a></code>).</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">ftna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_mosaic.html">plot_mosaic</a></span><span class="op">(</span><span class="va">model_f</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_mosaic.html">plot_mosaic</a></span><span class="op">(</span><span class="va">model_f</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
@@ -441,7 +435,6 @@ weight).</p>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Group comparison — pass group_tna directly</span></span>
-<span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_sequences.html">plot_sequences</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
@@ -449,13 +442,18 @@ weight).</p>
 <h3 id="plot_compare">
 <code>plot_compare()</code><a class="anchor" aria-label="anchor" href="#plot_compare"></a>
 </h3>
+<p>Difference network between groups. Just pass the group model
+object.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="1440"></p>
 <p>Difference network between two models. Green = x greater, red = y
 greater.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">model_b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">[</span><span class="fl">1001</span><span class="op">:</span><span class="fl">2000</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_compare.html">plot_compare</a></span><span class="op">(</span><span class="va">model_a</span>, <span class="va">model_b</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="plot_associations">
@@ -463,19 +461,17 @@ greater.</p>
 </h3>
 <p>Association network. Requires frequency model
 (<code><a href="../reference/build_model.html">ftna()</a></code>).</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model_f</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">ftna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_associations.html">plot_associations</a></span><span class="op">(</span><span class="va">model_f</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_associations.html">plot_associations</a></span><span class="op">(</span><span class="va">model_f</span><span class="op">)</span></span></code></pre></div>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="hist">
 <code>hist()</code><a class="anchor" aria-label="anchor" href="#hist"></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-17-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="section level4">
 <h4 id="additional-plot-methods">Additional plot methods<a class="anchor" aria-label="anchor" href="#additional-plot-methods"></a>
 </h4>
@@ -538,7 +534,7 @@ greater.</p>
 <pre><code><span><span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">actor</span>, <span class="va">time</span>, <span class="va">action</span>, <span class="va">order</span>, time_threshold <span class="op">=</span> <span class="fl">900</span>,</span>
 <span>             custom_format <span class="op">=</span> <span class="cn">NULL</span>, is_unix_time <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>             unix_time_unit <span class="op">=</span> <span class="st">"seconds"</span>, unused_fn <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="va"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prepare_data.html">prepare_data</a></span><span class="op">(</span></span>
 <span>  <span class="va">group_regulation_long</span>,</span>
 <span>  actor <span class="op">=</span> <span class="st">"Actor"</span>, time <span class="op">=</span> <span class="st">"Time"</span>, action <span class="op">=</span> <span class="st">"Action"</span></span>
@@ -612,9 +608,8 @@ data.</p>
 </h3>
 <p>Simulate sequence data from a TNA model (requires
 <code>type = "relative"</code>).</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">model</span>, nsim <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">123</span>, max_len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">model</span>, nsim <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">123</span>, max_len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;         T1         T2        T3      T4        T5       T6         T7</span></span>
 <span><span class="co">#&gt; 1     plan    emotion consensus monitor consensus  discuss  synthesis</span></span>
@@ -684,9 +679,8 @@ data.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">cm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/centralities.html">centralities</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/centralities.html">centralities</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cm</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 10</span></span></span>
 <span><span class="co">#&gt;   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness</span></span>
@@ -701,25 +695,33 @@ data.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> plan           0.626      1.19      0.027<span style="text-decoration: underline;">4</span>        0.011<span style="text-decoration: underline;">5</span>    0.027<span style="text-decoration: underline;">4</span>           9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> synthes…       1          0.192     0.009<span style="text-decoration: underline;">97</span>       0.015<span style="text-decoration: underline;">8</span>    0.024<span style="text-decoration: underline;">3</span>           7</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;, Clustering &lt;dbl&gt;</span></span></span></code></pre>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cm</span>, ncol <span class="op">=</span> <span class="fl">3</span>, reorder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-20-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cm</span>, ncol <span class="op">=</span> <span class="fl">3</span>, reorder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># On group_tna directly</span></span>
-<span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/centralities.html">centralities</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 11</span></span></span>
-<span><span class="co">#&gt;   group     state      OutStrength InStrength ClosenessIn ClosenessOut Closeness</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Cluster 1 Active           0.140      0.360      0.079<span style="text-decoration: underline;">4</span>       0.034<span style="text-decoration: underline;">2</span>    0.079<span style="text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Cluster 1 Average          0.458      0.251      0.057<span style="text-decoration: underline;">5</span>       0.099<span style="text-decoration: underline;">4</span>    0.107 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Cluster 1 Disengaged       0.210      0.197      0.040<span style="text-decoration: underline;">1</span>       0.064<span style="text-decoration: underline;">2</span>    0.064<span style="text-decoration: underline;">2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Cluster 2 Active           0.159      0.248      0.060<span style="text-decoration: underline;">8</span>       0.061<span style="text-decoration: underline;">8</span>    0.078<span style="text-decoration: underline;">7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> Cluster 2 Average          0.370      0.670      0.121        0.073<span style="text-decoration: underline;">4</span>    0.121 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> Cluster 2 Disengaged       0.667      0.278      0.074<span style="text-decoration: underline;">2</span>       0.119     0.119 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> Cluster 3 Active           0.417      0.153      0.067<span style="text-decoration: underline;">8</span>       0.117     0.117 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> Cluster 3 Average          0.181      0.725      0.148        0.060<span style="text-decoration: underline;">5</span>    0.148 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> Cluster 3 Disengaged       0.6        0.319      0.074<span style="text-decoration: underline;">6</span>       0.101     0.196 </span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18 × 11</span></span></span>
+<span><span class="co">#&gt;    group state      OutStrength InStrength ClosenessIn ClosenessOut Closeness</span></span>
+<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> High  adapt            1          0.215     0.006<span style="text-decoration: underline;">50</span>       0.015<span style="text-decoration: underline;">4</span>    0.026<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> High  cohesion         0.956      0.815     0.014<span style="text-decoration: underline;">2</span>        0.011<span style="text-decoration: underline;">8</span>    0.027<span style="text-decoration: underline;">9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> High  consensus        0.917      2.95      0.038<span style="text-decoration: underline;">6</span>        0.012<span style="text-decoration: underline;">1</span>    0.040<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> High  coregulate       0.987      0.436     0.015<span style="text-decoration: underline;">1</span>        0.013<span style="text-decoration: underline;">9</span>    0.020<span style="text-decoration: underline;">5</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> High  discuss          0.831      1.12      0.022<span style="text-decoration: underline;">4</span>        0.012<span style="text-decoration: underline;">4</span>    0.030<span style="text-decoration: underline;">9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> High  emotion          0.937      1.00      0.015<span style="text-decoration: underline;">9</span>        0.011<span style="text-decoration: underline;">5</span>    0.025<span style="text-decoration: underline;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> High  monitor          0.981      0.301     0.007<span style="text-decoration: underline;">68</span>       0.013<span style="text-decoration: underline;">0</span>    0.020<span style="text-decoration: underline;">9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> High  plan             0.672      1.27      0.028<span style="text-decoration: underline;">2</span>        0.011<span style="text-decoration: underline;">3</span>    0.028<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> High  synthesis        1          0.167     0.008<span style="text-decoration: underline;">78</span>       0.015<span style="text-decoration: underline;">3</span>    0.027<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Low   adapt            1          0.452     0.009<span style="text-decoration: underline;">48</span>       0.014<span style="text-decoration: underline;">6</span>    0.024<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Low   cohesion         0.993      0.799     0.013<span style="text-decoration: underline;">2</span>        0.012<span style="text-decoration: underline;">3</span>    0.025<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Low   consensus        0.920      2.42      0.032<span style="text-decoration: underline;">1</span>        0.011<span style="text-decoration: underline;">9</span>    0.035<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Low   coregulate       0.968      0.689     0.016<span style="text-decoration: underline;">0</span>        0.015<span style="text-decoration: underline;">5</span>    0.021<span style="text-decoration: underline;">8</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> Low   discuss          0.779      1.21      0.015<span style="text-decoration: underline;">8</span>        0.012<span style="text-decoration: underline;">9</span>    0.022<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> Low   emotion          0.906      0.808     0.012<span style="text-decoration: underline;">8</span>        0.011<span style="text-decoration: underline;">8</span>    0.020<span style="text-decoration: underline;">9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> Low   monitor          0.982      0.393     0.007<span style="text-decoration: underline;">43</span>       0.014<span style="text-decoration: underline;">2</span>    0.018<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> Low   plan             0.585      1.15      0.026<span style="text-decoration: underline;">1</span>        0.010<span style="text-decoration: underline;">9</span>    0.026<span style="text-decoration: underline;">1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> Low   synthesis        1          0.216     0.010<span style="text-decoration: underline;">1</span>        0.015<span style="text-decoration: underline;">3</span>    0.023<span style="text-decoration: underline;">3</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: Betweenness &lt;dbl&gt;, BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Clustering &lt;dbl&gt;</span></span></span></code></pre>
 </div>
@@ -728,9 +730,8 @@ data.</p>
 <code>betweenness_network()</code><a class="anchor" aria-label="anchor" href="#betweenness_network"></a>
 </h3>
 <p>Build network with edge betweenness as weights.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">bn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/betweenness_network.html">betweenness_network</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/betweenness_network.html">betweenness_network</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bn</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -776,17 +777,16 @@ data.</p>
 <span>            iter <span class="op">=</span> <span class="fl">1000</span>, method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
 <span>            drop_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>            threshold <span class="op">=</span> <span class="fl">0.7</span>, certainty <span class="op">=</span> <span class="fl">0.95</span>, progressbar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_centrality_stability.html">estimate_cs</a></span><span class="op">(</span><span class="va">model</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InStrength"</span>, <span class="st">"OutStrength"</span><span class="op">)</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/estimate_centrality_stability.html">estimate_cs</a></span><span class="op">(</span><span class="va">model</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"InStrength"</span>, <span class="st">"OutStrength"</span><span class="op">)</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cs</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Centrality Stability Coefficients</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  InStrength OutStrength </span></span>
 <span><span class="co">#&gt;         0.9         0.9</span></span></code></pre>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cs</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-23-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="" width="1440"></p>
 <hr>
 </div>
 </div>
@@ -800,9 +800,8 @@ data.</p>
 <p>Detect communities using 7 igraph algorithms. Works on
 <code>tna</code> and <code>group_tna</code>.</p>
 <pre><code><span><span class="fu"><a href="../reference/communities.html">communities</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">methods</span>, gamma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">comm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/communities.html">communities</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/communities.html">communities</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">comm</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Number of communities found by each algorithm</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -833,69 +832,73 @@ data.</p>
 <span><span class="co">#&gt; 7             2         2</span></span>
 <span><span class="co">#&gt; 8             2         2</span></span>
 <span><span class="co">#&gt; 9             3         1</span></span></code></pre>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comm</span>, method <span class="op">=</span> <span class="st">"spinglass"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comm</span>, method <span class="op">=</span> <span class="st">"spinglass"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># On group_tna directly</span></span>
-<span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/communities.html">communities</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Cluster 1 :</span></span>
+<pre><code><span><span class="co">#&gt; High :</span></span>
 <span><span class="co">#&gt; Number of communities found by each algorithm</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;         walktrap      fast_greedy       label_prop          infomap </span></span>
-<span><span class="co">#&gt;                1                3                3                1 </span></span>
+<span><span class="co">#&gt;                2                3                1                1 </span></span>
 <span><span class="co">#&gt; edge_betweenness    leading_eigen        spinglass </span></span>
-<span><span class="co">#&gt;                3                2                1 </span></span>
+<span><span class="co">#&gt;                7                2                2 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Community assignments</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;        state walktrap fast_greedy label_prop infomap edge_betweenness</span></span>
-<span><span class="co">#&gt; 1     Active        1           1          1       1                1</span></span>
-<span><span class="co">#&gt; 2    Average        1           2          2       1                2</span></span>
-<span><span class="co">#&gt; 3 Disengaged        1           3          3       1                3</span></span>
+<span><span class="co">#&gt; 1      adapt        1           1          1       1                1</span></span>
+<span><span class="co">#&gt; 2   cohesion        1           1          1       1                2</span></span>
+<span><span class="co">#&gt; 3  consensus        1           1          1       1                1</span></span>
+<span><span class="co">#&gt; 4 coregulate        2           2          1       1                3</span></span>
+<span><span class="co">#&gt; 5    discuss        2           2          1       1                4</span></span>
+<span><span class="co">#&gt; 6    emotion        1           1          1       1                5</span></span>
+<span><span class="co">#&gt; 7    monitor        2           2          1       1                6</span></span>
+<span><span class="co">#&gt; 8       plan        2           3          1       1                7</span></span>
+<span><span class="co">#&gt; 9  synthesis        1           1          1       1                1</span></span>
 <span><span class="co">#&gt;   leading_eigen spinglass</span></span>
-<span><span class="co">#&gt; 1             1         1</span></span>
+<span><span class="co">#&gt; 1             1         2</span></span>
+<span><span class="co">#&gt; 2             1         2</span></span>
+<span><span class="co">#&gt; 3             1         2</span></span>
+<span><span class="co">#&gt; 4             2         1</span></span>
+<span><span class="co">#&gt; 5             1         1</span></span>
+<span><span class="co">#&gt; 6             1         2</span></span>
+<span><span class="co">#&gt; 7             2         1</span></span>
+<span><span class="co">#&gt; 8             2         1</span></span>
+<span><span class="co">#&gt; 9             1         2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Low :</span></span>
+<span><span class="co">#&gt; Number of communities found by each algorithm</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;         walktrap      fast_greedy       label_prop          infomap </span></span>
+<span><span class="co">#&gt;                1                3                1                1 </span></span>
+<span><span class="co">#&gt; edge_betweenness    leading_eigen        spinglass </span></span>
+<span><span class="co">#&gt;                3                4                3 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Community assignments</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;        state walktrap fast_greedy label_prop infomap edge_betweenness</span></span>
+<span><span class="co">#&gt; 1      adapt        1           1          1       1                1</span></span>
+<span><span class="co">#&gt; 2   cohesion        1           3          1       1                1</span></span>
+<span><span class="co">#&gt; 3  consensus        1           1          1       1                1</span></span>
+<span><span class="co">#&gt; 4 coregulate        1           2          1       1                1</span></span>
+<span><span class="co">#&gt; 5    discuss        1           2          1       1                2</span></span>
+<span><span class="co">#&gt; 6    emotion        1           3          1       1                1</span></span>
+<span><span class="co">#&gt; 7    monitor        1           2          1       1                3</span></span>
+<span><span class="co">#&gt; 8       plan        1           1          1       1                3</span></span>
+<span><span class="co">#&gt; 9  synthesis        1           1          1       1                1</span></span>
+<span><span class="co">#&gt;   leading_eigen spinglass</span></span>
+<span><span class="co">#&gt; 1             1         2</span></span>
 <span><span class="co">#&gt; 2             1         1</span></span>
 <span><span class="co">#&gt; 3             2         1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Cluster 2 :</span></span>
-<span><span class="co">#&gt; Number of communities found by each algorithm</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;         walktrap      fast_greedy       label_prop          infomap </span></span>
-<span><span class="co">#&gt;                1                2                3                1 </span></span>
-<span><span class="co">#&gt; edge_betweenness    leading_eigen        spinglass </span></span>
-<span><span class="co">#&gt;                2                2                1 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Community assignments</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;        state walktrap fast_greedy label_prop infomap edge_betweenness</span></span>
-<span><span class="co">#&gt; 1     Active        1           2          1       1                1</span></span>
-<span><span class="co">#&gt; 2    Average        1           1          2       1                2</span></span>
-<span><span class="co">#&gt; 3 Disengaged        1           1          3       1                2</span></span>
-<span><span class="co">#&gt;   leading_eigen spinglass</span></span>
-<span><span class="co">#&gt; 1             1         1</span></span>
-<span><span class="co">#&gt; 2             2         1</span></span>
-<span><span class="co">#&gt; 3             2         1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Cluster 3 :</span></span>
-<span><span class="co">#&gt; Number of communities found by each algorithm</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;         walktrap      fast_greedy       label_prop          infomap </span></span>
-<span><span class="co">#&gt;                1                3                3                1 </span></span>
-<span><span class="co">#&gt; edge_betweenness    leading_eigen        spinglass </span></span>
-<span><span class="co">#&gt;                3                2                1 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Community assignments</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;        state walktrap fast_greedy label_prop infomap edge_betweenness</span></span>
-<span><span class="co">#&gt; 1     Active        1           1          1       1                1</span></span>
-<span><span class="co">#&gt; 2    Average        1           2          2       1                2</span></span>
-<span><span class="co">#&gt; 3 Disengaged        1           3          3       1                3</span></span>
-<span><span class="co">#&gt;   leading_eigen spinglass</span></span>
-<span><span class="co">#&gt; 1             1         1</span></span>
-<span><span class="co">#&gt; 2             2         1</span></span>
-<span><span class="co">#&gt; 3             2         1</span></span></code></pre>
+<span><span class="co">#&gt; 4             3         3</span></span>
+<span><span class="co">#&gt; 5             3         3</span></span>
+<span><span class="co">#&gt; 6             4         1</span></span>
+<span><span class="co">#&gt; 7             3         3</span></span>
+<span><span class="co">#&gt; 8             2         1</span></span>
+<span><span class="co">#&gt; 9             1         2</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="cliques">
@@ -903,9 +906,8 @@ data.</p>
 </h3>
 <p>Identify cliques (complete subgraphs) of a given size.</p>
 <pre><code><span><span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">x</span>, size <span class="op">=</span> <span class="fl">2</span>, threshold <span class="op">=</span> <span class="fl">0</span>, sum_weights <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
 <span><span class="va">cliq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cliques.html">cliques</a></span><span class="op">(</span><span class="va">model</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cliq</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Number of 2-cliques = 35 (weight threshold = 0)</span></span>
@@ -940,9 +942,9 @@ data.</p>
 <span><span class="co">#&gt;            discuss       plan</span></span>
 <span><span class="co">#&gt; discuss 0.19488737 0.01164262</span></span>
 <span><span class="co">#&gt; plan    0.06789021 0.37420822</span></span></code></pre>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cliq</span>, n <span class="op">=</span> <span class="fl">3</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-26-1.png" class="r-plt" alt="" width="1080"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="" width="1080"></p>
 <hr>
 </div>
 </div>
@@ -954,23 +956,24 @@ data.</p>
 <code>compare()</code><a class="anchor" aria-label="anchor" href="#compare"></a>
 </h3>
 <p>Compare two TNA models with comprehensive metrics.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
-<span><span class="va">comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare.html">compare</a></span><span class="op">(</span><span class="va">gmodel</span>, i <span class="op">=</span> <span class="fl">1</span>, j <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare.html">compare</a></span><span class="op">(</span><span class="va">gmodel</span>, i <span class="op">=</span> <span class="fl">1</span>, j <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Edge difference metrics</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 16</span></span></span>
-<span><span class="co">#&gt;   source     target     weight_x weight_y raw_difference absolute_difference</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> Active     Active       0.860    0.841          0.018<span style="text-decoration: underline;">9</span>              0.018<span style="text-decoration: underline;">9</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> Average    Active       0.312    0.092<span style="text-decoration: underline;">6</span>         0.220               0.220 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> Disengaged Active       0.047<span style="text-decoration: underline;">9</span>   0.156         -<span style="color: #BB0000;">0.108</span>               0.108 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> Active     Average      0.089<span style="text-decoration: underline;">2</span>   0.159         -<span style="color: #BB0000;">0.069</span><span style="color: #BB0000; text-decoration: underline;">9</span>              0.069<span style="text-decoration: underline;">9</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> Average    Average      0.542    0.630         -<span style="color: #BB0000;">0.087</span><span style="color: #BB0000; text-decoration: underline;">5</span>              0.087<span style="text-decoration: underline;">5</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> Disengaged Average      0.162    0.511         -<span style="color: #BB0000;">0.349</span>               0.349 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> Active     Disengaged   0.050<span style="text-decoration: underline;">9</span>   0              0.050<span style="text-decoration: underline;">9</span>              0.050<span style="text-decoration: underline;">9</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> Average    Disengaged   0.146    0.278         -<span style="color: #BB0000;">0.132</span>               0.132 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> Disengaged Disengaged   0.790    0.333          0.457               0.457 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 81 × 16</span></span></span>
+<span><span class="co">#&gt;    source     target   weight_x weight_y raw_difference absolute_difference</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> adapt      adapt     0       0              0                   0       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> cohesion   adapt     0.005<span style="text-decoration: underline;">33</span> 0              0.005<span style="text-decoration: underline;">33</span>             0.005<span style="text-decoration: underline;">33</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> consensus  adapt     0.004<span style="text-decoration: underline;">13</span> 0.005<span style="text-decoration: underline;">45</span>       -<span style="color: #BB0000;">0.001</span><span style="color: #BB0000; text-decoration: underline;">32</span>             0.001<span style="text-decoration: underline;">32</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> coregulate adapt     0.022<span style="text-decoration: underline;">4</span>  0.011<span style="text-decoration: underline;">2</span>         0.011<span style="text-decoration: underline;">2</span>              0.011<span style="text-decoration: underline;">2</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> discuss    adapt     0.024<span style="text-decoration: underline;">0</span>  0.120         -<span style="color: #BB0000;">0.096</span><span style="color: #BB0000; text-decoration: underline;">2</span>              0.096<span style="text-decoration: underline;">2</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> emotion    adapt     0.003<span style="text-decoration: underline;">23</span> 0.001<span style="text-decoration: underline;">55</span>        0.001<span style="text-decoration: underline;">67</span>             0.001<span style="text-decoration: underline;">67</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> monitor    adapt     0.011<span style="text-decoration: underline;">1</span>  0.011<span style="text-decoration: underline;">2</span>        -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">192</span>            0.000<span style="text-decoration: underline;">192</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> plan       adapt     0.001<span style="text-decoration: underline;">38</span> 0.000<span style="text-decoration: underline;">613</span>       0.000<span style="text-decoration: underline;">771</span>            0.000<span style="text-decoration: underline;">771</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> synthesis  adapt     0.144   0.302         -<span style="color: #BB0000;">0.158</span>               0.158   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> adapt      cohesion  0.262   0.277         -<span style="color: #BB0000;">0.014</span><span style="color: #BB0000; text-decoration: underline;">8</span>              0.014<span style="text-decoration: underline;">8</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 71 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 10 more variables: squared_difference &lt;dbl&gt;, relative_difference &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   similarity_strength_index &lt;dbl&gt;, difference_index &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   rank_difference &lt;dbl&gt;, percentile_difference &lt;dbl&gt;,</span></span></span>
@@ -979,40 +982,40 @@ data.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Summary metrics of differences</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 22 × 3</span></span></span>
-<span><span class="co">#&gt;    category          metric               value</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Weight Deviations Mean Abs. Diff.      0.166</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Weight Deviations Median Abs. Diff.    0.108</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Weight Deviations RMS Diff.            0.217</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Weight Deviations Max Abs. Diff.       0.457</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Weight Deviations Rel. Mean Abs. Diff. 0.498</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Weight Deviations CV Ratio             1.16 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Correlations      Pearson              0.710</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Correlations      Spearman             0.733</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Correlations      Kendall              0.611</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Correlations      Distance             0.500</span></span>
+<span><span class="co">#&gt;    category          metric                value</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Weight Deviations Mean Abs. Diff.      0.032<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Weight Deviations Median Abs. Diff.    0.018<span style="text-decoration: underline;">1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Weight Deviations RMS Diff.            0.052<span style="text-decoration: underline;">2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Weight Deviations Max Abs. Diff.       0.210 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Weight Deviations Rel. Mean Abs. Diff. 0.290 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Weight Deviations CV Ratio             1.10  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Correlations      Pearson              0.921 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Correlations      Spearman             0.915 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Correlations      Kendall              0.767 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Correlations      Distance             0.838 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 12 more rows</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Network metrics</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 3</span></span></span>
-<span><span class="co">#&gt;    metric                          x     y</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Node Count                  3     3    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Edge Count                  9     8    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Network Density             1     1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mean Distance               0.111 0.239</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mean Out-Strength           1     1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SD Out-Strength             0.214 0.353</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mean In-Strength            1     1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SD In-Strength              0     0    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mean Out-Degree             3     2.67 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SD Out-Degree               0     0.577</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree) 0     0.25 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)  0     0.25 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                 1     0.8</span></span></code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt;    metric                             x        y</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Node Count                  9   <span style="color: #949494;">e</span>+ 0 9   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Edge Count                  7.6 <span style="color: #949494;">e</span>+ 1 7.5 <span style="color: #949494;">e</span>+ 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Network Density             1   <span style="color: #949494;">e</span>+ 0 1   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mean Distance               4.23<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 5.60<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mean Out-Strength           1   <span style="color: #949494;">e</span>+ 0 1   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SD Out-Strength             9.14<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 7.19<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mean In-Strength            1   <span style="color: #949494;">e</span>+ 0 1   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SD In-Strength              7.85<span style="color: #949494;">e</span><span style="color: #BB0000;">-17</span> 3.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-17</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mean Out-Degree             8.44<span style="color: #949494;">e</span>+ 0 8.33<span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SD Out-Degree               1.13<span style="color: #949494;">e</span>+ 0 8.66<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree) 4.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 6.25<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)  4.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 6.25<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                 9.57<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 9.41<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span></code></pre>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comp</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="compare_sequences">
@@ -1022,46 +1025,34 @@ data.</p>
 <code>group_tna</code> directly.</p>
 <pre><code><span><span class="co"># For group_tna (groups already defined)</span></span>
 <span><span class="fu"><a href="../reference/compare_sequences.html">compare_sequences</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">sub</span>, min_freq <span class="op">=</span> <span class="fl">5L</span>, correction <span class="op">=</span> <span class="st">"bonferroni"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
-<span><span class="va">comp_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare_sequences.html">compare_sequences</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comp_seq</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compare_sequences.html">compare_sequences</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_seq</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;                                  pattern freq_Cluster 1 freq_Cluster 2</span></span>
-<span><span class="co">#&gt; 1                                Average           5069            113</span></span>
-<span><span class="co">#&gt; 2                       Average-&gt;Average           2647             68</span></span>
-<span><span class="co">#&gt; 4                    Disengaged-&gt;Average           1057             23</span></span>
-<span><span class="co">#&gt; 5                 Disengaged-&gt;Disengaged           5163             15</span></span>
-<span><span class="co">#&gt; 7              Average-&gt;Average-&gt;Average           1350             44</span></span>
-<span><span class="co">#&gt; 10          Disengaged-&gt;Average-&gt;Average            565             14</span></span>
-<span><span class="co">#&gt; 12                            Disengaged           6804             47</span></span>
-<span><span class="co">#&gt; 15    Average-&gt;Average-&gt;Average-&gt;Average            680             29</span></span>
-<span><span class="co">#&gt; 20 Disengaged-&gt;Average-&gt;Average-&gt;Average            288              9</span></span>
-<span><span class="co">#&gt; 22                                Active          12264            137</span></span>
-<span><span class="co">#&gt;    freq_Cluster 3 prop_Cluster 1 prop_Cluster 2 prop_Cluster 3 effect_size</span></span>
-<span><span class="co">#&gt; 1              74     0.21000953     0.38047138     0.61157025   10.510487</span></span>
-<span><span class="co">#&gt; 2              59     0.11432150     0.23859649     0.50862069   11.215353</span></span>
-<span><span class="co">#&gt; 4              12     0.04565086     0.08070175     0.10344828    5.601244</span></span>
-<span><span class="co">#&gt; 5               8     0.22298523     0.05263158     0.06896552    4.256135</span></span>
-<span><span class="co">#&gt; 7              45     0.06089035     0.16117216     0.40540541   12.287328</span></span>
-<span><span class="co">#&gt; 10             11     0.02548374     0.05128205     0.09909910    6.772509</span></span>
-<span><span class="co">#&gt; 12             22     0.28189087     0.15824916     0.18181818    2.272492</span></span>
-<span><span class="co">#&gt; 15             33     0.03209364     0.11111111     0.31132075   12.628119</span></span>
-<span><span class="co">#&gt; 20              9     0.01359260     0.03448276     0.08490566    8.264617</span></span>
-<span><span class="co">#&gt; 22             25     0.50809960     0.46127946     0.20661157    1.917857</span></span>
+<pre><code><span><span class="co">#&gt;             pattern freq_High freq_Low   prop_High    prop_Low effect_size</span></span>
+<span><span class="co">#&gt; 1             adapt       155      399 0.011296553 0.028887924   16.476066</span></span>
+<span><span class="co">#&gt; 2          cohesion      1018      821 0.074192843 0.059441066    7.135478</span></span>
+<span><span class="co">#&gt; 3         consensus      3651     3146 0.266088478 0.227772951   14.333771</span></span>
+<span><span class="co">#&gt; 4        coregulate       959     1174 0.069892865 0.084998552    6.781559</span></span>
+<span><span class="co">#&gt; 5           emotion      1686     1389 0.122877341 0.100564726    9.109850</span></span>
+<span><span class="co">#&gt; 6           monitor       668      848 0.048684498 0.061395888    6.804318</span></span>
+<span><span class="co">#&gt; 7              plan      3102     3521 0.226076817 0.254923255    6.307583</span></span>
+<span><span class="co">#&gt; 8         synthesis       316      413 0.023030391 0.029901535    4.689000</span></span>
+<span><span class="co">#&gt; 9   adapt-&gt;cohesion        37      102 0.002908576 0.007961286    8.232879</span></span>
+<span><span class="co">#&gt; 10 adapt-&gt;consensus        73      170 0.005738543 0.013268810    9.106178</span></span>
 <span><span class="co">#&gt;        p_value</span></span>
-<span><span class="co">#&gt; 1  0.002997003</span></span>
+<span><span class="co">#&gt; 1  0.008991009</span></span>
 <span><span class="co">#&gt; 2  0.008991009</span></span>
+<span><span class="co">#&gt; 3  0.008991009</span></span>
 <span><span class="co">#&gt; 4  0.008991009</span></span>
 <span><span class="co">#&gt; 5  0.008991009</span></span>
-<span><span class="co">#&gt; 7  0.026973027</span></span>
-<span><span class="co">#&gt; 10 0.026973027</span></span>
-<span><span class="co">#&gt; 12 0.080919081</span></span>
-<span><span class="co">#&gt; 15 0.080919081</span></span>
-<span><span class="co">#&gt; 20 0.080919081</span></span>
-<span><span class="co">#&gt; 22 0.149850150</span></span></code></pre>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt; 6  0.008991009</span></span>
+<span><span class="co">#&gt; 7  0.008991009</span></span>
+<span><span class="co">#&gt; 8  0.008991009</span></span>
+<span><span class="co">#&gt; 9  0.077922078</span></span>
+<span><span class="co">#&gt; 10 0.077922078</span></span></code></pre>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">comp_seq</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-28-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-29-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="permutation_test">
@@ -1070,7 +1061,7 @@ data.</p>
 <p>Permutation tests for edge weight and centrality differences.</p>
 <pre><code><span><span class="fu"><a href="../reference/permutation_test.html">permutation_test</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, adjust <span class="op">=</span> <span class="st">"none"</span>, iter <span class="op">=</span> <span class="fl">1000</span>, paired <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                 level <span class="op">=</span> <span class="fl">0.05</span>, measures <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">200</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">model_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">[</span><span class="fl">1001</span><span class="op">:</span><span class="fl">1200</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/permutation_test.html">permutation_test</a></span><span class="op">(</span><span class="va">model_x</span>, <span class="va">model_y</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
@@ -1079,19 +1070,22 @@ data.</p>
 <span><span class="co">#&gt;    edge_name           diff_true effect_size p_value</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> adapt -&gt; adapt       0            <span style="color: #BB0000;">NaN</span>     1      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> cohesion -&gt; adapt    0.005<span style="text-decoration: underline;">41</span>        0.973 0.792  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> consensus -&gt; adapt  -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">679</span>      -<span style="color: #BB0000;">0.160</span> 0.782  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> coregulate -&gt; adapt  0.007<span style="text-decoration: underline;">69</span>        0.504 0.644  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> discuss -&gt; adapt    -<span style="color: #BB0000;">0.130</span>         -<span style="color: #BB0000;">6.51</span>  0.009<span style="text-decoration: underline;">90</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> emotion -&gt; adapt     0.010<span style="text-decoration: underline;">1</span>         1.54  0.277  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> monitor -&gt; adapt    -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">80</span>       -<span style="color: #BB0000;">0.373</span> 0.990  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> plan -&gt; adapt        0.003<span style="text-decoration: underline;">39</span>        1.67  0.009<span style="text-decoration: underline;">90</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> synthesis -&gt; adapt  -<span style="color: #BB0000;">0.159</span>         -<span style="color: #BB0000;">1.95</span>  0.039<span style="text-decoration: underline;">6</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> adapt -&gt; cohesion   -<span style="color: #BB0000;">0.090</span><span style="color: #BB0000; text-decoration: underline;">7</span>        -<span style="color: #BB0000;">1.18</span>  0.267  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> cohesion -&gt; adapt    0.005<span style="text-decoration: underline;">41</span>        0.949 0.802  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> consensus -&gt; adapt  -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">679</span>      -<span style="color: #BB0000;">0.175</span> 0.752  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> coregulate -&gt; adapt  0.007<span style="text-decoration: underline;">69</span>        0.568 0.624  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> discuss -&gt; adapt    -<span style="color: #BB0000;">0.130</span>         -<span style="color: #BB0000;">7.11</span>  0.009<span style="text-decoration: underline;">90</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> emotion -&gt; adapt     0.010<span style="text-decoration: underline;">1</span>         1.59  0.257  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> monitor -&gt; adapt    -<span style="color: #BB0000;">0.004</span><span style="color: #BB0000; text-decoration: underline;">80</span>       -<span style="color: #BB0000;">0.367</span> 0.970  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> plan -&gt; adapt        0.003<span style="text-decoration: underline;">39</span>        1.56  0.029<span style="text-decoration: underline;">7</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> synthesis -&gt; adapt  -<span style="color: #BB0000;">0.159</span>         -<span style="color: #BB0000;">2.08</span>  0.059<span style="text-decoration: underline;">4</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> adapt -&gt; cohesion   -<span style="color: #BB0000;">0.090</span><span style="color: #BB0000; text-decoration: underline;">7</span>        -<span style="color: #BB0000;">1.23</span>  0.238  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 71 more rows</span></span></span></code></pre>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">perm</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-29-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-30-1.png" class="r-plt" alt="" width="1440"></p>
+<p>It also accepts a group tna model object.</p>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">permg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/permutation_test.html">permutation_test</a></span><span class="op">(</span><span class="va">gmodel</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -1106,97 +1100,22 @@ data.</p>
 significance.</p>
 <pre><code><span><span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">x</span>, iter <span class="op">=</span> <span class="fl">1000</span>, level <span class="op">=</span> <span class="fl">0.05</span>, method <span class="op">=</span> <span class="st">"stability"</span>,</span>
 <span>          <span class="va">threshold</span>, consistency_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.75</span>, <span class="fl">1.25</span><span class="op">)</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap.html">bootstrap</a></span><span class="op">(</span><span class="va">model</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-30-1.png" class="r-plt" alt="" width="1440"></p>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<p><img src="new-docs_files/figure-html/unnamed-chunk-32-1.png" class="r-plt" alt="" width="1440"></p>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">plot_bootstrap_forest</span><span class="op">(</span><span class="va">boot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-31-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-33-1.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="bootstrap_cliques">
 <code>bootstrap_cliques()</code><a class="anchor" aria-label="anchor" href="#bootstrap_cliques"></a>
 </h3>
 <p>Bootstrap cliques to assess stability.</p>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bootstrap_cliques.html">bootstrap_cliques</a></span><span class="op">(</span><span class="va">model</span>, size <span class="op">=</span> <span class="fl">2</span>, iter <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bc</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;                  clique mean_weight   p_values   sig    cr_lower   cr_upper</span></span>
-<span><span class="co">#&gt; 1        plan-synthesis  0.11278704 0.35643564 FALSE 0.084590283 0.14098381</span></span>
-<span><span class="co">#&gt; 2          monitor-plan  0.17087683 0.19801980 FALSE 0.128157620 0.21359603</span></span>
-<span><span class="co">#&gt; 3     monitor-synthesis  0.01161598 0.79207921 FALSE 0.008711988 0.01451998</span></span>
-<span><span class="co">#&gt; 4       emotion-monitor  0.05550255 0.50495050 FALSE 0.041626916 0.06937819</span></span>
-<span><span class="co">#&gt; 5          emotion-plan  0.17440699 0.00990099  TRUE 0.130805243 0.21800874</span></span>
-<span><span class="co">#&gt; 6     emotion-synthesis  0.03755344 0.68316832 FALSE 0.028165080 0.04694180</span></span>
-<span><span class="co">#&gt; 7       discuss-emotion  0.11984832 0.82178218 FALSE 0.089886239 0.14981040</span></span>
-<span><span class="co">#&gt; 8       discuss-monitor  0.15268503 0.94059406 FALSE 0.114513772 0.19085629</span></span>
-<span><span class="co">#&gt; 9          discuss-plan  0.16215710 0.46534653 FALSE 0.121617828 0.20269638</span></span>
-<span><span class="co">#&gt; 10    discuss-synthesis  0.09968694 0.22772277 FALSE 0.074765208 0.12460868</span></span>
-<span><span class="co">#&gt; 11   coregulate-discuss  0.14403104 0.94059406 FALSE 0.108023277 0.18003880</span></span>
-<span><span class="co">#&gt; 12   coregulate-emotion  0.07661606 0.45544554 FALSE 0.057462047 0.09577008</span></span>
-<span><span class="co">#&gt; 13   coregulate-monitor  0.04642722 0.41584158 FALSE 0.034820413 0.05803402</span></span>
-<span><span class="co">#&gt; 14      coregulate-plan  0.16346524 0.42574257 FALSE 0.122598927 0.20433154</span></span>
-<span><span class="co">#&gt; 15 coregulate-synthesis  0.02165263 0.89108911 FALSE 0.016239470 0.02706578</span></span>
-<span><span class="co">#&gt; 16 consensus-coregulate  0.10689472 0.25742574 FALSE 0.080171039 0.13361840</span></span>
-<span><span class="co">#&gt; 17    consensus-discuss  0.19652469 0.01980198  TRUE 0.147393514 0.24565586</span></span>
-<span><span class="co">#&gt; 18    consensus-emotion  0.13798385 0.11881188 FALSE 0.103487888 0.17247981</span></span>
-<span><span class="co">#&gt; 19    consensus-monitor  0.07646621 0.87128713 FALSE 0.057349657 0.09558276</span></span>
-<span><span class="co">#&gt; 20       consensus-plan  0.28560250 0.00990099  TRUE 0.214201873 0.35700312</span></span>
-<span><span class="co">#&gt; 21  consensus-synthesis  0.13896132 0.46534653 FALSE 0.104220990 0.17370165</span></span>
-<span><span class="co">#&gt; 22   cohesion-consensus  0.15548237 0.38613861 FALSE 0.116611779 0.19435297</span></span>
-<span><span class="co">#&gt; 23  cohesion-coregulate  0.05142589 0.70297030 FALSE 0.038569415 0.06428236</span></span>
-<span><span class="co">#&gt; 24     cohesion-discuss  0.08229898 0.39603960 FALSE 0.061724236 0.10287373</span></span>
-<span><span class="co">#&gt; 25     cohesion-emotion  0.13623957 0.14851485 FALSE 0.102179675 0.17029946</span></span>
-<span><span class="co">#&gt; 26     cohesion-monitor  0.03353692 0.68316832 FALSE 0.025152690 0.04192115</span></span>
-<span><span class="co">#&gt; 27        cohesion-plan  0.14188110 0.13861386 FALSE 0.106410827 0.17735138</span></span>
-<span><span class="co">#&gt; 28   cohesion-synthesis  0.01610520 0.58415842 FALSE 0.012078900 0.02013150</span></span>
-<span><span class="co">#&gt; 29       adapt-cohesion  0.07579324 0.68316832 FALSE 0.056844933 0.09474155</span></span>
-<span><span class="co">#&gt; 30      adapt-consensus  0.14103756 0.60396040 FALSE 0.105778170 0.17629695</span></span>
-<span><span class="co">#&gt; 31     adapt-coregulate  0.01530123 0.86138614 FALSE 0.011475921 0.01912653</span></span>
-<span><span class="co">#&gt; 32        adapt-discuss  0.08130020 0.99009901 FALSE 0.060975150 0.10162525</span></span>
-<span><span class="co">#&gt; 33        adapt-emotion  0.04978799 0.88118812 FALSE 0.037340992 0.06223499</span></span>
-<span><span class="co">#&gt; 34        adapt-monitor  0.01567699 0.75247525 FALSE 0.011757743 0.01959624</span></span>
-<span><span class="co">#&gt; 35           adapt-plan  0.09772495 0.27722772 FALSE 0.073293715 0.12215619</span></span>
-<span><span class="co">#&gt; 36      adapt-synthesis  0.05866564 0.69306931 FALSE 0.043999233 0.07333206</span></span>
-<span><span class="co">#&gt;       ci_lower   ci_upper</span></span>
-<span><span class="co">#&gt; 1  0.067871551 0.16916223</span></span>
-<span><span class="co">#&gt; 2  0.145865463 0.24209823</span></span>
-<span><span class="co">#&gt; 3  0.000000000 0.04886905</span></span>
-<span><span class="co">#&gt; 4  0.029849425 0.12163425</span></span>
-<span><span class="co">#&gt; 5  0.142235770 0.21299081</span></span>
-<span><span class="co">#&gt; 6  0.000000000 0.07106378</span></span>
-<span><span class="co">#&gt; 7  0.036705096 0.10441189</span></span>
-<span><span class="co">#&gt; 8  0.046129261 0.11903859</span></span>
-<span><span class="co">#&gt; 9  0.094095861 0.15261396</span></span>
-<span><span class="co">#&gt; 10 0.059482265 0.11527209</span></span>
-<span><span class="co">#&gt; 11 0.041666667 0.11866003</span></span>
-<span><span class="co">#&gt; 12 0.044193962 0.14108333</span></span>
-<span><span class="co">#&gt; 13 0.015142463 0.07089650</span></span>
-<span><span class="co">#&gt; 14 0.088771205 0.16251061</span></span>
-<span><span class="co">#&gt; 15 0.000000000 0.02670455</span></span>
-<span><span class="co">#&gt; 16 0.052969881 0.12558519</span></span>
-<span><span class="co">#&gt; 17 0.185334478 0.24076827</span></span>
-<span><span class="co">#&gt; 18 0.095754941 0.16349364</span></span>
-<span><span class="co">#&gt; 19 0.076490398 0.19025012</span></span>
-<span><span class="co">#&gt; 20 0.235414139 0.30275329</span></span>
-<span><span class="co">#&gt; 21 0.104114078 0.23946276</span></span>
-<span><span class="co">#&gt; 22 0.149104647 0.23333459</span></span>
-<span><span class="co">#&gt; 23 0.040210704 0.12331597</span></span>
-<span><span class="co">#&gt; 24 0.038884437 0.11526961</span></span>
-<span><span class="co">#&gt; 25 0.092156880 0.14994310</span></span>
-<span><span class="co">#&gt; 26 0.023060423 0.08172764</span></span>
-<span><span class="co">#&gt; 27 0.082919711 0.15436799</span></span>
-<span><span class="co">#&gt; 28 0.000000000 0.03506944</span></span>
-<span><span class="co">#&gt; 29 0.012500000 0.24109375</span></span>
-<span><span class="co">#&gt; 30 0.015196159 0.18507025</span></span>
-<span><span class="co">#&gt; 31 0.000000000 0.03125000</span></span>
-<span><span class="co">#&gt; 32 0.011104249 0.05388393</span></span>
-<span><span class="co">#&gt; 33 0.004423167 0.18288826</span></span>
-<span><span class="co">#&gt; 34 0.000000000 0.04886905</span></span>
-<span><span class="co">#&gt; 35 0.060602139 0.10098269</span></span>
-<span><span class="co">#&gt; 36 0.000000000 0.09366259</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="prune">
@@ -1205,75 +1124,14 @@ significance.</p>
 <p>Remove weak edges. Four methods available.</p>
 <pre><code><span><span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">x</span>, method <span class="op">=</span> <span class="st">"threshold"</span>, threshold <span class="op">=</span> <span class="fl">0.1</span>, lowest <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>      level <span class="op">=</span> <span class="fl">0.5</span>, boot <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">pruned_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">model</span>, method <span class="op">=</span> <span class="st">"threshold"</span>, threshold <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pruned_t</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">model</span>, method <span class="op">=</span> <span class="st">"threshold"</span>, threshold <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="va">pruned_p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">model</span>, method <span class="op">=</span> <span class="st">"lowest"</span>, lowest <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
 <span><span class="va">pruned_d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prune.html">prune</a></span><span class="op">(</span><span class="va">model</span>, method <span class="op">=</span> <span class="st">"disparity"</span>, level <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="../reference/pruning_details.html">pruning_details</a></span><span class="op">(</span><span class="va">pruned_t</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; **Pruning Details**</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Method used: User-specified threshold (0.1)</span></span>
-<span><span class="co">#&gt; Number of removed edges: 49</span></span>
-<span><span class="co">#&gt; Number of retained edges: 29</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; **Removed edges**</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;          from         to       weight</span></span>
-<span><span class="co">#&gt; 1    cohesion      adapt 0.0029498525</span></span>
-<span><span class="co">#&gt; 2   consensus      adapt 0.0047400853</span></span>
-<span><span class="co">#&gt; 3  coregulate      adapt 0.0162436548</span></span>
-<span><span class="co">#&gt; 4     discuss      adapt 0.0713743356</span></span>
-<span><span class="co">#&gt; 5     emotion      adapt 0.0024673951</span></span>
-<span><span class="co">#&gt; 6     monitor      adapt 0.0111653873</span></span>
-<span><span class="co">#&gt; 7        plan      adapt 0.0009745006</span></span>
-<span><span class="co">#&gt; 8    cohesion   cohesion 0.0271386431</span></span>
-<span><span class="co">#&gt; 9   consensus   cohesion 0.0148522673</span></span>
-<span><span class="co">#&gt; 10 coregulate   cohesion 0.0360406091</span></span>
-<span><span class="co">#&gt; 11    discuss   cohesion 0.0475828904</span></span>
-<span><span class="co">#&gt; 12    monitor   cohesion 0.0558269365</span></span>
-<span><span class="co">#&gt; 13       plan   cohesion 0.0251745980</span></span>
-<span><span class="co">#&gt; 14  synthesis   cohesion 0.0337423313</span></span>
-<span><span class="co">#&gt; 15  consensus  consensus 0.0820034761</span></span>
-<span><span class="co">#&gt; 16      adapt coregulate 0.0216110020</span></span>
-<span><span class="co">#&gt; 17 coregulate coregulate 0.0233502538</span></span>
-<span><span class="co">#&gt; 18    discuss coregulate 0.0842824601</span></span>
-<span><span class="co">#&gt; 19    emotion coregulate 0.0341910469</span></span>
-<span><span class="co">#&gt; 20    monitor coregulate 0.0579204466</span></span>
-<span><span class="co">#&gt; 21       plan coregulate 0.0172161767</span></span>
-<span><span class="co">#&gt; 22  synthesis coregulate 0.0444785276</span></span>
-<span><span class="co">#&gt; 23      adapt    discuss 0.0589390963</span></span>
-<span><span class="co">#&gt; 24   cohesion    discuss 0.0595870206</span></span>
-<span><span class="co">#&gt; 25       plan    discuss 0.0678902063</span></span>
-<span><span class="co">#&gt; 26  synthesis    discuss 0.0628834356</span></span>
-<span><span class="co">#&gt; 27  consensus    emotion 0.0726813083</span></span>
-<span><span class="co">#&gt; 28    emotion    emotion 0.0768417342</span></span>
-<span><span class="co">#&gt; 29    monitor    emotion 0.0907187718</span></span>
-<span><span class="co">#&gt; 30  synthesis    emotion 0.0705521472</span></span>
-<span><span class="co">#&gt; 31      adapt    monitor 0.0333988212</span></span>
-<span><span class="co">#&gt; 32   cohesion    monitor 0.0330383481</span></span>
-<span><span class="co">#&gt; 33  consensus    monitor 0.0466108390</span></span>
-<span><span class="co">#&gt; 34 coregulate    monitor 0.0862944162</span></span>
-<span><span class="co">#&gt; 35    discuss    monitor 0.0222728423</span></span>
-<span><span class="co">#&gt; 36    emotion    monitor 0.0363059570</span></span>
-<span><span class="co">#&gt; 37    monitor    monitor 0.0181437544</span></span>
-<span><span class="co">#&gt; 38       plan    monitor 0.0755237941</span></span>
-<span><span class="co">#&gt; 39  synthesis    monitor 0.0122699387</span></span>
-<span><span class="co">#&gt; 40      adapt       plan 0.0157170923</span></span>
-<span><span class="co">#&gt; 41    discuss       plan 0.0116426221</span></span>
-<span><span class="co">#&gt; 42    emotion       plan 0.0997532605</span></span>
-<span><span class="co">#&gt; 43  synthesis       plan 0.0751533742</span></span>
-<span><span class="co">#&gt; 44   cohesion  synthesis 0.0035398230</span></span>
-<span><span class="co">#&gt; 45  consensus  synthesis 0.0075841365</span></span>
-<span><span class="co">#&gt; 46 coregulate  synthesis 0.0187817259</span></span>
-<span><span class="co">#&gt; 47    emotion  synthesis 0.0028198802</span></span>
-<span><span class="co">#&gt; 48    monitor  synthesis 0.0160502442</span></span>
-<span><span class="co">#&gt; 49       plan  synthesis 0.0017865844</span></span></code></pre>
 <div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pruned_t</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-34-1.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-36-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Restore and reapply</span></span>
 <span><span class="va">restored</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deprune.html">deprune</a></span><span class="op">(</span><span class="va">pruned_t</span><span class="op">)</span></span>
@@ -1304,19 +1162,19 @@ significance.</p>
 <code class="sourceCode R"><span><span class="co"># Pass directly to group_model</span></span>
 <span><span class="va">gmodel_clust</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">gmodel_clust</span><span class="op">)</span></span></code></pre></div>
-<p><img src="new-docs_files/figure-html/unnamed-chunk-36-1.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-36-2.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-36-3.png" class="r-plt" alt="" width="1440"></p>
+<p><img src="new-docs_files/figure-html/unnamed-chunk-38-1.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-38-2.png" class="r-plt" alt="" width="1440"><img src="new-docs_files/figure-html/unnamed-chunk-38-3.png" class="r-plt" alt="" width="1440"></p>
 </div>
 <div class="section level3">
 <h3 id="rename_groups">
 <code>rename_groups()</code><a class="anchor" aria-label="anchor" href="#rename_groups"></a>
 </h3>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
-<span><span class="va">gmodel_renamed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rename_groups.html">rename_groups</a></span><span class="op">(</span><span class="va">gmodel</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">gmodel_mmm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
+<span><span class="va">gmodel_mmm_renamed</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rename_groups.html">rename_groups</a></span><span class="op">(</span><span class="va">gmodel_mmm</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Original:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Original: Cluster 1 Cluster 2 Cluster 3</span></span></code></pre>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Renamed:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gmodel_renamed</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Renamed:"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">gmodel_mmm_renamed</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Renamed: A B C</span></span></code></pre>
 </div>
 <div class="section level3">
@@ -1342,8 +1200,7 @@ significance.</p>
 <code>summary()</code><a class="anchor" aria-label="anchor" href="#summary"></a>
 </h3>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 2</span></span></span>
 <span><span class="co">#&gt;    metric                         value</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
@@ -1361,36 +1218,34 @@ significance.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)  1.56<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                 9.86<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span></code></pre>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/group_model.html">group_model</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 4</span></span></span>
-<span><span class="co">#&gt;    metric                      `Cluster 1` `Cluster 2` `Cluster 3`</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Node Count                        3           3           3    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Edge Count                        9           8           8    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Network Density                   1           1           1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mean Distance                     0.111       0.239       0.302</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mean Out-Strength                 1           1           1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SD Out-Strength                   0.214       0.353       0.472</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mean In-Strength                  1           1           1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SD In-Strength                    0           0           0    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mean Out-Degree                   3           2.67        2.67 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SD Out-Degree                     0           0.577       0.577</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree)       0           0.25        0.25 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)        0           0.25        0.25 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                       1           0.8         0.8</span></span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 3</span></span></span>
+<span><span class="co">#&gt;    metric                          High      Low</span></span>
+<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Node Count                  9   <span style="color: #949494;">e</span>+ 0 9   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Edge Count                  7.6 <span style="color: #949494;">e</span>+ 1 7.5 <span style="color: #949494;">e</span>+ 1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Network Density             1   <span style="color: #949494;">e</span>+ 0 1   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mean Distance               4.23<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 5.60<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mean Out-Strength           1   <span style="color: #949494;">e</span>+ 0 1   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SD Out-Strength             9.14<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 7.19<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mean In-Strength            1   <span style="color: #949494;">e</span>+ 0 1   <span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SD In-Strength              7.85<span style="color: #949494;">e</span><span style="color: #BB0000;">-17</span> 3.93<span style="color: #949494;">e</span><span style="color: #BB0000;">-17</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mean Out-Degree             8.44<span style="color: #949494;">e</span>+ 0 8.33<span style="color: #949494;">e</span>+ 0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SD Out-Degree               1.13<span style="color: #949494;">e</span>+ 0 8.66<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree) 4.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 6.25<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)  4.69<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span> 6.25<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                 9.57<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span> 9.41<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span></span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="as-igraph">
 <code>as.igraph()</code><a class="anchor" aria-label="anchor" href="#as-igraph"></a>
 </h3>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/build_model.html">tna</a></span><span class="op">(</span><span class="va">group_regulation</span><span class="op">)</span></span>
-<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; IGRAPH 9da4312 DNW- 9 78 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH d2938bc DNW- 9 78 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), weight (e/n)</span></span>
-<span><span class="co">#&gt; + edges from 9da4312 (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from d2938bc (vertex names):</span></span>
 <span><span class="co">#&gt;  [1] adapt     -&gt;cohesion   adapt     -&gt;consensus  adapt     -&gt;coregulate</span></span>
 <span><span class="co">#&gt;  [4] adapt     -&gt;discuss    adapt     -&gt;emotion    adapt     -&gt;monitor   </span></span>
 <span><span class="co">#&gt;  [7] adapt     -&gt;plan       cohesion  -&gt;adapt      cohesion  -&gt;cohesion  </span></span>

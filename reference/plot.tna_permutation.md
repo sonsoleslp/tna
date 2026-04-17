@@ -18,19 +18,19 @@ plot(x, colors, posCol = "#009900", negCol = "red", edge_labels = TRUE, ...)
 - colors:
 
   See
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 - posCol:
 
   Color for plotting edges the difference in edge weights is positive.
   See
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 - negCol:
 
   Color for plotting edges when the the difference in edge weights is
   negative. See
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 - edge_labels:
 

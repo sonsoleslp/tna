@@ -4,8 +4,8 @@ This function plots a transition network analysis (TNA) model using the
 `cograph` package. The nodes in the graph represent states, with node
 sizes corresponding to initial state probabilities. Edge labels
 represent the edge weights of the network. See
-[`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md) for
-details on how to further configure the plot.
+[`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
+for details on how to further configure the plot.
 
 ## Usage
 
@@ -46,7 +46,7 @@ plot(
   the node size by. See
   [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
   for valid names. If missing (the default), uses default
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md)
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
   scaling. The value of `node_size` provided via `...` is used as
   baseline size.
 
@@ -60,8 +60,9 @@ plot(
 - ...:
 
   Additional arguments passed to
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md) or
-  [`cograph::plot_htna()`](http://sonsoles.me/cograph/reference/plot_htna.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
+  or
+  [`cograph::plot_htna()`](https://sonsoles.me/cograph/reference/plot_htna.html).
 
 ## Value
 

@@ -145,6 +145,9 @@ pruned_disparity <- prune(model_scaled, method = "disparity", alpha = 0.5)
 
 # Plotting for comparison
 plot(pruned_threshold)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna
 plot(pruned_lowest)
 plot(pruned_disparity)
 plot(model_scaled)
@@ -454,13 +457,13 @@ plot(edge_between)
 
 ``` r
 detected_communities <- communities(model_scaled)
-plot(detected_communities)
+plot(detected_communities, method = "leading_eigen")
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-18-1.png)
 
 ``` r
-print(detected_communities)
+print(detected_communities, method = "leading_eigen")
 #> Number of communities found by each algorithm
 #> 
 #>         walktrap      fast_greedy       label_prop          infomap 

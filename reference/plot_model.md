@@ -25,8 +25,9 @@ plot_model(x, labels, colors, ...)
 - ...:
 
   Additional arguments passed to
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md) or
-  [`cograph::plot_htna()`](http://sonsoles.me/cograph/reference/plot_htna.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
+  or
+  [`cograph::plot_htna()`](https://sonsoles.me/cograph/reference/plot_htna.html).
 
 ## Value
 

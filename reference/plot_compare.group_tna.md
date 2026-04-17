@@ -20,19 +20,19 @@ plot_compare(x, i = NULL, j = NULL, ...)
   An `integer` index or the name of the principal cluster as a
   `character` string. When `NULL`, defaults are chosen automatically
   (see
-  [`cograph::plot_compare()`](http://sonsoles.me/cograph/reference/plot_compare.md)).
+  [`cograph::plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.html)).
 
 - j:
 
   An `integer` index or the name of the secondary cluster as a
   `character` string. When `NULL`, defaults are chosen automatically
   (see
-  [`cograph::plot_compare()`](http://sonsoles.me/cograph/reference/plot_compare.md)).
+  [`cograph::plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.html)).
 
 - ...:
 
   Additional arguments passed to
-  [`cograph::plot_compare()`](http://sonsoles.me/cograph/reference/plot_compare.md).
+  [`cograph::plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.html).
 
 ## Value
 

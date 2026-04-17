@@ -99,6 +99,9 @@ the 0–1 range by the `scaling = "minmax"` argument.
 
 ``` r
 plot(model_atna)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna
 ```
 
 ![](atna_files/figure-html/unnamed-chunk-3-1.png)

@@ -48,7 +48,7 @@ plot(x, title, which, ...)
       scale the node size by. See
       [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
       for valid names. If missing (the default), uses default
-      [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md)
+      [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
       scaling. The value of `node_size` provided via `...` is used as
       baseline size.
 
@@ -88,5 +88,8 @@ Basic functions
 ``` r
 model <- group_model(engagement_mmm)
 plot(model, which = 1)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna 
 
 ```

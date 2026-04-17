@@ -32,6 +32,9 @@ To visualize the model, we can use the standard
 
 ``` r
 plot(tna_model)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna
 ```
 
 ![](tna_files/figure-html/unnamed-chunk-5-1.png)

@@ -24,7 +24,7 @@ plot_compare(x, y, posCol = "#009900", negCol = "red", ...)
 - ...:
 
   Additional arguments passed to
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 - y:
 
@@ -34,13 +34,13 @@ plot_compare(x, y, posCol = "#009900", negCol = "red", ...)
 
   Color for plotting edges and pie when the first group has a higher
   value. See
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 - negCol:
 
   Color for plotting edges and pie when the second group has a higher
   value. See
-  [`cograph::splot()`](http://sonsoles.me/cograph/reference/splot.md).
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
 
 ## Value
 

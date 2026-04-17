@@ -27,6 +27,9 @@ print(model)
 ``` r
 # TNA visualization
 plot(model)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-4-1.png)

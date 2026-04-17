@@ -110,6 +110,7 @@ Model comparison functions
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
 group <- c(rep("High", 1000), rep("Low", 1000))
 comp <- compare_sequences(group_regulation, group)
 
@@ -120,4 +121,5 @@ comp_test <- compare_sequences(
   test = TRUE,
   iter = 10
 )
+} # }
 ```

@@ -43,6 +43,9 @@ metadata splits the sequences into two groups (high vs. low achievers).
 layout(t(1:2))
 achievers <- group_tna(prepared, group = "Achiever")
 plot(achievers)
+#> Registered S3 method overwritten by 'cograph':
+#>   method             from
+#>   plot.tna_bootstrap tna
 ```
 
 ![](grouped_sequences_files/figure-html/unnamed-chunk-4-1.png)

@@ -1,8 +1,5 @@
 # tna — R Package Documentation
 
-\#knit: (function(input, …) rmarkdown::render(input, output_file =
-“tna_knit.html”, …))
-
 ------------------------------------------------------------------------
 
 **tna** provides tools for performing Transition Network Analysis (TNA)
@@ -142,8 +139,8 @@ Build a TNA model for each group. Accepts manual group assignments,
 
 ``` r
 # From mixture Markov model
-model <- group_model(engagement_mmm)
-print(model)
+mmm_model <- group_model(engagement_mmm)
+print(mmm_model)
 ```
 
     #> Cluster 1 :
@@ -198,7 +195,7 @@ print(model)
     #>          0          0          1
 
 ``` r
-summary(model)
+summary(mmm_model)
 ```
 
     #> # A tibble: 13 × 4
@@ -221,7 +218,7 @@ summary(model)
 ``` r
 # Manual groups
 group <- c(rep("High", 1000), rep("Low", 1000))
-model <- group_model(group_regulation, group = group)
+gmodel <- group_model(group_regulation, group = group)
 ```
 
 ### `sna()`
@@ -257,7 +254,6 @@ Plot a TNA model as a transition network.
          mar = rep(5, 4), theme = "colorblind", ...)
 
 ``` r
-model <- tna(group_regulation)
 plot(model)
 ```
 
@@ -270,19 +266,18 @@ plot(model, layout = "spring", scale_nodes = "OutStrength")
 ![](new-docs_files/figure-html/unnamed-chunk-7-1.png)
 
 ``` r
+layout(t(1:2))
 # Group model — side-by-side panels
-gmodel <- group_model(engagement_mmm)
 plot(gmodel)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-8-1.png)![](new-docs_files/figure-html/unnamed-chunk-8-2.png)![](new-docs_files/figure-html/unnamed-chunk-8-3.png)
+![](new-docs_files/figure-html/unnamed-chunk-8-1.png)
 
 ### `plot_frequencies()`
 
 Bar plot of state frequency distribution.
 
 ``` r
-model <- tna(group_regulation)
 plot_frequencies(model)
 ```
 
@@ -290,7 +285,6 @@ plot_frequencies(model)
 
 ``` r
 # Group comparison
-gmodel <- group_model(engagement_mmm)
 plot_frequencies(gmodel)
 ```
 
@@ -302,7 +296,6 @@ Mosaic plot with chi-square test results. Requires frequency model
 ([`ftna()`](http://sonsoles.me/tna/reference/build_model.md)).
 
 ``` r
-model_f <- ftna(group_regulation)
 plot_mosaic(model_f)
 ```
 
@@ -331,13 +324,20 @@ plot_sequences(group_regulation, type = "distribution")
 
 ``` r
 # Group comparison — pass group_tna directly
-gmodel <- group_model(engagement_mmm)
 plot_sequences(gmodel)
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-14-1.png)
 
 ### `plot_compare()`
+
+Difference network between groups. Just pass the group model object.
+
+``` r
+plot_compare(gmodel)
+```
+
+![](new-docs_files/figure-html/unnamed-chunk-15-1.png)
 
 Difference network between two models. Green = x greater, red = y
 greater.
@@ -348,7 +348,7 @@ model_b <- tna(group_regulation[1001:2000, ])
 plot_compare(model_a, model_b)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-15-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-16-1.png)
 
 ### `plot_associations()`
 
@@ -356,20 +356,18 @@ Association network. Requires frequency model
 ([`ftna()`](http://sonsoles.me/tna/reference/build_model.md)).
 
 ``` r
-model_f <- ftna(group_regulation)
 plot_associations(model_f)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-16-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-17-1.png)
 
 ### `hist()`
 
 ``` r
-model <- tna(group_regulation)
 hist(model)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-17-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-18-1.png)
 
 #### Additional plot methods
 
@@ -469,7 +467,6 @@ Import one-hot encoded data as co-occurrence network.
 Simulate sequence data from a TNA model (requires `type = "relative"`).
 
 ``` r
-model <- tna(group_regulation)
 sim <- simulate(model, nsim = 5, seed = 123, max_len = 10)
 print(sim)
 ```
@@ -509,7 +506,6 @@ Calculate centrality measures. Works on `tna`, `group_tna`, and
 | `Clustering`                                 | Signed clustering coefficient         |
 
 ``` r
-model <- tna(group_regulation)
 cm <- centralities(model)
 print(cm)
 ```
@@ -532,26 +528,34 @@ print(cm)
 plot(cm, ncol = 3, reorder = TRUE)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-20-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-21-1.png)
 
 ``` r
 # On group_tna directly
-gmodel <- group_model(engagement_mmm)
 centralities(gmodel)
 ```
 
-    #> # A tibble: 9 × 11
-    #>   group     state      OutStrength InStrength ClosenessIn ClosenessOut Closeness
-    #> * <chr>     <fct>            <dbl>      <dbl>       <dbl>        <dbl>     <dbl>
-    #> 1 Cluster 1 Active           0.140      0.360      0.0794       0.0342    0.0794
-    #> 2 Cluster 1 Average          0.458      0.251      0.0575       0.0994    0.107 
-    #> 3 Cluster 1 Disengaged       0.210      0.197      0.0401       0.0642    0.0642
-    #> 4 Cluster 2 Active           0.159      0.248      0.0608       0.0618    0.0787
-    #> 5 Cluster 2 Average          0.370      0.670      0.121        0.0734    0.121 
-    #> 6 Cluster 2 Disengaged       0.667      0.278      0.0742       0.119     0.119 
-    #> 7 Cluster 3 Active           0.417      0.153      0.0678       0.117     0.117 
-    #> 8 Cluster 3 Average          0.181      0.725      0.148        0.0605    0.148 
-    #> 9 Cluster 3 Disengaged       0.6        0.319      0.0746       0.101     0.196 
+    #> # A tibble: 18 × 11
+    #>    group state      OutStrength InStrength ClosenessIn ClosenessOut Closeness
+    #>  * <chr> <fct>            <dbl>      <dbl>       <dbl>        <dbl>     <dbl>
+    #>  1 High  adapt            1          0.215     0.00650       0.0154    0.0263
+    #>  2 High  cohesion         0.956      0.815     0.0142        0.0118    0.0279
+    #>  3 High  consensus        0.917      2.95      0.0386        0.0121    0.0408
+    #>  4 High  coregulate       0.987      0.436     0.0151        0.0139    0.0205
+    #>  5 High  discuss          0.831      1.12      0.0224        0.0124    0.0309
+    #>  6 High  emotion          0.937      1.00      0.0159        0.0115    0.0254
+    #>  7 High  monitor          0.981      0.301     0.00768       0.0130    0.0209
+    #>  8 High  plan             0.672      1.27      0.0282        0.0113    0.0283
+    #>  9 High  synthesis        1          0.167     0.00878       0.0153    0.0273
+    #> 10 Low   adapt            1          0.452     0.00948       0.0146    0.0242
+    #> 11 Low   cohesion         0.993      0.799     0.0132        0.0123    0.0252
+    #> 12 Low   consensus        0.920      2.42      0.0321        0.0119    0.0352
+    #> 13 Low   coregulate       0.968      0.689     0.0160        0.0155    0.0218
+    #> 14 Low   discuss          0.779      1.21      0.0158        0.0129    0.0223
+    #> 15 Low   emotion          0.906      0.808     0.0128        0.0118    0.0209
+    #> 16 Low   monitor          0.982      0.393     0.00743       0.0142    0.0183
+    #> 17 Low   plan             0.585      1.15      0.0261        0.0109    0.0261
+    #> 18 Low   synthesis        1          0.216     0.0101        0.0153    0.0233
     #> # ℹ 4 more variables: Betweenness <dbl>, BetweennessRSP <dbl>, Diffusion <dbl>,
     #> #   Clustering <dbl>
 
@@ -560,7 +564,6 @@ centralities(gmodel)
 Build network with edge betweenness as weights.
 
 ``` r
-model <- tna(group_regulation)
 bn <- betweenness_network(model)
 print(bn)
 ```
@@ -610,7 +613,6 @@ Centrality stability via subset sampling.
                 threshold = 0.7, certainty = 0.95, progressbar = FALSE)
 
 ``` r
-model <- tna(group_regulation)
 cs <- estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 100)
 print(cs)
 ```
@@ -624,7 +626,7 @@ print(cs)
 plot(cs)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-23-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-24-1.png)
 
 ------------------------------------------------------------------------
 
@@ -638,7 +640,6 @@ Detect communities using 7 igraph algorithms. Works on `tna` and
     communities(x, methods, gamma = 1)
 
 ``` r
-model <- tna(group_regulation)
 comm <- communities(model)
 print(comm)
 ```
@@ -677,70 +678,74 @@ print(comm)
 plot(comm, method = "spinglass")
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-24-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-25-1.png)
 
 ``` r
 # On group_tna directly
-gmodel <- group_model(engagement_mmm)
 communities(gmodel)
 ```
 
-    #> Cluster 1 :
+    #> High :
     #> Number of communities found by each algorithm
     #> 
     #>         walktrap      fast_greedy       label_prop          infomap 
-    #>                1                3                3                1 
+    #>                2                3                1                1 
     #> edge_betweenness    leading_eigen        spinglass 
-    #>                3                2                1 
+    #>                7                2                2 
     #> 
     #> Community assignments
     #> 
     #>        state walktrap fast_greedy label_prop infomap edge_betweenness
-    #> 1     Active        1           1          1       1                1
-    #> 2    Average        1           2          2       1                2
-    #> 3 Disengaged        1           3          3       1                3
+    #> 1      adapt        1           1          1       1                1
+    #> 2   cohesion        1           1          1       1                2
+    #> 3  consensus        1           1          1       1                1
+    #> 4 coregulate        2           2          1       1                3
+    #> 5    discuss        2           2          1       1                4
+    #> 6    emotion        1           1          1       1                5
+    #> 7    monitor        2           2          1       1                6
+    #> 8       plan        2           3          1       1                7
+    #> 9  synthesis        1           1          1       1                1
     #>   leading_eigen spinglass
-    #> 1             1         1
+    #> 1             1         2
+    #> 2             1         2
+    #> 3             1         2
+    #> 4             2         1
+    #> 5             1         1
+    #> 6             1         2
+    #> 7             2         1
+    #> 8             2         1
+    #> 9             1         2
+    #> 
+    #> Low :
+    #> Number of communities found by each algorithm
+    #> 
+    #>         walktrap      fast_greedy       label_prop          infomap 
+    #>                1                3                1                1 
+    #> edge_betweenness    leading_eigen        spinglass 
+    #>                3                4                3 
+    #> 
+    #> Community assignments
+    #> 
+    #>        state walktrap fast_greedy label_prop infomap edge_betweenness
+    #> 1      adapt        1           1          1       1                1
+    #> 2   cohesion        1           3          1       1                1
+    #> 3  consensus        1           1          1       1                1
+    #> 4 coregulate        1           2          1       1                1
+    #> 5    discuss        1           2          1       1                2
+    #> 6    emotion        1           3          1       1                1
+    #> 7    monitor        1           2          1       1                3
+    #> 8       plan        1           1          1       1                3
+    #> 9  synthesis        1           1          1       1                1
+    #>   leading_eigen spinglass
+    #> 1             1         2
     #> 2             1         1
     #> 3             2         1
-    #> 
-    #> Cluster 2 :
-    #> Number of communities found by each algorithm
-    #> 
-    #>         walktrap      fast_greedy       label_prop          infomap 
-    #>                1                2                3                1 
-    #> edge_betweenness    leading_eigen        spinglass 
-    #>                2                2                1 
-    #> 
-    #> Community assignments
-    #> 
-    #>        state walktrap fast_greedy label_prop infomap edge_betweenness
-    #> 1     Active        1           2          1       1                1
-    #> 2    Average        1           1          2       1                2
-    #> 3 Disengaged        1           1          3       1                2
-    #>   leading_eigen spinglass
-    #> 1             1         1
-    #> 2             2         1
-    #> 3             2         1
-    #> 
-    #> Cluster 3 :
-    #> Number of communities found by each algorithm
-    #> 
-    #>         walktrap      fast_greedy       label_prop          infomap 
-    #>                1                3                3                1 
-    #> edge_betweenness    leading_eigen        spinglass 
-    #>                3                2                1 
-    #> 
-    #> Community assignments
-    #> 
-    #>        state walktrap fast_greedy label_prop infomap edge_betweenness
-    #> 1     Active        1           1          1       1                1
-    #> 2    Average        1           2          2       1                2
-    #> 3 Disengaged        1           3          3       1                3
-    #>   leading_eigen spinglass
-    #> 1             1         1
-    #> 2             2         1
-    #> 3             2         1
+    #> 4             3         3
+    #> 5             3         3
+    #> 6             4         1
+    #> 7             3         3
+    #> 8             2         1
+    #> 9             1         2
 
 ### `cliques()`
 
@@ -750,7 +755,6 @@ Identify cliques (complete subgraphs) of a given size.
 
 ``` r
 layout(t(1:3))
-model <- tna(group_regulation)
 cliq <- cliques(model, size = 2)
 print(cliq)
 ```
@@ -792,7 +796,7 @@ print(cliq)
 plot(cliq, n = 3, ask = FALSE)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-26-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-27-1.png)
 
 ------------------------------------------------------------------------
 
@@ -803,24 +807,25 @@ plot(cliq, n = 3, ask = FALSE)
 Compare two TNA models with comprehensive metrics.
 
 ``` r
-gmodel <- group_model(engagement_mmm)
 comp <- compare(gmodel, i = 1, j = 2)
 print(comp)
 ```
 
     #> Edge difference metrics
-    #> # A tibble: 9 × 16
-    #>   source     target     weight_x weight_y raw_difference absolute_difference
-    #>   <fct>      <fct>         <dbl>    <dbl>          <dbl>               <dbl>
-    #> 1 Active     Active       0.860    0.841          0.0189              0.0189
-    #> 2 Average    Active       0.312    0.0926         0.220               0.220 
-    #> 3 Disengaged Active       0.0479   0.156         -0.108               0.108 
-    #> 4 Active     Average      0.0892   0.159         -0.0699              0.0699
-    #> 5 Average    Average      0.542    0.630         -0.0875              0.0875
-    #> 6 Disengaged Average      0.162    0.511         -0.349               0.349 
-    #> 7 Active     Disengaged   0.0509   0              0.0509              0.0509
-    #> 8 Average    Disengaged   0.146    0.278         -0.132               0.132 
-    #> 9 Disengaged Disengaged   0.790    0.333          0.457               0.457 
+    #> # A tibble: 81 × 16
+    #>    source     target   weight_x weight_y raw_difference absolute_difference
+    #>    <fct>      <fct>       <dbl>    <dbl>          <dbl>               <dbl>
+    #>  1 adapt      adapt     0       0              0                   0       
+    #>  2 cohesion   adapt     0.00533 0              0.00533             0.00533 
+    #>  3 consensus  adapt     0.00413 0.00545       -0.00132             0.00132 
+    #>  4 coregulate adapt     0.0224  0.0112         0.0112              0.0112  
+    #>  5 discuss    adapt     0.0240  0.120         -0.0962              0.0962  
+    #>  6 emotion    adapt     0.00323 0.00155        0.00167             0.00167 
+    #>  7 monitor    adapt     0.0111  0.0112        -0.000192            0.000192
+    #>  8 plan       adapt     0.00138 0.000613       0.000771            0.000771
+    #>  9 synthesis  adapt     0.144   0.302         -0.158               0.158   
+    #> 10 adapt      cohesion  0.262   0.277         -0.0148              0.0148  
+    #> # ℹ 71 more rows
     #> # ℹ 10 more variables: squared_difference <dbl>, relative_difference <dbl>,
     #> #   similarity_strength_index <dbl>, difference_index <dbl>,
     #> #   rank_difference <dbl>, percentile_difference <dbl>,
@@ -829,43 +834,43 @@ print(comp)
     #> 
     #> Summary metrics of differences
     #> # A tibble: 22 × 3
-    #>    category          metric               value
-    #>    <chr>             <chr>                <dbl>
-    #>  1 Weight Deviations Mean Abs. Diff.      0.166
-    #>  2 Weight Deviations Median Abs. Diff.    0.108
-    #>  3 Weight Deviations RMS Diff.            0.217
-    #>  4 Weight Deviations Max Abs. Diff.       0.457
-    #>  5 Weight Deviations Rel. Mean Abs. Diff. 0.498
-    #>  6 Weight Deviations CV Ratio             1.16 
-    #>  7 Correlations      Pearson              0.710
-    #>  8 Correlations      Spearman             0.733
-    #>  9 Correlations      Kendall              0.611
-    #> 10 Correlations      Distance             0.500
+    #>    category          metric                value
+    #>    <chr>             <chr>                 <dbl>
+    #>  1 Weight Deviations Mean Abs. Diff.      0.0322
+    #>  2 Weight Deviations Median Abs. Diff.    0.0181
+    #>  3 Weight Deviations RMS Diff.            0.0522
+    #>  4 Weight Deviations Max Abs. Diff.       0.210 
+    #>  5 Weight Deviations Rel. Mean Abs. Diff. 0.290 
+    #>  6 Weight Deviations CV Ratio             1.10  
+    #>  7 Correlations      Pearson              0.921 
+    #>  8 Correlations      Spearman             0.915 
+    #>  9 Correlations      Kendall              0.767 
+    #> 10 Correlations      Distance             0.838 
     #> # ℹ 12 more rows
     #> 
     #> Network metrics
     #> # A tibble: 13 × 3
-    #>    metric                          x     y
-    #>    <chr>                       <dbl> <dbl>
-    #>  1 Node Count                  3     3    
-    #>  2 Edge Count                  9     8    
-    #>  3 Network Density             1     1    
-    #>  4 Mean Distance               0.111 0.239
-    #>  5 Mean Out-Strength           1     1    
-    #>  6 SD Out-Strength             0.214 0.353
-    #>  7 Mean In-Strength            1     1    
-    #>  8 SD In-Strength              0     0    
-    #>  9 Mean Out-Degree             3     2.67 
-    #> 10 SD Out-Degree               0     0.577
-    #> 11 Centralization (Out-Degree) 0     0.25 
-    #> 12 Centralization (In-Degree)  0     0.25 
-    #> 13 Reciprocity                 1     0.8
+    #>    metric                             x        y
+    #>    <chr>                          <dbl>    <dbl>
+    #>  1 Node Count                  9   e+ 0 9   e+ 0
+    #>  2 Edge Count                  7.6 e+ 1 7.5 e+ 1
+    #>  3 Network Density             1   e+ 0 1   e+ 0
+    #>  4 Mean Distance               4.23e- 2 5.60e- 2
+    #>  5 Mean Out-Strength           1   e+ 0 1   e+ 0
+    #>  6 SD Out-Strength             9.14e- 1 7.19e- 1
+    #>  7 Mean In-Strength            1   e+ 0 1   e+ 0
+    #>  8 SD In-Strength              7.85e-17 3.93e-17
+    #>  9 Mean Out-Degree             8.44e+ 0 8.33e+ 0
+    #> 10 SD Out-Degree               1.13e+ 0 8.66e- 1
+    #> 11 Centralization (Out-Degree) 4.69e- 2 6.25e- 2
+    #> 12 Centralization (In-Degree)  4.69e- 2 6.25e- 2
+    #> 13 Reciprocity                 9.57e- 1 9.41e- 1
 
 ``` r
 plot(comp)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-27-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-28-1.png)
 
 ### `compare_sequences()`
 
@@ -875,50 +880,38 @@ Compare subsequence patterns between groups. Pass `group_tna` directly.
     compare_sequences(x, sub, min_freq = 5L, correction = "bonferroni", ...)
 
 ``` r
-gmodel <- group_model(engagement_mmm)
 comp_seq <- compare_sequences(gmodel)
 print(head(comp_seq, 10))
 ```
 
-    #>                                  pattern freq_Cluster 1 freq_Cluster 2
-    #> 1                                Average           5069            113
-    #> 2                       Average->Average           2647             68
-    #> 4                    Disengaged->Average           1057             23
-    #> 5                 Disengaged->Disengaged           5163             15
-    #> 7              Average->Average->Average           1350             44
-    #> 10          Disengaged->Average->Average            565             14
-    #> 12                            Disengaged           6804             47
-    #> 15    Average->Average->Average->Average            680             29
-    #> 20 Disengaged->Average->Average->Average            288              9
-    #> 22                                Active          12264            137
-    #>    freq_Cluster 3 prop_Cluster 1 prop_Cluster 2 prop_Cluster 3 effect_size
-    #> 1              74     0.21000953     0.38047138     0.61157025   10.510487
-    #> 2              59     0.11432150     0.23859649     0.50862069   11.215353
-    #> 4              12     0.04565086     0.08070175     0.10344828    5.601244
-    #> 5               8     0.22298523     0.05263158     0.06896552    4.256135
-    #> 7              45     0.06089035     0.16117216     0.40540541   12.287328
-    #> 10             11     0.02548374     0.05128205     0.09909910    6.772509
-    #> 12             22     0.28189087     0.15824916     0.18181818    2.272492
-    #> 15             33     0.03209364     0.11111111     0.31132075   12.628119
-    #> 20              9     0.01359260     0.03448276     0.08490566    8.264617
-    #> 22             25     0.50809960     0.46127946     0.20661157    1.917857
+    #>             pattern freq_High freq_Low   prop_High    prop_Low effect_size
+    #> 1             adapt       155      399 0.011296553 0.028887924   16.476066
+    #> 2          cohesion      1018      821 0.074192843 0.059441066    7.135478
+    #> 3         consensus      3651     3146 0.266088478 0.227772951   14.333771
+    #> 4        coregulate       959     1174 0.069892865 0.084998552    6.781559
+    #> 5           emotion      1686     1389 0.122877341 0.100564726    9.109850
+    #> 6           monitor       668      848 0.048684498 0.061395888    6.804318
+    #> 7              plan      3102     3521 0.226076817 0.254923255    6.307583
+    #> 8         synthesis       316      413 0.023030391 0.029901535    4.689000
+    #> 9   adapt->cohesion        37      102 0.002908576 0.007961286    8.232879
+    #> 10 adapt->consensus        73      170 0.005738543 0.013268810    9.106178
     #>        p_value
-    #> 1  0.002997003
+    #> 1  0.008991009
     #> 2  0.008991009
+    #> 3  0.008991009
     #> 4  0.008991009
     #> 5  0.008991009
-    #> 7  0.026973027
-    #> 10 0.026973027
-    #> 12 0.080919081
-    #> 15 0.080919081
-    #> 20 0.080919081
-    #> 22 0.149850150
+    #> 6  0.008991009
+    #> 7  0.008991009
+    #> 8  0.008991009
+    #> 9  0.077922078
+    #> 10 0.077922078
 
 ``` r
 plot(comp_seq)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-28-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-29-1.png)
 
 ### `permutation_test()`
 
@@ -938,22 +931,28 @@ print(perm)
     #>    edge_name           diff_true effect_size p_value
     #>    <chr>                   <dbl>       <dbl>   <dbl>
     #>  1 adapt -> adapt       0            NaN     1      
-    #>  2 cohesion -> adapt    0.00541        0.973 0.792  
-    #>  3 consensus -> adapt  -0.000679      -0.160 0.782  
-    #>  4 coregulate -> adapt  0.00769        0.504 0.644  
-    #>  5 discuss -> adapt    -0.130         -6.51  0.00990
-    #>  6 emotion -> adapt     0.0101         1.54  0.277  
-    #>  7 monitor -> adapt    -0.00480       -0.373 0.990  
-    #>  8 plan -> adapt        0.00339        1.67  0.00990
-    #>  9 synthesis -> adapt  -0.159         -1.95  0.0396 
-    #> 10 adapt -> cohesion   -0.0907        -1.18  0.267  
+    #>  2 cohesion -> adapt    0.00541        0.949 0.802  
+    #>  3 consensus -> adapt  -0.000679      -0.175 0.752  
+    #>  4 coregulate -> adapt  0.00769        0.568 0.624  
+    #>  5 discuss -> adapt    -0.130         -7.11  0.00990
+    #>  6 emotion -> adapt     0.0101         1.59  0.257  
+    #>  7 monitor -> adapt    -0.00480       -0.367 0.970  
+    #>  8 plan -> adapt        0.00339        1.56  0.0297 
+    #>  9 synthesis -> adapt  -0.159         -2.08  0.0594 
+    #> 10 adapt -> cohesion   -0.0907        -1.23  0.238  
     #> # ℹ 71 more rows
 
 ``` r
 plot(perm)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-29-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-30-1.png)
+
+It also accepts a group tna model object.
+
+``` r
+permg <- permutation_test(gmodel, iter = 100)
+```
 
 ------------------------------------------------------------------------
 
@@ -967,18 +966,17 @@ Bootstrap transition networks for confidence intervals and significance.
               threshold, consistency_range = c(0.75, 1.25))
 
 ``` r
-model <- tna(group_regulation)
 boot <- bootstrap(model, iter = 100)
 plot(boot)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-30-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-32-1.png)
 
 ``` r
 plot_bootstrap_forest(boot)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-31-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-33-1.png)
 
 ### `bootstrap_cliques()`
 
@@ -989,81 +987,6 @@ bc <- bootstrap_cliques(model, size = 2, iter = 100)
 print(bc)
 ```
 
-    #>                  clique mean_weight   p_values   sig    cr_lower   cr_upper
-    #> 1        plan-synthesis  0.11278704 0.35643564 FALSE 0.084590283 0.14098381
-    #> 2          monitor-plan  0.17087683 0.19801980 FALSE 0.128157620 0.21359603
-    #> 3     monitor-synthesis  0.01161598 0.79207921 FALSE 0.008711988 0.01451998
-    #> 4       emotion-monitor  0.05550255 0.50495050 FALSE 0.041626916 0.06937819
-    #> 5          emotion-plan  0.17440699 0.00990099  TRUE 0.130805243 0.21800874
-    #> 6     emotion-synthesis  0.03755344 0.68316832 FALSE 0.028165080 0.04694180
-    #> 7       discuss-emotion  0.11984832 0.82178218 FALSE 0.089886239 0.14981040
-    #> 8       discuss-monitor  0.15268503 0.94059406 FALSE 0.114513772 0.19085629
-    #> 9          discuss-plan  0.16215710 0.46534653 FALSE 0.121617828 0.20269638
-    #> 10    discuss-synthesis  0.09968694 0.22772277 FALSE 0.074765208 0.12460868
-    #> 11   coregulate-discuss  0.14403104 0.94059406 FALSE 0.108023277 0.18003880
-    #> 12   coregulate-emotion  0.07661606 0.45544554 FALSE 0.057462047 0.09577008
-    #> 13   coregulate-monitor  0.04642722 0.41584158 FALSE 0.034820413 0.05803402
-    #> 14      coregulate-plan  0.16346524 0.42574257 FALSE 0.122598927 0.20433154
-    #> 15 coregulate-synthesis  0.02165263 0.89108911 FALSE 0.016239470 0.02706578
-    #> 16 consensus-coregulate  0.10689472 0.25742574 FALSE 0.080171039 0.13361840
-    #> 17    consensus-discuss  0.19652469 0.01980198  TRUE 0.147393514 0.24565586
-    #> 18    consensus-emotion  0.13798385 0.11881188 FALSE 0.103487888 0.17247981
-    #> 19    consensus-monitor  0.07646621 0.87128713 FALSE 0.057349657 0.09558276
-    #> 20       consensus-plan  0.28560250 0.00990099  TRUE 0.214201873 0.35700312
-    #> 21  consensus-synthesis  0.13896132 0.46534653 FALSE 0.104220990 0.17370165
-    #> 22   cohesion-consensus  0.15548237 0.38613861 FALSE 0.116611779 0.19435297
-    #> 23  cohesion-coregulate  0.05142589 0.70297030 FALSE 0.038569415 0.06428236
-    #> 24     cohesion-discuss  0.08229898 0.39603960 FALSE 0.061724236 0.10287373
-    #> 25     cohesion-emotion  0.13623957 0.14851485 FALSE 0.102179675 0.17029946
-    #> 26     cohesion-monitor  0.03353692 0.68316832 FALSE 0.025152690 0.04192115
-    #> 27        cohesion-plan  0.14188110 0.13861386 FALSE 0.106410827 0.17735138
-    #> 28   cohesion-synthesis  0.01610520 0.58415842 FALSE 0.012078900 0.02013150
-    #> 29       adapt-cohesion  0.07579324 0.68316832 FALSE 0.056844933 0.09474155
-    #> 30      adapt-consensus  0.14103756 0.60396040 FALSE 0.105778170 0.17629695
-    #> 31     adapt-coregulate  0.01530123 0.86138614 FALSE 0.011475921 0.01912653
-    #> 32        adapt-discuss  0.08130020 0.99009901 FALSE 0.060975150 0.10162525
-    #> 33        adapt-emotion  0.04978799 0.88118812 FALSE 0.037340992 0.06223499
-    #> 34        adapt-monitor  0.01567699 0.75247525 FALSE 0.011757743 0.01959624
-    #> 35           adapt-plan  0.09772495 0.27722772 FALSE 0.073293715 0.12215619
-    #> 36      adapt-synthesis  0.05866564 0.69306931 FALSE 0.043999233 0.07333206
-    #>       ci_lower   ci_upper
-    #> 1  0.067871551 0.16916223
-    #> 2  0.145865463 0.24209823
-    #> 3  0.000000000 0.04886905
-    #> 4  0.029849425 0.12163425
-    #> 5  0.142235770 0.21299081
-    #> 6  0.000000000 0.07106378
-    #> 7  0.036705096 0.10441189
-    #> 8  0.046129261 0.11903859
-    #> 9  0.094095861 0.15261396
-    #> 10 0.059482265 0.11527209
-    #> 11 0.041666667 0.11866003
-    #> 12 0.044193962 0.14108333
-    #> 13 0.015142463 0.07089650
-    #> 14 0.088771205 0.16251061
-    #> 15 0.000000000 0.02670455
-    #> 16 0.052969881 0.12558519
-    #> 17 0.185334478 0.24076827
-    #> 18 0.095754941 0.16349364
-    #> 19 0.076490398 0.19025012
-    #> 20 0.235414139 0.30275329
-    #> 21 0.104114078 0.23946276
-    #> 22 0.149104647 0.23333459
-    #> 23 0.040210704 0.12331597
-    #> 24 0.038884437 0.11526961
-    #> 25 0.092156880 0.14994310
-    #> 26 0.023060423 0.08172764
-    #> 27 0.082919711 0.15436799
-    #> 28 0.000000000 0.03506944
-    #> 29 0.012500000 0.24109375
-    #> 30 0.015196159 0.18507025
-    #> 31 0.000000000 0.03125000
-    #> 32 0.011104249 0.05388393
-    #> 33 0.004423167 0.18288826
-    #> 34 0.000000000 0.04886905
-    #> 35 0.060602139 0.10098269
-    #> 36 0.000000000 0.09366259
-
 ### `prune()`
 
 Remove weak edges. Four methods available.
@@ -1072,79 +995,17 @@ Remove weak edges. Four methods available.
           level = 0.5, boot = NULL, ...)
 
 ``` r
-model <- tna(group_regulation)
-
 pruned_t <- prune(model, method = "threshold", threshold = 0.1)
 pruned_p <- prune(model, method = "lowest", lowest = 0.05)
 pruned_d <- prune(model, method = "disparity", level = 0.5)
-
 pruning_details(pruned_t)
 ```
-
-    #> **Pruning Details**
-    #> 
-    #> Method used: User-specified threshold (0.1)
-    #> Number of removed edges: 49
-    #> Number of retained edges: 29
-    #> 
-    #> **Removed edges**
-    #> 
-    #>          from         to       weight
-    #> 1    cohesion      adapt 0.0029498525
-    #> 2   consensus      adapt 0.0047400853
-    #> 3  coregulate      adapt 0.0162436548
-    #> 4     discuss      adapt 0.0713743356
-    #> 5     emotion      adapt 0.0024673951
-    #> 6     monitor      adapt 0.0111653873
-    #> 7        plan      adapt 0.0009745006
-    #> 8    cohesion   cohesion 0.0271386431
-    #> 9   consensus   cohesion 0.0148522673
-    #> 10 coregulate   cohesion 0.0360406091
-    #> 11    discuss   cohesion 0.0475828904
-    #> 12    monitor   cohesion 0.0558269365
-    #> 13       plan   cohesion 0.0251745980
-    #> 14  synthesis   cohesion 0.0337423313
-    #> 15  consensus  consensus 0.0820034761
-    #> 16      adapt coregulate 0.0216110020
-    #> 17 coregulate coregulate 0.0233502538
-    #> 18    discuss coregulate 0.0842824601
-    #> 19    emotion coregulate 0.0341910469
-    #> 20    monitor coregulate 0.0579204466
-    #> 21       plan coregulate 0.0172161767
-    #> 22  synthesis coregulate 0.0444785276
-    #> 23      adapt    discuss 0.0589390963
-    #> 24   cohesion    discuss 0.0595870206
-    #> 25       plan    discuss 0.0678902063
-    #> 26  synthesis    discuss 0.0628834356
-    #> 27  consensus    emotion 0.0726813083
-    #> 28    emotion    emotion 0.0768417342
-    #> 29    monitor    emotion 0.0907187718
-    #> 30  synthesis    emotion 0.0705521472
-    #> 31      adapt    monitor 0.0333988212
-    #> 32   cohesion    monitor 0.0330383481
-    #> 33  consensus    monitor 0.0466108390
-    #> 34 coregulate    monitor 0.0862944162
-    #> 35    discuss    monitor 0.0222728423
-    #> 36    emotion    monitor 0.0363059570
-    #> 37    monitor    monitor 0.0181437544
-    #> 38       plan    monitor 0.0755237941
-    #> 39  synthesis    monitor 0.0122699387
-    #> 40      adapt       plan 0.0157170923
-    #> 41    discuss       plan 0.0116426221
-    #> 42    emotion       plan 0.0997532605
-    #> 43  synthesis       plan 0.0751533742
-    #> 44   cohesion  synthesis 0.0035398230
-    #> 45  consensus  synthesis 0.0075841365
-    #> 46 coregulate  synthesis 0.0187817259
-    #> 47    emotion  synthesis 0.0028198802
-    #> 48    monitor  synthesis 0.0160502442
-    #> 49       plan  synthesis 0.0017865844
 
 ``` r
 plot(pruned_t)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-34-1.png)
+![](new-docs_files/figure-html/unnamed-chunk-36-1.png)
 
 ``` r
 # Restore and reapply
@@ -1181,20 +1042,20 @@ gmodel_clust <- group_model(result)
 plot(gmodel_clust)
 ```
 
-![](new-docs_files/figure-html/unnamed-chunk-36-1.png)![](new-docs_files/figure-html/unnamed-chunk-36-2.png)![](new-docs_files/figure-html/unnamed-chunk-36-3.png)
+![](new-docs_files/figure-html/unnamed-chunk-38-1.png)![](new-docs_files/figure-html/unnamed-chunk-38-2.png)![](new-docs_files/figure-html/unnamed-chunk-38-3.png)
 
 ### `rename_groups()`
 
 ``` r
-gmodel <- group_model(engagement_mmm)
-gmodel_renamed <- rename_groups(gmodel, c("A", "B", "C"))
+gmodel_mmm <- group_model(engagement_mmm)
+gmodel_mmm_renamed <- rename_groups(gmodel_mmm, c("A", "B", "C"))
 cat("Original:", names(group_model(engagement_mmm)), "\n")
 ```
 
     #> Original: Cluster 1 Cluster 2 Cluster 3
 
 ``` r
-cat("Renamed:", names(gmodel_renamed), "\n")
+cat("Renamed:", names(gmodel_mmm_renamed), "\n")
 ```
 
     #> Renamed: A B C
@@ -1219,7 +1080,6 @@ mmm_stats(engagement_mmm)
 ### `summary()`
 
 ``` r
-model <- tna(group_regulation)
 summary(model)
 ```
 
@@ -1241,38 +1101,36 @@ summary(model)
     #> 13 Reciprocity                 9.86e- 1
 
 ``` r
-gmodel <- group_model(engagement_mmm)
 summary(gmodel)
 ```
 
-    #> # A tibble: 13 × 4
-    #>    metric                      `Cluster 1` `Cluster 2` `Cluster 3`
-    #>  * <chr>                             <dbl>       <dbl>       <dbl>
-    #>  1 Node Count                        3           3           3    
-    #>  2 Edge Count                        9           8           8    
-    #>  3 Network Density                   1           1           1    
-    #>  4 Mean Distance                     0.111       0.239       0.302
-    #>  5 Mean Out-Strength                 1           1           1    
-    #>  6 SD Out-Strength                   0.214       0.353       0.472
-    #>  7 Mean In-Strength                  1           1           1    
-    #>  8 SD In-Strength                    0           0           0    
-    #>  9 Mean Out-Degree                   3           2.67        2.67 
-    #> 10 SD Out-Degree                     0           0.577       0.577
-    #> 11 Centralization (Out-Degree)       0           0.25        0.25 
-    #> 12 Centralization (In-Degree)        0           0.25        0.25 
-    #> 13 Reciprocity                       1           0.8         0.8
+    #> # A tibble: 13 × 3
+    #>    metric                          High      Low
+    #>  * <chr>                          <dbl>    <dbl>
+    #>  1 Node Count                  9   e+ 0 9   e+ 0
+    #>  2 Edge Count                  7.6 e+ 1 7.5 e+ 1
+    #>  3 Network Density             1   e+ 0 1   e+ 0
+    #>  4 Mean Distance               4.23e- 2 5.60e- 2
+    #>  5 Mean Out-Strength           1   e+ 0 1   e+ 0
+    #>  6 SD Out-Strength             9.14e- 1 7.19e- 1
+    #>  7 Mean In-Strength            1   e+ 0 1   e+ 0
+    #>  8 SD In-Strength              7.85e-17 3.93e-17
+    #>  9 Mean Out-Degree             8.44e+ 0 8.33e+ 0
+    #> 10 SD Out-Degree               1.13e+ 0 8.66e- 1
+    #> 11 Centralization (Out-Degree) 4.69e- 2 6.25e- 2
+    #> 12 Centralization (In-Degree)  4.69e- 2 6.25e- 2
+    #> 13 Reciprocity                 9.57e- 1 9.41e- 1
 
 ### `as.igraph()`
 
 ``` r
-model <- tna(group_regulation)
 g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH 9da4312 DNW- 9 78 -- 
+    #> IGRAPH d2938bc DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from 9da4312 (vertex names):
+    #> + edges from d2938bc (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  
