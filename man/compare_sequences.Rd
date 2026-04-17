@@ -78,6 +78,7 @@ permutation samples divided by their standard deviation times square root of
 the number of observations.
 }
 \examples{
+\dontrun{
 group <- c(rep("High", 1000), rep("Low", 1000))
 comp <- compare_sequences(group_regulation, group)
 
@@ -88,6 +89,7 @@ comp_test <- compare_sequences(
   test = TRUE,
   iter = 10
 )
+}
 
 }
 \seealso{

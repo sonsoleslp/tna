@@ -11,7 +11,6 @@ output:
     code_folding: hide
     number_sections: false
 ---
-#knit: (function(input, ...) rmarkdown::render(input, output_file = "tna_knit.html", ...))
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE, warning = FALSE,
@@ -98,15 +97,15 @@ group_model(x, group, type = "relative", scaling = character(0L),
 
 ```{r}
 # From mixture Markov model
-model <- group_model(engagement_mmm)
-print(model)
-summary(model)
+mmm_model <- group_model(engagement_mmm)
+print(mmm_model)
+summary(mmm_model)
 ```
 
 ```{r}
 # Manual groups
 group <- c(rep("High", 1000), rep("Low", 1000))
-model <- group_model(group_regulation, group = group)
+gmodel <- group_model(group_regulation, group = group)
 ```
 
 ## `sna()`
@@ -141,7 +140,6 @@ plot(x, labels, colors, pie, cut, show_pruned = TRUE, pruned_edge_color = "pink"
 ```
 
 ```{r}
-model <- tna(group_regulation)
 plot(model)
 ```
 
@@ -149,9 +147,9 @@ plot(model)
 plot(model, layout = "spring", scale_nodes = "OutStrength")
 ```
 
-```{r}
+```{r,fig.width=12}
+layout(t(1:2))
 # Group model — side-by-side panels
-gmodel <- group_model(engagement_mmm)
 plot(gmodel)
 ```
 
@@ -160,13 +158,11 @@ plot(gmodel)
 Bar plot of state frequency distribution.
 
 ```{r}
-model <- tna(group_regulation)
 plot_frequencies(model)
 ```
 
 ```{r}
 # Group comparison
-gmodel <- group_model(engagement_mmm)
 plot_frequencies(gmodel)
 ```
 
@@ -175,7 +171,6 @@ plot_frequencies(gmodel)
 Mosaic plot with chi-square test results. Requires frequency model (`ftna()`).
 
 ```{r}
-model_f <- ftna(group_regulation)
 plot_mosaic(model_f)
 ```
 
@@ -200,11 +195,15 @@ plot_sequences(group_regulation, type = "distribution")
 
 ```{r}
 # Group comparison — pass group_tna directly
-gmodel <- group_model(engagement_mmm)
 plot_sequences(gmodel)
 ```
 
 ## `plot_compare()`
+
+Difference network between groups. Just pass the group model object.
+```{r}
+plot_compare(gmodel)
+```
 
 Difference network between two models. Green = x greater, red = y greater.
 
@@ -219,14 +218,12 @@ plot_compare(model_a, model_b)
 Association network. Requires frequency model (`ftna()`).
 
 ```{r}
-model_f <- ftna(group_regulation)
 plot_associations(model_f)
 ```
 
 ## `hist()`
 
 ```{r}
-model <- tna(group_regulation)
 hist(model)
 ```
 
@@ -287,7 +284,6 @@ import_onehot(data, cols, window = 1L)
 Simulate sequence data from a TNA model (requires `type = "relative"`).
 
 ```{r}
-model <- tna(group_regulation)
 sim <- simulate(model, nsim = 5, seed = 123, max_len = 10)
 print(sim)
 ```
@@ -315,7 +311,6 @@ centralities(x, loops = FALSE, normalize = FALSE, measures)
 | `Clustering` | Signed clustering coefficient |
 
 ```{r}
-model <- tna(group_regulation)
 cm <- centralities(model)
 print(cm)
 plot(cm, ncol = 3, reorder = TRUE)
@@ -323,7 +318,6 @@ plot(cm, ncol = 3, reorder = TRUE)
 
 ```{r}
 # On group_tna directly
-gmodel <- group_model(engagement_mmm)
 centralities(gmodel)
 ```
 
@@ -332,7 +326,6 @@ centralities(gmodel)
 Build network with edge betweenness as weights.
 
 ```{r}
-model <- tna(group_regulation)
 bn <- betweenness_network(model)
 print(bn)
 ```
@@ -350,7 +343,6 @@ estimate_cs(x, loops = FALSE, normalize = FALSE,
 ```
 
 ```{r}
-model <- tna(group_regulation)
 cs <- estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 100)
 print(cs)
 plot(cs)
@@ -369,7 +361,6 @@ communities(x, methods, gamma = 1)
 ```
 
 ```{r}
-model <- tna(group_regulation)
 comm <- communities(model)
 print(comm)
 plot(comm, method = "spinglass")
@@ -377,7 +368,6 @@ plot(comm, method = "spinglass")
 
 ```{r}
 # On group_tna directly
-gmodel <- group_model(engagement_mmm)
 communities(gmodel)
 ```
 
@@ -391,7 +381,6 @@ cliques(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 
 ```{r, fig.width=6, fig.height=2}
 layout(t(1:3))
-model <- tna(group_regulation)
 cliq <- cliques(model, size = 2)
 print(cliq)
 plot(cliq, n = 3, ask = FALSE)
@@ -406,7 +395,6 @@ plot(cliq, n = 3, ask = FALSE)
 Compare two TNA models with comprehensive metrics.
 
 ```{r}
-gmodel <- group_model(engagement_mmm)
 comp <- compare(gmodel, i = 1, j = 2)
 print(comp)
 plot(comp)
@@ -422,7 +410,6 @@ compare_sequences(x, sub, min_freq = 5L, correction = "bonferroni", ...)
 ```
 
 ```{r}
-gmodel <- group_model(engagement_mmm)
 comp_seq <- compare_sequences(gmodel)
 print(head(comp_seq, 10))
 plot(comp_seq)
@@ -445,6 +432,11 @@ print(perm)
 plot(perm)
 ```
 
+It also accepts a group tna model object.
+```{r}
+permg <- permutation_test(gmodel, iter = 100)
+```
+
 ---
 
 # Validation
@@ -459,10 +451,8 @@ bootstrap(x, iter = 1000, level = 0.05, method = "stability",
 ```
 
 ```{r}
-model <- tna(group_regulation)
 boot <- bootstrap(model, iter = 100)
 plot(boot)
-
 ```
 ```{r, fig.height=11}
 plot_bootstrap_forest(boot)
@@ -472,7 +462,7 @@ plot_bootstrap_forest(boot)
 
 Bootstrap cliques to assess stability.
 
-```{r}
+```{r, results=F, message = F}
 bc <- bootstrap_cliques(model, size = 2, iter = 100)
 print(bc)
 ```
@@ -486,13 +476,10 @@ prune(x, method = "threshold", threshold = 0.1, lowest = 0.05,
       level = 0.5, boot = NULL, ...)
 ```
 
-```{r}
-model <- tna(group_regulation)
-
+```{r, results=F, message = F}
 pruned_t <- prune(model, method = "threshold", threshold = 0.1)
 pruned_p <- prune(model, method = "lowest", lowest = 0.05)
 pruned_d <- prune(model, method = "disparity", level = 0.5)
-
 pruning_details(pruned_t)
 ```
 
@@ -531,10 +518,10 @@ plot(gmodel_clust)
 ## `rename_groups()`
 
 ```{r}
-gmodel <- group_model(engagement_mmm)
-gmodel_renamed <- rename_groups(gmodel, c("A", "B", "C"))
+gmodel_mmm <- group_model(engagement_mmm)
+gmodel_mmm_renamed <- rename_groups(gmodel_mmm, c("A", "B", "C"))
 cat("Original:", names(group_model(engagement_mmm)), "\n")
-cat("Renamed:", names(gmodel_renamed), "\n")
+cat("Renamed:", names(gmodel_mmm_renamed), "\n")
 ```
 
 ## `mmm_stats()`
@@ -550,19 +537,16 @@ mmm_stats(engagement_mmm)
 ## `summary()`
 
 ```{r}
-model <- tna(group_regulation)
 summary(model)
 ```
 
 ```{r}
-gmodel <- group_model(engagement_mmm)
 summary(gmodel)
 ```
 
 ## `as.igraph()`
 
 ```{r}
-model <- tna(group_regulation)
 g <- as.igraph(model)
 print(g)
 ```

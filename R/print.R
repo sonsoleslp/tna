@@ -358,9 +358,11 @@ print.tna_clustering <- function(x, ...) {
 #' @param ... Arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
 #' @examples
+#' \dontrun{
 #' group <- c(rep("High", 1000), rep("Low", 1000))
 #' comp <- compare_sequences(group_regulation, group)
 #' print(comp)
+#' }
 #'
 print.tna_sequence_comparison <- function(x, ...) {
   NextMethod(generic = "print", object = x, ...)

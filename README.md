@@ -75,7 +75,7 @@ analytics methods” book:
 
 In addition to the `tna` R package, you can also try our [Shiny
 app](https://sonsoleslp.shinyapps.io/tna-app/) and [Jamovi
-plugin](https://github.com/sonsoleslp/jTNA).
+plugin](https://github.com/SONsoleslp/JTNA).
 
 ## Installation
 

@@ -429,6 +429,7 @@ rv_coefficient <- function(x, y) {
 #'   and p-values of the tests.
 #'
 #' @examples
+#' \dontrun{
 #' group <- c(rep("High", 1000), rep("Low", 1000))
 #' comp <- compare_sequences(group_regulation, group)
 #'
@@ -439,6 +440,7 @@ rv_coefficient <- function(x, y) {
 #'   test = TRUE,
 #'   iter = 10
 #' )
+#' }
 #'
 #' @export
 compare_sequences <- function(x, ...) {

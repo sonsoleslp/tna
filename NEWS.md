@@ -1,4 +1,4 @@
-# tna 1.2.1
+# tna 1.2.2
 * Fix bug in `plot.tna_sequence_comparison`
 
 # tna 1.2.1

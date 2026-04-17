@@ -666,9 +666,11 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' @param ... Not used.
 #' @return A `ggplot` object.
 #' @examples
+#' \dontrun{
 #' group <- c(rep("High", 1000), rep("Low", 1000))
 #' comp <- compare_sequences(group_regulation, group)
 #' plot(comp)
+#' }
 #'
 plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
                                          cells = TRUE, text_color = "white",

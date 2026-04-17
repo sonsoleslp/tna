@@ -252,8 +252,8 @@ plot(edge_between)
 
 ```{r, fig.align='center', fig.width=5, fig.height=5}
 detected_communities <- communities(model_scaled)
-plot(detected_communities)
-print(detected_communities)
+plot(detected_communities, method = "leading_eigen")
+print(detected_communities, method = "leading_eigen")
 ```
 
 ## Bootstrapping
