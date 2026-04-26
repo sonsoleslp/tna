@@ -1,3 +1,18 @@
+# tna 1.2.3
+
+* Resolved CRAN warning "Data files with namespace references not in the
+  recursive strong package dependencies" by rebuilding `engagement_mmm` as
+  a `tna_mmm` object that carries no foreign class references. The new
+  sibling S3 methods `group_model.tna_mmm()` and `mmm_stats.tna_mmm()`
+  preserve all existing example behaviour without requiring `seqHMM` at
+  example-run time. Real `mhmm` objects from `seqHMM` continue to work via
+  the original `*.mhmm` methods.
+* Added `random_tna()`, `random_group_tna()`, `random_tna_mmm()`, and
+  `list_random_state_pools()` for constructing synthetic TNA models with
+  no external dependencies.
+* Lowered the minimum required R version from 4.4.0 to 4.1.0 (the floor
+  set by the native `|>` pipe used in the package).
+
 # tna 1.2.2
 * Fix bug in `plot.tna_sequence_comparison`
 

@@ -224,9 +224,21 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
 
 #' Bootstrap Cliques of Transition Networks from Sequence Data
 #'
+#' Bootstrap the edge weights of all cliques of a given size in a `tna`
+#' model, producing per-clique mean weights, p-values, confidence intervals,
+#' and consistency-range bounds.
+#'
 #' @export
 #' @inheritParams cliques
 #' @inheritParams bootstrap
+#' @return A `data.frame` (also of class `tna_bootstrap_cliques`) with
+#'   one row per clique and the columns `clique`, `mean_weight`, `p_values`,
+#'   `sig`, `cr_lower`, `cr_upper`, `ci_lower`, `ci_upper`.
+#' @examples
+#' model <- tna(group_regulation)
+#' # Small number of iterations for CRAN
+#' boot_cliq <- bootstrap_cliques(model, size = 2, iter = 10)
+#'
 bootstrap_cliques <- function(x, size, threshold,
                               iter, level, consistency_range) {
   UseMethod("bootstrap_cliques")

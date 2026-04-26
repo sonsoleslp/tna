@@ -158,6 +158,10 @@ unnamed \code{character} vector. If missing, a default palette is used.}
 \item{cols}{An \code{expression} giving a tidy selection of column names to be
 treated as time points. By default, all columns will be used.}
 }
+\value{
+A \code{ggplot} object containing either a sequence index plot or
+a state distribution plot, faceted by \code{group} when supplied.
+}
 \description{
 Create a Sequence Index Plot or a Distribution Plot
 }

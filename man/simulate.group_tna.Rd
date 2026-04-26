@@ -72,8 +72,12 @@ sim <- simulate(model, nsim = 10, max_len = 10)
 Other data: 
 \code{\link{import_data}()},
 \code{\link{import_onehot}()},
+\code{\link{list_random_state_pools}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
+\code{\link{random_group_tna}()},
+\code{\link{random_tna}()},
+\code{\link{random_tna_mmm}()},
 \code{\link{simulate.tna}()}
 }
 \concept{data}

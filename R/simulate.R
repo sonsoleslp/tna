@@ -1,4 +1,24 @@
+#' Simulate Method (Re-export of [stats::simulate])
+#'
+#' The [stats::simulate()] generic is re-exported so that the
+#' `simulate.tna()` and `simulate.group_tna()` methods provided by this
+#' package are dispatched correctly when the user only loads `tna`.
+#' See the method-specific help pages for argument and return details.
+#'
+#' @name simulate
+#' @rdname simulate
 #' @importFrom stats simulate
+#' @param object A statistical model object. The `tna` package provides
+#'   methods for objects of class `tna` and `group_tna`.
+#' @param nsim An `integer` giving the number of sequences to simulate.
+#' @param seed An `integer` random seed for reproducibility, or `NULL`.
+#' @param ... Further arguments passed to the dispatched method.
+#' @return The value returned by the dispatched method (a `data.frame` of
+#'   simulated sequences for `tna` and `group_tna` objects). See the
+#'   method-specific help pages for details.
+#' @examples
+#' model <- tna(group_regulation)
+#' sim <- simulate(model, nsim = 5, max_len = 10)
 #' @export
 stats::simulate
 

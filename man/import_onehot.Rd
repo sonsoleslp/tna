@@ -62,8 +62,12 @@ onehot2 <- import_onehot(d, feature1:feature3, "actor", "session")
 \seealso{
 Other data: 
 \code{\link{import_data}()},
+\code{\link{list_random_state_pools}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
+\code{\link{random_group_tna}()},
+\code{\link{random_tna}()},
+\code{\link{random_tna_mmm}()},
 \code{\link{simulate.group_tna}()},
 \code{\link{simulate.tna}()}
 }

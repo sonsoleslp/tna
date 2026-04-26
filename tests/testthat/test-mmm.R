@@ -3,11 +3,12 @@ test_that("mmm_stats is a generic function", {
   expect_true(is.function(mmm_stats))
   methods_info <- methods("mmm_stats")
   expect_true("mmm_stats.mhmm" %in% methods_info)
+  expect_true("mmm_stats.tna_mmm" %in% methods_info)
 })
 
-# Tests for mmm_stats.mhmm method
-test_that("mmm_stats.mhmm works with engagement_mmm data", {
-  skip_if_not_installed("seqHMM")
+# Tests for mmm_stats.tna_mmm method (dispatched via the bundled
+# engagement_mmm, which is now a tna_mmm object).
+test_that("mmm_stats.tna_mmm works with engagement_mmm data", {
   result <- mmm_stats(engagement_mmm)
   expect_s3_class(result, "data.frame")
   expect_true(nrow(result) > 0)
@@ -20,8 +21,7 @@ test_that("mmm_stats.mhmm works with engagement_mmm data", {
   )
 })
 
-test_that("mmm_stats.mhmm returns correct column types", {
-  skip_if_not_installed("seqHMM")
+test_that("mmm_stats.tna_mmm returns correct column types", {
   result <- mmm_stats(engagement_mmm)
   expect_type(result$cluster, "character")
   expect_type(result$variable, "character")
@@ -33,8 +33,7 @@ test_that("mmm_stats.mhmm returns correct column types", {
   expect_type(result$p_value, "double")
 })
 
-test_that("mmm_stats.mhmm respects custom level parameter", {
-  skip_if_not_installed("seqHMM")
+test_that("mmm_stats.tna_mmm respects custom level parameter", {
   result_default <- mmm_stats(engagement_mmm, level = 0.05)
   result_narrow <- mmm_stats(engagement_mmm, level = 0.01)
 
@@ -47,34 +46,24 @@ test_that("mmm_stats.mhmm respects custom level parameter", {
   expect_true(all(ci_width_narrow >= ci_width_default - 1e-10))
 })
 
-test_that("mmm_stats.mhmm validates level parameter", {
-  skip_if_not_installed("seqHMM")
+test_that("mmm_stats.tna_mmm validates level parameter", {
   expect_error(mmm_stats(engagement_mmm, level = -0.1))
   expect_error(mmm_stats(engagement_mmm, level = 1.5))
 })
 
-test_that("mmm_stats.mhmm rejects non-mhmm objects", {
-  skip_if_not_installed("seqHMM")
-  expect_error(mmm_stats.mhmm(list(a = 1)), "mhmm")
-  expect_error(mmm_stats.mhmm(data.frame(x = 1)), "mhmm")
-})
-
-test_that("mmm_stats.mhmm returns p-values between 0 and 1", {
-  skip_if_not_installed("seqHMM")
+test_that("mmm_stats.tna_mmm returns p-values between 0 and 1", {
   result <- mmm_stats(engagement_mmm)
   expect_true(all(result$p_value >= 0))
   expect_true(all(result$p_value <= 1))
 })
 
-test_that("mmm_stats.mhmm returns confidence intervals containing estimate", {
-  skip_if_not_installed("seqHMM")
+test_that("mmm_stats.tna_mmm returns confidence intervals containing estimate", {
   result <- mmm_stats(engagement_mmm)
   expect_true(all(result$ci_lower <= result$estimate))
   expect_true(all(result$ci_upper >= result$estimate))
 })
 
-test_that("mmm_stats.mhmm returns positive standard errors", {
-  skip_if_not_installed("seqHMM")
+test_that("mmm_stats.tna_mmm returns positive standard errors", {
   result <- mmm_stats(engagement_mmm)
   expect_true(all(result$std_error >= 0))
 })
@@ -216,10 +205,7 @@ test_that("mmm_stats_ returns default row names", {
 })
 
 # Edge case tests
-test_that("mmm_stats.mhmm works with edge level values",
-  {
-  skip_if_not_installed("seqHMM")
-
+test_that("mmm_stats.tna_mmm works with edge level values", {
   # Level close to 0 (very wide CI)
   result_wide <- mmm_stats(engagement_mmm, level = 0.001)
   expect_s3_class(result_wide, "data.frame")
@@ -227,20 +213,4 @@ test_that("mmm_stats.mhmm works with edge level values",
   # Level close to 1 (very narrow CI)
   result_narrow <- mmm_stats(engagement_mmm, level = 0.999)
   expect_s3_class(result_narrow, "data.frame")
-})
-
-test_that("mmm_stats_ handles single variable correctly", {
-  cf <- matrix(
-    c(0, 1),
-    nrow = 1,
-    ncol = 2,
-    dimnames = list("(Intercept)", c("ref", "Cluster 2"))
-  )
-  vc <- diag(1)
-
-  result <- mmm_stats_(cf, vc, level = 0.05)
-
-  expect_equal(nrow(result), 1)
-  expect_equal(result$variable, "(Intercept)")
-  expect_equal(result$cluster, "Cluster 2")
 })

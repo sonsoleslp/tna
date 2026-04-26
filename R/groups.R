@@ -194,6 +194,25 @@ group_model.default <- function(x, group, type = "relative",
 
 #' @export
 #' @rdname group_model
+group_model.tna_mmm <- function(x, type = "relative", scaling = character(0L),
+                                groupwise = FALSE, params = list(),
+                                na.rm = TRUE, ...) {
+  check_missing(x)
+  check_class(x, "tna_mmm")
+  group_model.default(
+    x = x$observations,
+    group = x$most_probable_cluster,
+    type = type,
+    scaling = scaling,
+    groupwise = groupwise,
+    params = params,
+    na.rm = na.rm,
+    ...
+  )
+}
+
+#' @export
+#' @rdname group_model
 group_model.mhmm <- function(x, type = "relative", scaling = character(0L),
                              groupwise = FALSE, params = list(),
                              na.rm = TRUE, ...) {

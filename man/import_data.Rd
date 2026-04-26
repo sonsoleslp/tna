@@ -67,8 +67,12 @@ long_data2 <- import_data(
 \seealso{
 Other data: 
 \code{\link{import_onehot}()},
+\code{\link{list_random_state_pools}()},
 \code{\link{prepare_data}()},
 \code{\link{print.tna_data}()},
+\code{\link{random_group_tna}()},
+\code{\link{random_tna}()},
+\code{\link{random_tna_mmm}()},
 \code{\link{simulate.group_tna}()},
 \code{\link{simulate.tna}()}
 }

@@ -38,6 +38,19 @@ the edge weights may deviate (multiplicatively) from their observed values
 \code{c(0.75, 1.25)} which corresponds to a symmetric 25\% deviation range. Used
 only when \code{method = "stability"}.}
 }
+\value{
+A \code{data.frame} (also of class \code{tna_bootstrap_cliques}) with
+one row per clique and the columns \code{clique}, \code{mean_weight}, \code{p_values},
+\code{sig}, \code{cr_lower}, \code{cr_upper}, \code{ci_lower}, \code{ci_upper}.
+}
 \description{
-Bootstrap Cliques of Transition Networks from Sequence Data
+Bootstrap the edge weights of all cliques of a given size in a \code{tna}
+model, producing per-clique mean weights, p-values, confidence intervals,
+and consistency-range bounds.
+}
+\examples{
+model <- tna(group_regulation)
+# Small number of iterations for CRAN
+boot_cliq <- bootstrap_cliques(model, size = 2, iter = 10)
+
 }

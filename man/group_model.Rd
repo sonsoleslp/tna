@@ -3,6 +3,7 @@
 \name{group_model}
 \alias{group_model}
 \alias{group_model.default}
+\alias{group_model.tna_mmm}
 \alias{group_model.mhmm}
 \alias{group_model.tna_clustering}
 \alias{group_tna}
@@ -22,6 +23,16 @@ group_model(x, ...)
   cols = tidyselect::everything(),
   params = list(),
   concat = 1L,
+  na.rm = TRUE,
+  ...
+)
+
+\method{group_model}{tna_mmm}(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  groupwise = FALSE,
+  params = list(),
   na.rm = TRUE,
   ...
 )

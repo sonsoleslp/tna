@@ -2,7 +2,8 @@
 #'
 #' @export
 #' @family clusters
-#' @param x A `mhmm` object.
+#' @param x A `mhmm` object (from the `seqHMM` package) or a `tna_mmm`
+#'   object built by [random_tna_mmm()].
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
 #' @return A `data.frame` object.
@@ -11,6 +12,14 @@
 #'
 mmm_stats <- function(x, level = 0.05) {
   UseMethod("mmm_stats")
+}
+
+#' @export
+#' @rdname mmm_stats
+mmm_stats.tna_mmm <- function(x, level = 0.05) {
+  check_missing(x)
+  check_range(level, lower = 0.0, upper = 1.0)
+  mmm_stats_(x$coefficients, x$vcov, level)
 }
 
 #' @export
