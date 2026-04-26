@@ -2,15 +2,19 @@
 % Please edit documentation in R/mmm.R
 \name{mmm_stats}
 \alias{mmm_stats}
+\alias{mmm_stats.tna_mmm}
 \alias{mmm_stats.mhmm}
 \title{Retrieve Statistics from a Mixture Markov Model (MMM)}
 \usage{
 mmm_stats(x, level = 0.05)
 
+\method{mmm_stats}{tna_mmm}(x, level = 0.05)
+
 \method{mmm_stats}{mhmm}(x, level = 0.05)
 }
 \arguments{
-\item{x}{A \code{mhmm} object.}
+\item{x}{A \code{mhmm} object (from the \code{seqHMM} package) or a \code{tna_mmm}
+object built by \code{\link[=random_tna_mmm]{random_tna_mmm()}}.}
 
 \item{level}{A \code{numeric} value representing the significance level for
 hypothesis testing and confidence intervals. Defaults to \code{0.05}.}

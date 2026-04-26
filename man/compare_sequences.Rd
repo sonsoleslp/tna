@@ -78,16 +78,18 @@ permutation samples divided by their standard deviation times square root of
 the number of observations.
 }
 \examples{
-\dontrun{
-group <- c(rep("High", 1000), rep("Low", 1000))
-comp <- compare_sequences(group_regulation, group)
+\donttest{
+# Use a subset to keep the example fast.
+idx <- c(1:500, 1001:1500)
+group <- c(rep("High", 500), rep("Low", 500))
+comp <- compare_sequences(group_regulation[idx, ], group)
 
 # With permutation test (small number of iterations for CRAN)
 comp_test <- compare_sequences(
-  group_regulation,
+  group_regulation[idx, ],
   group,
   test = TRUE,
-  iter = 10
+  iter = 5
 )
 }
 

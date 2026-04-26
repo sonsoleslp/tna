@@ -3,6 +3,9 @@
 ^\.github$
 ^codecov\.yml$
 ^LICENSE\.md$
+^cran-comments\.md$
+^submission$
+^.*\.tar\.gz$
 ^README\.Rmd$
 ^codemeta\.json$
 ^data-raw$

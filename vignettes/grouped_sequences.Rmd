@@ -22,7 +22,6 @@ suppressPackageStartupMessages({
   library("tibble")
   library("dplyr")
   library("gt")
-  library("seqHMM")
 })
 ```
 
@@ -35,7 +34,6 @@ library("tna")
 library("tibble")
 library("dplyr")
 library("gt")
-library("seqHMM")
 ```
 
 ## Data preparation

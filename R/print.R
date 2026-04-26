@@ -358,9 +358,10 @@ print.tna_clustering <- function(x, ...) {
 #' @param ... Arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
 #' @examples
-#' \dontrun{
-#' group <- c(rep("High", 1000), rep("Low", 1000))
-#' comp <- compare_sequences(group_regulation, group)
+#' \donttest{
+#' idx <- c(1:500, 1001:1500)
+#' group <- c(rep("High", 500), rep("Low", 500))
+#' comp <- compare_sequences(group_regulation[idx, ], group)
 #' print(comp)
 #' }
 #'

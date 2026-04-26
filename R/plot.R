@@ -666,9 +666,10 @@ plot.tna_stability <- function(x, level = 0.05, ...) {
 #' @param ... Not used.
 #' @return A `ggplot` object.
 #' @examples
-#' \dontrun{
-#' group <- c(rep("High", 1000), rep("Low", 1000))
-#' comp <- compare_sequences(group_regulation, group)
+#' \donttest{
+#' idx <- c(1:500, 1001:1500)
+#' group <- c(rep("High", 500), rep("Low", 500))
+#' comp <- compare_sequences(group_regulation[idx, ], group)
 #' plot(comp)
 #' }
 #'
@@ -1399,6 +1400,8 @@ plot_mosaic_ <- function(tab, xlab, ylab) {
 #' every label.
 #' @param ncol Number of columns to use for the facets. The default is 2.
 #' @param ... Ignored.
+#' @return A `ggplot` object containing either a sequence index plot or
+#'   a state distribution plot, faceted by `group` when supplied.
 #' @examples
 #' # Sequence index plot (default)
 #' plot_sequences(
