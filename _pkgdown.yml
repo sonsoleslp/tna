@@ -58,6 +58,11 @@ reference:
     - simulate.tna
     - simulate.group_tna
     - summary.tna
+    - list_random_state_pools
+    - random_group_tna
+    - random_tna
+    - random_tna_mmm 
+    - simulate
 
   - title: Centralities
     contents:
