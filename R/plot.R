@@ -485,15 +485,22 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' @family validation
 #' @param x A `tna_permutation` object.
 #' @param colors See [cograph::splot()].
-#' @param ... Arguments passed to [plot_model()].
+#' @param ... Additional arguments passed to the permutation renderer of
+#'   [cograph::splot()]. In addition to the usual styling arguments, this
+#'   includes permutation-specific options such as `show_nonsig` (also draw
+#'   non-significant edges), `show_stars` (annotate edge labels with
+#'   significance stars), `show_effect` (annotate edge labels with effect
+#'   sizes), and the styling of non-significant edges via `edge_nonsig_color`,
+#'   `edge_nonsig_style`, and `edge_nonsig_alpha`.
 #' @param posCol Color for plotting edges
 #'   the difference in edge weights is positive. See [cograph::splot()].
 #' @param negCol Color for plotting edges when
 #'   the the difference in edge weights is negative. See [cograph::splot()].
-#' @param edge_labels Boolean indicating whether edge labels should be 
+#' @param edge_labels Boolean indicating whether edge labels should be
 #'   ploted. Defaults to `TRUE`
-#' @return A `cograph_network` object containing only the significant edges
-#'   according to the permutation test.
+#' @return A `cograph_network` object containing the significant edges
+#'   (and, when `show_nonsig = TRUE`, the non-significant edges) according to
+#'   the permutation test.
 #' @examples
 #' model_x <- tna(group_regulation[1:200, ])
 #' model_y <- tna(group_regulation[1001:1200, ])
@@ -502,21 +509,24 @@ plot.tna_comparison <- function(x, type = "heatmap",
 #' plot(perm)
 #'
 plot.tna_permutation <- function(x, colors,
-                                 posCol = "#009900", 
-                                 negCol = "red", 
+                                 posCol = "#009900",
+                                 negCol = "red",
                                  edge_labels = TRUE, ...) {
   check_missing(x)
   check_class(x, "tna_permutation")
   colors <- colors %m% attr(x, "colors")
-  plot_model(
-    x$edges$diffs_sig,
-    labels = attr(x, "labels"),
-    colors = colors,
-    edge_positive_color = posCol,
-    edge_negative_color = negCol,
-    edge_labels = edge_labels,
-    ...
-  )
+  # Dispatch to cograph's dedicated permutation renderer (via the
+  # `tna_permutation` class) so that permutation-specific options such as
+  # `show_stars`, `show_nonsig`, and `edge_nonsig_*` are honored, along with
+  # the usual qgraph-style styling arguments.
+  args <- list(...)
+  args$edge_positive_color <- args$edge_positive_color %||% posCol
+  args$edge_negative_color <- args$edge_negative_color %||% negCol
+  args$edge_labels <- args$edge_labels %||% edge_labels
+  if (!is.null(colors)) {
+    args$node_fill <- args$node_fill %||% colors
+  }
+  do.call(cograph::splot, c(list(x = x), args))
 }
 
 #' Plot Centrality Stability Results
@@ -783,6 +793,9 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
 #'   `"histogram"` (default), `"density"`, or `"boxplot"`.
 #' @param metric A `character` string specifying the metric to plot.
 #'   The default is the median absolute difference (`"Median Abs. Diff."`).
+#' @param bins An `integer` specifying the number of bins to use for the
+#'   histogram (`type = "histogram"`). The default is `30`. Ignored for the
+#'   other plot types.
 #' @param ... Ignored
 #' @examples
 #' # Small number of iterations for CRAN
@@ -791,10 +804,12 @@ plot.tna_sequence_comparison <- function(x, n = 10, legend = TRUE,
 #' plot(rel)
 #'
 plot.tna_reliability <- function(x, type = "histogram",
-                                 metric = "Median Abs. Diff.", ...) {
+                                 metric = "Median Abs. Diff.",
+                                 bins = 30, ...) {
   check_missing(x)
   check_class(x, "tna_reliability")
   check_string(metric)
+  check_range(bins, type = "integer", lower = 1L)
   type <- check_match(type, c("histogram", "density", "boxplot"))
   stopifnot_(
     !metric %in% unique(x$metrics),
@@ -857,7 +872,7 @@ plot.tna_reliability <- function(x, type = "histogram",
           ),
           position = "identity",
           alpha = 0.5,
-          bins = 30,
+          bins = bins,
           color = "white"
         ) +
         ggplot2::geom_vline(
@@ -876,7 +891,7 @@ plot.tna_reliability <- function(x, type = "histogram",
           fill = "cadetblue",
           color = "white",
           alpha = 0.7,
-          bins = 30
+          bins = bins
         ) +
         ggplot2::geom_vline(
           ggplot2::aes(xintercept = stats$mean),
@@ -1236,12 +1251,108 @@ plot_model <- function(x, labels, colors, ...) {
   nc <- ncol(x)
   labels <- labels %m% seq_len(nc)
   colors <- colors %m% color_palette(nc)
-  cograph::splot(
-    x = x,
-    node_fill = colors,
-    labels = labels,
-    ...
+  # `cograph::splot()` only translates qgraph-style argument names (e.g.
+  # `edge.label.cex`) when `x` is a tna-class object. Here `x` is a bare
+  # matrix, so translate the names ourselves to keep the same behavior as
+  # `plot.tna()` (see e.g. permutation and disparity plots).
+  args <- translate_qgraph_args(list(...))
+  do.call(
+    cograph::splot,
+    c(list(x = x, node_fill = colors, labels = labels), args)
   )
+}
+
+#' Translate qgraph-style Plotting Arguments to cograph Names
+#'
+#' Mirrors the internal translation performed by `cograph::splot()` for
+#' tna-class objects so that bare-matrix plots (e.g. permutation and disparity
+#' plots) accept the same qgraph-style argument names.
+#'
+#' @param dots A named `list` of arguments to translate.
+#' @noRd
+translate_qgraph_args <- function(dots) {
+  if (length(dots) == 0L || is.null(names(dots))) {
+    return(dots)
+  }
+  name_map <- c(
+    size = "node_size",
+    vsize = "node_size",
+    color = "node_fill",
+    pie = "donut_fill",
+    pieColor = "donut_color",
+    edge.labels = "edge_labels",
+    edge.label.position = "edge_label_position",
+    edge.label.cex = "edge_label_size",
+    edge.label.color = "edge_label_color",
+    edge.color = "edge_color",
+    posCol = "edge_positive_color",
+    negCol = "edge_negative_color",
+    lty = "edge_style",
+    arrowAngle = "arrow_angle",
+    mar = "margins",
+    label.cex = "label_size",
+    label.color = "label_color",
+    border.color = "node_border_color",
+    border.width = "node_border_width",
+    asize = "arrow_size",
+    shape = "node_shape"
+  )
+  orig_nms <- names(dots)
+  mapped <- name_map[orig_nms]
+  translated_from <- character(0L)
+  for (idx in which(!is.na(mapped))) {
+    cograph_nm <- mapped[idx]
+    # Do not overwrite an argument the user already passed by its cograph name.
+    if (cograph_nm %in% orig_nms) {
+      next
+    }
+    translated_from <- c(translated_from, orig_nms[idx])
+    names(dots)[idx] <- cograph_nm
+  }
+  if ("edge.label.cex" %in% translated_from) {
+    dots$edge_label_size <- dots$edge_label_size * 1.2
+  }
+  if ("asize" %in% translated_from) {
+    dots$arrow_size <- dots$arrow_size * 0.2
+  }
+  if ("lty" %in% translated_from) {
+    dots$edge_style <- map_qgraph_lty(dots$edge_style)
+  }
+  if ("shape" %in% translated_from) {
+    dots$node_shape <- map_qgraph_shape(dots$node_shape)
+  }
+  dots
+}
+
+#' Map qgraph Line Types to cograph Edge Styles
+#'
+#' @param lty A `vector` of qgraph line type codes or names.
+#' @noRd
+map_qgraph_lty <- function(lty) {
+  mapping <- c(
+    `1` = "solid", `2` = "dashed", `3` = "dotted",
+    `4` = "dotdash", `5` = "longdash", `6` = "twodash",
+    solid = "solid", dashed = "dashed", dotted = "dotted",
+    longdash = "longdash", twodash = "twodash"
+  )
+  result <- mapping[as.character(lty)]
+  result[is.na(result)] <- "solid"
+  unname(result)
+}
+
+#' Map qgraph Node Shapes to cograph Node Shapes
+#'
+#' @param shapes A `vector` of qgraph node shape names.
+#' @noRd
+map_qgraph_shape <- function(shapes) {
+  mapping <- c(
+    rectangle = "square", square = "square", circle = "circle",
+    ellipse = "circle", triangle = "triangle", diamond = "diamond"
+  )
+  result <- mapping[shapes]
+  unknown <- is.na(result)
+  result[unknown] <- shapes[unknown]
+  unname(result)
 }
 
 #' Create a Mosaic Plot of Transitions or Events
@@ -2016,6 +2127,7 @@ plot_compare.group_tna <- function(x, i = NULL, j = NULL, ...) {
 #' @param ... Ignored.
 #' @return A `ggplot` object.
 #' @examples
+#' \donttest{
 #' model <- group_model(engagement_mmm)
 #' # Default
 #' plot_frequencies(model)
@@ -2030,6 +2142,7 @@ plot_compare.group_tna <- function(x, i = NULL, j = NULL, ...) {
 #' plot_frequencies(model, position = "stack", show_label = FALSE)
 #' # Fill
 #' plot_frequencies(model, position = "fill", hjust = 1.1)
+#' }
 #'
 plot_frequencies.group_tna <- function(x, label, colors, width = 0.7,
                                        palette = "Set2",

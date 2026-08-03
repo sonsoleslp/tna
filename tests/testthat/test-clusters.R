@@ -18,8 +18,10 @@ test_that("cluster_data works with PAM method", {
 })
 
 test_that("cluster_data works with hclust methods", {
-  # Note: check_match lowercases methods, so only lowercase methods work with hclust
-  methods <- c("complete", "average", "single", "mcquitty", "median", "centroid")
+  methods <- c(
+    "ward.D", "ward.D2", "complete", "average", "single", "mcquitty",
+    "median", "centroid"
+  )
   for (m in methods) {
     result <- cluster_data(mock_cluster_data, k = 2, method = m)
     expect_s3_class(result, "tna_clustering")

@@ -7,7 +7,81 @@
 ranger <- function(x, na.rm = FALSE) {
   mi <- min(x, na.rm = na.rm)
   ma <- max(x, na.rm = na.rm)
+  span <- ma - mi
+  scale <- max(abs(c(mi, ma)), 1)
+  # A numerically constant vector has no meaningful min-max normalization.
+  # Returning NaN also matches the result for an exactly constant vector.
+  if (!isTRUE(span > 1e-10 * scale)) {
+    return(rep(NaN, length(x)))
+  }
   (x - mi) / (ma - mi)
+}
+
+#' Sort Unique State Values Deterministically
+#'
+#' @param x A vector of state values.
+#' @return The unique values in locale-independent order.
+#' @noRd
+sort_states <- function(x) {
+  if (is.factor(x)) {
+    x <- as.character(x)
+  }
+  sort(unique(x), method = "radix")
+}
+
+#' Assign Collision-Safe IDs to Observed Column Combinations
+#'
+#' @param cols A named list or data frame of grouping columns.
+#' @param context A description used in missing-value errors.
+#' @return An integer vector containing one ID per observed combination.
+#' @noRd
+observed_group_id <- function(cols, context = "grouping") {
+  stopifnot_(
+    is.list(cols) && length(cols) > 0L,
+    "Internal grouping requires at least one column."
+  )
+  codes <- lapply(cols, function(x) as.integer(factor(x)))
+  incomplete <- names(cols)[vapply(codes, anyNA, logical(1L))]
+  stopifnot_(
+    length(incomplete) == 0L,
+    c(
+      "Missing values in {context} column{?s}:",
+      `x` = "{.var {incomplete}}",
+      `i` = "Every event needs an identifier; drop or relabel these rows first."
+    )
+  )
+  n <- length(codes[[1L]])
+  if (n == 0L) {
+    return(integer(0L))
+  }
+  if (n == 1L) {
+    return(1L)
+  }
+  # Match interaction() ordering without constructing the potentially huge
+  # Cartesian product of marginal factor levels.
+  keys <- rev(codes)
+  ord <- do.call(order, keys)
+  combinations <- do.call(cbind, keys)[ord, , drop = FALSE]
+  changed <- c(
+    TRUE,
+    rowSums(
+      combinations[-1L, , drop = FALSE] !=
+        combinations[-n, , drop = FALSE]
+    ) > 0L
+  )
+  ids <- integer(n)
+  ids[ord] <- cumsum(changed)
+  ids
+}
+
+#' Create a Human-Readable Label from Grouping Columns
+#'
+#' @param cols A list or data frame of grouping columns.
+#' @param sep A separator used only for display.
+#' @return A character vector.
+#' @noRd
+group_label <- function(cols, sep = " | ") {
+  do.call(paste, c(unname(cols), list(sep = sep)))
 }
 
 #' Check Weak Connectivity of an Adjacency Matrix

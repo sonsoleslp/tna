@@ -50,6 +50,7 @@ A \code{ggplot} object.
 Plot the Frequency Distribution of States
 }
 \examples{
+\donttest{
 model <- group_model(engagement_mmm)
 # Default
 plot_frequencies(model)
@@ -64,6 +65,7 @@ plot_frequencies(
 plot_frequencies(model, position = "stack", show_label = FALSE)
 # Fill
 plot_frequencies(model, position = "fill", hjust = 1.1)
+}
 
 }
 \seealso{

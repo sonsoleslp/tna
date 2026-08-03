@@ -20,11 +20,18 @@ the the difference in edge weights is negative. See \code{\link[cograph:splot]{c
 \item{edge_labels}{Boolean indicating whether edge labels should be
 ploted. Defaults to \code{TRUE}}
 
-\item{...}{Arguments passed to \code{\link[=plot_model]{plot_model()}}.}
+\item{...}{Additional arguments passed to the permutation renderer of
+\code{\link[cograph:splot]{cograph::splot()}}. In addition to the usual styling arguments, this
+includes permutation-specific options such as \code{show_nonsig} (also draw
+non-significant edges), \code{show_stars} (annotate edge labels with
+significance stars), \code{show_effect} (annotate edge labels with effect
+sizes), and the styling of non-significant edges via \code{edge_nonsig_color},
+\code{edge_nonsig_style}, and \code{edge_nonsig_alpha}.}
 }
 \value{
-A \code{cograph_network} object containing only the significant edges
-according to the permutation test.
+A \code{cograph_network} object containing the significant edges
+(and, when \code{show_nonsig = TRUE}, the non-significant edges) according to
+the permutation test.
 }
 \description{
 Plot the Significant Differences from a Permutation Test

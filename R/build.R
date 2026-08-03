@@ -560,7 +560,7 @@ create_seqdata <- function(x, cols, alphabet, concat = 1L,
     x <- as.data.frame(x)
   } else if (is.data.frame(x)) {
     if (missing(alphabet)) {
-      vals <- sort(unique(unlist(x[, cols])))
+      vals <- sort_states(unlist(x[, cols]))
       alphabet <- labels <- vals[!is.na(vals)]
     } else {
       labels <- alphabet

@@ -1,3 +1,37 @@
+# tna 1.3.0
+
+* Fixed case-insensitive argument matching to preserve canonical option names,
+  allowing `cluster_data()` and `cluster_sequences()` to pass `"ward.D"` and
+  `"ward.D2"` correctly to `stats::hclust()`.
+* Made state ordering deterministic across system locales for individual and
+  grouped models.
+* Fixed numerical instability in randomized-shortest-path betweenness and
+  prevented normalization from amplifying floating-point noise in constant
+  centrality measures.
+* Added deterministic timezone handling to `prepare_data()`: UTC is the
+  default, explicit offsets are honored, fractional seconds are retained, and
+  offset-free timestamps can use a user-specified Olson timezone.
+* `prepare_data(time_threshold = FALSE)` now disables gap-based session
+  splitting while retaining timestamp parsing and event ordering.
+* `prepare_data()` now supports explicit session columns and collision-safe
+  composite actor/session identities, including high-cardinality groupings.
+  Disabled time splitting now bypasses gap computation and keeps missing-time
+  events in their actor-session sequence.
+* Documented the `time_data` component returned by `prepare_data()`.
+* `prune()` now warns about inactive method-specific arguments and treats a
+  supplied bootstrap object as a request for bootstrap pruning.
+* Added reproducible `seed` arguments to network and clique bootstrapping.
+* Added weighted PageRank to `centralities()`.
+* `plot.tna_permutation()` now dispatches to the dedicated permutation
+  renderer of `cograph::splot()`, so permutation-specific options such as
+  `show_nonsig`, `show_stars`, `show_effect`, `edge_nonsig_color`,
+  `edge_nonsig_style`, and `edge_nonsig_alpha` are honored.
+* Fixed qgraph-style plotting arguments (such as `edge.label.cex`) being
+  ignored by matrix-based network plots (e.g. permutation and disparity
+  plots).
+* Added a `bins` argument to `plot.tna_reliability()` for controlling the
+  number of histogram bins.
+
 # tna 1.2.3
 
 * Resolved CRAN warning "Data files with namespace references not in the

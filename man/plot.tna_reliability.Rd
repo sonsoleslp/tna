@@ -4,7 +4,7 @@
 \alias{plot.tna_reliability}
 \title{Plot Reliability Analysis Results}
 \usage{
-\method{plot}{tna_reliability}(x, type = "histogram", metric = "Median Abs. Diff.", ...)
+\method{plot}{tna_reliability}(x, type = "histogram", metric = "Median Abs. Diff.", bins = 30, ...)
 }
 \arguments{
 \item{x}{A \code{tna_reliability} object.}
@@ -14,6 +14,10 @@
 
 \item{metric}{A \code{character} string specifying the metric to plot.
 The default is the median absolute difference (\code{"Median Abs. Diff."}).}
+
+\item{bins}{An \code{integer} specifying the number of bins to use for the
+histogram (\code{type = "histogram"}). The default is \code{30}. Ignored for the
+other plot types.}
 
 \item{...}{Ignored}
 }

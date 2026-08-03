@@ -31,3 +31,8 @@ vignettes/*cache
 vignettes/articles/*cache
 /doc/
 /Meta/
+# local exploratory work — never part of the CRAN package
+/archive/
+/tmp/
+AGENT-NOTE-r-equivalence-bugs.md
+HANDOFF.md

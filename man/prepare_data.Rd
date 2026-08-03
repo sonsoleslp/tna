@@ -14,7 +14,9 @@ prepare_data(
   custom_format = NULL,
   is_unix_time = FALSE,
   unix_time_unit = "seconds",
-  unused_fn = dplyr::first
+  unused_fn = dplyr::first,
+  timezone = "UTC",
+  session = NULL
 )
 }
 \arguments{
@@ -24,8 +26,8 @@ prepare_data(
 a tidy selection of the names of the columns that
 represent a user/actor identifiers. If not provided and neither \code{time} nor
 \code{order} is specified, the entire dataset is treated as a single session.
-In the case of multiple actors, a new \code{.actor} column is added that
-represents the interaction of the given columns.}
+In the case of multiple actors, a readable \code{.actor} column is added while
+grouping uses the original columns to keep distinct combinations separate.}
 
 \item{time}{A \code{character} string or an \code{expression} giving the name of
 the column representing timestamps of the action events.}
@@ -41,8 +43,10 @@ If both \code{actor} and \code{time} are specified, then the sequence order shou
 be specified such that it determines the order of events within \code{actor}
 and each session.}
 
-\item{time_threshold}{An \code{integer} specifying the time threshold in seconds
-for creating new time-based sessions. Defaults to 900 seconds.}
+\item{time_threshold}{A positive \code{numeric} value specifying the time
+threshold in seconds for creating new time-based sessions. Set to \code{FALSE}
+to disable gap-based session splitting, so each actor-session combination
+forms one session. Defaults to 900 seconds.}
 
 \item{custom_format}{A \code{character} string giving the format used to
 parse the \code{time} column.}
@@ -57,6 +61,16 @@ is in Unix time. The default is \code{FALSE}.}
 \item{unused_fn}{How to handle extra columns when pivoting to wide format.
 See \code{\link[tidyr:pivot_wider]{tidyr::pivot_wider()}}. The default is to keep all columns and to
 use the first value.}
+
+\item{timezone}{An Olson time zone used to interpret timestamps that do not
+contain an explicit UTC offset. Explicit offsets such as \code{Z}, \code{+00:00}, and
+\code{-0500} are always honored. The default is \code{"UTC"} for reproducible results
+across systems. See \code{\link[=OlsonNames]{OlsonNames()}}.}
+
+\item{session}{An optional tidy selection of one or more columns identifying
+explicit sessions within actors, such as a course or semester. When \code{time}
+is also supplied, each actor-session combination can be further split by
+\code{time_threshold}.}
 }
 \value{
 A \code{tna_data} object, which is a \code{list} with the following elements:
@@ -65,6 +79,8 @@ A \code{tna_data} object, which is a \code{list} with the following elements:
 \item \code{sequence_data}: The processed data on the sequences in wide format,
 with actions/events as different variables structured with sequences.
 \item \code{meta_data}: Other variables from the original data in wide format.
+\item \code{time_data}: Parsed timestamps in wide format when \code{time} is supplied,
+or \code{NULL} otherwise.
 \item \code{statistics}: A \code{list} containing summary statistics: total
 sessions, total actions, unique users, time range (if applicable), and
 top sessions and user by activities.
@@ -75,6 +91,12 @@ Processes a dataset to create user sessions based on time gaps,
 ordering columns, or actor groupings. It supports different ways to
 understand order in user behavior and provides flexibility when
 widening the data.
+}
+\details{
+Session identity is based on observed combinations of the original
+actor and session columns. Separator characters and high-cardinality
+marginal levels therefore cannot merge distinct sessions. \code{.session_id} is
+the collision-safe key and \code{.session_label} is its readable display label.
 }
 \examples{
 results <- prepare_data(

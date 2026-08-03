@@ -14,6 +14,10 @@
 ^docs$
 ^\.claude$
 ^pkgdown$
+^archive$
+^tmp$
+^AGENT-NOTE-r-equivalence-bugs\.md$
+^HANDOFF\.md$
 Rplots.pdf
 ^doc$
 ^vignettes/*_files$

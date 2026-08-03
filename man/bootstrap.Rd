@@ -6,7 +6,7 @@
 \alias{bootstrap.group_tna}
 \title{Bootstrap Transition Networks from Sequence Data}
 \usage{
-bootstrap(x, iter, level, method, threshold, consistency_range)
+bootstrap(x, iter, level, method, threshold, consistency_range, seed = NULL)
 
 \method{bootstrap}{tna}(
   x,
@@ -14,7 +14,8 @@ bootstrap(x, iter, level, method, threshold, consistency_range)
   level = 0.05,
   method = "stability",
   threshold,
-  consistency_range = c(0.75, 1.25)
+  consistency_range = c(0.75, 1.25),
+  seed = NULL
 )
 
 \method{bootstrap}{group_tna}(
@@ -23,7 +24,8 @@ bootstrap(x, iter, level, method, threshold, consistency_range)
   level = 0.05,
   method = "stability",
   threshold,
-  consistency_range = c(0.75, 1.25)
+  consistency_range = c(0.75, 1.25),
+  seed = NULL
 )
 }
 \arguments{
@@ -52,6 +54,9 @@ the edge weights may deviate (multiplicatively) from their observed values
 (below and above) before they are considered insignificant. The default is
 \code{c(0.75, 1.25)} which corresponds to a symmetric 25\% deviation range. Used
 only when \code{method = "stability"}.}
+
+\item{seed}{A single \code{numeric} random seed for reproducible resampling, or
+\code{NULL} (the default) to use the current RNG state.}
 }
 \value{
 A \code{tna_bootstrap} object which is a \code{list} containing the

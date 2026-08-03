@@ -42,6 +42,8 @@
 #' @param threshold A `numeric` value to compare edge weights against.
 #' The default is the 10th percentile of the edge weights. Used only when
 #' `method = "threshold"`.
+#' @param seed A single `numeric` random seed for reproducible resampling, or
+#' `NULL` (the default) to use the current RNG state.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
 #
@@ -71,14 +73,16 @@
 #' # Small number of iterations for CRAN
 #' bootstrap(model, iter = 10)
 #'
-bootstrap <- function(x, iter, level, method, threshold, consistency_range) {
+bootstrap <- function(x, iter, level, method, threshold, consistency_range,
+                      seed = NULL) {
   UseMethod("bootstrap")
 }
 
 #' @export
 #' @rdname bootstrap
 bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
-                          threshold, consistency_range = c(0.75, 1.25)) {
+                          threshold, consistency_range = c(0.75, 1.25),
+                          seed = NULL) {
   check_missing(x)
   check_tna_seq(x)
   check_values(iter, strict = TRUE)
@@ -97,6 +101,10 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
     "Argument {.arg consistency_range} must be a sorted {.cls numeric}
      vector of length 2 containing positive values."
   )
+  if (!is.null(seed)) {
+    check_numeric(seed)
+    set.seed(seed)
+  }
   d <- x$data
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
@@ -197,7 +205,8 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
 #' @rdname bootstrap
 bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
                                 method = "stability", threshold,
-                                consistency_range = c(0.75, 1.25)) {
+                                consistency_range = c(0.75, 1.25),
+                                seed = NULL) {
   check_missing(x)
   check_class(x, "group_tna")
   stopifnot_(
@@ -205,6 +214,10 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
     "Bootstrapping is not supported for
      grouped models with globally scaled edge weights."
   )
+  if (!is.null(seed)) {
+    check_numeric(seed)
+    set.seed(seed)
+  }
   structure(
     stats::setNames(
       lapply(
@@ -240,7 +253,7 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
 #' boot_cliq <- bootstrap_cliques(model, size = 2, iter = 10)
 #'
 bootstrap_cliques <- function(x, size, threshold,
-                              iter, level, consistency_range) {
+                              iter, level, consistency_range, seed = NULL) {
   UseMethod("bootstrap_cliques")
 }
 
@@ -248,7 +261,8 @@ bootstrap_cliques <- function(x, size, threshold,
 #' @rdname bootstrap_cliques
 bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
                                   iter = 1000, level = 0.05,
-                                  consistency_range = c(0.75, 1.25)) {
+                                  consistency_range = c(0.75, 1.25),
+                                  seed = NULL) {
   check_missing(x)
   check_tna_seq(x)
   check_values(threshold, type = "numeric")
@@ -257,6 +271,10 @@ bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
     "Argument {.arg size} must be a single {.cls integer}
     between 2 and {nodes(x)}."
   )
+  if (!is.null(seed)) {
+    check_numeric(seed)
+    set.seed(seed)
+  }
   check_values(iter, strict = TRUE)
   check_range(level, lower = 0, upper = 1)
   check_values(threshold, type = "numeric")

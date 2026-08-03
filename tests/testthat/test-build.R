@@ -70,6 +70,28 @@ test_that("unnamed matrix gains dimnames", {
   )
 })
 
+test_that("state ordering is deterministic for mixed-case labels", {
+  data <- data.frame(
+    T1 = c("Plan", "discuss", "Review"),
+    T2 = c("discuss", "Review", "Plan"),
+    T3 = c("Review", "Plan", "discuss")
+  )
+  expect_identical(
+    tna(data)$labels,
+    c("Plan", "Review", "discuss")
+  )
+
+  factor_data <- as.data.frame(lapply(
+    data,
+    factor,
+    levels = c("discuss", "Plan", "Review")
+  ))
+  expect_identical(
+    tna(factor_data)$labels,
+    c("Plan", "Review", "discuss")
+  )
+})
+
 test_that("tna aliases work", {
   expect_error(ftna(mock_freq_matrix), NA)
   expect_error(ctna(mock_sequence), NA)
