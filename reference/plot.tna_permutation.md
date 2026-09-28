@@ -39,13 +39,20 @@ plot(x, colors, posCol = "#009900", negCol = "red", edge_labels = TRUE, ...)
 
 - ...:
 
-  Arguments passed to
-  [`plot_model()`](https://sonsoles.me/tna/reference/plot_model.md).
+  Additional arguments passed to the permutation renderer of
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html).
+  In addition to the usual styling arguments, this includes
+  permutation-specific options such as `show_nonsig` (also draw
+  non-significant edges), `show_stars` (annotate edge labels with
+  significance stars), `show_effect` (annotate edge labels with effect
+  sizes), and the styling of non-significant edges via
+  `edge_nonsig_color`, `edge_nonsig_style`, and `edge_nonsig_alpha`.
 
 ## Value
 
-A `cograph_network` object containing only the significant edges
-according to the permutation test.
+A `cograph_network` object containing the significant edges (and, when
+`show_nonsig = TRUE`, the non-significant edges) according to the
+permutation test.
 
 ## See also
 

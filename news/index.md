@@ -42,6 +42,18 @@
   bootstrapping.
 - Added weighted PageRank to
   [`centralities()`](https://sonsoles.me/tna/reference/centralities.md).
+- [`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md)
+  now dispatches to the dedicated permutation renderer of
+  [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html),
+  so permutation-specific options such as `show_nonsig`, `show_stars`,
+  `show_effect`, `edge_nonsig_color`, `edge_nonsig_style`, and
+  `edge_nonsig_alpha` are honored.
+- Fixed qgraph-style plotting arguments (such as `edge.label.cex`) being
+  ignored by matrix-based network plots (e.g. permutation and disparity
+  plots).
+- Added a `bins` argument to
+  [`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md)
+  for controlling the number of histogram bins.
 
 ## tna 1.2.3
 

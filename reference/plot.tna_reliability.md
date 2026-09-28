@@ -6,7 +6,7 @@ Plot Reliability Analysis Results
 
 ``` r
 # S3 method for class 'tna_reliability'
-plot(x, type = "histogram", metric = "Median Abs. Diff.", ...)
+plot(x, type = "histogram", metric = "Median Abs. Diff.", bins = 30, ...)
 ```
 
 ## Arguments
@@ -24,6 +24,12 @@ plot(x, type = "histogram", metric = "Median Abs. Diff.", ...)
 
   A `character` string specifying the metric to plot. The default is the
   median absolute difference (`"Median Abs. Diff."`).
+
+- bins:
+
+  An `integer` specifying the number of bins to use for the histogram
+  (`type = "histogram"`). The default is `30`. Ignored for the other
+  plot types.
 
 - ...:
 

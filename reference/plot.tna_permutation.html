@@ -81,13 +81,20 @@ ploted. Defaults to <code>TRUE</code></p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed to <code><a href="plot_model.html">plot_model()</a></code>.</p></dd>
+<dd><p>Additional arguments passed to the permutation renderer of
+<code><a href="https://sonsoles.me/cograph/reference/splot.html" class="external-link">cograph::splot()</a></code>. In addition to the usual styling arguments, this
+includes permutation-specific options such as <code>show_nonsig</code> (also draw
+non-significant edges), <code>show_stars</code> (annotate edge labels with
+significance stars), <code>show_effect</code> (annotate edge labels with effect
+sizes), and the styling of non-significant edges via <code>edge_nonsig_color</code>,
+<code>edge_nonsig_style</code>, and <code>edge_nonsig_alpha</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>cograph_network</code> object containing only the significant edges
-according to the permutation test.</p>
+    <p>A <code>cograph_network</code> object containing the significant edges
+(and, when <code>show_nonsig = TRUE</code>, the non-significant edges) according to
+the permutation test.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

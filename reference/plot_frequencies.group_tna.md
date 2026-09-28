@@ -89,6 +89,7 @@ Basic functions
 ## Examples
 
 ``` r
+# \donttest{
 model <- group_model(engagement_mmm)
 # Default
 plot_frequencies(model)
@@ -107,4 +108,5 @@ plot_frequencies(model, position = "stack", show_label = FALSE)
 # Fill
 plot_frequencies(model, position = "fill", hjust = 1.1)
 
+# }
 ```

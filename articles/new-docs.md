@@ -1184,9 +1184,9 @@ g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH e7322f6 DNW- 9 78 -- 
+    #> IGRAPH 286961d DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from e7322f6 (vertex names):
+    #> + edges from 286961d (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  

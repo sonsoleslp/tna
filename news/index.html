@@ -61,6 +61,10 @@
 <code><a href="../reference/prune.html">prune()</a></code> now warns about inactive method-specific arguments and treats a supplied bootstrap object as a request for bootstrap pruning.</li>
 <li>Added reproducible <code>seed</code> arguments to network and clique bootstrapping.</li>
 <li>Added weighted PageRank to <code><a href="../reference/centralities.html">centralities()</a></code>.</li>
+<li>
+<code><a href="../reference/plot.tna_permutation.html">plot.tna_permutation()</a></code> now dispatches to the dedicated permutation renderer of <code><a href="https://sonsoles.me/cograph/reference/splot.html" class="external-link">cograph::splot()</a></code>, so permutation-specific options such as <code>show_nonsig</code>, <code>show_stars</code>, <code>show_effect</code>, <code>edge_nonsig_color</code>, <code>edge_nonsig_style</code>, and <code>edge_nonsig_alpha</code> are honored.</li>
+<li>Fixed qgraph-style plotting arguments (such as <code>edge.label.cex</code>) being ignored by matrix-based network plots (e.g. permutation and disparity plots).</li>
+<li>Added a <code>bins</code> argument to <code><a href="../reference/plot.tna_reliability.html">plot.tna_reliability()</a></code> for controlling the number of histogram bins.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.3" id="tna-123">tna 1.2.3<a class="anchor" aria-label="anchor" href="#tna-123"></a></h2><p class="text-muted">CRAN release: 2026-04-26</p>
