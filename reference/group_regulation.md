@@ -20,6 +20,7 @@ The data was generated synthetically.
 
 ## See also
 
-Datasets [`engagement`](http://sonsoles.me/tna/reference/engagement.md),
-[`engagement_mmm`](http://sonsoles.me/tna/reference/engagement_mmm.md),
-[`group_regulation_long`](http://sonsoles.me/tna/reference/group_regulation_long.md)
+Datasets
+[`engagement`](https://sonsoles.me/tna/reference/engagement.md),
+[`engagement_mmm`](https://sonsoles.me/tna/reference/engagement_mmm.md),
+[`group_regulation_long`](https://sonsoles.me/tna/reference/group_regulation_long.md)

@@ -69,7 +69,7 @@ compare(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 
   A `character` vector indicating which centrality measures should be
   computed. See
-  [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
+  [`centralities()`](https://sonsoles.me/tna/reference/centralities.md)
   for the available measures. No measures are included by default.
 
 - network:
@@ -105,14 +105,14 @@ elements:
 ## See also
 
 Model comparison functions
-[`compare.group_tna()`](http://sonsoles.me/tna/reference/compare.group_tna.md),
-[`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md),
-[`plot.tna_comparison()`](http://sonsoles.me/tna/reference/plot.tna_comparison.md),
-[`plot.tna_sequence_comparison()`](http://sonsoles.me/tna/reference/plot.tna_sequence_comparison.md),
-[`plot_compare()`](http://sonsoles.me/tna/reference/plot_compare.md),
-[`plot_compare.group_tna()`](http://sonsoles.me/tna/reference/plot_compare.group_tna.md),
-[`print.tna_comparison()`](http://sonsoles.me/tna/reference/print.tna_comparison.md),
-[`print.tna_sequence_comparison()`](http://sonsoles.me/tna/reference/print.tna_sequence_comparison.md)
+[`compare.group_tna()`](https://sonsoles.me/tna/reference/compare.group_tna.md),
+[`compare_sequences()`](https://sonsoles.me/tna/reference/compare_sequences.md),
+[`plot.tna_comparison()`](https://sonsoles.me/tna/reference/plot.tna_comparison.md),
+[`plot.tna_sequence_comparison()`](https://sonsoles.me/tna/reference/plot.tna_sequence_comparison.md),
+[`plot_compare()`](https://sonsoles.me/tna/reference/plot_compare.md),
+[`plot_compare.group_tna()`](https://sonsoles.me/tna/reference/plot_compare.group_tna.md),
+[`print.tna_comparison()`](https://sonsoles.me/tna/reference/print.tna_comparison.md),
+[`print.tna_sequence_comparison()`](https://sonsoles.me/tna/reference/print.tna_sequence_comparison.md)
 
 ## Examples
 

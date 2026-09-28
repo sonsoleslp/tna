@@ -3,6 +3,7 @@
 ## FTNA tutorial
 
 ``` r
+
 # Install 'tna' package from CRAN if needed (uncomment if required).
 # install.packages("tna")
 
@@ -44,6 +45,7 @@ print(model)
 ```
 
 ``` r
+
 # Calculate the Transition Network Analysis (TNA) on the group_regulation 
 # data with scaled weights between 0 and 1
 model_scaled <- ftna(group_regulation, scaling = "minmax")
@@ -75,6 +77,7 @@ print(model_scaled) # Print the FTNA model with scaled weights
 ### Plotting
 
 ``` r
+
 # Plotting the two weights together to see if the scaling distorts the data
 
 # Combine weights from absolute and scaled models into a data frame for plotting
@@ -104,6 +107,7 @@ plot_abs_scaled
 ![](ftna_files/figure-html/unnamed-chunk-4-1.png)
 
 ``` r
+
 # Calculate the Transition Network Analysis (TNA) on the `group_regulation` 
 # data with ranked weights
 model_ranked <- ftna(group_regulation, scaling = "rank")
@@ -111,6 +115,7 @@ print(model_ranked) # Print the FTNA model with ranked weights
 ```
 
 ``` r
+
 # Combine weights from absolute and ranked models into a data frame for plotting
 weights_data <- data.frame(
   Absolute = as.vector(model$weights), # Extract absolute weights as a vector
@@ -137,11 +142,14 @@ plot_abs_ranked
 ### Pruning
 
 ``` r
+
 layout(matrix(1:4, ncol = 2))
 # Pruning with different methods
 pruned_threshold <- prune(model_scaled, method = "threshold", threshold = 0.1)
 pruned_lowest <- prune(model_scaled, method = "lowest", lowest = 0.15)
 pruned_disparity <- prune(model_scaled, method = "disparity", alpha = 0.5)
+#> Warning: Additional arguments in `...` are ignored unless `method =
+#> "bootstrap"`.
 
 # Plotting for comparison
 plot(pruned_threshold)
@@ -158,6 +166,7 @@ plot(model_scaled)
 ### Patterns
 
 ``` r
+
 # Identify 2-cliques (dyads) from the FTNA model with a weight threshold, 
 # excluding loops in visualization.
 # A 2-clique represents a pair of nodes that are strongly connected based on 
@@ -209,6 +218,7 @@ plot(cliques_of_two, ask = F)   # Visualize 2-cliques in the network
 ![](ftna_files/figure-html/unnamed-chunk-8-1.png)
 
 ``` r
+
 layout(matrix(1:6, ncol = 3))
 # Identify 3-cliques (triads) from the FTNA model.
 # A 3-clique is a fully connected set of three nodes, indicating a strong 
@@ -260,6 +270,7 @@ plot(cliques_of_three, ask = FALSE)  # Visualize 3-cliques in the network
 ![](ftna_files/figure-html/unnamed-chunk-9-1.png)
 
 ``` r
+
 layout(matrix(1:6, ncol = 3))
 # Identify 4-cliques (quadruples) from the FTNA model.
 # A 4-clique includes four nodes where each node is connected to every other 
@@ -324,6 +335,7 @@ plot(cliques_of_four, ask = FALSE)   # Visualize 4-cliques in the network
 ![](ftna_files/figure-html/unnamed-chunk-10-1.png)
 
 ``` r
+
 # Identify 5-cliques (quintuples) from the FTNA model, summing edge weights.
 # Here, the sum of edge weights in both directions must meet the specified 
 # threshold for inclusion.
@@ -355,6 +367,7 @@ plot(cliques_of_five, ask = FALSE)   # Visualize 5-cliques in the network
 ### Graph level measures
 
 ``` r
+
 summary(model_scaled)
 #> # A tibble: 13 × 2
 #>    metric                        value
@@ -375,6 +388,7 @@ summary(model_scaled)
 ```
 
 ``` r
+
 summary(pruned_disparity)
 #> # A tibble: 13 × 2
 #>    metric                       value
@@ -397,12 +411,13 @@ summary(pruned_disparity)
 ### Node level measures
 
 ``` r
+
 # Compute centrality measures for the FTNA model
 centrality_measures <- centralities(model_scaled)
 
 # Print the calculated centrality measures in the FTNA model
 print(centrality_measures)
-#> # A tibble: 9 × 10
+#> # A tibble: 9 × 11
 #>   state      OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>            <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
 #> 1 adapt            0.203      0.212     0.00967      0.00901    0.0104           0
@@ -414,13 +429,15 @@ print(centrality_measures)
 #> 7 monitor          0.562      0.480     0.0124       0.0135     0.0154           0
 #> 8 plan             1.54       1.56      0.0221       0.0236     0.0263          18
 #> 9 synthesis        0.260      0.275     0.0137       0.0104     0.0147           0
-#> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
+#> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
+#> #   PageRank <dbl>
 plot(centrality_measures)
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-14-1.png)
 
 ``` r
+
 # Convert the FTNA model to an igraph object and 
 # calculate HITS (Hub and Authority) scores
 hits_results <- igraph::hits_scores(as.igraph(model_scaled))
@@ -431,6 +448,7 @@ authority_scores <- hits_results$authority
 ```
 
 ``` r
+
 # Print the hub and authority scores to view influential nodes
 print(hub_scores)
 #>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
@@ -447,6 +465,7 @@ print(authority_scores)
 ### Edge level measures
 
 ``` r
+
 edge_between <- betweenness_network(model_scaled)
 plot(edge_between)
 ```
@@ -456,6 +475,7 @@ plot(edge_between)
 ### Community detection
 
 ``` r
+
 detected_communities <- communities(model_scaled)
 plot(detected_communities, method = "leading_eigen")
 ```
@@ -463,6 +483,7 @@ plot(detected_communities, method = "leading_eigen")
 ![](ftna_files/figure-html/unnamed-chunk-18-1.png)
 
 ``` r
+
 print(detected_communities, method = "leading_eigen")
 #> Number of communities found by each algorithm
 #> 
@@ -487,6 +508,7 @@ print(detected_communities, method = "leading_eigen")
 ### Bootstrapping
 
 ``` r
+
 # Perform bootstrapping on the FTNA model with a fixed seed for reproducibility
 set.seed(265)
 boot <- bootstrap(model_scaled, threshold = 0.05)
@@ -513,6 +535,7 @@ print(boot, type = "nonsig")
 ### Comparing Models
 
 ``` r
+
 # Create FTNA for the high-achievers subset (rows 1 to 1000)
 Hi <- ftna(group_regulation[1:1000, ], scaling = "minmax")
 
@@ -528,6 +551,7 @@ plot_compare(Hi, Lo, minimum = 0.0001)
 
 ``` r
 
+
 # Run a permutation test to determine statistical significance of 
 # differences between "Hi" and "Lo"
 # The 'it' parameter is set to 1000, meaning 1000 permutations are performed
@@ -542,6 +566,7 @@ plot(Permutation)
 ### Centrality stability
 
 ``` r
+
 Centrality_stability <- estimate_centrality_stability(model_scaled, iter = 100)
 plot(Centrality_stability)
 ```

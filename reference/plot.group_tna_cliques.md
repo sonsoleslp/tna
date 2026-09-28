@@ -22,7 +22,7 @@ plot(x, title, ...)
 - ...:
 
   Arguments passed to
-  [`plot.tna_cliques()`](http://sonsoles.me/tna/reference/plot.tna_cliques.md).
+  [`plot.tna_cliques()`](https://sonsoles.me/tna/reference/plot.tna_cliques.md).
 
 ## Value
 
@@ -33,10 +33,10 @@ otherwise the element is `NULL`.
 ## See also
 
 Clique-related functions
-[`cliques()`](http://sonsoles.me/tna/reference/cliques.md),
-[`plot.tna_cliques()`](http://sonsoles.me/tna/reference/plot.tna_cliques.md),
-[`print.group_tna_cliques()`](http://sonsoles.me/tna/reference/print.group_tna_cliques.md),
-[`print.tna_cliques()`](http://sonsoles.me/tna/reference/print.tna_cliques.md)
+[`cliques()`](https://sonsoles.me/tna/reference/cliques.md),
+[`plot.tna_cliques()`](https://sonsoles.me/tna/reference/plot.tna_cliques.md),
+[`print.group_tna_cliques()`](https://sonsoles.me/tna/reference/print.group_tna_cliques.md),
+[`print.tna_cliques()`](https://sonsoles.me/tna/reference/print.tna_cliques.md)
 
 ## Examples
 
@@ -44,6 +44,8 @@ Clique-related functions
 model <- group_model(engagement_mmm)
 cliq <- cliques(model, size = 2)
 plot(cliq, ask = FALSE)
+
+
 
 
 

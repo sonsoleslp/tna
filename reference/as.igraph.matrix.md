@@ -33,5 +33,5 @@ An `igraph` object.
 ## See also
 
 Helper functions
-[`as.igraph.group_tna()`](http://sonsoles.me/tna/reference/as.igraph.group_tna.md),
-[`as.igraph.tna()`](http://sonsoles.me/tna/reference/as.igraph.tna.md)
+[`as.igraph.group_tna()`](https://sonsoles.me/tna/reference/as.igraph.group_tna.md),
+[`as.igraph.tna()`](https://sonsoles.me/tna/reference/as.igraph.tna.md)

@@ -97,14 +97,18 @@ The following measures are provided:
   adjacency matrix and its transpose). It measures the degree to which
   nodes tend to cluster together.
 
+- `PageRank`: Weighted PageRank centrality calculated using
+  [`igraph::page_rank()`](https://r.igraph.org/reference/page_rank.html)
+  on the directed transition network.
+
 ## See also
 
 Centrality measure functions
-[`betweenness_network()`](http://sonsoles.me/tna/reference/betweenness_network.md),
-[`plot.group_tna_centralities()`](http://sonsoles.me/tna/reference/plot.group_tna_centralities.md),
-[`plot.tna_centralities()`](http://sonsoles.me/tna/reference/plot.tna_centralities.md),
-[`print.group_tna_centralities()`](http://sonsoles.me/tna/reference/print.group_tna_centralities.md),
-[`print.tna_centralities()`](http://sonsoles.me/tna/reference/print.tna_centralities.md)
+[`betweenness_network()`](https://sonsoles.me/tna/reference/betweenness_network.md),
+[`plot.group_tna_centralities()`](https://sonsoles.me/tna/reference/plot.group_tna_centralities.md),
+[`plot.tna_centralities()`](https://sonsoles.me/tna/reference/plot.tna_centralities.md),
+[`print.group_tna_centralities()`](https://sonsoles.me/tna/reference/print.group_tna_centralities.md),
+[`print.tna_centralities()`](https://sonsoles.me/tna/reference/print.tna_centralities.md)
 
 ## Examples
 
@@ -113,7 +117,7 @@ model <- tna(group_regulation)
 
 # Centrality measures including loops in the network
 centralities(model)
-#> # A tibble: 9 × 10
+#> # A tibble: 9 × 11
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
 #> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
@@ -125,11 +129,12 @@ centralities(model)
 #> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
 #> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
 #> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
-#> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
+#> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
+#> #   PageRank <dbl>
 
 # Centrality measures excluding loops in the network
 centralities(model, loops = FALSE)
-#> # A tibble: 9 × 10
+#> # A tibble: 9 × 11
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
 #> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
@@ -141,11 +146,12 @@ centralities(model, loops = FALSE)
 #> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
 #> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
 #> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
-#> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
+#> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
+#> #   PageRank <dbl>
 
 # Centrality measures normalized
 centralities(model, normalize = TRUE)
-#> # A tibble: 9 × 10
+#> # A tibble: 9 × 11
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
 #> 1 adapt          1         0.0618      0.0276        0.855    0.290       0.0333
@@ -157,5 +163,6 @@ centralities(model, normalize = TRUE)
 #> 7 monitor        0.952     0.0623      0             0.508    0           0     
 #> 8 plan           0         0.405       0.721         0        0.428       0.3   
 #> 9 synthes…       1         0           0.0867        1        0.265       0.233 
-#> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
+#> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
+#> #   PageRank <dbl>
 ```

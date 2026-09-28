@@ -41,10 +41,10 @@ print(x, n = 6, first = 1, digits = getOption("digits"), ...)
 ## See also
 
 Clique-related functions
-[`cliques()`](http://sonsoles.me/tna/reference/cliques.md),
-[`plot.group_tna_cliques()`](http://sonsoles.me/tna/reference/plot.group_tna_cliques.md),
-[`plot.tna_cliques()`](http://sonsoles.me/tna/reference/plot.tna_cliques.md),
-[`print.group_tna_cliques()`](http://sonsoles.me/tna/reference/print.group_tna_cliques.md)
+[`cliques()`](https://sonsoles.me/tna/reference/cliques.md),
+[`plot.group_tna_cliques()`](https://sonsoles.me/tna/reference/plot.group_tna_cliques.md),
+[`plot.tna_cliques()`](https://sonsoles.me/tna/reference/plot.tna_cliques.md),
+[`print.group_tna_cliques()`](https://sonsoles.me/tna/reference/print.group_tna_cliques.md)
 
 ## Examples
 

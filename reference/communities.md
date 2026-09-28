@@ -76,15 +76,15 @@ returned instead, which is a `list` of `tna_communities` objects.
 ## See also
 
 Community detection functions
-[`plot.group_tna_communities()`](http://sonsoles.me/tna/reference/plot.group_tna_communities.md),
-[`plot.tna_communities()`](http://sonsoles.me/tna/reference/plot.tna_communities.md),
-[`print.group_tna_communities()`](http://sonsoles.me/tna/reference/print.group_tna_communities.md),
-[`print.tna_communities()`](http://sonsoles.me/tna/reference/print.tna_communities.md)
+[`plot.group_tna_communities()`](https://sonsoles.me/tna/reference/plot.group_tna_communities.md),
+[`plot.tna_communities()`](https://sonsoles.me/tna/reference/plot.tna_communities.md),
+[`print.group_tna_communities()`](https://sonsoles.me/tna/reference/print.group_tna_communities.md),
+[`print.tna_communities()`](https://sonsoles.me/tna/reference/print.tna_communities.md)
 
 Cluster-related functions
-[`group_model()`](http://sonsoles.me/tna/reference/group_model.md),
-[`mmm_stats()`](http://sonsoles.me/tna/reference/mmm_stats.md),
-[`rename_groups()`](http://sonsoles.me/tna/reference/rename_groups.md)
+[`group_model()`](https://sonsoles.me/tna/reference/group_model.md),
+[`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md),
+[`rename_groups()`](https://sonsoles.me/tna/reference/rename_groups.md)
 
 ## Examples
 

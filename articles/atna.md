@@ -53,10 +53,11 @@ appears before state B, weighted by how close together they tend to be.
 ## Building an ATNA Model
 
 If you’ve used
-[`tna()`](http://sonsoles.me/tna/reference/build_model.md) before, this
+[`tna()`](https://sonsoles.me/tna/reference/build_model.md) before, this
 works the same way with a different function name.
 
 ``` r
+
 library("tna")
 data("group_regulation")
 
@@ -98,6 +99,7 @@ the 0–1 range by the `scaling = "minmax"` argument.
 ## Plotting the Network
 
 ``` r
+
 plot(model_atna)
 #> Registered S3 method overwritten by 'cograph':
 #>   method             from
@@ -126,6 +128,7 @@ Start with `minimum = 0.05` and adjust from there.
 You can also look at the distribution of edge weights:
 
 ``` r
+
 hist(model_atna)
 ```
 
@@ -144,9 +147,10 @@ it more aggressively.
 Centrality tells you which states play the biggest role in the network.
 
 ``` r
+
 cents <- centralities(model_atna, normalize = TRUE)
 print(cents)
-#> # A tibble: 9 × 10
+#> # A tibble: 9 × 11
 #>   state      OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>            <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
 #> 1 adapt           0          0            0           0          0           0    
@@ -158,7 +162,8 @@ print(cents)
 #> 7 monitor         0.180      0.136        0.221       0.283      0.272       0    
 #> 8 plan            0.714      0.724        0.868       0.910      0.841       0.486
 #> 9 synthesis       0.0278     0.0325       0.213       0.0712     0.181       0    
-#> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
+#> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
+#> #   PageRank <dbl>
 ```
 
 This gives you three measures for each state:
@@ -176,6 +181,7 @@ This gives you three measures for each state:
 To plot all three:
 
 ``` r
+
 plot(cents)
 ```
 
@@ -201,6 +207,7 @@ Communities are groups of states that are more tightly connected to each
 other than to the rest of the network.
 
 ``` r
+
 comms <- communities(model_atna)
 plot(comms)
 ```
@@ -223,6 +230,7 @@ Cliques are small groups of states where every state has a strong
 connection to every other state in the group.
 
 ``` r
+
 layout(t(1:3)); par(mar = c(0,0,0,0))
 cliq <- cliques(model_atna, size = 2, threshold = 0.2)
 print(cliq)
@@ -267,6 +275,7 @@ Before interpreting results, check that they are stable.
 ### Bootstrap
 
 ``` r
+
 boot <- bootstrap(model_atna, threshold = 0.05)
 plot(boot)
 ```
@@ -281,6 +290,7 @@ and go are not reliable.
 ### Centrality Stability
 
 ``` r
+
 stab <- estimate_centrality_stability(model_atna)
 print(stab)
 #> Centrality Stability Coefficients
@@ -305,9 +315,10 @@ may not hold up with less data.
 ### Building Group Models
 
 To compare groups (e.g., high- vs. low-achieving students), use
-[`group_atna()`](http://sonsoles.me/tna/reference/group_model.md):
+[`group_atna()`](https://sonsoles.me/tna/reference/group_model.md):
 
 ``` r
+
 data("group_regulation_long")
 prepared <- prepare_data(
   group_regulation_long,
@@ -322,6 +333,7 @@ gtna <- group_atna(prepared, group = "Achiever")
 ### Plotting Group Networks
 
 ``` r
+
 plot(gtna)
 ```
 
@@ -335,6 +347,7 @@ will be visible.
 ### Comparing Centralities Across Groups
 
 ``` r
+
 plot(centralities(gtna))
 ```
 
@@ -347,6 +360,7 @@ role changes depending on group membership.
 ### Difference Network
 
 ``` r
+
 plot_compare(gtna)
 ```
 
@@ -360,22 +374,23 @@ It is the fastest way to see where the two groups diverge.
 ### Permutation Test
 
 ``` r
+
 perm <- permutation_test(gtna, iter = 1000)
 print(perm)
 #> High vs. Low :
 #> # A tibble: 81 × 4
 #>    edge_name           diff_true effect_size  p_value
 #>    <chr>                   <dbl>       <dbl>    <dbl>
-#>  1 adapt -> adapt         -1.34       -3.18  0.00200 
-#>  2 cohesion -> adapt       0.907       0.895 0.373   
-#>  3 consensus -> adapt     -6.92       -2.62  0.0150  
-#>  4 coregulate -> adapt    -2.40       -1.04  0.311   
-#>  5 discuss -> adapt      -83.7       -11.4   0.000999
-#>  6 emotion -> adapt       -0.777      -0.598 0.563   
-#>  7 monitor -> adapt       -5.27       -3.04  0.000999
-#>  8 plan -> adapt          -5.68       -3.59  0.000999
-#>  9 synthesis -> adapt    -27.6        -5.84  0.000999
-#> 10 adapt -> cohesion     -25.7        -5.87  0.000999
+#>  1 adapt -> adapt         -1.34       -3.16  0.000999
+#>  2 cohesion -> adapt       0.907       0.853 0.418   
+#>  3 consensus -> adapt     -6.92       -2.53  0.0140  
+#>  4 coregulate -> adapt    -2.40       -1.01  0.309   
+#>  5 discuss -> adapt      -83.7       -11.2   0.000999
+#>  6 emotion -> adapt       -0.777      -0.594 0.555   
+#>  7 monitor -> adapt       -5.27       -3.06  0.000999
+#>  8 plan -> adapt          -5.68       -3.56  0.00200 
+#>  9 synthesis -> adapt    -27.6        -5.79  0.000999
+#> 10 adapt -> cohesion     -25.7        -6.00  0.000999
 #> # ℹ 71 more rows
 plot(perm, minimum = 0.01)
 ```
@@ -395,12 +410,12 @@ passed the permutation test are visible.
 
 ## When to Use ATNA vs. Regular TNA
 
-| Situation                                                          | Use                                                         |
-|--------------------------------------------------------------------|-------------------------------------------------------------|
-| You care about what happens in the very next step                  | [`tna()`](http://sonsoles.me/tna/reference/build_model.md)  |
-| You think events influence other events several steps later        | [`atna()`](http://sonsoles.me/tna/reference/build_model.md) |
-| Conversational data where early turns shape later turns            | [`atna()`](http://sonsoles.me/tna/reference/build_model.md) |
-| You want to find states that connect distant parts of the sequence | [`atna()`](http://sonsoles.me/tna/reference/build_model.md) |
+| Situation | Use |
+|----|----|
+| You care about what happens in the very next step | [`tna()`](https://sonsoles.me/tna/reference/build_model.md) |
+| You think events influence other events several steps later | [`atna()`](https://sonsoles.me/tna/reference/build_model.md) |
+| Conversational data where early turns shape later turns | [`atna()`](https://sonsoles.me/tna/reference/build_model.md) |
+| You want to find states that connect distant parts of the sequence | [`atna()`](https://sonsoles.me/tna/reference/build_model.md) |
 
 ATNA and TNA can give different answers about which states are most
 central. A state might have weak immediate transitions (low importance

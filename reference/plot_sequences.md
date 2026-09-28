@@ -197,6 +197,11 @@ plot_sequences(
   An `expression` giving a tidy selection of column names to be treated
   as time points. By default, all columns will be used.
 
+## Value
+
+A `ggplot` object containing either a sequence index plot or a state
+distribution plot, faceted by `group` when supplied.
+
 ## Examples
 
 ``` r

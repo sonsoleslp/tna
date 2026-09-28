@@ -18,7 +18,7 @@ print(x, ...)
 - ...:
 
   Arguments passed to
-  [`print.tna_cliques()`](http://sonsoles.me/tna/reference/print.tna_cliques.md).
+  [`print.tna_cliques()`](https://sonsoles.me/tna/reference/print.tna_cliques.md).
 
 ## Value
 
@@ -27,10 +27,10 @@ print(x, ...)
 ## See also
 
 Clique-related functions
-[`cliques()`](http://sonsoles.me/tna/reference/cliques.md),
-[`plot.group_tna_cliques()`](http://sonsoles.me/tna/reference/plot.group_tna_cliques.md),
-[`plot.tna_cliques()`](http://sonsoles.me/tna/reference/plot.tna_cliques.md),
-[`print.tna_cliques()`](http://sonsoles.me/tna/reference/print.tna_cliques.md)
+[`cliques()`](https://sonsoles.me/tna/reference/cliques.md),
+[`plot.group_tna_cliques()`](https://sonsoles.me/tna/reference/plot.group_tna_cliques.md),
+[`plot.tna_cliques()`](https://sonsoles.me/tna/reference/plot.tna_cliques.md),
+[`print.tna_cliques()`](https://sonsoles.me/tna/reference/print.tna_cliques.md)
 
 ## Examples
 
@@ -43,46 +43,56 @@ print(cliq)
 #> Showing 3 cliques starting from clique number 1
 #> 
 #> Clique 1
-#>              Average Disengaged
-#> Average    0.5420848  0.1458120
-#> Disengaged 0.1617940  0.7902954
+#>            Engaged  Moderate
+#> Engaged  0.6616424 0.3180873
+#> Moderate 0.1242408 0.7551077
 #> 
 #> Clique 2
-#>            Active    Average
-#> Active  0.8598569 0.08919748
-#> Average 0.3121032 0.54208478
+#>            Disengaged   Engaged
+#> Disengaged 0.68079470 0.1582781
+#> Engaged    0.02027027 0.6616424
 #> 
 #> Clique 3
-#>                Active Disengaged
-#> Active     0.85985688 0.05094565
-#> Disengaged 0.04791061 0.79029542
+#>            Disengaged  Moderate
+#> Disengaged  0.6807947 0.1609272
+#> Moderate    0.1206516 0.7551077
 #> 
 #> Cluster 2 :
-#> Number of 2-cliques = 2 (weight threshold = 0)
-#> Showing 2 cliques starting from clique number 1
+#> Number of 2-cliques = 3 (weight threshold = 0)
+#> Showing 3 cliques starting from clique number 1
 #> 
 #> Clique 1
-#>              Average Disengaged
-#> Average    0.6296296  0.2777778
-#> Disengaged 0.5111111  0.3333333
+#>             Engaged   Moderate
+#> Engaged  0.67158177 0.02010724
+#> Moderate 0.05360444 0.82809612
 #> 
 #> Clique 2
-#>             Active   Average
-#> Active  0.84090909 0.1590909
-#> Average 0.09259259 0.6296296
+#>            Disengaged   Engaged
+#> Disengaged  0.9112066 0.0877193
+#> Engaged     0.3083110 0.6715818
+#> 
+#> Clique 3
+#>            Disengaged    Moderate
+#> Disengaged  0.9112066 0.001074114
+#> Moderate    0.1182994 0.828096118
 #> 
 #> Cluster 3 :
-#> Number of 2-cliques = 2 (weight threshold = 0)
-#> Showing 2 cliques starting from clique number 1
+#> Number of 2-cliques = 3 (weight threshold = 0)
+#> Showing 3 cliques starting from clique number 1
 #> 
 #> Clique 1
-#>              Average Disengaged
-#> Average    0.8194444 0.02777778
-#> Disengaged 0.6000000 0.40000000
+#>            Engaged  Moderate
+#> Engaged  0.6652470 0.2722885
+#> Moderate 0.1498049 0.6686606
 #> 
 #> Clique 2
-#>            Active   Average
-#> Active  0.5833333 0.1250000
-#> Average 0.1527778 0.8194444
+#>            Disengaged   Engaged
+#> Disengaged 0.87538657 0.1111515
+#> Engaged    0.06246451 0.6652470
+#> 
+#> Clique 3
+#>            Disengaged   Moderate
+#> Disengaged  0.8753866 0.01346189
+#> Moderate    0.1815345 0.66866060
 #> 
 ```

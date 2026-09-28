@@ -50,10 +50,10 @@ plot(x, n = 6, first = 1, show_loops = FALSE, colors, ask = TRUE, ...)
 ## See also
 
 Clique-related functions
-[`cliques()`](http://sonsoles.me/tna/reference/cliques.md),
-[`plot.group_tna_cliques()`](http://sonsoles.me/tna/reference/plot.group_tna_cliques.md),
-[`print.group_tna_cliques()`](http://sonsoles.me/tna/reference/print.group_tna_cliques.md),
-[`print.tna_cliques()`](http://sonsoles.me/tna/reference/print.tna_cliques.md)
+[`cliques()`](https://sonsoles.me/tna/reference/cliques.md),
+[`plot.group_tna_cliques()`](https://sonsoles.me/tna/reference/plot.group_tna_cliques.md),
+[`print.group_tna_cliques()`](https://sonsoles.me/tna/reference/print.group_tna_cliques.md),
+[`print.tna_cliques()`](https://sonsoles.me/tna/reference/print.tna_cliques.md)
 
 ## Examples
 

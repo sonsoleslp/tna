@@ -17,7 +17,9 @@ prepare_data(
   custom_format = NULL,
   is_unix_time = FALSE,
   unix_time_unit = "seconds",
-  unused_fn = dplyr::first
+  unused_fn = dplyr::first,
+  timezone = "UTC",
+  session = NULL
 )
 ```
 
@@ -33,8 +35,9 @@ prepare_data(
   selection of the names of the columns that represent a user/actor
   identifiers. If not provided and neither `time` nor `order` is
   specified, the entire dataset is treated as a single session. In the
-  case of multiple actors, a new `.actor` column is added that
-  represents the interaction of the given columns.
+  case of multiple actors, a readable `.actor` column is added while
+  grouping uses the original columns to keep distinct combinations
+  separate.
 
 - time:
 
@@ -58,8 +61,10 @@ prepare_data(
 
 - time_threshold:
 
-  An `integer` specifying the time threshold in seconds for creating new
-  time-based sessions. Defaults to 900 seconds.
+  A positive `numeric` value specifying the time threshold in seconds
+  for creating new time-based sessions. Set to `FALSE` to disable
+  gap-based session splitting, so each actor-session combination forms
+  one session. Defaults to 900 seconds.
 
 - custom_format:
 
@@ -83,6 +88,21 @@ prepare_data(
   [`tidyr::pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html).
   The default is to keep all columns and to use the first value.
 
+- timezone:
+
+  An Olson time zone used to interpret timestamps that do not contain an
+  explicit UTC offset. Explicit offsets such as `Z`, `+00:00`, and
+  `-0500` are always honored. The default is `"UTC"` for reproducible
+  results across systems. See
+  [`OlsonNames()`](https://rdrr.io/r/base/timezones.html).
+
+- session:
+
+  An optional tidy selection of one or more columns identifying explicit
+  sessions within actors, such as a course or semester. When `time` is
+  also supplied, each actor-session combination can be further split by
+  `time_threshold`.
+
 ## Value
 
 A `tna_data` object, which is a `list` with the following elements:
@@ -94,18 +114,32 @@ A `tna_data` object, which is a `list` with the following elements:
 
 - `meta_data`: Other variables from the original data in wide format.
 
+- `time_data`: Parsed timestamps in wide format when `time` is supplied,
+  or `NULL` otherwise.
+
 - `statistics`: A `list` containing summary statistics: total sessions,
   total actions, unique users, time range (if applicable), and top
   sessions and user by activities.
 
+## Details
+
+Session identity is based on observed combinations of the original actor
+and session columns. Separator characters and high-cardinality marginal
+levels therefore cannot merge distinct sessions. `.session_id` is the
+collision-safe key and `.session_label` is its readable display label.
+
 ## See also
 
 Other data:
-[`import_data()`](http://sonsoles.me/tna/reference/import_data.md),
-[`import_onehot()`](http://sonsoles.me/tna/reference/import_onehot.md),
-[`print.tna_data()`](http://sonsoles.me/tna/reference/print.tna_data.md),
-[`simulate.group_tna()`](http://sonsoles.me/tna/reference/simulate.group_tna.md),
-[`simulate.tna()`](http://sonsoles.me/tna/reference/simulate.tna.md)
+[`import_data()`](https://sonsoles.me/tna/reference/import_data.md),
+[`import_onehot()`](https://sonsoles.me/tna/reference/import_onehot.md),
+[`list_random_state_pools()`](https://sonsoles.me/tna/reference/list_random_state_pools.md),
+[`print.tna_data()`](https://sonsoles.me/tna/reference/print.tna_data.md),
+[`random_group_tna()`](https://sonsoles.me/tna/reference/random_group_tna.md),
+[`random_tna()`](https://sonsoles.me/tna/reference/random_tna.md),
+[`random_tna_mmm()`](https://sonsoles.me/tna/reference/random_tna_mmm.md),
+[`simulate.group_tna()`](https://sonsoles.me/tna/reference/simulate.group_tna.md),
+[`simulate.tna()`](https://sonsoles.me/tna/reference/simulate.tna.md)
 
 ## Examples
 
@@ -130,18 +164,18 @@ results <- prepare_data(
 #> ℹ Time range: 2025-01-01 08:01:16.009382 to 2025-01-01 13:03:20.238288
 print(results$sequence_data)
 #> # A tibble: 2,000 × 26
-#>    Action_T1 Action_T2 Action_T3 Action_T4 Action_T5  Action_T6  Action_T7
-#>    <chr>     <chr>     <chr>     <chr>     <chr>      <chr>      <chr>    
-#>  1 cohesion  consensus discuss   synthesis adapt      consensus  plan     
-#>  2 emotion   cohesion  discuss   synthesis NA         NA         NA       
-#>  3 plan      consensus plan      NA        NA         NA         NA       
-#>  4 discuss   discuss   consensus plan      cohesion   consensus  discuss  
-#>  5 cohesion  consensus plan      plan      monitor    plan       consensus
-#>  6 discuss   adapt     cohesion  consensus discuss    emotion    cohesion 
-#>  7 discuss   emotion   cohesion  consensus coregulate coregulate plan     
-#>  8 cohesion  plan      consensus plan      consensus  discuss    discuss  
-#>  9 emotion   cohesion  emotion   plan      monitor    discuss    emotion  
-#> 10 emotion   cohesion  consensus plan      plan       plan       plan     
+#>    Action_T1 Action_T2  Action_T3  Action_T4 Action_T5 Action_T6 Action_T7
+#>    <chr>     <chr>      <chr>      <chr>     <chr>     <chr>     <chr>    
+#>  1 cohesion  consensus  discuss    synthesis adapt     consensus plan     
+#>  2 plan      emotion    consensus  discuss   synthesis adapt     emotion  
+#>  3 consensus coregulate monitor    consensus plan      emotion   consensus
+#>  4 monitor   emotion    plan       discuss   synthesis consensus discuss  
+#>  5 discuss   emotion    cohesion   NA        NA        NA        NA       
+#>  6 plan      plan       consensus  plan      plan      plan      plan     
+#>  7 plan      discuss    coregulate NA        NA        NA        NA       
+#>  8 plan      emotion    consensus  discuss   consensus plan      consensus
+#>  9 discuss   consensus  NA         NA        NA        NA        NA       
+#> 10 emotion   cohesion   discuss    synthesis NA        NA        NA       
 #> # ℹ 1,990 more rows
 #> # ℹ 19 more variables: Action_T8 <chr>, Action_T9 <chr>, Action_T10 <chr>,
 #> #   Action_T11 <chr>, Action_T12 <chr>, Action_T13 <chr>, Action_T14 <chr>,
@@ -149,20 +183,21 @@ print(results$sequence_data)
 #> #   Action_T19 <chr>, Action_T20 <chr>, Action_T21 <chr>, Action_T22 <chr>,
 #> #   Action_T23 <chr>, Action_T24 <chr>, Action_T25 <chr>, Action_T26 <chr>
 print(results$meta_data)
-#> # A tibble: 2,000 × 7
-#>    .session_id   Actor Achiever Group Course Time                .session_nr
-#>    <chr>         <int> <chr>    <dbl> <chr>  <dttm>                    <int>
-#>  1 1 session1        1 High         1 A      2025-01-01 08:27:07           1
-#>  2 10 session1      10 High         1 A      2025-01-01 08:23:45           1
-#>  3 100 session1    100 High        10 A      2025-01-01 10:11:50           1
-#>  4 1000 session1  1000 High       100 B      2025-01-01 09:12:00           1
-#>  5 1001 session1  1001 Low        101 B      2025-01-01 09:18:40           1
-#>  6 1002 session1  1002 Low        101 B      2025-01-01 09:18:53           1
-#>  7 1003 session1  1003 Low        101 B      2025-01-01 09:18:05           1
-#>  8 1004 session1  1004 Low        101 B      2025-01-01 09:22:26           1
-#>  9 1005 session1  1005 Low        101 B      2025-01-01 09:22:31           1
-#> 10 1006 session1  1006 Low        101 B      2025-01-01 09:15:23           1
+#> # A tibble: 2,000 × 8
+#>    .session_id Actor Achiever Group Course Time                .session_nr
+#>    <chr>       <int> <chr>    <dbl> <chr>  <dttm>                    <int>
+#>  1 1 s1            1 High         1 A      2025-01-01 08:27:07           1
+#>  2 2 s1            2 High         1 A      2025-01-01 08:27:33           1
+#>  3 3 s1            3 High         1 A      2025-01-01 08:24:45           1
+#>  4 4 s1            4 High         1 A      2025-01-01 08:22:07           1
+#>  5 5 s1            5 High         1 A      2025-01-01 08:22:50           1
+#>  6 6 s1            6 High         1 A      2025-01-01 08:22:25           1
+#>  7 7 s1            7 High         1 A      2025-01-01 08:26:04           1
+#>  8 8 s1            8 High         1 A      2025-01-01 08:26:46           1
+#>  9 9 s1            9 High         1 A      2025-01-01 08:25:56           1
+#> 10 10 s1          10 High         1 A      2025-01-01 08:23:45           1
 #> # ℹ 1,990 more rows
+#> # ℹ 1 more variable: .session_label <chr>
 print(results$statistics)
 #> $total_sessions
 #> [1] 2000
@@ -194,18 +229,18 @@ print(results$statistics)
 #> 
 #> $actions_per_session
 #> # A tibble: 2,000 × 2
-#>    .session_id   n_actions
-#>    <chr>             <int>
-#>  1 1010 session1        26
-#>  2 1015 session1        26
-#>  3 1030 session1        26
-#>  4 1092 session1        26
-#>  5 1106 session1        26
-#>  6 1107 session1        26
-#>  7 1153 session1        26
-#>  8 1184 session1        26
-#>  9 1209 session1        26
-#> 10 1267 session1        26
+#>    .session_id n_actions
+#>    <chr>           <int>
+#>  1 1010 s1            26
+#>  2 1015 s1            26
+#>  3 1030 s1            26
+#>  4 1092 s1            26
+#>  5 1106 s1            26
+#>  6 1107 s1            26
+#>  7 1153 s1            26
+#>  8 1184 s1            26
+#>  9 1209 s1            26
+#> 10 1267 s1            26
 #> # ℹ 1,990 more rows
 #> 
 #> $time_range
@@ -239,12 +274,12 @@ print(results_ordered$sequence_data)
 #> 2 view  checkout NA      
 #> 3 view  click    share   
 print(results_ordered$meta_data)
-#> # A tibble: 3 × 3
-#>   .session_id user  order
-#>   <chr>       <chr> <dbl>
-#> 1 A           A         1
-#> 2 B           B         1
-#> 3 C           C         1
+#> # A tibble: 3 × 5
+#>   .session_id user  order .session_nr .session_label
+#>   <chr>       <chr> <dbl>       <int> <chr>         
+#> 1 1           A         1           1 A             
+#> 2 2           B         1           1 B             
+#> 3 3           C         1           1 C             
 print(results_ordered$statistics)
 #> $total_sessions
 #> [1] 3
@@ -270,9 +305,9 @@ print(results_ordered$statistics)
 #> # A tibble: 3 × 2
 #>   .session_id n_actions
 #>   <chr>           <int>
-#> 1 A                   3
-#> 2 C                   3
-#> 3 B                   2
+#> 1 1                   3
+#> 2 3                   3
+#> 3 2                   2
 #> 
 
 # No actor scenario leading to a single session
@@ -296,10 +331,10 @@ print(results_single$sequence_data)
 #>   <chr> <chr> <chr>    <chr> <chr>    <chr> <chr> <chr>
 #> 1 view  click add_cart view  checkout view  click share
 print(results_single$meta_data)
-#> # A tibble: 1 × 1
-#>   .session_id
-#>   <chr>      
-#> 1 session    
+#> # A tibble: 1 × 3
+#>   .session_id .session_nr .session_label
+#>   <chr>             <int> <chr>         
+#> 1 1                     1 session       
 print(results_single$statistics)
 #> $total_sessions
 #> [1] 1
@@ -314,7 +349,7 @@ print(results_single$statistics)
 #> # A tibble: 1 × 2
 #>   .session_id n_actions
 #>   <chr>           <int>
-#> 1 session             8
+#> 1 1                   8
 #> 
 
 # Multiple actors
@@ -345,13 +380,13 @@ print(results_multi_actor$sequence_data)
 #> 3 add_cart view 
 #> 4 click    share
 print(results_multi_actor$meta_data)
-#> # A tibble: 4 × 4
-#>   .session_id user  session .actor
-#>   <fct>       <chr>   <dbl> <fct> 
-#> 1 A-1         A           1 A-1   
-#> 2 B-1         B           1 B-1   
-#> 3 A-2         A           2 A-2   
-#> 4 B-2         B           2 B-2   
+#> # A tibble: 4 × 6
+#>   .session_id user  session .actor .session_nr .session_label
+#>   <chr>       <chr>   <dbl> <chr>        <int> <chr>         
+#> 1 1           A           1 A-1              1 A-1           
+#> 2 2           B           1 B-1              1 B-1           
+#> 3 3           A           2 A-2              1 A-2           
+#> 4 4           B           2 B-2              1 B-2           
 print(results_multi_actor$statistics)
 #> $total_sessions
 #> [1] 4
@@ -368,7 +403,7 @@ print(results_multi_actor$statistics)
 #> $sessions_per_user
 #> # A tibble: 4 × 2
 #>   .actor n_sessions
-#>   <fct>       <int>
+#>   <chr>       <int>
 #> 1 A-1             1
 #> 2 B-1             1
 #> 3 A-2             1
@@ -377,10 +412,10 @@ print(results_multi_actor$statistics)
 #> $actions_per_session
 #> # A tibble: 4 × 2
 #>   .session_id n_actions
-#>   <fct>           <int>
-#> 1 A-1                 2
-#> 2 B-1                 2
-#> 3 A-2                 2
-#> 4 B-2                 2
+#>   <chr>           <int>
+#> 1 1                   2
+#> 2 2                   2
+#> 3 3                   2
+#> 4 4                   2
 #> 
 ```

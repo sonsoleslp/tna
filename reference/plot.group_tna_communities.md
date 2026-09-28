@@ -26,7 +26,7 @@ plot(x, title, colors, ...)
 - ...:
 
   Arguments passed to
-  [`plot.tna_communities()`](http://sonsoles.me/tna/reference/plot.tna_communities.md).
+  [`plot.tna_communities()`](https://sonsoles.me/tna/reference/plot.tna_communities.md).
 
 ## Value
 
@@ -36,10 +36,10 @@ colored by community for each cluster.
 ## See also
 
 Community detection functions
-[`communities()`](http://sonsoles.me/tna/reference/communities.md),
-[`plot.tna_communities()`](http://sonsoles.me/tna/reference/plot.tna_communities.md),
-[`print.group_tna_communities()`](http://sonsoles.me/tna/reference/print.group_tna_communities.md),
-[`print.tna_communities()`](http://sonsoles.me/tna/reference/print.tna_communities.md)
+[`communities()`](https://sonsoles.me/tna/reference/communities.md),
+[`plot.tna_communities()`](https://sonsoles.me/tna/reference/plot.tna_communities.md),
+[`print.group_tna_communities()`](https://sonsoles.me/tna/reference/print.group_tna_communities.md),
+[`print.tna_communities()`](https://sonsoles.me/tna/reference/print.tna_communities.md)
 
 ## Examples
 

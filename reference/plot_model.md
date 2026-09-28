@@ -31,7 +31,7 @@ plot_model(x, labels, colors, ...)
 
 ## Value
 
-See [`plot.tna()`](http://sonsoles.me/tna/reference/plot.tna.md).
+See [`plot.tna()`](https://sonsoles.me/tna/reference/plot.tna.md).
 
 ## Examples
 

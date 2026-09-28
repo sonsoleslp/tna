@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="tna — R Package Documentation">
 </head>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">tna</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -282,71 +282,71 @@ specify groups again.</p>
 <pre><code><span><span class="co">#&gt; Cluster 1 :</span></span>
 <span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    Active, Average, Disengaged </span></span>
+<span><span class="co">#&gt;    Disengaged, Engaged, Moderate </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probability Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                Active    Average Disengaged</span></span>
-<span><span class="co">#&gt; Active     0.85985688 0.08919748 0.05094565</span></span>
-<span><span class="co">#&gt; Average    0.31210322 0.54208478 0.14581200</span></span>
-<span><span class="co">#&gt; Disengaged 0.04791061 0.16179397 0.79029542</span></span>
+<span><span class="co">#&gt;            Disengaged   Engaged  Moderate</span></span>
+<span><span class="co">#&gt; Disengaged 0.68079470 0.1582781 0.1609272</span></span>
+<span><span class="co">#&gt; Engaged    0.02027027 0.6616424 0.3180873</span></span>
+<span><span class="co">#&gt; Moderate   0.12065157 0.1242408 0.7551077</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Initial Probabilities : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Active    Average Disengaged </span></span>
-<span><span class="co">#&gt;  0.3397762  0.3234995  0.3367243 </span></span>
+<span><span class="co">#&gt; Disengaged    Engaged   Moderate </span></span>
+<span><span class="co">#&gt;  0.2210884  0.1802721  0.5986395 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Cluster 2 :</span></span>
 <span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    Active, Average, Disengaged </span></span>
+<span><span class="co">#&gt;    Disengaged, Engaged, Moderate </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probability Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;                Active   Average Disengaged</span></span>
-<span><span class="co">#&gt; Active     0.84090909 0.1590909  0.0000000</span></span>
-<span><span class="co">#&gt; Average    0.09259259 0.6296296  0.2777778</span></span>
-<span><span class="co">#&gt; Disengaged 0.15555556 0.5111111  0.3333333</span></span>
+<span><span class="co">#&gt;            Disengaged    Engaged    Moderate</span></span>
+<span><span class="co">#&gt; Disengaged  0.9112066 0.08771930 0.001074114</span></span>
+<span><span class="co">#&gt; Engaged     0.3083110 0.67158177 0.020107239</span></span>
+<span><span class="co">#&gt; Moderate    0.1182994 0.05360444 0.828096118</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Initial Probabilities : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Active    Average Disengaged </span></span>
-<span><span class="co">#&gt; 0.75000000 0.08333333 0.16666667 </span></span>
+<span><span class="co">#&gt; Disengaged    Engaged   Moderate </span></span>
+<span><span class="co">#&gt; 0.49411765 0.01176471 0.49411765 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Cluster 3 :</span></span>
 <span><span class="co">#&gt; State Labels : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    Active, Average, Disengaged </span></span>
+<span><span class="co">#&gt;    Disengaged, Engaged, Moderate </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probability Matrix :</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;               Active   Average Disengaged</span></span>
-<span><span class="co">#&gt; Active     0.5833333 0.1250000 0.29166667</span></span>
-<span><span class="co">#&gt; Average    0.1527778 0.8194444 0.02777778</span></span>
-<span><span class="co">#&gt; Disengaged 0.0000000 0.6000000 0.40000000</span></span>
+<span><span class="co">#&gt;            Disengaged   Engaged   Moderate</span></span>
+<span><span class="co">#&gt; Disengaged 0.87538657 0.1111515 0.01346189</span></span>
+<span><span class="co">#&gt; Engaged    0.06246451 0.6652470 0.27228847</span></span>
+<span><span class="co">#&gt; Moderate   0.18153446 0.1498049 0.66866060</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Initial Probabilities : </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     Active    Average Disengaged </span></span>
-<span><span class="co">#&gt;          0          0          1</span></span></code></pre>
+<span><span class="co">#&gt; Disengaged    Engaged   Moderate </span></span>
+<span><span class="co">#&gt; 0.07462687 0.24626866 0.67910448</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mmm_model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 × 4</span></span></span>
 <span><span class="co">#&gt;    metric                      `Cluster 1` `Cluster 2` `Cluster 3`</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Node Count                        3           3           3    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Edge Count                        9           8           8    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Network Density                   1           1           1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mean Distance                     0.111       0.239       0.302</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mean Out-Strength                 1           1           1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SD Out-Strength                   0.214       0.353       0.472</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mean In-Strength                  1           1           1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SD In-Strength                    0           0           0    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mean Out-Degree                   3           2.67        2.67 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SD Out-Degree                     0           0.577       0.577</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree)       0           0.25        0.25 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)        0           0.25        0.25 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                       1           0.8         0.8</span></span></code></pre>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Node Count                        3        3   <span style="color: #949494;">e</span>+ 0      3     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Edge Count                        9        9   <span style="color: #949494;">e</span>+ 0      9     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Network Density                   1        1   <span style="color: #949494;">e</span>+ 0      1     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Mean Distance                     0.128    6.44<span style="color: #949494;">e</span><span style="color: #BB0000;">- 2</span>      0.099<span style="text-decoration: underline;">1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Mean Out-Strength                 1        1   <span style="color: #949494;">e</span>+ 0      1     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> SD Out-Strength                   0.212    2.93<span style="color: #949494;">e</span><span style="color: #BB0000;">- 1</span>      0.104 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Mean In-Strength                  1        1   <span style="color: #949494;">e</span>+ 0      1     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> SD In-Strength                    0        7.85<span style="color: #949494;">e</span><span style="color: #BB0000;">-17</span>      0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Mean Out-Degree                   3        3   <span style="color: #949494;">e</span>+ 0      3     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> SD Out-Degree                     0        0   <span style="color: #949494;"> </span>         0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Centralization (Out-Degree)       0        0   <span style="color: #949494;"> </span>         0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Centralization (In-Degree)        0        0   <span style="color: #949494;"> </span>         0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Reciprocity                       1        1   <span style="color: #949494;">e</span>+ 0      1</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Manual groups</span></span>
 <span><span class="va">group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"High"</span>, <span class="fl">1000</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Low"</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
@@ -570,18 +570,18 @@ greater.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $actions_per_session</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,000 × 2</span></span></span>
-<span><span class="co">#&gt;    .session_id   n_actions</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 1010 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1015 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 1030 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 1092 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 1106 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 1107 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 1153 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1184 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1209 session1        26</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1267 session1        26</span></span>
+<span><span class="co">#&gt;    .session_id n_actions</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 1010 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1015 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 1030 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 1092 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 1106 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 1107 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 1153 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1184 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1209 s1            26</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1267 s1            26</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,990 more rows</span></span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $time_range</span></span>
@@ -609,7 +609,7 @@ data.</p>
 <p>Simulate sequence data from a TNA model (requires
 <code>type = "relative"</code>).</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/simulate.html" class="external-link">simulate</a></span><span class="op">(</span><span class="va">model</span>, nsim <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">123</span>, max_len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate.html">simulate</a></span><span class="op">(</span><span class="va">model</span>, nsim <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">123</span>, max_len <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;         T1         T2        T3      T4        T5       T6         T7</span></span>
 <span><span class="co">#&gt; 1     plan    emotion consensus monitor consensus  discuss  synthesis</span></span>
@@ -682,7 +682,7 @@ data.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/centralities.html">centralities</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cm</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 10</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 11</span></span></span>
 <span><span class="co">#&gt;   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> adapt          1          0.345     0.008<span style="text-decoration: underline;">34</span>       0.015<span style="text-decoration: underline;">2</span>    0.024<span style="text-decoration: underline;">8</span>           1</span></span>
@@ -694,14 +694,15 @@ data.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> monitor        0.982      0.346     0.007<span style="text-decoration: underline;">58</span>       0.013<span style="text-decoration: underline;">7</span>    0.019<span style="text-decoration: underline;">3</span>           0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> plan           0.626      1.19      0.027<span style="text-decoration: underline;">4</span>        0.011<span style="text-decoration: underline;">5</span>    0.027<span style="text-decoration: underline;">4</span>           9</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> synthes…       1          0.192     0.009<span style="text-decoration: underline;">97</span>       0.015<span style="text-decoration: underline;">8</span>    0.024<span style="text-decoration: underline;">3</span>           7</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;, Clustering &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;, Clustering &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   PageRank &lt;dbl&gt;</span></span></span></code></pre>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cm</span>, ncol <span class="op">=</span> <span class="fl">3</span>, reorder <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="new-docs_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" alt="" width="1440"></p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># On group_tna directly</span></span>
 <span><span class="fu"><a href="../reference/centralities.html">centralities</a></span><span class="op">(</span><span class="va">gmodel</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18 × 11</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18 × 12</span></span></span>
 <span><span class="co">#&gt;    group state      OutStrength InStrength ClosenessIn ClosenessOut Closeness</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> High  adapt            1          0.215     0.006<span style="text-decoration: underline;">50</span>       0.015<span style="text-decoration: underline;">4</span>    0.026<span style="text-decoration: underline;">3</span></span></span>
@@ -722,8 +723,8 @@ data.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> Low   monitor          0.982      0.393     0.007<span style="text-decoration: underline;">43</span>       0.014<span style="text-decoration: underline;">2</span>    0.018<span style="text-decoration: underline;">3</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> Low   plan             0.585      1.15      0.026<span style="text-decoration: underline;">1</span>        0.010<span style="text-decoration: underline;">9</span>    0.026<span style="text-decoration: underline;">1</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> Low   synthesis        1          0.216     0.010<span style="text-decoration: underline;">1</span>        0.015<span style="text-decoration: underline;">3</span>    0.023<span style="text-decoration: underline;">3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: Betweenness &lt;dbl&gt;, BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   Clustering &lt;dbl&gt;</span></span></span></code></pre>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: Betweenness &lt;dbl&gt;, BetweennessRSP &lt;dbl&gt;, Diffusion &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   Clustering &lt;dbl&gt;, PageRank &lt;dbl&gt;</span></span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="betweenness_network">
@@ -1183,12 +1184,12 @@ significance.</p>
 </h3>
 <div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/mmm_stats.html">mmm_stats</a></span><span class="op">(</span><span class="va">engagement_mmm</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;     cluster    variable  estimate std_error  ci_lower  ci_upper   z_value</span></span>
-<span><span class="co">#&gt; 1 Cluster 2 (Intercept) -2.640329 0.1274911 -2.890207 -2.390451 -20.70991</span></span>
-<span><span class="co">#&gt; 2 Cluster 3 (Intercept) -4.512131 0.3157501 -5.130990 -3.893272 -14.29020</span></span>
-<span><span class="co">#&gt;   p_value</span></span>
-<span><span class="co">#&gt; 1       0</span></span>
-<span><span class="co">#&gt; 2       0</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;     cluster    variable  estimate std_error   ci_lower ci_upper   z_value</span></span>
+<span><span class="co">#&gt; 1 Cluster 2 (Intercept) 1.1880881 0.9856987 -0.7438459 3.120022 1.2053258</span></span>
+<span><span class="co">#&gt; 2 Cluster 3 (Intercept) 0.9495465 2.1560282 -3.2761911 5.175284 0.4404147</span></span>
+<span><span class="co">#&gt;     p_value</span></span>
+<span><span class="co">#&gt; 1 0.2280775</span></span>
+<span><span class="co">#&gt; 2 0.6596368</span></span></code></pre>
 <hr>
 </div>
 </div>
@@ -1243,9 +1244,9 @@ significance.</p>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/as.igraph.html" class="external-link">as.igraph</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; IGRAPH 0ba29e8 DNW- 9 78 -- </span></span>
+<pre><code><span><span class="co">#&gt; IGRAPH e7322f6 DNW- 9 78 -- </span></span>
 <span><span class="co">#&gt; + attr: name (v/c), weight (e/n)</span></span>
-<span><span class="co">#&gt; + edges from 0ba29e8 (vertex names):</span></span>
+<span><span class="co">#&gt; + edges from e7322f6 (vertex names):</span></span>
 <span><span class="co">#&gt;  [1] adapt     -&gt;cohesion   adapt     -&gt;consensus  adapt     -&gt;coregulate</span></span>
 <span><span class="co">#&gt;  [4] adapt     -&gt;discuss    adapt     -&gt;emotion    adapt     -&gt;monitor   </span></span>
 <span><span class="co">#&gt;  [7] adapt     -&gt;plan       cohesion  -&gt;adapt      cohesion  -&gt;cohesion  </span></span>
@@ -1273,7 +1274,7 @@ Network Analysis. <em>Proc. LAK ’25</em>, 351-361. <a href="https://doi.org/10
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

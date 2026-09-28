@@ -39,9 +39,10 @@ prune(x, ...)
 - ...:
 
   Arguments passed to
-  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md) when
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md) when
   using `method = "bootstrap"` and when a `tna_bootstrap` is not
-  supplied.
+  supplied. Method-specific arguments supplied for another method are
+  ignored with a warning instead of being silently discarded.
 
 - method:
 
@@ -69,76 +70,78 @@ prune(x, ...)
 
 - boot:
 
-  A `tna_bootstrap` object to be used for pruning with method `"boot"`.
-  The method argument is ignored if this argument is supplied.
+  A `tna_bootstrap` object to be used for pruning with method
+  `"bootstrap"`. Supplying a non-`NULL` value selects bootstrap pruning
+  even if `method` is omitted. A warning is issued if it conflicts with
+  an explicitly supplied `method`.
 
 ## Value
 
 A pruned `tna` or `group_tna` object. Details on the pruning can be
 viewed with
-[`pruning_details()`](http://sonsoles.me/tna/reference/pruning_details.md).
+[`pruning_details()`](https://sonsoles.me/tna/reference/pruning_details.md).
 The original model can be restored with
-[`deprune()`](http://sonsoles.me/tna/reference/deprune.md).
+[`deprune()`](https://sonsoles.me/tna/reference/deprune.md).
 
 ## See also
 
 Validation functions
-[`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md),
-[`deprune()`](http://sonsoles.me/tna/reference/deprune.md),
-[`estimate_cs()`](http://sonsoles.me/tna/reference/estimate_centrality_stability.md),
-[`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md),
-[`permutation_test.group_tna()`](http://sonsoles.me/tna/reference/permutation_test.group_tna.md),
-[`plot.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
-[`plot.group_tna_permutation()`](http://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
-[`plot.group_tna_stability()`](http://sonsoles.me/tna/reference/plot.group_tna_stability.md),
-[`plot.tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
-[`plot.tna_permutation()`](http://sonsoles.me/tna/reference/plot.tna_permutation.md),
-[`plot.tna_reliability()`](http://sonsoles.me/tna/reference/plot.tna_reliability.md),
-[`plot.tna_stability()`](http://sonsoles.me/tna/reference/plot.tna_stability.md),
-[`print.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
-[`print.group_tna_permutation()`](http://sonsoles.me/tna/reference/print.group_tna_permutation.md),
-[`print.group_tna_stability()`](http://sonsoles.me/tna/reference/print.group_tna_stability.md),
-[`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
-[`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
-[`print.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](http://sonsoles.me/tna/reference/print.tna_clustering.md),
-[`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
-[`print.tna_reliability()`](http://sonsoles.me/tna/reference/print.tna_reliability.md),
-[`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),
-[`pruning_details()`](http://sonsoles.me/tna/reference/pruning_details.md),
-[`reliability()`](http://sonsoles.me/tna/reference/reliability.md),
-[`reprune()`](http://sonsoles.me/tna/reference/reprune.md),
-[`summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
-[`summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+[`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
+[`deprune()`](https://sonsoles.me/tna/reference/deprune.md),
+[`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md),
+[`permutation_test.group_tna()`](https://sonsoles.me/tna/reference/permutation_test.group_tna.md),
+[`plot.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
+[`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
+[`plot.group_tna_stability()`](https://sonsoles.me/tna/reference/plot.group_tna_stability.md),
+[`plot.tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md),
+[`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md),
+[`plot.tna_stability()`](https://sonsoles.me/tna/reference/plot.tna_stability.md),
+[`print.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
+[`print.group_tna_permutation()`](https://sonsoles.me/tna/reference/print.group_tna_permutation.md),
+[`print.group_tna_stability()`](https://sonsoles.me/tna/reference/print.group_tna_stability.md),
+[`print.summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
+[`print.summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.tna_bootstrap.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`print.tna_permutation()`](https://sonsoles.me/tna/reference/print.tna_permutation.md),
+[`print.tna_reliability()`](https://sonsoles.me/tna/reference/print.tna_reliability.md),
+[`print.tna_stability()`](https://sonsoles.me/tna/reference/print.tna_stability.md),
+[`pruning_details()`](https://sonsoles.me/tna/reference/pruning_details.md),
+[`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
+[`reprune()`](https://sonsoles.me/tna/reference/reprune.md),
+[`summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
+[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
 
 Validation functions
-[`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md),
-[`deprune()`](http://sonsoles.me/tna/reference/deprune.md),
-[`estimate_cs()`](http://sonsoles.me/tna/reference/estimate_centrality_stability.md),
-[`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md),
-[`permutation_test.group_tna()`](http://sonsoles.me/tna/reference/permutation_test.group_tna.md),
-[`plot.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
-[`plot.group_tna_permutation()`](http://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
-[`plot.group_tna_stability()`](http://sonsoles.me/tna/reference/plot.group_tna_stability.md),
-[`plot.tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
-[`plot.tna_permutation()`](http://sonsoles.me/tna/reference/plot.tna_permutation.md),
-[`plot.tna_reliability()`](http://sonsoles.me/tna/reference/plot.tna_reliability.md),
-[`plot.tna_stability()`](http://sonsoles.me/tna/reference/plot.tna_stability.md),
-[`print.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
-[`print.group_tna_permutation()`](http://sonsoles.me/tna/reference/print.group_tna_permutation.md),
-[`print.group_tna_stability()`](http://sonsoles.me/tna/reference/print.group_tna_stability.md),
-[`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
-[`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
-[`print.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](http://sonsoles.me/tna/reference/print.tna_clustering.md),
-[`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
-[`print.tna_reliability()`](http://sonsoles.me/tna/reference/print.tna_reliability.md),
-[`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),
-[`pruning_details()`](http://sonsoles.me/tna/reference/pruning_details.md),
-[`reliability()`](http://sonsoles.me/tna/reference/reliability.md),
-[`reprune()`](http://sonsoles.me/tna/reference/reprune.md),
-[`summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
-[`summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+[`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
+[`deprune()`](https://sonsoles.me/tna/reference/deprune.md),
+[`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md),
+[`permutation_test.group_tna()`](https://sonsoles.me/tna/reference/permutation_test.group_tna.md),
+[`plot.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
+[`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
+[`plot.group_tna_stability()`](https://sonsoles.me/tna/reference/plot.group_tna_stability.md),
+[`plot.tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md),
+[`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md),
+[`plot.tna_stability()`](https://sonsoles.me/tna/reference/plot.tna_stability.md),
+[`print.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
+[`print.group_tna_permutation()`](https://sonsoles.me/tna/reference/print.group_tna_permutation.md),
+[`print.group_tna_stability()`](https://sonsoles.me/tna/reference/print.group_tna_stability.md),
+[`print.summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
+[`print.summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.tna_bootstrap.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`print.tna_permutation()`](https://sonsoles.me/tna/reference/print.tna_permutation.md),
+[`print.tna_reliability()`](https://sonsoles.me/tna/reference/print.tna_reliability.md),
+[`print.tna_stability()`](https://sonsoles.me/tna/reference/print.tna_stability.md),
+[`pruning_details()`](https://sonsoles.me/tna/reference/pruning_details.md),
+[`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
+[`reprune()`](https://sonsoles.me/tna/reference/reprune.md),
+[`summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
+[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
 
 ## Examples
 

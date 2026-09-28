@@ -5,6 +5,7 @@ transition network as well as discovering communities. We begin by
 loading the package and the example data set `group_regulation`.
 
 ``` r
+
 library("tna")
 data("group_regulation", package = "tna")
 ```
@@ -12,6 +13,7 @@ data("group_regulation", package = "tna")
 We fit a TNA model to the data.
 
 ``` r
+
 tna_model <- tna(group_regulation)
 print(tna_model)
 #> State Labels : 
@@ -56,10 +58,11 @@ plot(tna_model)
 ![](communities_and_cliques_files/figure-html/unnamed-chunk-3-1.png)
 
 Next, we apply several community finding algorithms to the model (see
-[`?communities`](http://sonsoles.me/tna/reference/communities.md) for
+[`?communities`](https://sonsoles.me/tna/reference/communities.md) for
 more details), and plot the results for the `leading_eigen` algorithm.
 
 ``` r
+
 cd <- communities(tna_model)
 plot(cd, method = "leading_eigen")
 ```
@@ -71,6 +74,7 @@ dyads and triads by setting `size = 2` and `size = 3`, respectively.
 Finally, we plot the results.
 
 ``` r
+
 layout(matrix(1:4, ncol = 2, byrow = TRUE))
 dyads <- cliques(tna_model, size = 2, threshold = 0.2)
 triads <- cliques(tna_model, size = 3, threshold = 0.05)

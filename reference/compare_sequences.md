@@ -98,28 +98,30 @@ p-values of the tests.
 ## See also
 
 Model comparison functions
-[`compare()`](http://sonsoles.me/tna/reference/compare.md),
-[`compare.group_tna()`](http://sonsoles.me/tna/reference/compare.group_tna.md),
-[`plot.tna_comparison()`](http://sonsoles.me/tna/reference/plot.tna_comparison.md),
-[`plot.tna_sequence_comparison()`](http://sonsoles.me/tna/reference/plot.tna_sequence_comparison.md),
-[`plot_compare()`](http://sonsoles.me/tna/reference/plot_compare.md),
-[`plot_compare.group_tna()`](http://sonsoles.me/tna/reference/plot_compare.group_tna.md),
-[`print.tna_comparison()`](http://sonsoles.me/tna/reference/print.tna_comparison.md),
-[`print.tna_sequence_comparison()`](http://sonsoles.me/tna/reference/print.tna_sequence_comparison.md)
+[`compare()`](https://sonsoles.me/tna/reference/compare.md),
+[`compare.group_tna()`](https://sonsoles.me/tna/reference/compare.group_tna.md),
+[`plot.tna_comparison()`](https://sonsoles.me/tna/reference/plot.tna_comparison.md),
+[`plot.tna_sequence_comparison()`](https://sonsoles.me/tna/reference/plot.tna_sequence_comparison.md),
+[`plot_compare()`](https://sonsoles.me/tna/reference/plot_compare.md),
+[`plot_compare.group_tna()`](https://sonsoles.me/tna/reference/plot_compare.group_tna.md),
+[`print.tna_comparison()`](https://sonsoles.me/tna/reference/print.tna_comparison.md),
+[`print.tna_sequence_comparison()`](https://sonsoles.me/tna/reference/print.tna_sequence_comparison.md)
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-group <- c(rep("High", 1000), rep("Low", 1000))
-comp <- compare_sequences(group_regulation, group)
+# \donttest{
+# Use a subset to keep the example fast.
+idx <- c(1:500, 1001:1500)
+group <- c(rep("High", 500), rep("Low", 500))
+comp <- compare_sequences(group_regulation[idx, ], group)
 
 # With permutation test (small number of iterations for CRAN)
 comp_test <- compare_sequences(
-  group_regulation,
+  group_regulation[idx, ],
   group,
   test = TRUE,
-  iter = 10
+  iter = 5
 )
-} # }
+# }
 ```

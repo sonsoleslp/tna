@@ -23,6 +23,7 @@ The data was generated synthetically from `group_regulation`
 
 ## See also
 
-Datasets [`engagement`](http://sonsoles.me/tna/reference/engagement.md),
-[`engagement_mmm`](http://sonsoles.me/tna/reference/engagement_mmm.md),
-[`group_regulation`](http://sonsoles.me/tna/reference/group_regulation.md)
+Datasets
+[`engagement`](https://sonsoles.me/tna/reference/engagement.md),
+[`engagement_mmm`](https://sonsoles.me/tna/reference/engagement_mmm.md),
+[`group_regulation`](https://sonsoles.me/tna/reference/group_regulation.md)

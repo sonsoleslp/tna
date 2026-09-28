@@ -34,7 +34,7 @@ permutation_test(
 - ...:
 
   Additional arguments passed to
-  [`centralities()`](http://sonsoles.me/tna/reference/centralities.md).
+  [`centralities()`](https://sonsoles.me/tna/reference/centralities.md).
 
 - y:
 
@@ -66,7 +66,7 @@ permutation_test(
 - measures:
 
   A `character` vector of centrality measures to test. See
-  [`centralities()`](http://sonsoles.me/tna/reference/centralities.md)
+  [`centralities()`](https://sonsoles.me/tna/reference/centralities.md)
   for a list of available centrality measures.
 
 ## Value
@@ -86,33 +86,33 @@ and `centralities`, both containing the following elements:
 ## See also
 
 Validation functions
-[`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md),
-[`deprune()`](http://sonsoles.me/tna/reference/deprune.md),
-[`estimate_cs()`](http://sonsoles.me/tna/reference/estimate_centrality_stability.md),
-[`permutation_test.group_tna()`](http://sonsoles.me/tna/reference/permutation_test.group_tna.md),
-[`plot.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
-[`plot.group_tna_permutation()`](http://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
-[`plot.group_tna_stability()`](http://sonsoles.me/tna/reference/plot.group_tna_stability.md),
-[`plot.tna_bootstrap()`](http://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
-[`plot.tna_permutation()`](http://sonsoles.me/tna/reference/plot.tna_permutation.md),
-[`plot.tna_reliability()`](http://sonsoles.me/tna/reference/plot.tna_reliability.md),
-[`plot.tna_stability()`](http://sonsoles.me/tna/reference/plot.tna_stability.md),
-[`print.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
-[`print.group_tna_permutation()`](http://sonsoles.me/tna/reference/print.group_tna_permutation.md),
-[`print.group_tna_stability()`](http://sonsoles.me/tna/reference/print.group_tna_stability.md),
-[`print.summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
-[`print.summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
-[`print.tna_bootstrap()`](http://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](http://sonsoles.me/tna/reference/print.tna_clustering.md),
-[`print.tna_permutation()`](http://sonsoles.me/tna/reference/print.tna_permutation.md),
-[`print.tna_reliability()`](http://sonsoles.me/tna/reference/print.tna_reliability.md),
-[`print.tna_stability()`](http://sonsoles.me/tna/reference/print.tna_stability.md),
-[`prune()`](http://sonsoles.me/tna/reference/prune.md),
-[`pruning_details()`](http://sonsoles.me/tna/reference/pruning_details.md),
-[`reliability()`](http://sonsoles.me/tna/reference/reliability.md),
-[`reprune()`](http://sonsoles.me/tna/reference/reprune.md),
-[`summary.group_tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
-[`summary.tna_bootstrap()`](http://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+[`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
+[`deprune()`](https://sonsoles.me/tna/reference/deprune.md),
+[`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`permutation_test.group_tna()`](https://sonsoles.me/tna/reference/permutation_test.group_tna.md),
+[`plot.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
+[`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
+[`plot.group_tna_stability()`](https://sonsoles.me/tna/reference/plot.group_tna_stability.md),
+[`plot.tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md),
+[`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md),
+[`plot.tna_stability()`](https://sonsoles.me/tna/reference/plot.tna_stability.md),
+[`print.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.group_tna_bootstrap.md),
+[`print.group_tna_permutation()`](https://sonsoles.me/tna/reference/print.group_tna_permutation.md),
+[`print.group_tna_stability()`](https://sonsoles.me/tna/reference/print.group_tna_stability.md),
+[`print.summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
+[`print.summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.tna_bootstrap.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`print.tna_permutation()`](https://sonsoles.me/tna/reference/print.tna_permutation.md),
+[`print.tna_reliability()`](https://sonsoles.me/tna/reference/print.tna_reliability.md),
+[`print.tna_stability()`](https://sonsoles.me/tna/reference/print.tna_stability.md),
+[`prune()`](https://sonsoles.me/tna/reference/prune.md),
+[`pruning_details()`](https://sonsoles.me/tna/reference/pruning_details.md),
+[`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
+[`reprune()`](https://sonsoles.me/tna/reference/reprune.md),
+[`summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
+[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
 
 ## Examples
 
@@ -125,14 +125,14 @@ permutation_test(model_x, model_y, iter = 20)
 #>    edge_name           diff_true effect_size p_value
 #>    <chr>                   <dbl>       <dbl>   <dbl>
 #>  1 adapt -> adapt       0            NaN      1     
-#>  2 cohesion -> adapt    0.00541        0.938  0.714 
-#>  3 consensus -> adapt  -0.000679      -0.177  0.810 
-#>  4 coregulate -> adapt  0.00769        0.552  0.619 
-#>  5 discuss -> adapt    -0.130         -7.53   0.0476
-#>  6 emotion -> adapt     0.0101         1.39   0.333 
-#>  7 monitor -> adapt    -0.00480       -0.358  0.952 
-#>  8 plan -> adapt        0.00339        1.89   0.0476
-#>  9 synthesis -> adapt  -0.159         -2.26   0.0952
-#> 10 adapt -> cohesion   -0.0907        -0.818  0.476 
+#>  2 cohesion -> adapt    0.00541        0.943  0.714 
+#>  3 consensus -> adapt  -0.000679      -0.176  0.667 
+#>  4 coregulate -> adapt  0.00769        0.658  0.667 
+#>  5 discuss -> adapt    -0.130         -6.68   0.0476
+#>  6 emotion -> adapt     0.0101         1.36   0.381 
+#>  7 monitor -> adapt    -0.00480       -0.389  0.952 
+#>  8 plan -> adapt        0.00339        1.50   0.143 
+#>  9 synthesis -> adapt  -0.159         -3.06   0.0476
+#> 10 adapt -> cohesion   -0.0907        -0.991  0.238 
 #> # ℹ 71 more rows
 ```

@@ -23,6 +23,6 @@ A `stslist` object (sequence data).
 ## See also
 
 Datasets
-[`engagement_mmm`](http://sonsoles.me/tna/reference/engagement_mmm.md),
-[`group_regulation`](http://sonsoles.me/tna/reference/group_regulation.md),
-[`group_regulation_long`](http://sonsoles.me/tna/reference/group_regulation_long.md)
+[`engagement_mmm`](https://sonsoles.me/tna/reference/engagement_mmm.md),
+[`group_regulation`](https://sonsoles.me/tna/reference/group_regulation.md),
+[`group_regulation_long`](https://sonsoles.me/tna/reference/group_regulation_long.md)

@@ -1,5 +1,72 @@
 # Changelog
 
+## tna 1.3.1
+
+- Fixed
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+  emitting a dplyr grouping message when computing sessions per user;
+  the summarise now drops its grouping explicitly.
+
+## tna 1.3.0
+
+- Fixed case-insensitive argument matching to preserve canonical option
+  names, allowing
+  [`cluster_data()`](https://sonsoles.me/tna/reference/cluster_data.md)
+  and
+  [`cluster_sequences()`](https://sonsoles.me/tna/reference/cluster_data.md)
+  to pass `"ward.D"` and `"ward.D2"` correctly to
+  [`stats::hclust()`](https://rdrr.io/r/stats/hclust.html).
+- Made state ordering deterministic across system locales for individual
+  and grouped models.
+- Fixed numerical instability in randomized-shortest-path betweenness
+  and prevented normalization from amplifying floating-point noise in
+  constant centrality measures.
+- Added deterministic timezone handling to
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md):
+  UTC is the default, explicit offsets are honored, fractional seconds
+  are retained, and offset-free timestamps can use a user-specified
+  Olson timezone.
+- `prepare_data(time_threshold = FALSE)` now disables gap-based session
+  splitting while retaining timestamp parsing and event ordering.
+- [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+  now supports explicit session columns and collision-safe composite
+  actor/session identities, including high-cardinality groupings.
+  Disabled time splitting now bypasses gap computation and keeps
+  missing-time events in their actor-session sequence.
+- Documented the `time_data` component returned by
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md).
+- [`prune()`](https://sonsoles.me/tna/reference/prune.md) now warns
+  about inactive method-specific arguments and treats a supplied
+  bootstrap object as a request for bootstrap pruning.
+- Added reproducible `seed` arguments to network and clique
+  bootstrapping.
+- Added weighted PageRank to
+  [`centralities()`](https://sonsoles.me/tna/reference/centralities.md).
+
+## tna 1.2.3
+
+CRAN release: 2026-04-26
+
+- Resolved CRAN warning “Data files with namespace references not in the
+  recursive strong package dependencies” by rebuilding `engagement_mmm`
+  as a `tna_mmm` object that carries no foreign class references. The
+  new sibling S3 methods
+  [`group_model.tna_mmm()`](https://sonsoles.me/tna/reference/group_model.md)
+  and
+  [`mmm_stats.tna_mmm()`](https://sonsoles.me/tna/reference/mmm_stats.md)
+  preserve all existing example behaviour without requiring `seqHMM` at
+  example-run time. Real `mhmm` objects from `seqHMM` continue to work
+  via the original `*.mhmm` methods.
+- Added
+  [`random_tna()`](https://sonsoles.me/tna/reference/random_tna.md),
+  [`random_group_tna()`](https://sonsoles.me/tna/reference/random_group_tna.md),
+  [`random_tna_mmm()`](https://sonsoles.me/tna/reference/random_tna_mmm.md),
+  and
+  [`list_random_state_pools()`](https://sonsoles.me/tna/reference/list_random_state_pools.md)
+  for constructing synthetic TNA models with no external dependencies.
+- Lowered the minimum required R version from 4.4.0 to 4.1.0 (the floor
+  set by the native `|>` pipe used in the package).
+
 ## tna 1.2.2
 
 CRAN release: 2026-04-15
@@ -9,15 +76,15 @@ CRAN release: 2026-04-15
 ## tna 1.2.1
 
 - The `test` argument of
-  [`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md)
+  [`compare_sequences()`](https://sonsoles.me/tna/reference/compare_sequences.md)
   is now `TRUE` by default for backward compatibility.
 - Fixed an issue with
-  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md) when
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md) when
   the model contained weights that were zero.
 - Fixed issues with several distance measures in
-  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md).
+  [`cluster_sequences()`](https://sonsoles.me/tna/reference/cluster_data.md).
 - Fixed edge ordering in
-  [`betweenness_network()`](http://sonsoles.me/tna/reference/betweenness_network.md).
+  [`betweenness_network()`](https://sonsoles.me/tna/reference/betweenness_network.md).
 - The packages no longer depends on `qgraph`.
 - Network plotting functionality now relies on `cograph` instead.
 
@@ -26,18 +93,18 @@ CRAN release: 2026-04-15
 CRAN release: 2026-02-12
 
 - Added the function
-  [`reliability()`](http://sonsoles.me/tna/reference/reliability.md) for
-  reliability analysis of `tna` models.
+  [`reliability()`](https://sonsoles.me/tna/reference/reliability.md)
+  for reliability analysis of `tna` models.
 - The
-  [`import_onehot()`](http://sonsoles.me/tna/reference/import_onehot.md)
+  [`import_onehot()`](https://sonsoles.me/tna/reference/import_onehot.md)
   function has been redesigned with new features.
 - Replaced the Z tests and chi-squared tests in
-  [`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md)
+  [`compare_sequences()`](https://sonsoles.me/tna/reference/compare_sequences.md)
   with a permutation test.
 - Removed the chi-squared test from
-  [`plot_mosaic()`](http://sonsoles.me/tna/reference/plot_mosaic.md).
+  [`plot_mosaic()`](https://sonsoles.me/tna/reference/plot_mosaic.md).
 - The `correct` argument of
-  [`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md)
+  [`compare_sequences()`](https://sonsoles.me/tna/reference/compare_sequences.md)
   has been renamed to `adjust` to align with other similar arguments.
 - Added several new arguments to the `plot` method of `tna` objects for
   plotting heterogeneous networks.
@@ -52,14 +119,14 @@ CRAN release: 2026-02-12
 CRAN release: 2025-10-18
 
 - Added the function
-  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md)
+  [`cluster_sequences()`](https://sonsoles.me/tna/reference/cluster_data.md)
   to cluster sequence data using string distance measures of the
   `stringdist` package.
 - Added the function
-  [`compare_sequences()`](http://sonsoles.me/tna/reference/compare_sequences.md)
+  [`compare_sequences()`](https://sonsoles.me/tna/reference/compare_sequences.md)
   to compare the frequencies of patterns between groups for sequence
   data.
-- [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md)
+- [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
   now accepts a character vector for the `actor` argument.
 
 ## tna 1.0.0
@@ -71,31 +138,31 @@ CRAN release: 2025-07-15
 ## tna 0.7.0
 
 - Added the function
-  [`import_onehot()`](http://sonsoles.me/tna/reference/import_onehot.md)
+  [`import_onehot()`](https://sonsoles.me/tna/reference/import_onehot.md)
   to read one-hot data.
 - The function
-  [`plot_sequences()`](http://sonsoles.me/tna/reference/plot_sequences.md)
+  [`plot_sequences()`](https://sonsoles.me/tna/reference/plot_sequences.md)
   gains the argument `ncol` for selecting the number of columns of the
   facets.
 
 ## tna 0.6.1
 
 - The `group` column is now automatically removed from `cols` in
-  [`group_model()`](http://sonsoles.me/tna/reference/group_model.md).
+  [`group_model()`](https://sonsoles.me/tna/reference/group_model.md).
 
 ## tna 0.6.0
 
 - Added a new method
-  [`plot_sequences()`](http://sonsoles.me/tna/reference/plot_sequences.md)
+  [`plot_sequences()`](https://sonsoles.me/tna/reference/plot_sequences.md)
   for sequence index plots and state distribution plots.
 
 ## tna 0.5.1
 
 - Fixed the handling of missing values in
-  [`group_model()`](http://sonsoles.me/tna/reference/group_model.md)
+  [`group_model()`](https://sonsoles.me/tna/reference/group_model.md)
   with `stslist` objects.
 - Fixed an issue with
-  [`plot.group_tna_permutation()`](http://sonsoles.me/tna/reference/plot.group_tna_permutation.md)
+  [`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md)
   that resulted in plotting arguments not being passed to `qgraph`.
 
 ## tna 0.5.0
@@ -112,76 +179,76 @@ CRAN release: 2025-05-26
 ## tna 0.4.8
 
 - Fixed an issue with
-  [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md)
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
   that resulted in excessive console output.
 
 ## tna 0.4.7
 
 - Added the function
-  [`import_data()`](http://sonsoles.me/tna/reference/import_data.md) to
+  [`import_data()`](https://sonsoles.me/tna/reference/import_data.md) to
   read wide format sequence data into long format.
 
 ## tna 0.4.6
 
 - Added the function
-  [`plot_frequencies()`](http://sonsoles.me/tna/reference/plot_frequencies.md)
+  [`plot_frequencies()`](https://sonsoles.me/tna/reference/plot_frequencies.md)
   that can be used to plot the state frequency distribution for both
   `tna` and `group_tna` objects.
 
 ## tna 0.4.5
 
 - The function
-  [`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md)
+  [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md)
   is now a method for both ungrouped
-  ([`build_model()`](http://sonsoles.me/tna/reference/build_model.md))
+  ([`build_model()`](https://sonsoles.me/tna/reference/build_model.md))
   and grouped
-  ([`group_model()`](http://sonsoles.me/tna/reference/group_model.md))
+  ([`group_model()`](https://sonsoles.me/tna/reference/group_model.md))
   models. For grouped models, the function performs the test between
   every unique pair of groups.
 - A new argument `adjust` has been added for
-  [`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md)
+  [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md)
   to optionally adjust p-values using `p.adjust`. By default, the
   p-values are not adjusted (`adjust = "none"`).
 - A new argument `groupwise` has been added for
-  [`group_model()`](http://sonsoles.me/tna/reference/group_model.md).
+  [`group_model()`](https://sonsoles.me/tna/reference/group_model.md).
   When `FALSE` (the default), scaling methods listed in `scaling` are
   performed globally over the groups. When `TRUE`, the scaling is
   performed within each group instead (this was the default behavior in
   previous versions of the package).
-- Added a [`simulate()`](https://rdrr.io/r/stats/simulate.html) method
-  for `tna` objects. For models with `type = "relative"`, this function
-  simulates sequence data based on the initial probabilities and
-  transition probability matrix.
+- Added a [`simulate()`](https://sonsoles.me/tna/reference/simulate.md)
+  method for `tna` objects. For models with `type = "relative"`, this
+  function simulates sequence data based on the initial probabilities
+  and transition probability matrix.
 
 ## tna 0.4.4
 
 - The
-  [`plot.tna_centralities()`](http://sonsoles.me/tna/reference/plot.tna_centralities.md)
+  [`plot.tna_centralities()`](https://sonsoles.me/tna/reference/plot.tna_centralities.md)
   and
-  [`plot.group_tna_centralities()`](http://sonsoles.me/tna/reference/plot.group_tna_centralities.md)
+  [`plot.group_tna_centralities()`](https://sonsoles.me/tna/reference/plot.group_tna_centralities.md)
   functions now plot the centralities in the same order as provided in
   the `measures` argument.
-- The [`plot.tna()`](http://sonsoles.me/tna/reference/plot.tna.md) and
-  [`plot_model()`](http://sonsoles.me/tna/reference/plot_model.md)
+- The [`plot.tna()`](https://sonsoles.me/tna/reference/plot.tna.md) and
+  [`plot_model()`](https://sonsoles.me/tna/reference/plot_model.md)
   functions now use the median edge weight as the default value for the
   `cut` argument.
 - Fixed the `from` and `to` columns in
-  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md) output,
-  which were inverted from the true edge direction.
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md)
+  output, which were inverted from the true edge direction.
 - A plot method has been added for the
-  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md) output,
-  which plots the corresponding network where non-significant edges have
-  been pruned.
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md)
+  output, which plots the corresponding network where non-significant
+  edges have been pruned.
 
 ## tna 0.4.3
 
 - The
-  [`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md)
+  [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md)
   function now properly checks that its arguments `x` and `y` can be
   compared.
 - The p-value calculations of
-  [`permutation_test()`](http://sonsoles.me/tna/reference/permutation_test.md)
-  and [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md)
+  [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md)
+  and [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md)
   have been adjusted by adding 1 to both the number of
   permutations/bootstrap samples and the number of extreme events so
   that these estimates are never zero. The documentation has also been
@@ -191,18 +258,19 @@ CRAN release: 2025-05-26
 ## tna 0.4.2
 
 - The
-  [`plot_compare()`](http://sonsoles.me/tna/reference/plot_compare.md)
+  [`plot_compare()`](https://sonsoles.me/tna/reference/plot_compare.md)
   function now supports `negCol` and `posCol` for specifying the color
   of the positive and negative differences in transition and initial
   probabilities.
-- The [`plot_mosaic()`](http://sonsoles.me/tna/reference/plot_mosaic.md)
+- The
+  [`plot_mosaic()`](https://sonsoles.me/tna/reference/plot_mosaic.md)
   function now plots the x-axis on the top and rotates the labels 90
   degrees only when there are more than three groups.
 
 ## tna 0.4.1
 
 - The `detailed` argument of
-  [`estimate_centrality_stability()`](http://sonsoles.me/tna/reference/estimate_centrality_stability.md)
+  [`estimate_centrality_stability()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md)
   has been removed. Previously this argument had no effect on the output
   of the function.
 - Removed several duplicated entries in the documentation.
@@ -212,34 +280,34 @@ CRAN release: 2025-05-26
 CRAN release: 2025-03-01
 
 - The
-  [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md)
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
   function now produces an object of class `tna_data`, which can be
   directly used as an argument to
-  [`build_model()`](http://sonsoles.me/tna/reference/build_model.md) and
-  other methods.
+  [`build_model()`](https://sonsoles.me/tna/reference/build_model.md)
+  and other methods.
 - The
-  [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md)
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
   function now supports `order` when used together with `time` and
   `actor`.
 - The
-  [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md)
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
   function gains the `unused_fn` argument of
   [`tidyr::pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html)
   to process any extra columns. The default is to keep all columns and
   use the first value.
 - Added the function
-  [`compare()`](http://sonsoles.me/tna/reference/compare.md) to compare
+  [`compare()`](https://sonsoles.me/tna/reference/compare.md) to compare
   `tna` models and weight matrices. This function produces an object of
   class `tna_comparison` which has
   [`print()`](https://rdrr.io/r/base/print.html) and
   [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods.
 - Added the function
-  [`plot_mosaic()`](http://sonsoles.me/tna/reference/plot_mosaic.md)
+  [`plot_mosaic()`](https://sonsoles.me/tna/reference/plot_mosaic.md)
   which can be used to produce mosaic plots of transition counts for
   frequency-based transition network models and to contrast the state
   counts between groups.
 - Fixed an issue with
-  [`plot.tna_communities()`](http://sonsoles.me/tna/reference/plot.tna_communities.md)
+  [`plot.tna_communities()`](https://sonsoles.me/tna/reference/plot.tna_communities.md)
   which now checks for the availability of a particular community
   detection method before plotting.
 - Made several arguments in the plot methods of the package accessible
@@ -248,11 +316,11 @@ CRAN release: 2025-03-01
 ## tna 0.3.2
 
 - `event2sequence()` has been renamed to
-  [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md).
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md).
   The function is now also more general and can process more date
   formats.
 - Added a `method` argument to
-  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md). The
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md). The
   new default option `"stability"` implements a bootstrapping scheme
   where the edge weights are compared against a range of “consistent”
   weights (see the documentation for details). The old functionality can
@@ -261,8 +329,9 @@ CRAN release: 2025-03-01
   differing number of columns.
 - Community detection methods can now be selected using the `methods`
   argument in
-  [`communities()`](http://sonsoles.me/tna/reference/communities.md).
-- The [`build_model()`](http://sonsoles.me/tna/reference/build_model.md)
+  [`communities()`](https://sonsoles.me/tna/reference/communities.md).
+- The
+  [`build_model()`](https://sonsoles.me/tna/reference/build_model.md)
   function has gained the argument `cols` which can be used to subset
   the columns of the data for `stslist` and `data.frame` inputs.
 - Removed all `verbose` arguments in favor of
@@ -274,7 +343,7 @@ CRAN release: 2025-03-01
 - Fixed an issue when checking the validity of `character` type
   arguments.
 - Improved the
-  [`bootstrap()`](http://sonsoles.me/tna/reference/bootstrap.md)
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md)
   function to determine edge significance based on deviation from the
   observed value, rather than a fixed threshold.
 - Added a helper function `event2sequence()` to parse event data into

@@ -31,5 +31,5 @@ An `igraph` object.
 ## See also
 
 Helper functions
-[`as.igraph.matrix()`](http://sonsoles.me/tna/reference/as.igraph.matrix.md),
-[`as.igraph.tna()`](http://sonsoles.me/tna/reference/as.igraph.tna.md)
+[`as.igraph.matrix()`](https://sonsoles.me/tna/reference/as.igraph.matrix.md),
+[`as.igraph.tna()`](https://sonsoles.me/tna/reference/as.igraph.tna.md)

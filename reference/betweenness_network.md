@@ -34,11 +34,11 @@ A `tna` object where the edge weights are edge betweenness values.
 ## See also
 
 Centrality measure functions
-[`centralities()`](http://sonsoles.me/tna/reference/centralities.md),
-[`plot.group_tna_centralities()`](http://sonsoles.me/tna/reference/plot.group_tna_centralities.md),
-[`plot.tna_centralities()`](http://sonsoles.me/tna/reference/plot.tna_centralities.md),
-[`print.group_tna_centralities()`](http://sonsoles.me/tna/reference/print.group_tna_centralities.md),
-[`print.tna_centralities()`](http://sonsoles.me/tna/reference/print.tna_centralities.md)
+[`centralities()`](https://sonsoles.me/tna/reference/centralities.md),
+[`plot.group_tna_centralities()`](https://sonsoles.me/tna/reference/plot.group_tna_centralities.md),
+[`plot.tna_centralities()`](https://sonsoles.me/tna/reference/plot.tna_centralities.md),
+[`print.group_tna_centralities()`](https://sonsoles.me/tna/reference/print.group_tna_centralities.md),
+[`print.tna_centralities()`](https://sonsoles.me/tna/reference/print.tna_centralities.md)
 
 ## Examples
 

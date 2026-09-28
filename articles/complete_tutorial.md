@@ -6,6 +6,7 @@ This is a short tutorial of the `tna` package. We begin by loading the
 package and the example data set `group_regulation`.
 
 ``` r
+
 library("tna")
 data("group_regulation", package = "tna")
 ```
@@ -16,6 +17,7 @@ TNA models can be built with the `tna` function, which accepts several
 types of data such a sequence data, data frames or matrices.
 
 ``` r
+
 model <- tna(group_regulation)
 print(model)
 ```
@@ -25,6 +27,7 @@ print(model)
 #### Interpretation of the model
 
 ``` r
+
 # TNA visualization
 plot(model)
 #> Registered S3 method overwritten by 'cograph':
@@ -37,6 +40,7 @@ plot(model)
 #### Pruning and retaining edges that “matter”
 
 ``` r
+
 layout(matrix(1:4, ncol = 2, byrow = TRUE))
 # Pruning with different methods (using comparable parameters)
 pruned_threshold <- prune(model, method = "threshold", threshold = 0.15)
@@ -55,6 +59,7 @@ plot(model)
 ### Patterns
 
 ``` r
+
 layout(t(1:2))
 # Identify 2-cliques (dyads) from the TNA model, excluding loops in the visualization
 # A clique of size 2 is essentially a pair of connected nodes
@@ -82,6 +87,7 @@ plot(cliques_of_two, ask = FALSE)
 ![](complete_tutorial_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 layout(t(1:3))
 # Identify 3-cliques (triads) from the TNA_Model
 # A clique of size 3 means a fully connected triplet of nodes
@@ -117,6 +123,7 @@ plot(cliques_of_three, ask = FALSE)
 ![](complete_tutorial_files/figure-html/unnamed-chunk-7-1.png)
 
 ``` r
+
 # Identify 4-cliques (quadruples) from the TNA_Model
 # A clique of size 4 means four nodes that are all mutually connected
 cliques_of_four <- cliques(
@@ -144,6 +151,7 @@ plot(cliques_of_four, ask = FALSE)
 ##### Node-level measures
 
 ``` r
+
 # Compute centrality measures for the TNA model
 Centralities <- centralities(model)
 
@@ -154,6 +162,7 @@ plot(Centralities)
 ![](complete_tutorial_files/figure-html/unnamed-chunk-9-1.png)
 
 ``` r
+
 # Calculate hub scores and the authority scores for the network
 hits_scores <- igraph::hits_scores(as.igraph(model))
 hub_scores <- hits_scores$hub
@@ -175,6 +184,7 @@ print(authority_scores)
 ##### Edge-level measures
 
 ``` r
+
 # Edge betweenness
 Edge_betweeness <- betweenness_network(model)
 plot(Edge_betweeness)
@@ -185,6 +195,7 @@ plot(Edge_betweeness)
 #### Community finding
 
 ``` r
+
 communities <- communities(model)
 print(communities)
 #> Number of communities found by each algorithm
@@ -215,6 +226,7 @@ plot(communities, method = "leading_eigen")
 #### Bootstrapping
 
 ``` r
+
 # Perform bootstrapping on the TNA model with a fixed seed for reproducibility
 set.seed(265)
 boot <- bootstrap(model, threshold = 0.05)
@@ -242,6 +254,7 @@ print(boot, type = "nonsig")
 #### Permutation
 
 ``` r
+
 # Create TNA for the high-achievers subset (rows 1 to 1000)
 Hi <- tna(group_regulation[1:1000, ])
 
@@ -257,6 +270,7 @@ plot_compare(Hi, Lo, minimum = 0.01)
 
 ``` r
 
+
 # Run a permutation test to determine statistical significance of differences
 # between "Hi" and "Lo"
 # The 'iter' argument is set to 1000, meaning 1000 permutations are performed
@@ -269,6 +283,7 @@ plot(Permutation, minimum = 0.01)
 ![](complete_tutorial_files/figure-html/unnamed-chunk-14-2.png)
 
 ``` r
+
 print(Permutation$edges$stats)
 #>             edge_name diff_true effect_size p_value
 #> 1      adapt -> adapt   0.00000         NaN   1.000
@@ -293,6 +308,7 @@ print(Permutation$centralities$stats)
 #### Interpreting the Results of the Case-Dropping Bootstrap for Centrality Indices
 
 ``` r
+
 # Results of the Case-Dropping Bootstrap for Centrality Indices
 Centrality_stability <- estimate_centrality_stability(model, iter = 100)
 plot(Centrality_stability)

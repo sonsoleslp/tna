@@ -1,11 +1,21 @@
 # Bootstrap Cliques of Transition Networks from Sequence Data
 
-Bootstrap Cliques of Transition Networks from Sequence Data
+Bootstrap the edge weights of all cliques of a given size in a `tna`
+model, producing per-clique mean weights, p-values, confidence
+intervals, and consistency-range bounds.
 
 ## Usage
 
 ``` r
-bootstrap_cliques(x, size, threshold, iter, level, consistency_range)
+bootstrap_cliques(
+  x,
+  size,
+  threshold,
+  iter,
+  level,
+  consistency_range,
+  seed = NULL
+)
 
 # S3 method for class 'tna'
 bootstrap_cliques(
@@ -14,7 +24,8 @@ bootstrap_cliques(
   threshold = 0,
   iter = 1000,
   level = 0.05,
-  consistency_range = c(0.75, 1.25)
+  consistency_range = c(0.75, 1.25),
+  seed = NULL
 )
 ```
 
@@ -52,3 +63,22 @@ bootstrap_cliques(
   above) before they are considered insignificant. The default is
   `c(0.75, 1.25)` which corresponds to a symmetric 25% deviation range.
   Used only when `method = "stability"`.
+
+- seed:
+
+  A single `numeric` random seed for reproducible resampling, or `NULL`
+  (the default) to use the current RNG state.
+
+## Value
+
+A `data.frame` (also of class `tna_bootstrap_cliques`) with one row per
+clique and the columns `clique`, `mean_weight`, `p_values`, `sig`,
+`cr_lower`, `cr_upper`, `ci_lower`, `ci_upper`.
+
+## Examples
+
+``` r
+model <- tna(group_regulation)
+# Small number of iterations for CRAN
+boot_cliq <- bootstrap_cliques(model, size = 2, iter = 10)
+```

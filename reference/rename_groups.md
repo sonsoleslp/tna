@@ -25,9 +25,9 @@ A renamed `group_tna` object.
 ## See also
 
 Cluster-related functions
-[`communities()`](http://sonsoles.me/tna/reference/communities.md),
-[`group_model()`](http://sonsoles.me/tna/reference/group_model.md),
-[`mmm_stats()`](http://sonsoles.me/tna/reference/mmm_stats.md)
+[`communities()`](https://sonsoles.me/tna/reference/communities.md),
+[`group_model()`](https://sonsoles.me/tna/reference/group_model.md),
+[`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md)
 
 ## Examples
 

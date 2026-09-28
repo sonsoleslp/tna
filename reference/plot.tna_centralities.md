@@ -4,8 +4,8 @@ Plots the centrality measures of a `tna_centralities` object as a
 lollipop chart. The resulting plot includes facets for each centrality
 measure, showing the values for each state. The returned plot is a
 `ggplot2` object, so it can be easily modified and styled. See
-[`centralities()`](http://sonsoles.me/tna/reference/centralities.md) for
-details on the centrality measures.
+[`centralities()`](https://sonsoles.me/tna/reference/centralities.md)
+for details on the centrality measures.
 
 ## Usage
 
@@ -65,11 +65,11 @@ measure.
 ## See also
 
 Centrality measure functions
-[`betweenness_network()`](http://sonsoles.me/tna/reference/betweenness_network.md),
-[`centralities()`](http://sonsoles.me/tna/reference/centralities.md),
-[`plot.group_tna_centralities()`](http://sonsoles.me/tna/reference/plot.group_tna_centralities.md),
-[`print.group_tna_centralities()`](http://sonsoles.me/tna/reference/print.group_tna_centralities.md),
-[`print.tna_centralities()`](http://sonsoles.me/tna/reference/print.tna_centralities.md)
+[`betweenness_network()`](https://sonsoles.me/tna/reference/betweenness_network.md),
+[`centralities()`](https://sonsoles.me/tna/reference/centralities.md),
+[`plot.group_tna_centralities()`](https://sonsoles.me/tna/reference/plot.group_tna_centralities.md),
+[`print.group_tna_centralities()`](https://sonsoles.me/tna/reference/print.group_tna_centralities.md),
+[`print.tna_centralities()`](https://sonsoles.me/tna/reference/print.tna_centralities.md)
 
 ## Examples
 

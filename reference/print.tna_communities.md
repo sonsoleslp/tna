@@ -26,10 +26,10 @@ print(x, ...)
 ## See also
 
 Community detection functions
-[`communities()`](http://sonsoles.me/tna/reference/communities.md),
-[`plot.group_tna_communities()`](http://sonsoles.me/tna/reference/plot.group_tna_communities.md),
-[`plot.tna_communities()`](http://sonsoles.me/tna/reference/plot.tna_communities.md),
-[`print.group_tna_communities()`](http://sonsoles.me/tna/reference/print.group_tna_communities.md)
+[`communities()`](https://sonsoles.me/tna/reference/communities.md),
+[`plot.group_tna_communities()`](https://sonsoles.me/tna/reference/plot.group_tna_communities.md),
+[`plot.tna_communities()`](https://sonsoles.me/tna/reference/plot.tna_communities.md),
+[`print.group_tna_communities()`](https://sonsoles.me/tna/reference/print.group_tna_communities.md)
 
 ## Examples
 

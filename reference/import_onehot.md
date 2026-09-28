@@ -67,11 +67,15 @@ The processed data as a `data.frame`.
 ## See also
 
 Other data:
-[`import_data()`](http://sonsoles.me/tna/reference/import_data.md),
-[`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md),
-[`print.tna_data()`](http://sonsoles.me/tna/reference/print.tna_data.md),
-[`simulate.group_tna()`](http://sonsoles.me/tna/reference/simulate.group_tna.md),
-[`simulate.tna()`](http://sonsoles.me/tna/reference/simulate.tna.md)
+[`import_data()`](https://sonsoles.me/tna/reference/import_data.md),
+[`list_random_state_pools()`](https://sonsoles.me/tna/reference/list_random_state_pools.md),
+[`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md),
+[`print.tna_data()`](https://sonsoles.me/tna/reference/print.tna_data.md),
+[`random_group_tna()`](https://sonsoles.me/tna/reference/random_group_tna.md),
+[`random_tna()`](https://sonsoles.me/tna/reference/random_tna.md),
+[`random_tna_mmm()`](https://sonsoles.me/tna/reference/random_tna_mmm.md),
+[`simulate.group_tna()`](https://sonsoles.me/tna/reference/simulate.group_tna.md),
+[`simulate.tna()`](https://sonsoles.me/tna/reference/simulate.tna.md)
 
 ## Examples
 

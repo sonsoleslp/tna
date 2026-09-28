@@ -23,6 +23,17 @@ group_model(
   ...
 )
 
+# S3 method for class 'tna_mmm'
+group_model(
+  x,
+  type = "relative",
+  scaling = character(0L),
+  groupwise = FALSE,
+  params = list(),
+  na.rm = TRUE,
+  ...
+)
+
 # S3 method for class 'mhmm'
 group_model(
   x,
@@ -62,7 +73,7 @@ group_atna(x, ...)
   used for building the Markov model. The argument `x` also accepts
   `data.frame` objects in wide format, and `tna_data` objects. This can
   also be the output of clustering from
-  [`cluster_sequences()`](http://sonsoles.me/tna/reference/cluster_data.md).
+  [`cluster_sequences()`](https://sonsoles.me/tna/reference/cluster_data.md).
 
 - ...:
 
@@ -209,9 +220,9 @@ per cluster. Each element is a `tna` object.
 ## See also
 
 Cluster-related functions
-[`communities()`](http://sonsoles.me/tna/reference/communities.md),
-[`mmm_stats()`](http://sonsoles.me/tna/reference/mmm_stats.md),
-[`rename_groups()`](http://sonsoles.me/tna/reference/rename_groups.md)
+[`communities()`](https://sonsoles.me/tna/reference/communities.md),
+[`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md),
+[`rename_groups()`](https://sonsoles.me/tna/reference/rename_groups.md)
 
 ## Examples
 

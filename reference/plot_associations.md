@@ -20,7 +20,7 @@ plot_associations(x, edge_color, ...)
 - ...:
 
   Additional arguments passed to
-  [`plot_model()`](http://sonsoles.me/tna/reference/plot_model.md).
+  [`plot_model()`](https://sonsoles.me/tna/reference/plot_model.md).
 
 - edge_color:
 

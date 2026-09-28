@@ -6,7 +6,8 @@
 
 - **[Santtu Tikka](http://users.jyu.fi/~santikka/)**. Author.
 
-- **[Sonsoles López-Pernas](https://sonsoles.me)**. Author, maintainer.
+- **[Sonsoles López-Pernas](https://sonsoles.me)**. Author, maintainer,
+  copyright holder.
 
 ## Citation
 
@@ -43,7 +44,7 @@ Analytics and Knowledge Conference (LAK '25)*, 351–361.
 
 Saqr M, Tikka S, López-Pernas S (2025). “tna: Transition Network
 Analysis (TNA).”
-[doi:10.32614/cran.package.tna](https://doi.org/10.32614/cran.package.tna),
+[doi:10.32614/cran.package.tna](https://doi.org/10.32614/cran.package.tna).
 R package version 1.0.0.
 
     @Misc{tna_cran,

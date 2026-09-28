@@ -65,11 +65,11 @@ line per cluster.
 ## See also
 
 Centrality measure functions
-[`betweenness_network()`](http://sonsoles.me/tna/reference/betweenness_network.md),
-[`centralities()`](http://sonsoles.me/tna/reference/centralities.md),
-[`plot.tna_centralities()`](http://sonsoles.me/tna/reference/plot.tna_centralities.md),
-[`print.group_tna_centralities()`](http://sonsoles.me/tna/reference/print.group_tna_centralities.md),
-[`print.tna_centralities()`](http://sonsoles.me/tna/reference/print.tna_centralities.md)
+[`betweenness_network()`](https://sonsoles.me/tna/reference/betweenness_network.md),
+[`centralities()`](https://sonsoles.me/tna/reference/centralities.md),
+[`plot.tna_centralities()`](https://sonsoles.me/tna/reference/plot.tna_centralities.md),
+[`print.group_tna_centralities()`](https://sonsoles.me/tna/reference/print.group_tna_centralities.md),
+[`print.tna_centralities()`](https://sonsoles.me/tna/reference/print.tna_centralities.md)
 
 ## Examples
 

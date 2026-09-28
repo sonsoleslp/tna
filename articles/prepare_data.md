@@ -12,6 +12,7 @@ each row represents an action performed by a `user` at a specific
 associated with high or low achievement.
 
 ``` r
+
 df <- tribble(
   ~user, ~timestamp, ~event, ~achievement, ~order,
   2, "2025-02-27 18:01:32", "Plan",           "High", 1,
@@ -56,6 +57,7 @@ result of calling `prepare_data` directly to the `tna` function to
 create a `tna` model.
 
 ``` r
+
 by_classroom <- prepare_data(df, action = "event")
 tna_by_classroom <- tna(by_classroom)
 plot(tna_by_classroom)
@@ -69,6 +71,7 @@ it is not ordered, we can provide a column to order the data by, in this
 case `order`.
 
 ``` r
+
 by_user <- prepare_data(df, actor = "user", action = "event", order = "order")
 tna_by_user <- tna(by_user)
 plot(tna_by_user)
@@ -84,6 +87,7 @@ session). If both `time` and `order` are provided, the data will be
 first ordered by `time`, and in case of a tie, by `order`.
 
 ``` r
+
 by_session <- prepare_data(df, actor = "user", time = "timestamp", action = "event")
 tna_by_session <- tna(by_session)
 plot(tna_by_session)
@@ -96,6 +100,7 @@ sequence, we can do so by customizing the `time_threshold` argument (in
 minutes).
 
 ``` r
+
 by_session_custom <- prepare_data(
   df, actor = "user", time = "timestamp", 
   action = "event", time_threshold = 10 * 60 # 10 minutes
@@ -113,6 +118,7 @@ first argument, and indicating the name of the column in the data that
 we want to group by.
 
 ``` r
+
 gtna <- group_tna(by_user, group = "achievement")
 plot(gtna)
 ```

@@ -10,6 +10,7 @@ validate findings with bootstrapping and permutation tests.
 **Install:**
 
 ``` r
+
 install.packages("tna")
 # or dev version:
 devtools::install_github("sonsoleslp/tna")
@@ -28,26 +29,28 @@ Requires R \>= 4.1.0. All analysis objects have
 
 Construct a transition network analysis model from sequence data.
 Requires specifying `type`. For convenience, use the shortcut functions:
-[`tna()`](http://sonsoles.me/tna/reference/build_model.md) = relative,
-[`ftna()`](http://sonsoles.me/tna/reference/build_model.md) = frequency,
-[`ctna()`](http://sonsoles.me/tna/reference/build_model.md) =
-co-occurrence,
-[`atna()`](http://sonsoles.me/tna/reference/build_model.md) = attention.
+[`tna()`](https://sonsoles.me/tna/reference/build_model.md) = relative,
+[`ftna()`](https://sonsoles.me/tna/reference/build_model.md) =
+frequency, [`ctna()`](https://sonsoles.me/tna/reference/build_model.md)
+= co-occurrence,
+[`atna()`](https://sonsoles.me/tna/reference/build_model.md) =
+attention.
 
     build_model(x, type = "relative", scaling = character(0L), cols = everything(),
                 params = list(), inits, begin_state, end_state)
 
-| Parameter | Description                                                                                                 | Default                                      |
-|-----------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------|
-| `x`       | `data.frame` (wide), `stslist`, `matrix`, or `tna_data`                                                     | —                                            |
-| `type`    | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"window"`, `"reverse"`, `"attention"` | `"relative"`                                 |
-| `scaling` | `"minmax"`, `"max"`, `"rank"`, or empty vector                                                              | `character(0)`                               |
-| `params`  | List: `n_gram`, `max_gap`, `window_size`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration`    | [`list()`](https://rdrr.io/r/base/list.html) |
+| Parameter | Description | Default |
+|----|----|----|
+| `x` | `data.frame` (wide), `stslist`, `matrix`, or `tna_data` | — |
+| `type` | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"window"`, `"reverse"`, `"attention"` | `"relative"` |
+| `scaling` | `"minmax"`, `"max"`, `"rank"`, or empty vector | `character(0)` |
+| `params` | List: `n_gram`, `max_gap`, `window_size`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration` | [`list()`](https://rdrr.io/r/base/list.html) |
 
 **Returns:** A `tna` object with `$weights`, `$inits`, `$labels`,
 `$data`.
 
 ``` r
+
 # Using build_model with explicit type
 model <- build_model(group_regulation, type = "relative")
 
@@ -95,6 +98,7 @@ print(model)
     #>     0.2045     0.0195
 
 ``` r
+
 summary(model)
 ```
 
@@ -138,6 +142,7 @@ Build a TNA model for each group. Accepts manual group assignments,
                 groupwise = FALSE, cols = everything(), params = list(), na.rm = TRUE, ...)
 
 ``` r
+
 # From mixture Markov model
 mmm_model <- group_model(engagement_mmm)
 print(mmm_model)
@@ -146,76 +151,78 @@ print(mmm_model)
     #> Cluster 1 :
     #> State Labels : 
     #> 
-    #>    Active, Average, Disengaged 
+    #>    Disengaged, Engaged, Moderate 
     #> 
     #> Transition Probability Matrix :
     #> 
-    #>                Active    Average Disengaged
-    #> Active     0.85985688 0.08919748 0.05094565
-    #> Average    0.31210322 0.54208478 0.14581200
-    #> Disengaged 0.04791061 0.16179397 0.79029542
+    #>            Disengaged   Engaged  Moderate
+    #> Disengaged 0.68079470 0.1582781 0.1609272
+    #> Engaged    0.02027027 0.6616424 0.3180873
+    #> Moderate   0.12065157 0.1242408 0.7551077
     #> 
     #> Initial Probabilities : 
     #> 
-    #>     Active    Average Disengaged 
-    #>  0.3397762  0.3234995  0.3367243 
+    #> Disengaged    Engaged   Moderate 
+    #>  0.2210884  0.1802721  0.5986395 
     #> 
     #> Cluster 2 :
     #> State Labels : 
     #> 
-    #>    Active, Average, Disengaged 
+    #>    Disengaged, Engaged, Moderate 
     #> 
     #> Transition Probability Matrix :
     #> 
-    #>                Active   Average Disengaged
-    #> Active     0.84090909 0.1590909  0.0000000
-    #> Average    0.09259259 0.6296296  0.2777778
-    #> Disengaged 0.15555556 0.5111111  0.3333333
+    #>            Disengaged    Engaged    Moderate
+    #> Disengaged  0.9112066 0.08771930 0.001074114
+    #> Engaged     0.3083110 0.67158177 0.020107239
+    #> Moderate    0.1182994 0.05360444 0.828096118
     #> 
     #> Initial Probabilities : 
     #> 
-    #>     Active    Average Disengaged 
-    #> 0.75000000 0.08333333 0.16666667 
+    #> Disengaged    Engaged   Moderate 
+    #> 0.49411765 0.01176471 0.49411765 
     #> 
     #> Cluster 3 :
     #> State Labels : 
     #> 
-    #>    Active, Average, Disengaged 
+    #>    Disengaged, Engaged, Moderate 
     #> 
     #> Transition Probability Matrix :
     #> 
-    #>               Active   Average Disengaged
-    #> Active     0.5833333 0.1250000 0.29166667
-    #> Average    0.1527778 0.8194444 0.02777778
-    #> Disengaged 0.0000000 0.6000000 0.40000000
+    #>            Disengaged   Engaged   Moderate
+    #> Disengaged 0.87538657 0.1111515 0.01346189
+    #> Engaged    0.06246451 0.6652470 0.27228847
+    #> Moderate   0.18153446 0.1498049 0.66866060
     #> 
     #> Initial Probabilities : 
     #> 
-    #>     Active    Average Disengaged 
-    #>          0          0          1
+    #> Disengaged    Engaged   Moderate 
+    #> 0.07462687 0.24626866 0.67910448
 
 ``` r
+
 summary(mmm_model)
 ```
 
     #> # A tibble: 13 × 4
     #>    metric                      `Cluster 1` `Cluster 2` `Cluster 3`
     #>  * <chr>                             <dbl>       <dbl>       <dbl>
-    #>  1 Node Count                        3           3           3    
-    #>  2 Edge Count                        9           8           8    
-    #>  3 Network Density                   1           1           1    
-    #>  4 Mean Distance                     0.111       0.239       0.302
-    #>  5 Mean Out-Strength                 1           1           1    
-    #>  6 SD Out-Strength                   0.214       0.353       0.472
-    #>  7 Mean In-Strength                  1           1           1    
-    #>  8 SD In-Strength                    0           0           0    
-    #>  9 Mean Out-Degree                   3           2.67        2.67 
-    #> 10 SD Out-Degree                     0           0.577       0.577
-    #> 11 Centralization (Out-Degree)       0           0.25        0.25 
-    #> 12 Centralization (In-Degree)        0           0.25        0.25 
-    #> 13 Reciprocity                       1           0.8         0.8
+    #>  1 Node Count                        3        3   e+ 0      3     
+    #>  2 Edge Count                        9        9   e+ 0      9     
+    #>  3 Network Density                   1        1   e+ 0      1     
+    #>  4 Mean Distance                     0.128    6.44e- 2      0.0991
+    #>  5 Mean Out-Strength                 1        1   e+ 0      1     
+    #>  6 SD Out-Strength                   0.212    2.93e- 1      0.104 
+    #>  7 Mean In-Strength                  1        1   e+ 0      1     
+    #>  8 SD In-Strength                    0        7.85e-17      0     
+    #>  9 Mean Out-Degree                   3        3   e+ 0      3     
+    #> 10 SD Out-Degree                     0        0             0     
+    #> 11 Centralization (Out-Degree)       0        0             0     
+    #> 12 Centralization (In-Degree)        0        0             0     
+    #> 13 Reciprocity                       1        1   e+ 0      1
 
 ``` r
+
 # Manual groups
 group <- c(rep("High", 1000), rep("Low", 1000))
 gmodel <- group_model(group_regulation, group = group)
@@ -227,6 +234,7 @@ Build a social network analysis model from edge-list data (from, to,
 weight).
 
 ``` r
+
 set.seed(42)
 d <- data.frame(
   from = sample(LETTERS[1:4], 100, replace = TRUE),
@@ -254,18 +262,21 @@ Plot a TNA model as a transition network.
          mar = rep(5, 4), theme = "colorblind", ...)
 
 ``` r
+
 plot(model)
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-6-1.png)
 
 ``` r
+
 plot(model, layout = "spring", scale_nodes = "OutStrength")
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-7-1.png)
 
 ``` r
+
 layout(t(1:2))
 # Group model — side-by-side panels
 plot(gmodel)
@@ -278,12 +289,14 @@ plot(gmodel)
 Bar plot of state frequency distribution.
 
 ``` r
+
 plot_frequencies(model)
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-9-1.png)
 
 ``` r
+
 # Group comparison
 plot_frequencies(gmodel)
 ```
@@ -293,9 +306,10 @@ plot_frequencies(gmodel)
 ### `plot_mosaic()`
 
 Mosaic plot with chi-square test results. Requires frequency model
-([`ftna()`](http://sonsoles.me/tna/reference/build_model.md)).
+([`ftna()`](https://sonsoles.me/tna/reference/build_model.md)).
 
 ``` r
+
 plot_mosaic(model_f)
 ```
 
@@ -311,18 +325,21 @@ Sequence index plots or state distribution plots.
                    tick = 5, ncol = 2L, ...)
 
 ``` r
+
 plot_sequences(group_regulation)
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-12-1.png)
 
 ``` r
+
 plot_sequences(group_regulation, type = "distribution")
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-13-1.png)
 
 ``` r
+
 # Group comparison — pass group_tna directly
 plot_sequences(gmodel)
 ```
@@ -334,6 +351,7 @@ plot_sequences(gmodel)
 Difference network between groups. Just pass the group model object.
 
 ``` r
+
 plot_compare(gmodel)
 ```
 
@@ -343,6 +361,7 @@ Difference network between two models. Green = x greater, red = y
 greater.
 
 ``` r
+
 model_a <- tna(group_regulation[1:1000, ])
 model_b <- tna(group_regulation[1001:2000, ])
 plot_compare(model_a, model_b)
@@ -353,9 +372,10 @@ plot_compare(model_a, model_b)
 ### `plot_associations()`
 
 Association network. Requires frequency model
-([`ftna()`](http://sonsoles.me/tna/reference/build_model.md)).
+([`ftna()`](https://sonsoles.me/tna/reference/build_model.md)).
 
 ``` r
+
 plot_associations(model_f)
 ```
 
@@ -364,6 +384,7 @@ plot_associations(model_f)
 ### `hist()`
 
 ``` r
+
 hist(model)
 ```
 
@@ -396,6 +417,7 @@ Convert long-format event logs into wide-format sequences.
                  unix_time_unit = "seconds", unused_fn = dplyr::first)
 
 ``` r
+
 results <- prepare_data(
   group_regulation_long,
   actor = "Actor", time = "Time", action = "Action"
@@ -433,18 +455,18 @@ print(results$statistics)
     #> 
     #> $actions_per_session
     #> # A tibble: 2,000 × 2
-    #>    .session_id   n_actions
-    #>    <chr>             <int>
-    #>  1 1010 session1        26
-    #>  2 1015 session1        26
-    #>  3 1030 session1        26
-    #>  4 1092 session1        26
-    #>  5 1106 session1        26
-    #>  6 1107 session1        26
-    #>  7 1153 session1        26
-    #>  8 1184 session1        26
-    #>  9 1209 session1        26
-    #> 10 1267 session1        26
+    #>    .session_id n_actions
+    #>    <chr>           <int>
+    #>  1 1010 s1            26
+    #>  2 1015 s1            26
+    #>  3 1030 s1            26
+    #>  4 1092 s1            26
+    #>  5 1106 s1            26
+    #>  6 1107 s1            26
+    #>  7 1153 s1            26
+    #>  8 1184 s1            26
+    #>  9 1209 s1            26
+    #> 10 1267 s1            26
     #> # ℹ 1,990 more rows
     #> 
     #> $time_range
@@ -467,6 +489,7 @@ Import one-hot encoded data as co-occurrence network.
 Simulate sequence data from a TNA model (requires `type = "relative"`).
 
 ``` r
+
 sim <- simulate(model, nsim = 5, seed = 123, max_len = 10)
 print(sim)
 ```
@@ -495,22 +518,23 @@ Calculate centrality measures. Works on `tna`, `group_tna`, and
 
     centralities(x, loops = FALSE, normalize = FALSE, measures)
 
-| Measure                                      | Description                           |
-|----------------------------------------------|---------------------------------------|
-| `OutStrength`                                | Total weight of outgoing edges        |
-| `InStrength`                                 | Total weight of incoming edges        |
-| `ClosenessIn` / `ClosenessOut` / `Closeness` | Closeness centrality variants         |
-| `Betweenness`                                | Geodesic betweenness                  |
-| `BetweennessRSP`                             | Randomized shortest paths betweenness |
-| `Diffusion`                                  | Diffusion centrality                  |
-| `Clustering`                                 | Signed clustering coefficient         |
+| Measure | Description |
+|----|----|
+| `OutStrength` | Total weight of outgoing edges |
+| `InStrength` | Total weight of incoming edges |
+| `ClosenessIn` / `ClosenessOut` / `Closeness` | Closeness centrality variants |
+| `Betweenness` | Geodesic betweenness |
+| `BetweennessRSP` | Randomized shortest paths betweenness |
+| `Diffusion` | Diffusion centrality |
+| `Clustering` | Signed clustering coefficient |
 
 ``` r
+
 cm <- centralities(model)
 print(cm)
 ```
 
-    #> # A tibble: 9 × 10
+    #> # A tibble: 9 × 11
     #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
     #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
     #> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
@@ -522,20 +546,23 @@ print(cm)
     #> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
     #> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
     #> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
-    #> # ℹ 3 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>
+    #> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
+    #> #   PageRank <dbl>
 
 ``` r
+
 plot(cm, ncol = 3, reorder = TRUE)
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-21-1.png)
 
 ``` r
+
 # On group_tna directly
 centralities(gmodel)
 ```
 
-    #> # A tibble: 18 × 11
+    #> # A tibble: 18 × 12
     #>    group state      OutStrength InStrength ClosenessIn ClosenessOut Closeness
     #>  * <chr> <fct>            <dbl>      <dbl>       <dbl>        <dbl>     <dbl>
     #>  1 High  adapt            1          0.215     0.00650       0.0154    0.0263
@@ -556,14 +583,15 @@ centralities(gmodel)
     #> 16 Low   monitor          0.982      0.393     0.00743       0.0142    0.0183
     #> 17 Low   plan             0.585      1.15      0.0261        0.0109    0.0261
     #> 18 Low   synthesis        1          0.216     0.0101        0.0153    0.0233
-    #> # ℹ 4 more variables: Betweenness <dbl>, BetweennessRSP <dbl>, Diffusion <dbl>,
-    #> #   Clustering <dbl>
+    #> # ℹ 5 more variables: Betweenness <dbl>, BetweennessRSP <dbl>, Diffusion <dbl>,
+    #> #   Clustering <dbl>, PageRank <dbl>
 
 ### `betweenness_network()`
 
 Build network with edge betweenness as weights.
 
 ``` r
+
 bn <- betweenness_network(model)
 print(bn)
 ```
@@ -613,6 +641,7 @@ Centrality stability via subset sampling.
                 threshold = 0.7, certainty = 0.95, progressbar = FALSE)
 
 ``` r
+
 cs <- estimate_cs(model, measures = c("InStrength", "OutStrength"), iter = 100)
 print(cs)
 ```
@@ -623,6 +652,7 @@ print(cs)
     #>         0.9         0.9
 
 ``` r
+
 plot(cs)
 ```
 
@@ -640,6 +670,7 @@ Detect communities using 7 igraph algorithms. Works on `tna` and
     communities(x, methods, gamma = 1)
 
 ``` r
+
 comm <- communities(model)
 print(comm)
 ```
@@ -675,12 +706,14 @@ print(comm)
     #> 9             3         1
 
 ``` r
+
 plot(comm, method = "spinglass")
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-25-1.png)
 
 ``` r
+
 # On group_tna directly
 communities(gmodel)
 ```
@@ -754,6 +787,7 @@ Identify cliques (complete subgraphs) of a given size.
     cliques(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 
 ``` r
+
 layout(t(1:3))
 cliq <- cliques(model, size = 2)
 print(cliq)
@@ -793,6 +827,7 @@ print(cliq)
     #> plan    0.06789021 0.37420822
 
 ``` r
+
 plot(cliq, n = 3, ask = FALSE)
 ```
 
@@ -807,6 +842,7 @@ plot(cliq, n = 3, ask = FALSE)
 Compare two TNA models with comprehensive metrics.
 
 ``` r
+
 comp <- compare(gmodel, i = 1, j = 2)
 print(comp)
 ```
@@ -867,6 +903,7 @@ print(comp)
     #> 13 Reciprocity                 9.57e- 1 9.41e- 1
 
 ``` r
+
 plot(comp)
 ```
 
@@ -880,6 +917,7 @@ Compare subsequence patterns between groups. Pass `group_tna` directly.
     compare_sequences(x, sub, min_freq = 5L, correction = "bonferroni", ...)
 
 ``` r
+
 comp_seq <- compare_sequences(gmodel)
 print(head(comp_seq, 10))
 ```
@@ -908,6 +946,7 @@ print(head(comp_seq, 10))
     #> 10 0.077922078
 
 ``` r
+
 plot(comp_seq)
 ```
 
@@ -921,6 +960,7 @@ Permutation tests for edge weight and centrality differences.
                      level = 0.05, measures = character(0), ...)
 
 ``` r
+
 model_x <- tna(group_regulation[1:200, ])
 model_y <- tna(group_regulation[1001:1200, ])
 perm <- permutation_test(model_x, model_y, iter = 100)
@@ -943,6 +983,7 @@ print(perm)
     #> # ℹ 71 more rows
 
 ``` r
+
 plot(perm)
 ```
 
@@ -951,6 +992,7 @@ plot(perm)
 It also accepts a group tna model object.
 
 ``` r
+
 permg <- permutation_test(gmodel, iter = 100)
 ```
 
@@ -966,6 +1008,7 @@ Bootstrap transition networks for confidence intervals and significance.
               threshold, consistency_range = c(0.75, 1.25))
 
 ``` r
+
 boot <- bootstrap(model, iter = 100)
 plot(boot)
 ```
@@ -973,6 +1016,7 @@ plot(boot)
 ![](new-docs_files/figure-html/unnamed-chunk-32-1.png)
 
 ``` r
+
 plot_bootstrap_forest(boot)
 ```
 
@@ -983,6 +1027,7 @@ plot_bootstrap_forest(boot)
 Bootstrap cliques to assess stability.
 
 ``` r
+
 bc <- bootstrap_cliques(model, size = 2, iter = 100)
 print(bc)
 ```
@@ -995,6 +1040,7 @@ Remove weak edges. Four methods available.
           level = 0.5, boot = NULL, ...)
 
 ``` r
+
 pruned_t <- prune(model, method = "threshold", threshold = 0.1)
 pruned_p <- prune(model, method = "lowest", lowest = 0.05)
 pruned_d <- prune(model, method = "disparity", level = 0.5)
@@ -1002,12 +1048,14 @@ pruning_details(pruned_t)
 ```
 
 ``` r
+
 plot(pruned_t)
 ```
 
 ![](new-docs_files/figure-html/unnamed-chunk-36-1.png)
 
 ``` r
+
 # Restore and reapply
 restored <- deprune(pruned_t)
 repruned <- reprune(restored)
@@ -1025,6 +1073,7 @@ Cluster sequences using string distance-based dissimilarity.
                       na_syms = c("*", "%"), weighted = FALSE, lambda = 1, ...)
 
 ``` r
+
 result <- cluster_sequences(group_regulation[1:200, ], k = 3, dissimilarity = "osa")
 print(result)
 ```
@@ -1037,6 +1086,7 @@ print(result)
     #> 63 66 71
 
 ``` r
+
 # Pass directly to group_model
 gmodel_clust <- group_model(result)
 plot(gmodel_clust)
@@ -1047,6 +1097,7 @@ plot(gmodel_clust)
 ### `rename_groups()`
 
 ``` r
+
 gmodel_mmm <- group_model(engagement_mmm)
 gmodel_mmm_renamed <- rename_groups(gmodel_mmm, c("A", "B", "C"))
 cat("Original:", names(group_model(engagement_mmm)), "\n")
@@ -1055,6 +1106,7 @@ cat("Original:", names(group_model(engagement_mmm)), "\n")
     #> Original: Cluster 1 Cluster 2 Cluster 3
 
 ``` r
+
 cat("Renamed:", names(gmodel_mmm_renamed), "\n")
 ```
 
@@ -1063,15 +1115,16 @@ cat("Renamed:", names(gmodel_mmm_renamed), "\n")
 ### `mmm_stats()`
 
 ``` r
+
 mmm_stats(engagement_mmm)
 ```
 
-    #>     cluster    variable  estimate std_error  ci_lower  ci_upper   z_value
-    #> 1 Cluster 2 (Intercept) -2.640329 0.1274911 -2.890207 -2.390451 -20.70991
-    #> 2 Cluster 3 (Intercept) -4.512131 0.3157501 -5.130990 -3.893272 -14.29020
-    #>   p_value
-    #> 1       0
-    #> 2       0
+    #>     cluster    variable  estimate std_error   ci_lower ci_upper   z_value
+    #> 1 Cluster 2 (Intercept) 1.1880881 0.9856987 -0.7438459 3.120022 1.2053258
+    #> 2 Cluster 3 (Intercept) 0.9495465 2.1560282 -3.2761911 5.175284 0.4404147
+    #>     p_value
+    #> 1 0.2280775
+    #> 2 0.6596368
 
 ------------------------------------------------------------------------
 
@@ -1080,6 +1133,7 @@ mmm_stats(engagement_mmm)
 ### `summary()`
 
 ``` r
+
 summary(model)
 ```
 
@@ -1101,6 +1155,7 @@ summary(model)
     #> 13 Reciprocity                 9.86e- 1
 
 ``` r
+
 summary(gmodel)
 ```
 
@@ -1124,13 +1179,14 @@ summary(gmodel)
 ### `as.igraph()`
 
 ``` r
+
 g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH 0ba29e8 DNW- 9 78 -- 
+    #> IGRAPH e7322f6 DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from 0ba29e8 (vertex names):
+    #> + edges from e7322f6 (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  

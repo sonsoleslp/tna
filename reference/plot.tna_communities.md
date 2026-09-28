@@ -29,8 +29,8 @@ plot(x, colors, method, ...)
   A `character` string naming a community detection method to use for
   coloring the plot. The default is to use the first available method in
   `x`. See
-  [`communities()`](http://sonsoles.me/tna/reference/communities.md) for
-  details.
+  [`communities()`](https://sonsoles.me/tna/reference/communities.md)
+  for details.
 
 - ...:
 
@@ -44,10 +44,10 @@ A `cograph_network` object in which the nodes are colored by community.
 ## See also
 
 Community detection functions
-[`communities()`](http://sonsoles.me/tna/reference/communities.md),
-[`plot.group_tna_communities()`](http://sonsoles.me/tna/reference/plot.group_tna_communities.md),
-[`print.group_tna_communities()`](http://sonsoles.me/tna/reference/print.group_tna_communities.md),
-[`print.tna_communities()`](http://sonsoles.me/tna/reference/print.tna_communities.md)
+[`communities()`](https://sonsoles.me/tna/reference/communities.md),
+[`plot.group_tna_communities()`](https://sonsoles.me/tna/reference/plot.group_tna_communities.md),
+[`print.group_tna_communities()`](https://sonsoles.me/tna/reference/print.group_tna_communities.md),
+[`print.tna_communities()`](https://sonsoles.me/tna/reference/print.tna_communities.md)
 
 ## Examples
 

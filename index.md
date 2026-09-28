@@ -18,40 +18,40 @@ more details on TNA.
 We have also released comprehensive new tutorials for the main TNA
 features:
 
-| Tutorial                                                                                                            | Link                                             |
-|---------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
-| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA)                                              | <https://sonsoles.me/posts/tna-tutorial/>        |
-| TNA Data Preparation: A Comprehensive Guide to [`prepare_data()`](http://sonsoles.me/tna/reference/prepare_data.md) | <https://sonsoles.me/posts/tna-data/>            |
-| TNA Group Analysis: Analysis and Comparison of Groups                                                               | <https://sonsoles.me/posts/tna-group/>           |
-| TNA Clustering: Discovering and Analysis of Clusters                                                                | <https://sonsoles.me/posts/tna-clustering/>      |
-| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison                              | <https://sonsoles.me/posts/tna-compare/>         |
-| Full reference guide on `tna` functions                                                                             | <https://sonsoles.me/tna/tna.html>               |
-| Sequence Patterns, Outcomes, and Indices with `codyna`                                                              | <https://sonsoles.me/posts/codyna-seq-tutorial/> |
+| Tutorial | Link |
+|----|----|
+| An Updated Comprehensive Tutorial on Transition Network Analysis (TNA) | <https://sonsoles.me/posts/tna-tutorial/> |
+| TNA Data Preparation: A Comprehensive Guide to [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md) | <https://sonsoles.me/posts/tna-data/> |
+| TNA Group Analysis: Analysis and Comparison of Groups | <https://sonsoles.me/posts/tna-group/> |
+| TNA Clustering: Discovering and Analysis of Clusters | <https://sonsoles.me/posts/tna-clustering/> |
+| TNA Model Comparison:TNA Model Comparison: A Comprehensive Guide to Network Comparison | <https://sonsoles.me/posts/tna-compare/> |
+| Full reference guide on `tna` functions | <https://sonsoles.me/tna/tna.html> |
+| Sequence Patterns, Outcomes, and Indices with `codyna` | <https://sonsoles.me/posts/codyna-seq-tutorial/> |
 
 ### Vignettes
 
 Check out the `tna` R package vignettes:
 
-| Vignette                             | Link                                                            |
-|--------------------------------------|-----------------------------------------------------------------|
-| Getting started with tna             | <https://sonsoles.me/tna/articles/tna.html>                     |
-| A showcase of the main tna functions | <https://sonsoles.me/tna/articles/complete_tutorial.html>       |
-| How to prepare data for tna          | <https://sonsoles.me/tna/articles/prepare_data.html>            |
-| Frequency-based TNA                  | <https://sonsoles.me/tna/articles/ftna.html>                    |
-| Attention TNA                        | <https://sonsoles.me/tna/articles/atna.html>                    |
-| Finding cliques and communities      | <https://sonsoles.me/tna/articles/communities_and_cliques.html> |
-| Using grouped sequence data          | <https://sonsoles.me/tna/articles/grouped_sequences.html>       |
+| Vignette | Link |
+|----|----|
+| Getting started with tna | <https://sonsoles.me/tna/articles/tna.html> |
+| A showcase of the main tna functions | <https://sonsoles.me/tna/articles/complete_tutorial.html> |
+| How to prepare data for tna | <https://sonsoles.me/tna/articles/prepare_data.html> |
+| Frequency-based TNA | <https://sonsoles.me/tna/articles/ftna.html> |
+| Attention TNA | <https://sonsoles.me/tna/articles/atna.html> |
+| Finding cliques and communities | <https://sonsoles.me/tna/articles/communities_and_cliques.html> |
+| Using grouped sequence data | <https://sonsoles.me/tna/articles/grouped_sequences.html> |
 
 ### Book chapters
 
 Do not forget to check out our tutorials in the “Advanced learning
 analytics methods” book:
 
-| Title                                                                                                                                                                    | Pages                                          | Tutorial                                                                                         |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial*                                            | <https://doi.org/10.1007/978-3-031-95365-1_15> | [Online tutorial](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html)                   |
-| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial* | <https://doi.org/10.1007/978-3-031-95365-1_16> | [Online tutorial](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)                 |
-| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach*                                        | <https://doi.org/10.1007/978-3-031-95365-1_17> | [Online tutorial](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) |
+| Title | Pages | Tutorial |
+|----|----|----|
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Mapping Relational Dynamics with Transition Network Analysis: A Primer and Tutorial* | <https://doi.org/10.1007/978-3-031-95365-1_15> | [Online tutorial](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) |
+| Saqr, M., Lopez-Pernas, S., & Tikka, S. *Capturing the Breadth and Dynamics of the Temporal Processes with Frequency Transition Network Analysis: A Primer and Tutorial* | <https://doi.org/10.1007/978-3-031-95365-1_16> | [Online tutorial](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html) |
+| Lopez-Pernas, S., Tikka, S., & Saqr, M. *Mining Patterns and Clusters with Transition Network Analysis: A Heterogeneity Approach* | <https://doi.org/10.1007/978-3-031-95365-1_17> | [Online tutorial](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html) |
 
 ### Other tools
 
@@ -67,6 +67,7 @@ version from [GitHub](https://github.com/) by running one of the
 following:
 
 ``` r
+
 install.packages("tna")
 
 # install.packages("devtools")
@@ -78,22 +79,26 @@ install.packages("tna")
 Load the package
 
 ``` r
+
 library("tna")
 ```
 
 Example data
 
 ``` r
+
 data("group_regulation", package = "tna")
 ```
 
 Build a Markov model
 
 ``` r
+
 tna_model <- tna(group_regulation)
 ```
 
 ``` r
+
 summary(tna_model)
 ```
 
@@ -116,6 +121,7 @@ summary(tna_model)
 Plot the transition network
 
 ``` r
+
 plot(tna_model) 
 ```
 
@@ -123,24 +129,26 @@ plot(tna_model)
 measures
 
 ``` r
+
 cent <- centralities(tna_model)
 ```
 
-|   state    | OutStrength | InStrength | ClosenessIn | ClosenessOut | Closeness | Betweenness | BetweennessRSP | Diffusion | Clustering |
-|:----------:|------------:|-----------:|------------:|-------------:|----------:|------------:|---------------:|----------:|-----------:|
-|   adapt    |       1.000 |      0.345 |       0.008 |        0.015 |     0.025 |       1.000 |          1.000 |     5.586 |      0.337 |
-|  cohesion  |       0.973 |      0.812 |       0.014 |        0.012 |     0.027 |       0.000 |         19.000 |     5.209 |      0.300 |
-| consensus  |       0.918 |      2.667 |       0.035 |        0.013 |     0.038 |      30.000 |        103.000 |     4.660 |      0.161 |
-| coregulate |       0.977 |      0.567 |       0.016 |        0.015 |     0.021 |       0.000 |         27.000 |     5.148 |      0.306 |
-|  discuss   |       0.805 |      1.188 |       0.020 |        0.013 |     0.027 |      16.000 |         53.000 |     4.628 |      0.240 |
-|  emotion   |       0.923 |      0.894 |       0.014 |        0.012 |     0.023 |       5.000 |         36.000 |     5.070 |      0.290 |
-|  monitor   |       0.982 |      0.346 |       0.008 |        0.014 |     0.019 |       0.000 |         11.000 |     5.157 |      0.289 |
-|    plan    |       0.626 |      1.194 |       0.027 |        0.012 |     0.027 |       9.000 |         61.000 |     3.488 |      0.287 |
-| synthesis  |       1.000 |      0.192 |       0.010 |        0.016 |     0.024 |       7.000 |          3.000 |     5.583 |      0.359 |
+| state | OutStrength | InStrength | ClosenessIn | ClosenessOut | Closeness | Betweenness | BetweennessRSP | Diffusion | Clustering |
+|:--:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| adapt | 1.000 | 0.345 | 0.008 | 0.015 | 0.025 | 1.000 | 1.000 | 5.586 | 0.337 |
+| cohesion | 0.973 | 0.812 | 0.014 | 0.012 | 0.027 | 0.000 | 19.000 | 5.209 | 0.300 |
+| consensus | 0.918 | 2.667 | 0.035 | 0.013 | 0.038 | 30.000 | 103.000 | 4.660 | 0.161 |
+| coregulate | 0.977 | 0.567 | 0.016 | 0.015 | 0.021 | 0.000 | 27.000 | 5.148 | 0.306 |
+| discuss | 0.805 | 1.188 | 0.020 | 0.013 | 0.027 | 16.000 | 53.000 | 4.628 | 0.240 |
+| emotion | 0.923 | 0.894 | 0.014 | 0.012 | 0.023 | 5.000 | 36.000 | 5.070 | 0.290 |
+| monitor | 0.982 | 0.346 | 0.008 | 0.014 | 0.019 | 0.000 | 11.000 | 5.157 | 0.289 |
+| plan | 0.626 | 1.194 | 0.027 | 0.012 | 0.027 | 9.000 | 61.000 | 3.488 | 0.287 |
+| synthesis | 1.000 | 0.192 | 0.010 | 0.016 | 0.024 | 7.000 | 3.000 | 5.583 | 0.359 |
 
 Plot the centrality measures
 
 ``` r
+
 plot(cent, ncol = 3)
 ```
 
@@ -149,6 +157,7 @@ plot(cent, ncol = 3)
 Estimate centrality stability
 
 ``` r
+
 estimate_centrality_stability(tna_model)
 #> Centrality Stability Coefficients
 #> 
@@ -159,6 +168,7 @@ estimate_centrality_stability(tna_model)
 Identify and plot communities
 
 ``` r
+
 coms <- communities(tna_model)
 plot(coms)
 ```
@@ -168,6 +178,7 @@ plot(coms)
 Find and plot cliques
 
 ``` r
+
 cqs <- cliques(tna_model, threshold = 0.12)
 plot(cqs)
 ```
@@ -177,6 +188,7 @@ plot(cqs)
 Compare high achievers (first 1000) with low achievers (last 1000)
 
 ``` r
+
 tna_model_start_high <- tna(group_regulation[1:1000, ])
 tna_model_start_low <- tna(group_regulation[1001:2000, ])
 comparison <- permutation_test(
@@ -189,6 +201,7 @@ comparison <- permutation_test(
 Simple comparison vs. permutation test comparison
 
 ``` r
+
 plot_compare(tna_model_start_high, tna_model_start_low)
 plot(comparison)
 ```
@@ -198,6 +211,7 @@ plot(comparison)
 Compare centralities
 
 ``` r
+
 print(comparison$centralities$stats)
 ```
 
