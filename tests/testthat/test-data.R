@@ -14,7 +14,7 @@ test_that("data preparation works when actor and time are provided", {
   )
   rlang::local_options(rlib_message_verbosity = "quiet")
   expect_error(
-    prepare_data(
+    result <- prepare_data(
       data,
       actor = "user",
       time = "time",
@@ -22,6 +22,181 @@ test_that("data preparation works when actor and time are provided", {
     ),
     NA
   )
+  expect_s3_class(result$time_data[[1]], "POSIXct")
+  expect_identical(attr(result$time_data[[1]], "tzone"), "UTC")
+})
+
+test_that("time_threshold = FALSE disables gap-based session splitting", {
+  data <- tibble::tibble(
+    user = rep(c("A", "B"), each = 2),
+    time = rep(c("2024-01-01 00:00:00", "2024-01-01 01:00:00"), 2),
+    action = c("view", "click", "view", "click")
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+
+  enabled <- prepare_data(
+    data, actor = "user", time = "time", action = "action"
+  )
+  disabled <- prepare_data(
+    data, actor = "user", time = "time", action = "action",
+    time_threshold = FALSE
+  )
+  infinite <- prepare_data(
+    data, actor = "user", time = "time", action = "action",
+    time_threshold = Inf
+  )
+
+  expect_identical(enabled$statistics$total_sessions, 4L)
+  expect_identical(disabled$statistics$total_sessions, 2L)
+  expect_equal(disabled, infinite)
+  expect_s3_class(disabled$time_data[[1]], "POSIXct")
+
+  expect_error(
+    prepare_data(
+      data, actor = "user", time = "time", action = "action",
+      time_threshold = TRUE
+    )
+  )
+  expect_error(
+    prepare_data(
+      data, actor = "user", time = "time", action = "action",
+      time_threshold = 0
+    )
+  )
+  expect_error(
+    prepare_data(
+      data, actor = "user", time = "time", action = "action",
+      time_threshold = NA
+    )
+  )
+})
+
+test_that("disabled time splitting keeps missing timestamps in one session", {
+  data <- tibble::tibble(
+    user = "A",
+    time = c("2024-01-01 00:00:00", NA, NA),
+    action = c("view", "click", "share"),
+    event_order = 1:3
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- prepare_data(
+    data,
+    actor = "user",
+    time = "time",
+    action = "action",
+    order = "event_order",
+    time_threshold = FALSE
+  )
+
+  expect_identical(result$statistics$total_sessions, 1L)
+  expect_identical(
+    as.character(result$sequence_data[1, 1:3]),
+    c("view", "click", "share")
+  )
+  expect_true(is.na(result$time_data[[2]][1]))
+  expect_true(is.na(result$time_data[[3]][1]))
+})
+
+test_that("composite actor identities cannot collide on separators", {
+  data <- tibble::tibble(
+    student = c("a-b", "a-b", "a", "a"),
+    cohort = c("c", "c", "b-c", "b-c"),
+    event_order = c(1, 2, 1, 2),
+    action = c("A", "B", "A", "C")
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- prepare_data(
+    data,
+    actor = c("student", "cohort"),
+    order = "event_order",
+    action = "action"
+  )
+
+  expect_identical(result$statistics$total_sessions, 2L)
+  expect_identical(result$statistics$unique_users, 2L)
+  expect_identical(anyDuplicated(result$meta_data$.session_id), 0L)
+  paths <- sort(apply(result$sequence_data, 1L, paste, collapse = "->"))
+  expect_identical(paths, c("A->B", "A->C"))
+})
+
+test_that("explicit session columns define actor-session combinations", {
+  data <- tibble::tibble(
+    student = "s1",
+    course = c("math", "math", "bio", "bio"),
+    semester = c("fall", "fall", "fall", "spring"),
+    event_order = c(1, 2, 1, 1),
+    action = c("A", "B", "C", "D")
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+
+  one_session_column <- prepare_data(
+    data,
+    actor = "student",
+    session = "course",
+    order = "event_order",
+    action = "action"
+  )
+  two_session_columns <- prepare_data(
+    data,
+    actor = "student",
+    session = c("course", "semester"),
+    order = "event_order",
+    action = "action"
+  )
+
+  expect_identical(one_session_column$statistics$total_sessions, 2L)
+  expect_identical(two_session_columns$statistics$total_sessions, 3L)
+  expect_identical(two_session_columns$statistics$unique_users, 1L)
+})
+
+test_that("missing actor or session identifiers fail fast", {
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  actor_missing <- tibble::tibble(
+    student = c("s1", NA),
+    session = c("a", "b"),
+    action = c("A", "B")
+  )
+  session_missing <- actor_missing
+  session_missing$student <- "s1"
+  session_missing$session[2] <- NA
+
+  expect_error(
+    prepare_data(actor_missing, actor = "student", action = "action"),
+    "Missing values in actor"
+  )
+  expect_error(
+    prepare_data(
+      session_missing,
+      actor = "student",
+      session = "session",
+      action = "action"
+    ),
+    "Missing values in actor/session"
+  )
+})
+
+test_that("high-cardinality actor-session grouping does not overflow", {
+  skip_on_cran()
+  n <- 47000L
+  data <- tibble::tibble(
+    student = rep(sprintf("student-%05d", seq_len(n)), each = 2L),
+    session = rep(sprintf("session-%05d", seq_len(n)), each = 2L),
+    event_order = rep(1:2, n),
+    action = rep(c("A", "B"), n)
+  )
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- prepare_data(
+    data,
+    actor = "student",
+    session = "session",
+    order = "event_order",
+    action = "action"
+  )
+
+  expect_identical(result$statistics$total_sessions, n)
+  expect_identical(nrow(result$sequence_data), n)
+  expect_true(all(result$sequence_data[[1]] == "A"))
+  expect_true(all(result$sequence_data[[2]] == "B"))
 })
 
 test_that("data preparation works when actor and order are provided", {
@@ -186,7 +361,7 @@ test_that("missing values informs", {
 test_that("parsing with custom time format works", {
   time_raw <- "27---2---2025"
   fmt <- "%d---%m---%Y"
-  time <- as.POSIXct(strptime(time_raw, format = fmt))
+  time <- as.POSIXct(strptime(time_raw, format = fmt, tz = "UTC"))
   rlang::local_options(rlib_message_verbosity = "quiet")
   expect_equal(
     time,
@@ -432,4 +607,92 @@ test_that("parse_time handles microseconds unix time", {
     unix_time_unit = "microseconds"
   )
   expect_s3_class(result, "POSIXct")
+})
+
+test_that("explicit timezone offsets are honored across system timezones", {
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  old_timezone <- Sys.getenv("TZ", unset = NA_character_)
+  on.exit(
+    if (is.na(old_timezone)) Sys.unsetenv("TZ") else Sys.setenv(TZ = old_timezone),
+    add = TRUE
+  )
+  time <- c(
+    "2024-01-01T00:00:00Z",
+    "2024-01-01 00:00:00+00:00",
+    "2024-01-01 00:00:00+02:00",
+    "2024-01-01T00:00:00.125Z"
+  )
+  expected <- c(1704067200, 1704067200, 1704060000, 1704067200.125)
+
+  for (system_timezone in c("UTC", "Europe/Helsinki", "America/New_York")) {
+    Sys.setenv(TZ = system_timezone)
+    result <- parse_time(
+      time,
+      custom_format = NULL,
+      is_unix_time = FALSE,
+      unix_time_unit = "seconds"
+    )
+    expect_equal(as.numeric(result), expected, tolerance = 1e-6)
+    expect_identical(attr(result, "tzone"), "UTC")
+  }
+})
+
+test_that("timezone controls offset-free timestamps", {
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- parse_time(
+    "2024-01-01 00:00:00",
+    custom_format = NULL,
+    is_unix_time = FALSE,
+    unix_time_unit = "seconds",
+    timezone = "Europe/Helsinki"
+  )
+  expect_equal(as.numeric(result), 1704060000)
+  expect_identical(attr(result, "tzone"), "Europe/Helsinki")
+})
+
+test_that("mixed timestamp formats are parsed completely", {
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  result <- parse_time(
+    c("2024-01-01T00:00:00Z", "2024/01/02 03:04:05", NA),
+    custom_format = NULL,
+    is_unix_time = FALSE,
+    unix_time_unit = "seconds"
+  )
+  expect_false(anyNA(result[1:2]))
+  expect_true(is.na(result[3]))
+})
+
+test_that("invalid timezones fail", {
+  rlang::local_options(rlib_message_verbosity = "quiet")
+  expect_error(
+    parse_time(
+      "2024-01-01 00:00:00",
+      custom_format = NULL,
+      is_unix_time = FALSE,
+      unix_time_unit = "seconds",
+      timezone = "Not/A_Timezone"
+    ),
+    "must be a valid Olson time zone"
+  )
+})
+
+test_that("prepare_data with explicit sessions emits no dplyr grouping message", {
+  d <- data.frame(
+    user = rep(c("A", "B"), each = 6L),
+    course = rep(c("c1", "c2"), 6L),
+    action = rep(c("read", "write", "plan"), 4L),
+    stringsAsFactors = FALSE
+  )
+  msgs <- character(0L)
+  out <- withCallingHandlers(
+    prepare_data(d, actor = "user", action = "action", session = "course"),
+    message = function(m) {
+      msgs <<- c(msgs, conditionMessage(m))
+      invokeRestart("muffleMessage")
+    }
+  )
+  expect_false(any(grepl("Adding missing grouping variables", msgs)))
+  expect_false(dplyr::is_grouped_df(out$statistics$sessions_per_user))
+  expect_named(out$statistics$sessions_per_user, c("user", "n_sessions"))
+  expect_equal(out$statistics$total_sessions, 4L)
 })

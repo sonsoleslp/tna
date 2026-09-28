@@ -1,4 +1,4 @@
-url: http://sonsoles.me/tna/
+url: https://sonsoles.me/tna/
 template:
   bootstrap: 5
   bslib:
@@ -55,6 +55,11 @@ reference:
     - import_onehot
     - prepare_data
     - print.tna_data
+    - random_tna
+    - random_group_tna
+    - random_tna_mmm
+    - list_random_state_pools
+    - simulate
     - simulate.tna
     - simulate.group_tna
     - summary.tna

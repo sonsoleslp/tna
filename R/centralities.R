@@ -32,6 +32,8 @@
 #'     based on the symmetric adjacency matrix (sum of the adjacency matrix
 #'     and its transpose). It measures the degree to which nodes tend to
 #'     cluster together.
+#'   * `PageRank`: Weighted PageRank centrality calculated using
+#'     [igraph::page_rank()] on the directed transition network.
 #'
 #' @export
 #' @family centralities
@@ -408,7 +410,9 @@ rsp_bet <- function(mat, beta = 0.01) {
   W <- P_ref * exp(-beta * C)
   Z <- solve(diag(1, n, n) - W)
   Z_recip <- Z^-1
-  Z_recip[is.infinite(Z_recip)] <- 0
+  # Entries that are mathematically zero can contain finite solver noise.
+  # Taking their reciprocal amplifies that noise into phantom centrality.
+  Z_recip[!is.finite(Z_recip) | abs(Z) < 1e-12] <- 0
   Z_recip_diag <- diag(Z_recip) * diag(1, n, n)
   out <- diag(tcrossprod(Z, Z_recip - n * Z_recip_diag) %*% Z)
   out <- round(out)
@@ -542,4 +546,12 @@ centrality_funs$Diffusion <- function(x, ...) {
 
 centrality_funs$Clustering <- function(x, ...) {
   wcc(x + t(x))
+}
+
+centrality_funs$PageRank <- function(g, ...) {
+  igraph::page_rank(
+    g,
+    directed = TRUE,
+    weights = igraph::E(g)$weight
+  )$vector
 }

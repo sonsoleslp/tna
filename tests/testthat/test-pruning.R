@@ -17,6 +17,39 @@ test_that("pruning works with lowest percent", {
   expect_equal(result$method, "lowest")
 })
 
+test_that("inactive pruning arguments warn instead of being silent", {
+  expect_warning(
+    result <- prune(mock_tna, lowest = 0.25),
+    "Argument `lowest` is ignored for pruning method \"threshold\""
+  )
+  expect_equal(attr(result, "pruning")$method, "threshold")
+
+  expect_warning(
+    prune(mock_tna, method = "lowest", threshold = -1),
+    "Argument `threshold` is ignored for pruning method \"lowest\""
+  )
+  expect_warning(
+    prune(mock_tna, level = 2),
+    "Argument `level` is ignored for pruning method \"threshold\""
+  )
+})
+
+test_that("a supplied bootstrap object selects bootstrap pruning", {
+  boot <- bootstrap(mock_tna_seq, iter = 10)
+  expect_warning(
+    result <- prune(mock_tna_seq, method = "lowest", boot = boot),
+    "Argument `method` is ignored when `boot` is supplied"
+  )
+  expect_equal(attr(result, "pruning")$method, "bootstrap")
+})
+
+test_that("unused pruning dots warn", {
+  expect_warning(
+    prune(mock_tna, unused = TRUE),
+    "Additional arguments in `...` are ignored"
+  )
+})
+
 test_that("pruning works with disparity filter", {
   result <- prune(mock_tna, method = "disparity", level = 0.5) |>
     attr("pruning")

@@ -70,6 +70,8 @@ the network.
 based on the symmetric adjacency matrix (sum of the adjacency matrix
 and its transpose). It measures the degree to which nodes tend to
 cluster together.
+\item \code{PageRank}: Weighted PageRank centrality calculated using
+\code{\link[igraph:page_rank]{igraph::page_rank()}} on the directed transition network.
 }
 }
 \examples{

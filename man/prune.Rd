@@ -24,7 +24,9 @@ prune(x, ...)
 \item{x}{An object of class \code{tna} or \code{group_tna}}
 
 \item{...}{Arguments passed to \code{\link[=bootstrap]{bootstrap()}} when
-using \code{method = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.}
+using \code{method = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.
+Method-specific arguments supplied for another method are ignored with a
+warning instead of being silently discarded.}
 
 \item{method}{A \code{character} string describing the pruning method.
 The available options are \code{"threshold"}, \code{"lowest"}, \code{"bootstrap"} and
@@ -43,7 +45,9 @@ considered for removal. The default is \code{0.05}.}
 disparity filter. Defaults to \code{0.5}.}
 
 \item{boot}{A \code{tna_bootstrap} object to be used for pruning with method
-\code{"boot"}. The method argument is ignored if this argument is supplied.}
+\code{"bootstrap"}. Supplying a non-\code{NULL} value selects bootstrap pruning even
+if \code{method} is omitted. A warning is issued if it conflicts with an
+explicitly supplied \code{method}.}
 }
 \value{
 A pruned \code{tna} or \code{group_tna} object. Details on the pruning can be

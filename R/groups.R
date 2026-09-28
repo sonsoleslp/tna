@@ -124,8 +124,8 @@ group_model.default <- function(x, group, type = "relative",
   # TODO remove workaround if TraMineR is fixed
   vals <- ifelse_(
     inherits(x, "stslist"),
-    sort(unique(unlist(x[, which(names(x) %in% cols)]))),
-    vals <- sort(unique(unlist(x[, cols])))
+    sort_states(unlist(x[, which(names(x) %in% cols)])),
+    vals <- sort_states(unlist(x[, cols]))
   )
   alphabet <- ifelse_(
     inherits(x, "stslist"),

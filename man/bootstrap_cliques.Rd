@@ -5,7 +5,15 @@
 \alias{bootstrap_cliques.tna}
 \title{Bootstrap Cliques of Transition Networks from Sequence Data}
 \usage{
-bootstrap_cliques(x, size, threshold, iter, level, consistency_range)
+bootstrap_cliques(
+  x,
+  size,
+  threshold,
+  iter,
+  level,
+  consistency_range,
+  seed = NULL
+)
 
 \method{bootstrap_cliques}{tna}(
   x,
@@ -13,7 +21,8 @@ bootstrap_cliques(x, size, threshold, iter, level, consistency_range)
   threshold = 0,
   iter = 1000,
   level = 0.05,
-  consistency_range = c(0.75, 1.25)
+  consistency_range = c(0.75, 1.25),
+  seed = NULL
 )
 }
 \arguments{
@@ -37,6 +46,9 @@ the edge weights may deviate (multiplicatively) from their observed values
 (below and above) before they are considered insignificant. The default is
 \code{c(0.75, 1.25)} which corresponds to a symmetric 25\% deviation range. Used
 only when \code{method = "stability"}.}
+
+\item{seed}{A single \code{numeric} random seed for reproducible resampling, or
+\code{NULL} (the default) to use the current RNG state.}
 }
 \value{
 A \code{data.frame} (also of class \code{tna_bootstrap_cliques}) with

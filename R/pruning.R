@@ -38,9 +38,13 @@ prune <- function(x, ...) {
 #' @param level A `numeric` value representing the significance level for the
 #' disparity filter. Defaults to `0.5`.
 #' @param boot A `tna_bootstrap` object to be used for pruning with method
-#' `"boot"`. The method argument is ignored if this argument is supplied.
+#' `"bootstrap"`. Supplying a non-`NULL` value selects bootstrap pruning even
+#' if `method` is omitted. A warning is issued if it conflicts with an
+#' explicitly supplied `method`.
 #' @param ... Arguments passed to [bootstrap()] when
 #' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
+#' Method-specific arguments supplied for another method are ignored with a
+#' warning instead of being silently discarded.
 #' @return A pruned `tna` or `group_tna` object. Details on the pruning can be
 #' viewed with [pruning_details()]. The original model can be restored with
 #' [deprune()].
@@ -54,13 +58,62 @@ prune.tna <- function(x, method = "threshold", threshold = 0.1, lowest = 0.05,
                       level = 0.5, boot = NULL, ...) {
   check_missing(x)
   check_class(x, "tna")
+  supplied <- c(
+    threshold = !missing(threshold),
+    lowest = !missing(lowest),
+    level = !missing(level)
+  )
+  method_supplied <- !missing(method)
+  boot_supplied <- !missing(boot) && !is.null(boot)
   method <- check_match(
     method,
     c("threshold", "lowest", "bootstrap", "disparity")
   )
-  check_values(threshold, type = "numeric")
-  check_range(lowest, lower = 0, upper = 1)
-  check_range(level, lower = 0, upper = 1)
+  if (boot_supplied) {
+    if (method_supplied && method != "bootstrap") {
+      warning_(
+        c(
+          "Argument {.arg method} is ignored when {.arg boot} is supplied.",
+          `i` = "Using bootstrap pruning."
+        )
+      )
+    }
+    method <- "bootstrap"
+  }
+  active_argument <- switch(
+    method,
+    threshold = "threshold",
+    lowest = "lowest",
+    disparity = "level",
+    bootstrap = character(0L)
+  )
+  inactive <- names(supplied)[supplied & names(supplied) != active_argument]
+  expected_methods <- c(
+    threshold = "threshold",
+    lowest = "lowest",
+    level = "disparity"
+  )
+  for (arg in inactive) {
+    warning_(
+      c(
+        "Argument {.arg {arg}} is ignored for pruning method {.val {method}}.",
+        `i` = "Use {.code method = \"{expected_methods[[arg]]}\"} to activate it."
+      )
+    )
+  }
+  if (length(list(...)) > 0L && method != "bootstrap") {
+    warning_(
+      "Additional arguments in {.arg ...} are ignored unless
+       {.code method = \"bootstrap\"}."
+    )
+  }
+  switch(
+    method,
+    threshold = check_values(threshold, type = "numeric"),
+    lowest = check_range(lowest, lower = 0, upper = 1),
+    disparity = check_range(level, lower = 0, upper = 1),
+    bootstrap = if (!is.null(boot)) check_class(boot, "tna_bootstrap")
+  )
   stopifnot_(
     is.null(attr(x, "pruning")),
     "The model has already been pruned."

@@ -69,6 +69,19 @@ test_that("group model can be summarized", {
   )
 })
 
+test_that("grouped state ordering is deterministic for mixed-case labels", {
+  data <- data.frame(
+    T1 = c("Plan", "discuss", "Review"),
+    T2 = c("discuss", "Review", "Plan"),
+    T3 = c("Review", "Plan", "discuss")
+  )
+  model <- group_model(data, group = rep("Group", nrow(data)))
+  expect_identical(
+    model[[1]]$labels,
+    c("Plan", "Review", "discuss")
+  )
+})
+
 test_that("grouped model can be constructed from tna_data objects", {
   data <- tibble::tibble(
     user = c("A", "A", "A", "B", "B", "C", "C", "C"),

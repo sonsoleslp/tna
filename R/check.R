@@ -233,11 +233,16 @@ check_weights <- function(x, type) {
 #' @noRd
 check_match <- function(x, choices, several.ok = FALSE, match_case = FALSE) {
   arg <- deparse(substitute(x))
+  match_choices <- choices
   if (!match_case) {
     x <- onlyif(is.character(x), tolower(x))
-    choices <- tolower(choices)
+    match_choices <- tolower(choices)
   }
-  x <- try_(match.arg(arg = x, choices = choices, several.ok = several.ok))
+  x <- try_(match.arg(
+    arg = x,
+    choices = match_choices,
+    several.ok = several.ok
+  ))
   n_choices <- length(choices)
   prefix <- ifelse_(several.ok, "Elements of", "Argument")
   stopifnot_(
@@ -245,6 +250,9 @@ check_match <- function(x, choices, several.ok = FALSE, match_case = FALSE) {
     "{prefix} {.arg {arg}} must be either
     {cli::qty(n_choices)} {.or {.val {choices}}}."
   )
+  if (!match_case) {
+    x <- choices[match(x, match_choices)]
+  }
   x
 }
 
