@@ -1,3 +1,8 @@
+# tna 1.3.1
+
+* Fixed `prepare_data()` emitting a dplyr grouping message when computing
+  sessions per user; the summarise now drops its grouping explicitly.
+
 # tna 1.3.0
 
 * Fixed case-insensitive argument matching to preserve canonical option names,

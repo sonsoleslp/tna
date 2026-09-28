@@ -372,7 +372,10 @@ prepare_data <- function(data, actor, time, action, order,
     stats$unique_users <- dplyr::n_distinct(long_data$.actor_group)
     stats$sessions_per_user <- long_data |>
       dplyr::group_by(.actor_group, !!rlang::sym(actor)) |>
-      dplyr::summarize(n_sessions = dplyr::n_distinct(.session_id)) |>
+      dplyr::summarize(
+        n_sessions = dplyr::n_distinct(.session_id),
+        .groups = "drop"
+      ) |>
       dplyr::arrange(dplyr::desc(n_sessions)) |>
       dplyr::select(-.actor_group)
   }

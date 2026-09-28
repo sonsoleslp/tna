@@ -675,3 +675,24 @@ test_that("invalid timezones fail", {
     "must be a valid Olson time zone"
   )
 })
+
+test_that("prepare_data with explicit sessions emits no dplyr grouping message", {
+  d <- data.frame(
+    user = rep(c("A", "B"), each = 6L),
+    course = rep(c("c1", "c2"), 6L),
+    action = rep(c("read", "write", "plan"), 4L),
+    stringsAsFactors = FALSE
+  )
+  msgs <- character(0L)
+  out <- withCallingHandlers(
+    prepare_data(d, actor = "user", action = "action", session = "course"),
+    message = function(m) {
+      msgs <<- c(msgs, conditionMessage(m))
+      invokeRestart("muffleMessage")
+    }
+  )
+  expect_false(any(grepl("Adding missing grouping variables", msgs)))
+  expect_false(dplyr::is_grouped_df(out$statistics$sessions_per_user))
+  expect_named(out$statistics$sessions_per_user, c("user", "n_sessions"))
+  expect_equal(out$statistics$total_sessions, 4L)
+})
