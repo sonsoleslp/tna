@@ -33,7 +33,9 @@ of data for the split. The default is \code{0.5} for an even split.}
 \item{iter}{An \code{integer} specifying number of iterations (splits). The
 default is \code{1000}.}
 
-\item{scaling}{See \code{\link[=compare]{compare()}}.}
+\item{scaling}{A \code{character} string naming the scaling applied to the
+weights of the two halves before they are compared. The default is
+\code{"none"}. See \code{\link[=compare]{compare()}} for the options.}
 
 \item{actor}{An optional actor identifier for sequences nested in actors:
 a \code{character} string naming a non-sequence column of the data the model
@@ -43,7 +45,17 @@ half, and \code{split} is the proportion of actors. The default \code{NULL} spli
 single sequences.}
 }
 \value{
-A \code{tna_reliability} object.
+A \code{tna_reliability} object, which is a \code{list} with two tibbles:
+\itemize{
+\item \code{metrics}: One row per split and comparison metric, with the columns
+\code{category}, \code{metric}, and \code{value} (and \code{model_type} when several
+\code{types} are given).
+\item \code{summary}: One row per metric with the \code{mean}, \code{sd}, \code{median}, \code{min},
+\code{max}, and quartiles (\code{q25}, \code{q75}) of the metric over the splits.
+}
+
+\code{\link[=summary.tna_reliability]{summary.tna_reliability()}} returns all metrics with their category as
+a tidy table.
 }
 \description{
 Performs reliability analysis and outputs a concise summary of key
@@ -78,7 +90,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

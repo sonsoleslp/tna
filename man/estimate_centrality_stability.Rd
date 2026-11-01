@@ -147,8 +147,8 @@ calculating the CS-coefficient. The default is 0.7.}
 \item{certainty}{A \code{numeric} value specifying the desired level of certainty
 for the CS-coefficient. Default is 0.95.}
 
-\item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed
-Defaults to \code{FALSE}}
+\item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is
+displayed. Defaults to \code{FALSE}.}
 
 \item{detailed}{Deprecated. This argument is ignored and will be removed in
 a future version.}
@@ -173,8 +173,13 @@ elements:
 \item \code{cs_coefficient}: The centrality stability (CS) coefficient
 of the measure.
 \item \code{correlations}: A \code{matrix} of correlations between the original
-centrality and the resampled centralities for each drop proportion.
+centrality and the resampled centralities, with one row per resample
+(\code{iter} rows) and one column per drop proportion.
 }
+
+The drop proportions and the correlation threshold are stored in the
+attributes \code{drop_prop} and \code{threshold}. Use \code{\link[=summary.tna_stability]{summary.tna_stability()}} for
+the CS-coefficients as a table.
 
 If \code{x} is a \code{group_tna} object, a \code{group_tna_stability} object is returned
 instead, which is a \code{list} of \code{tna_stability} objects.
@@ -212,7 +217,7 @@ subtitle.
 \examples{
 # A small subset and few iterations
 estimate_cs(
-  tna(group_regulation[1:200, ]),
+  tna(head(group_regulation, 200)),
   drop_prop = c(0.3, 0.6),
   measures = "InStrength",
   iter = 5
@@ -263,7 +268,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

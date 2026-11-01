@@ -94,7 +94,7 @@ tna_by_session <- tna(by_session)
 plot(tna_by_session)
 ```
 
-If we want to customize the time gap that marks the start of a new sequence, we can do so by customizing the `time_threshold` argument (in minutes). 
+If we want to customize the time gap that marks the start of a new sequence, we can do so by customizing the `time_threshold` argument (in seconds). The threshold decides what counts as one episode of work: a shorter threshold splits the activity of a user into more and shorter sessions, so it should match the pause after which a new episode plausibly begins in the setting studied. 
 ```{r}
 by_session_custom <- prepare_data(
   df, actor = "user", time = "timestamp", 

@@ -55,7 +55,9 @@ returned in \code{wide} or \code{long} format.}
 \item{...}{Ignored.}
 }
 \value{
-A \code{data.frame} of the simulated sequence data.
+A \code{data.frame} of the simulated sequence data, as for
+\code{\link[=simulate.tna]{simulate.tna()}}, with the group of each sequence in the first column
+\code{group}.
 }
 \description{
 Simulate Data from a Group Transition Network Analysis Model

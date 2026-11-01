@@ -59,15 +59,24 @@ distinct permutations to reach \code{level}. Cannot be combined with
 }
 \value{
 A \code{tna_permutation} object which is a \code{list} with two elements:
-\code{edges} and \code{centralities}, both containing the following elements:
+\code{edges} and \code{centralities} (\code{NULL} when \code{measures} is empty). Both contain
+the following elements:
 \itemize{
 \item \code{stats}: A \code{data.frame} of original differences, effect sizes, and
-estimated p-values for each edge or centrality measure. The effect size
-is computed as the observed difference divided by the standard deviation
-of the differences of the permuted samples.
-\item \code{diffs_true}: A \code{matrix} of differences in the data.
-\item \code{diffs_sig}: A \code{matrix} showing the significant differences.
+estimated p-values, with one row per edge (columns \code{edge_name},
+\code{diff_true}, \code{effect_size}, \code{p_value}) or per state and centrality
+measure (columns \code{state}, \code{centrality}, \code{diff_true}, \code{effect_size},
+\code{p_value}). The effect size is the observed difference divided by the
+standard deviation of the differences of the permuted samples, and
+\code{NA} when the permuted differences do not vary.
+\item \code{diffs_true}: The differences in the data: a \code{matrix} for the edges,
+and a \code{data.frame} with one row per state and one column per measure
+for the centralities.
+\item \code{diffs_sig}: The same as \code{diffs_true} with the non-significant
+differences set to zero.
 }
+
+Use \code{\link[=summary.tna_permutation]{summary.tna_permutation()}} for the results as a tidy table.
 }
 \description{
 This function compares two networks built from sequence data using
@@ -77,8 +86,8 @@ performing permutation tests. It returns the differences in transition
 probabilities, effect sizes, estimated p-values, and confidence intervals.
 }
 \examples{
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 # Small number of iterations for CRAN
 permutation_test(model_x, model_y, iter = 20)
 
@@ -109,7 +118,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

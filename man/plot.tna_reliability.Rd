@@ -56,7 +56,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

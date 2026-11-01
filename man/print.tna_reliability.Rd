@@ -9,7 +9,9 @@
 \arguments{
 \item{x}{A \code{tna_reliability} object.}
 
-\item{summary_metrics}{A \code{character} vector of metrics to display.}
+\item{summary_metrics}{A \code{character} vector of metrics to display. The
+default is \code{"Mean Abs. Diff."}, \code{"Median Abs. Diff."}, \code{"Pearson"}, and
+\code{"Bray-Curtis"}. See \code{\link[=summary.tna_reliability]{summary.tna_reliability()}} for all metrics.}
 
 \item{...}{Arguments passed to the generic \code{print} method.}
 }
@@ -49,7 +51,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_stability}()},

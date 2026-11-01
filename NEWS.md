@@ -1,3 +1,28 @@
+# tna 1.5.3
+
+* Documentation revision. The help pages describe what the functions
+  return as they do now: `summary()` of a model (a table of 13 metrics, not
+  a list), `communities()`, `cliques()`, `compare()`, `compare_sequences()`
+  (the default `sub` is `1:5`), `permutation_test()`, `bootstrap()` (with
+  its `model` element), `reliability()`, `prepare_data()`, `import_data()`,
+  `import_onehot()`, `simulate()`, `plot_compare()`, and `pruning_details()`.
+  The default of `na.rm` in `group_model()` is `TRUE`, as in the code, and
+  a missing `group` is an error. `prune()` documents its four methods,
+  including that only `"threshold"` and `"lowest"` keep the network weakly
+  connected, and `reprune()` has its own help page.
+* Examples no longer reach into result objects with `$` or subset the data
+  with brackets; `print(<tna_data>)` examples use the `data` argument
+  (they used `which`, which was ignored). `centralities()`, `prune()`, and
+  `cluster_sequences()` cite the methods they implement.
+* Vignettes and articles: the tables of the getting-started vignette, the
+  grouped-sequences vignette, and the README use `print()` and `summary()`
+  instead of `$weights`, `$inits`, and `$centralities$stats`; the clusters
+  are built with `group_tna(<clustering>)`; `bootstrap()` calls no longer
+  pass a `threshold` that the default method ignores; the time threshold of
+  `prepare_data()` is in seconds; the frequency and attention articles
+  restore their `options()`, and the frequency article compares the scaled
+  weights with `compare()`.
+
 # tna 1.5.2
 
 * `summary()` of a permutation test returns the centrality results with

@@ -10,8 +10,10 @@
 #'
 #' @export
 #' @family comparison
-#' @param x A `tna` object or a `matrix` of weights.
-#' @param y A `tna` object or a `matrix` of weights.
+#' @param x A `tna` object or a `matrix` of weights. A `matrix` must have
+#'   the state names as row and column names.
+#' @param y A `tna` object or a `matrix` of weights, with the same states as
+#'   `x`.
 #' @param scaling A  `character` string naming a scaling method to
 #' apply to the weights before comparing them. The supported options are:
 #'
@@ -45,28 +47,33 @@
 #' * `matrices`: A `list` containing the scaled matrices of the input `tna`
 #'   objects or the scaled inputs themselves in the case of matrices.
 #' * `difference_matrix`: A `matrix` of differences `x - y`.
-#' * `edge_metrics`: A `data.frame` of edge-level metrics about the differences.
-#' * `summary_metrics`: A `data.frame` of summary metrics of the differences
-#'   across all edges.
-#' * `network_metrics`: A `data.frame` of network metrics for both `x` and `y`.
-#' * `centrality_differences`: A `data.frame` of differences in centrality
-#'   measures computes from `x` and `y`.
-#' * `centrality_correlations`: A `numeric` vector of correlations of the
-#'   centrality measures between `x` and `y`.
+#' * `edge_metrics`: A `data.frame` with one row per pair of states (columns
+#'   `source` and `target`), the weights `weight_x` and `weight_y`, and
+#'   edge-level metrics of their difference.
+#' * `summary_metrics`: A `data.frame` with one row per summary metric of the
+#'   differences across all edges, with the columns `category`, `metric`,
+#'   and `value`.
+#' * `network_metrics`: A `data.frame` with one row per network metric and
+#'   the columns `metric`, `x`, and `y`.
+#' * `centrality_differences`: A `data.frame` with one row per state and
+#'   centrality measure, with the columns `state`, `centrality`, `x`, `y`,
+#'   and `difference`. Only present when `measures` is not empty.
+#' * `centrality_correlations`: A `data.frame` with one row per centrality
+#'   measure and the correlation of the measure between `x` and `y`. Only
+#'   present when `measures` is not empty.
 #'
 #' @examples
 #' # Comparing TNA models
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
+#' model_x <- tna(head(group_regulation, 200))
+#' model_y <- tna(tail(group_regulation, 200))
 #' comp1 <- compare(model_x, model_y)
 #'
-#' # Comparing matrices
-#' mat_x <- model_x$weights
-#' mat_y <- model_y$weights
+#' # Comparing weight matrices (with the states as row and column names)
+#' states <- c("A", "B")
+#' mat_x <- matrix(c(0.6, 0.3, 0.4, 0.7), 2, 2, dimnames = list(states, states))
+#' mat_y <- matrix(c(0.5, 0.2, 0.5, 0.8), 2, 2, dimnames = list(states, states))
 #' comp2 <- compare(mat_x, mat_y)
-#'
-#' # Comparing a matrix to a TNA model
-#' comp3 <- compare(mat_x, model_y)
+#' print(comp2)
 #'
 compare <- function(x, ...) {
   UseMethod("compare")
@@ -92,11 +99,11 @@ compare.matrix <- function(x, y, scaling = "none", measures = character(0),
 #' @family comparison
 #' @param x A `group_tna` object.
 #' @param i An `integer` index or the name of the principal cluster as a
-#' `character` string.
+#' `character` string. The default is the first cluster.
 #' @param j An `integer` index or the name of the secondary cluster as a
-#' `character` string.
+#' `character` string. The default is the second cluster.
 #' @inheritParams compare
-#' @param ... Additional arguments passed to [compare.tna()].
+#' @param ... Ignored.
 #' @return A `tna_comparison` object. See [compare.tna()] for details.
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -409,7 +416,8 @@ rv_coefficient <- function(x, y) {
 #'   the column name of the data that defines the group when `x` is a wide
 #'   format `data.frame` or a `tna_data` object.
 #' @param sub An `integer` vector of pattern lengths to analyze.
-#'   The default is `2:5`.
+#'   The default is `1:5` (patterns of length 1 are the states themselves),
+#'   or up to the number of time points when the sequences are shorter.
 #' @param min_freq An `integer` giving the minimum number of times that a
 #'   specific pattern has to be observed in each group to be included in the
 #'   analysis. The default is `5`.
@@ -432,28 +440,22 @@ rv_coefficient <- function(x, y) {
 #'   (Good, 2005). The default `NULL` permutes single sequences.
 #' @param ... Not used. A misspelled or unknown argument is an error.
 #' @return A `tna_sequence_comparison` object, which is a `data.frame` with
-#'   columns giving the names of the patterns, pattern frequencies, pattern
-#'   proportions (within patterns of the same length), effect sizes,
-#'   and p-values of the tests.
+#'   one row per pattern that passes `min_freq`, and the columns `pattern`
+#'   (the states of the pattern joined by `->`), `freq_<group>` (the count
+#'   of the pattern in each group), `prop_<group>` (its proportion among the
+#'   patterns of the same length in the group), and, when `test = TRUE`,
+#'   `effect_size` and `p_value` (adjusted with `adjust`).
 #'
 #' @examples
-#' # A small subset without the permutation test
-#' idx <- c(1:100, 1001:1100)
+#' # A small subset (100 high and 100 low achievers) without the test
+#' sequences <- rbind(head(group_regulation, 100), tail(group_regulation, 100))
 #' group <- rep(c("High", "Low"), each = 100)
-#' compare_sequences(group_regulation[idx, ], group, test = FALSE)
+#' compare_sequences(sequences, group, test = FALSE)
 #' \donttest{
-#' # Use a subset to keep the example fast.
-#' idx <- c(1:500, 1001:1500)
-#' group <- c(rep("High", 500), rep("Low", 500))
-#' comp <- compare_sequences(group_regulation[idx, ], group)
-#'
-#' # With permutation test (small number of iterations for CRAN)
-#' comp_test <- compare_sequences(
-#'   group_regulation[idx, ],
-#'   group,
-#'   test = TRUE,
-#'   iter = 5
-#' )
+#' # With the permutation test (small number of iterations for CRAN)
+#' sequences <- rbind(head(group_regulation, 500), tail(group_regulation, 500))
+#' group <- rep(c("High", "Low"), each = 500)
+#' compare_sequences(sequences, group, sub = 2:3, iter = 20)
 #' }
 #'
 #' @export

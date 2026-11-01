@@ -14,7 +14,9 @@
 #'   of data for the split. The default is `0.5` for an even split.
 #' @param iter An `integer` specifying number of iterations (splits). The
 #'   default is `1000`.
-#' @param scaling See [compare()].
+#' @param scaling A `character` string naming the scaling applied to the
+#'   weights of the two halves before they are compared. The default is
+#'   `"none"`. See [compare()] for the options.
 #' @param actor An optional actor identifier for sequences nested in actors:
 #'   a `character` string naming a non-sequence column of the data the model
 #'   was built from, or a vector with one identifier per sequence. When given,
@@ -22,7 +24,16 @@
 #'   half, and `split` is the proportion of actors. The default `NULL` splits
 #'   single sequences.
 #' @param ... Ignored.
-#' @return A `tna_reliability` object.
+#' @return A `tna_reliability` object, which is a `list` with two tibbles:
+#'
+#'   * `metrics`: One row per split and comparison metric, with the columns
+#'     `category`, `metric`, and `value` (and `model_type` when several
+#'     `types` are given).
+#'   * `summary`: One row per metric with the `mean`, `sd`, `median`, `min`,
+#'     `max`, and quartiles (`q25`, `q75`) of the metric over the splits.
+#'
+#'   [summary.tna_reliability()] returns all metrics with their category as
+#'   a tidy table.
 #' @examples
 #' # Small number of iterations for CRAN
 #' model <- tna(engagement)

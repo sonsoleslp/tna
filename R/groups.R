@@ -16,18 +16,18 @@
 #'   row of the data/sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
-#'   format `data.frame` or a `tna_data` object. If not provided, each row of
-#'   the data forms a cluster. Not used when `x` is a mixture Markov model
-#'   or a clustering result.
+#'   format `data.frame` or a `tna_data` object. Required for sequence data
+#'   (an error is raised when it is missing). Not used when `x` is a mixture
+#'   Markov model or a clustering result.
 #' @param cols An `expression` giving a tidy selection of the
 #'   columns that should be considered as sequence data.
 #'   The default is all columns. The columns are
 #'   automatically determined for `tna_data` objects. The `group` column
 #'   is automatically removed from these columns if provided.
 #' @param na.rm A `logical` value that determines if observations with `NA`
-#'   value in `group` be removed. If `FALSE`, an additional category for `NA`
-#'   values will be added. The default is `FALSE` and a warning is issued
-#'   if `NA` values are detected.
+#'   value in `group` are removed. The default is `TRUE`: the observations
+#'   are removed, with a warning. If `FALSE`, an additional category for `NA`
+#'   values is added.
 #' @param groupwise A `logical` value that indicates whether scaling methods
 #'   should be applied by group (`TRUE`) or globally (`FALSE`, the default).
 #'   A grouped model with scaled edge weights (either way) and its networks
@@ -37,8 +37,9 @@
 #'   every group, so a resample of one group cannot reproduce it.
 #' @inheritParams build_model
 #' @param ... Ignored.
-#' @return An object of class `group_tna` which is a `list` containing one
-#'   element per cluster. Each element is a `tna` object.
+#' @return An object of class `group_tna` which is a named `list` containing
+#'   one element per group (cluster). Each element is a `tna` object (see
+#'   [build_model()]).
 #'
 #' @examples
 #' # Manually specified groups
@@ -313,7 +314,8 @@ group_atna <- function(x, ...) {
 #' @family clusters
 #' @param x A `group_tna` object.
 #' @param new_names A `character` vector containing one name per cluster.
-#' @return A renamed `group_tna` object.
+#' @return The `group_tna` object `x` with its elements (groups) renamed to
+#'   `new_names`.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' model_renamed <- rename_groups(model, c("A", "B", "C"))

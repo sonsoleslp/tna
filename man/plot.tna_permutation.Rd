@@ -15,10 +15,10 @@
 the difference in edge weights is positive. See \code{\link[cograph:splot]{cograph::splot()}}.}
 
 \item{negCol}{Color for plotting edges when
-the the difference in edge weights is negative. See \code{\link[cograph:splot]{cograph::splot()}}.}
+the difference in edge weights is negative. See \code{\link[cograph:splot]{cograph::splot()}}.}
 
-\item{edge_labels}{Boolean indicating whether edge labels should be
-ploted. Defaults to \code{TRUE}}
+\item{edge_labels}{A \code{logical} value indicating whether edge labels should
+be plotted. Defaults to \code{TRUE}.}
 
 \item{...}{Additional arguments passed to the permutation renderer of
 \code{\link[cograph:splot]{cograph::splot()}}. In addition to the usual styling arguments, this
@@ -31,14 +31,14 @@ sizes), and the styling of non-significant edges via \code{edge_nonsig_color},
 \value{
 A \code{cograph_network} object containing the significant edges
 (and, when \code{show_nonsig = TRUE}, the non-significant edges) according to
-the permutation test.
+the permutation test, invisibly.
 }
 \description{
 Plot the Significant Differences from a Permutation Test
 }
 \examples{
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 # Small number of iterations for CRAN
 perm <- permutation_test(model_x, model_y, iter = 20)
 plot(perm)
@@ -66,7 +66,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

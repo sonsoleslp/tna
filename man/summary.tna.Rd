@@ -12,22 +12,9 @@
 \item{...}{Ignored.}
 }
 \value{
-A named \code{list} containing the following network metrics (invisibly):
-\itemize{
-\item \code{node_count}: The total number of nodes.
-\item \code{edge_count}: The total number of edges.
-\item \code{network_Density}: The density of the network.
-\item \code{mean_distance}: The mean shortest path length.
-\item \code{mean_out_strength}: The mean out-strength of nodes.
-\item \code{sd_out_strength}: The standard deviation of out-strength.
-\item \code{mean_in_strength}: The mean in-strength of nodes.
-\item \code{sd_in_strength}: The standard deviation of in-strength.
-\item \code{mean_out_degree}: The mean out-degree of nodes.
-\item \code{sd_out_degree}: The standard deviation of out-degree.
-\item \code{centralization_out_degree}: The centralization of out-degree.
-\item \code{centralization_in_degree}: The centralization of in-degree.
-\item \code{reciprocity}: The reciprocity of the network.
-}
+A \code{summary.tna} object, which is a tibble with one row per metric
+(13 rows) and the columns \code{metric} (the name of the metric, for example
+\code{"Node Count"} or \code{"Reciprocity"}) and \code{value}.
 }
 \description{
 This function calculates a variety of network metrics for a \code{tna} object.
@@ -52,8 +39,6 @@ centralized the network is based on the degrees of nodes.
 \item Reciprocity: The proportion of edges that are reciprocated
 (i.e., mutual edges between nodes).
 }
-
-A summary of the metrics is printed to the console.
 }
 \examples{
 model <- tna(group_regulation)

@@ -45,7 +45,8 @@ the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object.}
 
 \item{sub}{An \code{integer} vector of pattern lengths to analyze.
-The default is \code{2:5}.}
+The default is \code{1:5} (patterns of length 1 are the states themselves),
+or up to the number of time points when the sequences are shorter.}
 
 \item{min_freq}{An \code{integer} giving the minimum number of times that a
 specific pattern has to be observed in each group to be included in the
@@ -74,9 +75,11 @@ the sequences of actors present in several groups within the actor
 }
 \value{
 A \code{tna_sequence_comparison} object, which is a \code{data.frame} with
-columns giving the names of the patterns, pattern frequencies, pattern
-proportions (within patterns of the same length), effect sizes,
-and p-values of the tests.
+one row per pattern that passes \code{min_freq}, and the columns \code{pattern}
+(the states of the pattern joined by \verb{->}), \verb{freq_<group>} (the count
+of the pattern in each group), \verb{prop_<group>} (its proportion among the
+patterns of the same length in the group), and, when \code{test = TRUE},
+\code{effect_size} and \code{p_value} (adjusted with \code{adjust}).
 }
 \description{
 Performs comprehensive sequence comparison analysis between groups. All
@@ -89,23 +92,15 @@ permutation samples divided by their standard deviation times square root of
 the number of observations.
 }
 \examples{
-# A small subset without the permutation test
-idx <- c(1:100, 1001:1100)
+# A small subset (100 high and 100 low achievers) without the test
+sequences <- rbind(head(group_regulation, 100), tail(group_regulation, 100))
 group <- rep(c("High", "Low"), each = 100)
-compare_sequences(group_regulation[idx, ], group, test = FALSE)
+compare_sequences(sequences, group, test = FALSE)
 \donttest{
-# Use a subset to keep the example fast.
-idx <- c(1:500, 1001:1500)
-group <- c(rep("High", 500), rep("Low", 500))
-comp <- compare_sequences(group_regulation[idx, ], group)
-
-# With permutation test (small number of iterations for CRAN)
-comp_test <- compare_sequences(
-  group_regulation[idx, ],
-  group,
-  test = TRUE,
-  iter = 5
-)
+# With the permutation test (small number of iterations for CRAN)
+sequences <- rbind(head(group_regulation, 500), tail(group_regulation, 500))
+group <- rep(c("High", "Low"), each = 500)
+compare_sequences(sequences, group, sub = 2:3, iter = 20)
 }
 
 }

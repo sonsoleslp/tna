@@ -143,7 +143,8 @@ igraph::as.igraph
 #' @inheritParams igraph::graph_from_adjacency_matrix
 #' @param x A `tna` object.
 #' @param ... Ignored.
-#' @return An `igraph` object.
+#' @return An `igraph` object with one vertex per state and one weighted
+#'   edge per non-zero element of the weight matrix of `x`.
 #' @examples
 #' as.igraph(tna(group_regulation))
 as.igraph.tna <- function(x, mode = "directed", ...) {
@@ -163,7 +164,8 @@ as.igraph.tna <- function(x, mode = "directed", ...) {
 #' @inheritParams igraph::graph_from_adjacency_matrix
 #' @param x A `matrix` of edge weights.
 #' @param ... Ignored.
-#' @return An `igraph` object.
+#' @return An `igraph` object with one vertex per row of `x` and one
+#'   weighted edge per non-zero element of `x`.
 #' @examples
 #' weights <- matrix(c(0, 0.6, 0.4, 0.5, 0, 0.5, 0.2, 0.8, 0), 3, 3)
 #' as.igraph(weights)
@@ -183,7 +185,8 @@ as.igraph.matrix <- function(x, mode = "directed", ...) {
 #' @family helpers
 #' @inheritParams igraph::as.igraph
 #' @param which The number or name of the group.
-#' @return An `igraph` object.
+#' @return An `igraph` object of the network of the group `which` (see
+#'   [as.igraph.tna()]).
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' as.igraph(model, which = 1)

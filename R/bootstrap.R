@@ -58,7 +58,7 @@
 #' sequences.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
-#
+#'
 #'   * `weights_orig`: The original edge weight `matrix`.
 #'   * `weights_sig`: The `matrix` of significant transitions
 #'     (those with estimated p-values below the significance level).
@@ -73,9 +73,12 @@
 #'   * `ci_upper`: The upper bound `matrix` of the bootstrap confidence
 #'     intervals for the edge weights.
 #'   * `p_values`: The `matrix` of estimated p-values for the edge weights.
-#'   * `summary`: A `data.frame` summarizing the edges, their weights,
-#'     p-values, statistical significance, consistency ranges, and
-#'     confidence intervals.
+#'   * `summary`: A `data.frame` with one row per edge with a positive
+#'     weight and the columns `from`, `to`, `weight`, `p_value`, `sig`,
+#'     `cr_lower`, `cr_upper`, `ci_lower`, and `ci_upper`. The same table is
+#'     returned by [summary.tna_bootstrap()].
+#'   * `model`: The `tna` model pruned to the significant edges (see
+#'     [prune()] with `method = "bootstrap"`).
 #'
 #' If `x` is a `group_tna` object, the output is a `group_tna_bootstrap`
 #' object, which is a `list` of `tna_bootstrap` objects.

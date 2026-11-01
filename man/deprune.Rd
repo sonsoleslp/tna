@@ -3,15 +3,12 @@
 \name{deprune}
 \alias{deprune}
 \alias{deprune.tna}
-\alias{reprune.tna}
 \alias{deprune.group_tna}
 \title{Restore a Pruned Transition Network Analysis Model}
 \usage{
 deprune(x, ...)
 
 \method{deprune}{tna}(x, ...)
-
-\method{reprune}{tna}(x, ...)
 
 \method{deprune}{group_tna}(x, ...)
 }
@@ -54,7 +51,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

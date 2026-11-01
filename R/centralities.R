@@ -56,16 +56,31 @@
 #' @param measures A `character` vector indicating which centrality
 #'   measures should be computed. If missing, all available measures are
 #'   returned. See 'Details' for the available measures.
-#' @return A `tna_centralities` object which is a tibble (`tbl_df`).
-#'   containing centrality measures for each state.
+#' @return A `tna_centralities` object, which is a tibble (`tbl_df`) with
+#'   one row per state, the column `state`, and one `numeric` column per
+#'   requested measure (in the order listed in 'Details'). For a `group_tna`
+#'   object, a `group_tna_centralities` object: the same table for every
+#'   group stacked, with the group name in the first column `group`.
+#' @references
+#' Banerjee, A., Chandrasekhar, A. G., Duflo, E., & Jackson, M. O. (2014).
+#' Gossip: Identifying central individuals in a social network.
+#' Working Paper.
+#'
+#' Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016). Two
+#' betweenness centrality measures based on randomized shortest paths.
+#' *Scientific Reports*, 6, 19668. \doi{10.1038/srep19668}
+#'
+#' Zhang, B., & Horvath, S. (2005). A general framework for weighted gene
+#' co-expression network analysis. *Statistical Applications in Genetics and
+#' Molecular Biology*, 4(1), Article 17. \doi{10.2202/1544-6115.1128}
 #' @examples
 #' model <- tna(group_regulation)
 #'
-#' # Centrality measures including loops in the network
+#' # Centrality measures excluding loops in the network (the default)
 #' centralities(model)
 #'
-#' # Centrality measures excluding loops in the network
-#' centralities(model, loops = FALSE)
+#' # Centrality measures including loops in the network
+#' centralities(model, loops = TRUE)
 #'
 #' # Centrality measures normalized
 #' centralities(model, normalize = TRUE)
@@ -233,8 +248,8 @@ estimate_centrality_stability <- estimate_cs
 #'   calculating the CS-coefficient. The default is 0.7.
 #' @param certainty A `numeric` value specifying the desired level of certainty
 #'   for the CS-coefficient. Default is 0.95.
-#' @param progressbar A `logical` value. If `TRUE`, a progress bar is displayed
-#'   Defaults to `FALSE`
+#' @param progressbar A `logical` value. If `TRUE`, a progress bar is
+#'   displayed. Defaults to `FALSE`.
 #' @param detailed Deprecated. This argument is ignored and will be removed in 
 #'   a future version.
 #' @param actor An optional actor identifier for sequences nested in actors:
@@ -254,7 +269,12 @@ estimate_centrality_stability <- estimate_cs
 #' * `cs_coefficient`: The centrality stability (CS) coefficient
 #'   of the measure.
 #' * `correlations`: A `matrix` of correlations between the original
-#'   centrality and the resampled centralities for each drop proportion.
+#'   centrality and the resampled centralities, with one row per resample
+#'   (`iter` rows) and one column per drop proportion.
+#'
+#' The drop proportions and the correlation threshold are stored in the
+#' attributes `drop_prop` and `threshold`. Use [summary.tna_stability()] for
+#' the CS-coefficients as a table.
 #'
 #' If `x` is a `group_tna` object, a `group_tna_stability` object is returned
 #' instead, which is a `list` of `tna_stability` objects.
@@ -262,7 +282,7 @@ estimate_centrality_stability <- estimate_cs
 #' @examples
 #' # A small subset and few iterations
 #' estimate_cs(
-#'   tna(group_regulation[1:200, ]),
+#'   tna(head(group_regulation, 200)),
 #'   drop_prop = c(0.3, 0.6),
 #'   measures = "InStrength",
 #'   iter = 5

@@ -26,23 +26,9 @@
 #'   * Reciprocity: The proportion of edges that are reciprocated
 #'     (i.e., mutual edges between nodes).
 #'
-#' A summary of the metrics is printed to the console.
-#'
-#' @return A named `list` containing the following network metrics (invisibly):
-#'
-#'   * `node_count`: The total number of nodes.
-#'   * `edge_count`: The total number of edges.
-#'   * `network_Density`: The density of the network.
-#'   * `mean_distance`: The mean shortest path length.
-#'   * `mean_out_strength`: The mean out-strength of nodes.
-#'   * `sd_out_strength`: The standard deviation of out-strength.
-#'   * `mean_in_strength`: The mean in-strength of nodes.
-#'   * `sd_in_strength`: The standard deviation of in-strength.
-#'   * `mean_out_degree`: The mean out-degree of nodes.
-#'   * `sd_out_degree`: The standard deviation of out-degree.
-#'   * `centralization_out_degree`: The centralization of out-degree.
-#'   * `centralization_in_degree`: The centralization of in-degree.
-#'   * `reciprocity`: The reciprocity of the network.
+#' @return A `summary.tna` object, which is a tibble with one row per metric
+#'   (13 rows) and the columns `metric` (the name of the metric, for example
+#'   `"Node Count"` or `"Reciprocity"`) and `value`.
 #'
 #' @examples
 #' model <- tna(group_regulation)
@@ -101,8 +87,11 @@ summary.tna <- function(object, ...) {
 #' @family validation
 #' @param object A `tna_bootstrap` object.
 #' @param ... Ignored.
-#' @return A `summary.tna_bootstrap` object containing the weight,
-#' estimated p-value and confidence interval of each edge.
+#' @return A `summary.tna_bootstrap` object, which is a `data.frame` with one
+#'   row per edge with a positive weight and the columns `from`, `to`,
+#'   `weight`, `p_value`, `sig` (`p_value < level`), `cr_lower`, `cr_upper`
+#'   (the consistency range), `ci_lower`, and `ci_upper` (the bootstrap
+#'   confidence interval).
 #' @examples
 #' model <- tna(group_regulation)
 #' # Small number of iterations for CRAN
@@ -120,16 +109,18 @@ summary.tna_bootstrap <- function(object, ...) {
 
 #' Calculate Summary of Network Metrics for a grouped Transition Network
 #'
-#' This function calculates a variety of network metrics for a `tna` object.
-#' It computes key metrics such as node and edge counts, network density,
-#' mean distance, strength measures, degree centrality, and reciprocity.
+#' This function calculates a variety of network metrics for each network
+#' of a `group_tna` object. It computes key metrics such as node and edge
+#' counts, network density, mean distance, strength measures, degree
+#' centrality, and reciprocity.
 #'
 #' @export
 #' @family basic
 #' @param object A `group_tna` object.
-#' @param combined A logical indicating whether the summary results should be
-#' combined into a single data frame for all clusters (defaults to `TRUE`)
-#' @param ... Ignored
+#' @param combined A `logical` value indicating whether the summary results
+#'   should be combined into a single table for all clusters. The default is
+#'   `TRUE`.
+#' @param ... Ignored.
 #' @details
 #' The function extracts the `igraph` network for each cluster and
 #' computes the following network metrics:
@@ -148,22 +139,10 @@ summary.tna_bootstrap <- function(object, ...) {
 #'   * Reciprocity: The proportion of edges that are reciprocated
 #'     (i.e., mutual edges between nodes).
 #'
-#' @return A `summary.group_tna` object which is a `list` of `list`s or a
-#' combined `data.frame`  containing the following network metrics:
-#'
-#'   * `node_count`: The total number of nodes.
-#'   * `edge_count`: The total number of edges.
-#'   * `network_Density`: The density of the network.
-#'   * `mean_distance`: The mean shortest path length.
-#'   * `mean_out_strength`: The mean out-strength of nodes.
-#'   * `sd_out_strength`: The standard deviation of out-strength.
-#'   * `mean_in_strength`: The mean in-strength of nodes.
-#'   * `sd_in_strength`: The standard deviation of in-strength.
-#'   * `mean_out_degree`: The mean out-degree of nodes.
-#'   * `sd_out_degree`: The standard deviation of out-degree.
-#'   * `centralization_out_degree`: The centralization of out-degree.
-#'   * `centralization_in_degree`: The centralization of in-degree.
-#'   * `reciprocity`: The reciprocity of the network.
+#' @return A `summary.group_tna` object. When `combined = TRUE`, a tibble
+#'   with one row per metric (see [summary.tna()]), the column `metric`, and
+#'   one column of values per cluster. When `combined = FALSE`, a named
+#'   `list` with the [summary.tna()] table of each cluster.
 #'
 #' @examples
 #' group <- c(rep("High", 1000), rep("Low", 1000))
@@ -197,8 +176,9 @@ summary.group_tna <- function(object, combined = TRUE, ...) {
 #' @family validation
 #' @param object A `group_tna_bootstrap` object.
 #' @param ... Ignored.
-#' @return A `summary.group_tna_bootstrap` object containing the weight,
-#' estimated p-value and confidence interval of each edge for each cluster.
+#' @return A `summary.group_tna_bootstrap` object, which is a `data.frame`
+#'   with the columns of [summary.tna_bootstrap()] preceded by the column
+#'   `group`: one row per cluster and edge with a positive weight.
 #' @examples
 #' model <- group_tna(engagement_mmm)
 #' # Small number of iterations for CRAN
@@ -317,7 +297,7 @@ summary.group_tna_permutation <- function(object, what = "edges",
 #' @examples
 #' # A small subset and few iterations
 #' small <- estimate_cs(
-#'   tna(group_regulation[1:200, ]),
+#'   tna(head(group_regulation, 200)),
 #'   drop_prop = c(0.3, 0.6),
 #'   measures = "InStrength",
 #'   iter = 5,

@@ -37,22 +37,31 @@
 #' `paired = TRUE`. The default `NULL` permutes single sequences.
 #' @param ... Additional arguments passed to [centralities()].
 #' @return A `tna_permutation` object which is a `list` with two elements:
-#' `edges` and `centralities`, both containing the following elements:
+#' `edges` and `centralities` (`NULL` when `measures` is empty). Both contain
+#' the following elements:
 #'
 #'   * `stats`: A `data.frame` of original differences, effect sizes, and
-#'     estimated p-values for each edge or centrality measure. The effect size
-#'     is computed as the observed difference divided by the standard deviation
-#'     of the differences of the permuted samples.
-#'   * `diffs_true`: A `matrix` of differences in the data.
-#'   * `diffs_sig`: A `matrix` showing the significant differences.
+#'     estimated p-values, with one row per edge (columns `edge_name`,
+#'     `diff_true`, `effect_size`, `p_value`) or per state and centrality
+#'     measure (columns `state`, `centrality`, `diff_true`, `effect_size`,
+#'     `p_value`). The effect size is the observed difference divided by the
+#'     standard deviation of the differences of the permuted samples, and
+#'     `NA` when the permuted differences do not vary.
+#'   * `diffs_true`: The differences in the data: a `matrix` for the edges,
+#'     and a `data.frame` with one row per state and one column per measure
+#'     for the centralities.
+#'   * `diffs_sig`: The same as `diffs_true` with the non-significant
+#'     differences set to zero.
+#'
+#' Use [summary.tna_permutation()] for the results as a tidy table.
 #'
 #' @references
 #' Good, P. (2005). *Permutation, Parametric, and Bootstrap Tests of
 #' Hypotheses* (3rd ed.). Springer.
 #'
 #' @examples
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
+#' model_x <- tna(head(group_regulation, 200))
+#' model_y <- tna(tail(group_regulation, 200))
 #' # Small number of iterations for CRAN
 #' permutation_test(model_x, model_y, iter = 20)
 #'

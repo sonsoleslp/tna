@@ -26,8 +26,9 @@ for each centrality in a descending order. The default is \code{TRUE}.}
 the horizontal axis is scaled individually in each facet. If \code{"fixed"},
 the same values are used for all axes.}
 
-\item{colors}{The colors for each node (default is the model colors
-if the \code{tna} model object is passed, otherwise \code{"black"}).}
+\item{colors}{The colors for each state. The default is the state colors
+of the model that the centralities were computed from, or \code{"black"} when
+they are not available.}
 
 \item{labels}{A \code{logical} value indicating whether to show the centrality
 numeric values. The default is \code{TRUE}.}

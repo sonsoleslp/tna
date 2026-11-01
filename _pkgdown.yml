@@ -32,6 +32,7 @@ reference:
     - tna-package
     - build_model
     - print.tna
+    - summary.tna
     - plot.tna
     - hist.tna
     - sna
@@ -62,12 +63,6 @@ reference:
     - simulate
     - simulate.tna
     - simulate.group_tna
-    - summary.tna
-    - list_random_state_pools
-    - random_group_tna
-    - random_tna
-    - random_tna_mmm 
-    - simulate
 
   - title: Centralities
     contents:
@@ -142,6 +137,7 @@ reference:
     - reliability
     - print.tna_reliability
     - plot.tna_reliability
+    - summary.tna_reliability
     - markov_order
     - print.tna_markov_order
     - summary.tna_markov_order

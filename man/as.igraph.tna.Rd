@@ -18,7 +18,8 @@ depends on that too. Possible values are: \code{directed},
 \item{...}{Ignored.}
 }
 \value{
-An \code{igraph} object.
+An \code{igraph} object with one vertex per state and one weighted
+edge per non-zero element of the weight matrix of \code{x}.
 }
 \description{
 Coerce a \code{tna} Object into an \code{igraph} Object.

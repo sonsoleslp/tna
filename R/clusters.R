@@ -28,16 +28,27 @@
 #' @param lambda A `numeric` value defining the strength of the decay when
 #'   `weighted = TRUE`. The default is `1.0`.
 #' @param ... Additional arguments passed to [stringdist::stringdist()].
-#' @return A `tna_clustering` object which is a  `list` containing:
+#' @return A `tna_clustering` object which is a `list` containing:
 #'
 #'   * `data`: The original data.
 #'   * `k`: The number of clusters.
-#'   * `assignments`: An `integer` vector of cluster assignments.
-#'   * `silhouette`: Silhouette score measuring clustering quality.
+#'   * `assignments`: An `integer` vector of cluster assignments, one per
+#'     sequence (row of `data`).
+#'   * `silhouette`: The average silhouette width of the clustering.
 #'   * `sizes`: An `integer` vector of cluster sizes.
 #'   * `method`: The clustering method used.
-#'   * `distance`: The distance matrix.
+#'   * `distance`: The dissimilarity matrix (a `dist` object).
 #'
+#'   The result can be passed to [group_model()] to build a TNA model for
+#'   each cluster.
+#' @references
+#' Kaufman, L., & Rousseeuw, P. J. (1990). *Finding Groups in Data: An
+#' Introduction to Cluster Analysis*. Wiley. \doi{10.1002/9780470316801}
+#'
+#' Rousseeuw, P. J. (1987). Silhouettes: A graphical aid to the
+#' interpretation and validation of cluster analysis. *Journal of
+#' Computational and Applied Mathematics*, 20, 53--65.
+#' \doi{10.1016/0377-0427(87)90125-7}
 #' @examples
 #' data <- data.frame(
 #'   T1 = c("A", "B", "A", "C", "A", "B"),
@@ -45,10 +56,16 @@
 #'   T3 = c("C", "C", "A", "B", "B", "C")
 #' )
 #'
-#' # PAM clustering with optimal string alignment (default)
+#' # PAM clustering with the Hamming distance (the defaults)
 #' result <- cluster_sequences(data, k = 2)
+#' print(result)
+#'
+#' # Hierarchical clustering with the optimal string alignment distance
+#' result <- cluster_sequences(data, k = 2, dissimilarity = "osa",
+#'                             method = "complete")
 #'
 #' @export
+#' @family clusters
 cluster_data <- function(data, k, dissimilarity = "hamming",
                          method = "pam", na_syms = c("*", "%"),
                          weighted = FALSE, lambda = 1.0, ...) {

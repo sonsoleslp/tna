@@ -14,7 +14,8 @@
 \item{...}{Additional arguments. None currently.}
 }
 \value{
-An \code{igraph} object.
+An \code{igraph} object of the network of the group \code{which} (see
+\code{\link[=as.igraph.tna]{as.igraph.tna()}}).
 }
 \description{
 Coerce a Specific Group from a \code{group_tna} Object into an \code{igraph} Object.

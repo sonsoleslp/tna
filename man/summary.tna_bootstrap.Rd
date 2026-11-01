@@ -12,8 +12,11 @@
 \item{...}{Ignored.}
 }
 \value{
-A \code{summary.tna_bootstrap} object containing the weight,
-estimated p-value and confidence interval of each edge.
+A \code{summary.tna_bootstrap} object, which is a \code{data.frame} with one
+row per edge with a positive weight and the columns \code{from}, \code{to},
+\code{weight}, \code{p_value}, \code{sig} (\code{p_value < level}), \code{cr_lower}, \code{cr_upper}
+(the consistency range), \code{ci_lower}, and \code{ci_upper} (the bootstrap
+confidence interval).
 }
 \description{
 Summarize Bootstrap Results
@@ -48,7 +51,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

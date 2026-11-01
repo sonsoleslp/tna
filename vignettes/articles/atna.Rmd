@@ -19,14 +19,8 @@ knitr::opts_chunk$set(
 )
 suppressPackageStartupMessages({
   library("tna")
-  library("tibble")
-  library("dplyr")
-  library("ggplot2")
 })
-options(scipen = 9999)
-options(digits = 2)
-options(max.print = 30)
-options(width = 83)
+old_options <- options(scipen = 9999, digits = 2, max.print = 30, width = 83)
 ```
 
 
@@ -149,13 +143,15 @@ In ATNA, communities can look different from what you'd find in regular TNA, bec
 Cliques are small groups of states where every state has a strong connection to every other state in the group.
 
 ```{r, fig.width=3,fig.height=1}
-layout(t(1:3)); par(mar = c(0,0,0,0))
+old_par <- par(mar = c(0, 0, 0, 0))
+layout(t(1:3))
 cliq <- cliques(model_atna, size = 2, threshold = 0.2)
 print(cliq)
 plot(cliq)
+par(old_par)
 ```
 
-The `size` argument sets the minimum clique size (2 means pairs, 3 means triangles, etc.). The `threshold` argument sets the minimum edge weight needed for two states to count as connected.
+The `size` argument sets the clique size (2 means pairs, 3 means triangles, etc.). The `threshold` argument sets the minimum edge weight needed for two states to count as connected.
 
 In ATNA, a clique means those states all have strong long-range attention toward each other. A 3-clique of {Plan, Monitor, Adapt} means that whenever any one of those three shows up, the other two tend to appear nearby (within the attention window), no matter the exact step distance.
 
@@ -168,11 +164,11 @@ Before interpreting results, check that they are stable.
 ### Bootstrap
 
 ```{r, fig.width=4, fig.height=4}
-boot <- bootstrap(model_atna, threshold = 0.05)
+boot <- bootstrap(model_atna)
 plot(boot)
 ```
 
-This resamples your sequences, rebuilds the model each time, and checks how often each edge exceeds the threshold. Edges that appear in a high percentage of bootstrap samples (say 95%+) are stable. Edges that come and go are not reliable.
+This resamples your sequences, rebuilds the model each time, and checks how often the weight of each edge stays within a consistency range around its observed value (by default 75% to 125%). Edges that stay within the range in at least 95% of the bootstrap samples (the default `level = 0.05`) are stable; the plot draws them as solid lines and the other edges as dashed lines. Edges that come and go are not reliable.
 
 ### Centrality Stability
 
@@ -192,7 +188,7 @@ This drops increasing fractions of your data and recalculates centrality each ti
 
 To compare groups (e.g., high- vs. low-achieving students), use `group_atna()`:
 
-```{r, message = F}
+```{r, message = FALSE}
 data("group_regulation_long")
 prepared <- prepare_data(
   group_regulation_long,
@@ -256,4 +252,8 @@ The plot shows the network of significant differences. Only edges that passed th
 ATNA and TNA can give different answers about which states are most central. A state might have weak immediate transitions (low importance in TNA) but strong long-range influence (high importance in ATNA). If the two methods agree on what matters, that's good evidence the finding is solid. If they disagree, the disagreement itself is informative — it tells you the state's role depends on the time scale you're looking at.
 
 ```{r, child = "../_tutorials.md"}
+```
+
+```{r, include = FALSE}
+options(old_options)
 ```

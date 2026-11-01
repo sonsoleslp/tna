@@ -34,8 +34,11 @@ measures should be computed. If missing, all available measures are
 returned. See 'Details' for the available measures.}
 }
 \value{
-A \code{tna_centralities} object which is a tibble (\code{tbl_df}).
-containing centrality measures for each state.
+A \code{tna_centralities} object, which is a tibble (\code{tbl_df}) with
+one row per state, the column \code{state}, and one \code{numeric} column per
+requested measure (in the order listed in 'Details'). For a \code{group_tna}
+object, a \code{group_tna_centralities} object: the same table for every
+group stacked, with the group name in the first column \code{group}.
 }
 \description{
 Calculates several centrality measures. See 'Details' for
@@ -84,15 +87,28 @@ cluster together.
 \examples{
 model <- tna(group_regulation)
 
-# Centrality measures including loops in the network
+# Centrality measures excluding loops in the network (the default)
 centralities(model)
 
-# Centrality measures excluding loops in the network
-centralities(model, loops = FALSE)
+# Centrality measures including loops in the network
+centralities(model, loops = TRUE)
 
 # Centrality measures normalized
 centralities(model, normalize = TRUE)
 
+}
+\references{
+Banerjee, A., Chandrasekhar, A. G., Duflo, E., & Jackson, M. O. (2014).
+Gossip: Identifying central individuals in a social network.
+Working Paper.
+
+Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016). Two
+betweenness centrality measures based on randomized shortest paths.
+\emph{Scientific Reports}, 6, 19668. \doi{10.1038/srep19668}
+
+Zhang, B., & Horvath, S. (2005). A general framework for weighted gene
+co-expression network analysis. \emph{Statistical Applications in Genetics and
+Molecular Biology}, 4(1), Article 17. \doi{10.2202/1544-6115.1128}
 }
 \seealso{
 Centrality measure functions

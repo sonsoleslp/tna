@@ -1,6 +1,6 @@
 ---
 title: "tna — R Package Documentation"
-subtitle: "v1.1.0 — Transition Network Analysis"
+subtitle: "Transition Network Analysis"
 output:
   html_document:
     toc: true
@@ -47,17 +47,17 @@ Construct a transition network analysis model from sequence data. Requires speci
 
 ```
 build_model(x, type = "relative", scaling = character(0L), cols = everything(),
-            params = list(), inits, begin_state, end_state)
+            concat = 1L, params = list(), begin_state, end_state, ...)
 ```
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `x` | `data.frame` (wide), `stslist`, `matrix`, or `tna_data` | — |
-| `type` | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"window"`, `"reverse"`, `"attention"` | `"relative"` |
+| `x` | `data.frame` (wide), `stslist`, `matrix`, `tna_data`, or `tsn` | — |
+| `type` | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"reverse"`, `"attention"` | `"relative"` |
 | `scaling` | `"minmax"`, `"max"`, `"rank"`, or empty vector | `character(0)` |
-| `params` | List: `n_gram`, `max_gap`, `window_size`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration` | `list()` |
+| `params` | List: `n_gram`, `max_gap`, `windowed`, `window_size`, `window_type`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration` | `list()` |
 
-**Returns:** A `tna` object with `$weights`, `$inits`, `$labels`, `$data`.
+**Returns:** A `tna` object: a list with the weight matrix (`weights`), the initial probabilities (`inits`), the state labels (`labels`), and the sequence data (`data`). `print()` shows the weights and the initial probabilities.
 
 ```{r}
 # Using build_model with explicit type
@@ -82,7 +82,6 @@ summary(model)
 | `"co-occurrence"` | Co-occurrence within sequences |
 | `"n-gram"` | Higher-order transitions |
 | `"gap"` | Non-adjacent transitions, weighted by gap |
-| `"window"` | Transitions within sliding window |
 | `"reverse"` | Reverse order (reply networks) |
 | `"attention"` | Exponential decay-weighted downstream pairs |
 
@@ -92,7 +91,8 @@ Build a TNA model for each group. Accepts manual group assignments, `mhmm` objec
 
 ```
 group_model(x, group, type = "relative", scaling = character(0L),
-            groupwise = FALSE, cols = everything(), params = list(), na.rm = TRUE, ...)
+            groupwise = FALSE, cols = everything(), params = list(),
+            concat = 1L, na.rm = TRUE, ...)
 ```
 
 ```{r}
@@ -114,9 +114,10 @@ Build a social network analysis model from edge-list data (from, to, weight).
 
 ```{r}
 set.seed(42)
+states <- c("A", "B", "C", "D")
 d <- data.frame(
-  from = sample(LETTERS[1:4], 100, replace = TRUE),
-  to = sample(LETTERS[1:4], 100, replace = TRUE),
+  from = sample(states, 100, replace = TRUE),
+  to = sample(states, 100, replace = TRUE),
   weight = rexp(100)
 )
 model_sna <- sna(d)
@@ -130,13 +131,10 @@ All TNA analysis objects have `plot()` methods returning `cograph_network` or `g
 
 ## `plot()`
 
-Plot a TNA model as a transition network.
+Plot a TNA model as a transition network with `cograph`. Styling arguments are passed to `cograph::splot()` through `...`.
 
 ```
-plot(x, labels, colors, pie, cut, show_pruned = TRUE, pruned_edge_color = "pink",
-     edge.color = NA, edge.labels = TRUE, edge.label.position = 0.65,
-     layout = "circle", layout_args = list(), scale_nodes, scaling_factor = 0.5,
-     mar = rep(5, 4), theme = "colorblind", ...)
+plot(x, node_list, use_list_order = TRUE, scale_nodes, scaling_factor = 0.5, ...)
 ```
 
 ```{r}
@@ -208,8 +206,8 @@ plot_compare(gmodel)
 Difference network between two models. Green = x greater, red = y greater.
 
 ```{r}
-model_a <- tna(group_regulation[1:1000, ])
-model_b <- tna(group_regulation[1001:2000, ])
+model_a <- tna(head(group_regulation, 1000))
+model_b <- tna(tail(group_regulation, 1000))
 plot_compare(model_a, model_b)
 ```
 
@@ -252,15 +250,18 @@ Convert long-format event logs into wide-format sequences.
 ```
 prepare_data(data, actor, time, action, order, time_threshold = 900,
              custom_format = NULL, is_unix_time = FALSE,
-             unix_time_unit = "seconds", unused_fn = dplyr::first)
+             unix_time_unit = "seconds", unused_fn = dplyr::first,
+             timezone = "UTC", session = NULL)
 ```
 
-```{r}
+The summary statistics (sessions, actions, users, time range) are reported as messages while the data is prepared; `print()` shows the sequences.
+
+```{r, message = TRUE}
 results <- prepare_data(
   group_regulation_long,
   actor = "Actor", time = "Time", action = "Action"
 )
-print(results$statistics)
+print(results)
 ```
 
 ## `import_data()`
@@ -273,15 +274,16 @@ import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)
 
 ## `import_onehot()`
 
-Import one-hot encoded data as co-occurrence network.
+Import one-hot encoded data (one column per event, 1 when it occurs) as wide sequence data for a co-occurrence network.
 
 ```
-import_onehot(data, cols, window = 1L)
+import_onehot(data, cols, actor, session, interval, window_size = 1L,
+              window_type = "tumbling", aggregate = FALSE)
 ```
 
 ## `simulate()`
 
-Simulate sequence data from a TNA model (requires `type = "relative"`).
+Simulate sequence data from a TNA model (requires `type = "relative"` or `type = "frequency"`).
 
 ```{r}
 sim <- simulate(model, nsim = 5, seed = 123, max_len = 10)
@@ -297,7 +299,7 @@ print(sim)
 Calculate centrality measures. Works on `tna`, `group_tna`, and `matrix`.
 
 ```
-centralities(x, loops = FALSE, normalize = FALSE, measures)
+centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 ```
 
 | Measure | Description |
@@ -309,6 +311,7 @@ centralities(x, loops = FALSE, normalize = FALSE, measures)
 | `BetweennessRSP` | Randomized shortest paths betweenness |
 | `Diffusion` | Diffusion centrality |
 | `Clustering` | Signed clustering coefficient |
+| `PageRank` | Weighted PageRank |
 
 ```{r}
 cm <- centralities(model)
@@ -335,11 +338,12 @@ print(bn)
 Centrality stability via subset sampling.
 
 ```
-estimate_cs(x, loops = FALSE, normalize = FALSE,
+estimate_cs(x, loops = FALSE, normalize = FALSE, invert = TRUE,
             measures = c("InStrength", "OutStrength", "Betweenness"),
             iter = 1000, method = "pearson",
             drop_prop = seq(0.1, 0.9, by = 0.1),
-            threshold = 0.7, certainty = 0.95, progressbar = FALSE)
+            threshold = 0.7, certainty = 0.95, progressbar = FALSE,
+            actor = NULL, edges = FALSE)
 ```
 
 ```{r}
@@ -422,12 +426,12 @@ Permutation tests for edge weight and centrality differences.
 
 ```
 permutation_test(x, y, adjust = "none", iter = 1000, paired = FALSE,
-                 level = 0.05, measures = character(0), ...)
+                 level = 0.05, measures = character(0), actor = NULL, ...)
 ```
 
 ```{r}
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 perm <- permutation_test(model_x, model_y, iter = 100)
 print(perm)
 plot(perm)
@@ -448,7 +452,8 @@ Bootstrap transition networks for confidence intervals and significance.
 
 ```
 bootstrap(x, iter = 1000, level = 0.05, method = "stability",
-          threshold, consistency_range = c(0.75, 1.25))
+          threshold, consistency_range = c(0.75, 1.25), seed = NULL,
+          actor = NULL)
 ```
 
 ```{r}
@@ -463,7 +468,7 @@ plot_bootstrap_forest(boot)
 
 Bootstrap cliques to assess stability.
 
-```{r, results=F, message = F}
+```{r, results = FALSE, message = FALSE}
 bc <- bootstrap_cliques(model, size = 2, iter = 100)
 print(bc)
 ```
@@ -477,7 +482,7 @@ prune(x, method = "threshold", threshold = 0.1, lowest = 0.05,
       level = 0.5, boot = NULL, ...)
 ```
 
-```{r, results=F, message = F}
+```{r, results = FALSE, message = FALSE}
 pruned_t <- prune(model, method = "threshold", threshold = 0.1)
 pruned_p <- prune(model, method = "lowest", lowest = 0.05)
 pruned_d <- prune(model, method = "disparity", level = 0.5)
@@ -508,7 +513,7 @@ cluster_sequences(data, k, dissimilarity = "hamming", method = "pam",
 ```
 
 ```{r}
-result <- cluster_sequences(group_regulation[1:200, ], k = 3, dissimilarity = "osa")
+result <- cluster_sequences(head(group_regulation, 200), k = 3, dissimilarity = "osa")
 print(result)
 
 # Pass directly to group_model
@@ -552,9 +557,13 @@ g <- as.igraph(model)
 print(g)
 ```
 
+## Further validation
+
+`markov_order()`, `reliability()`, `estimate_cs(edges = TRUE)`, and the `actor` argument for nested data are covered in the article "Validating a transition network".
+
 ---
 
-**tna** v1.1.0 | MIT License | Mohammed Saqr, Santtu Tikka, Sonsoles Lopez-Pernas
+**tna** | MIT License | Mohammed Saqr, Santtu Tikka, Sonsoles Lopez-Pernas
 
 Reference: Saqr M., Lopez-Pernas S., et al. (2025). Transition Network Analysis. *Proc. LAK '25*, 351-361. [doi:10.1145/3706468.3706513](https://doi.org/10.1145/3706468.3706513)
 

@@ -12,8 +12,9 @@
 \item{...}{Ignored.}
 }
 \value{
-A \code{summary.group_tna_bootstrap} object containing the weight,
-estimated p-value and confidence interval of each edge for each cluster.
+A \code{summary.group_tna_bootstrap} object, which is a \code{data.frame}
+with the columns of \code{\link[=summary.tna_bootstrap]{summary.tna_bootstrap()}} preceded by the column
+\code{group}: one row per cluster and edge with a positive weight.
 }
 \description{
 Summarize Bootstrap Results for a Grouped Transition Network
@@ -48,7 +49,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

@@ -13,11 +13,13 @@ compare(x, ...)
 \method{compare}{matrix}(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 }
 \arguments{
-\item{x}{A \code{tna} object or a \code{matrix} of weights.}
+\item{x}{A \code{tna} object or a \code{matrix} of weights. A \code{matrix} must have
+the state names as row and column names.}
 
 \item{...}{Ignored.}
 
-\item{y}{A \code{tna} object or a \code{matrix} of weights.}
+\item{y}{A \code{tna} object or a \code{matrix} of weights, with the same states as
+\code{x}.}
 
 \item{scaling}{A  \code{character} string naming a scaling method to
 apply to the weights before comparing them. The supported options are:
@@ -55,14 +57,20 @@ following elements:
 \item \code{matrices}: A \code{list} containing the scaled matrices of the input \code{tna}
 objects or the scaled inputs themselves in the case of matrices.
 \item \code{difference_matrix}: A \code{matrix} of differences \code{x - y}.
-\item \code{edge_metrics}: A \code{data.frame} of edge-level metrics about the differences.
-\item \code{summary_metrics}: A \code{data.frame} of summary metrics of the differences
-across all edges.
-\item \code{network_metrics}: A \code{data.frame} of network metrics for both \code{x} and \code{y}.
-\item \code{centrality_differences}: A \code{data.frame} of differences in centrality
-measures computes from \code{x} and \code{y}.
-\item \code{centrality_correlations}: A \code{numeric} vector of correlations of the
-centrality measures between \code{x} and \code{y}.
+\item \code{edge_metrics}: A \code{data.frame} with one row per pair of states (columns
+\code{source} and \code{target}), the weights \code{weight_x} and \code{weight_y}, and
+edge-level metrics of their difference.
+\item \code{summary_metrics}: A \code{data.frame} with one row per summary metric of the
+differences across all edges, with the columns \code{category}, \code{metric},
+and \code{value}.
+\item \code{network_metrics}: A \code{data.frame} with one row per network metric and
+the columns \code{metric}, \code{x}, and \code{y}.
+\item \code{centrality_differences}: A \code{data.frame} with one row per state and
+centrality measure, with the columns \code{state}, \code{centrality}, \code{x}, \code{y},
+and \code{difference}. Only present when \code{measures} is not empty.
+\item \code{centrality_correlations}: A \code{data.frame} with one row per centrality
+measure and the correlation of the measure between \code{x} and \code{y}. Only
+present when \code{measures} is not empty.
 }
 }
 \description{
@@ -74,17 +82,16 @@ the differences.
 }
 \examples{
 # Comparing TNA models
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 comp1 <- compare(model_x, model_y)
 
-# Comparing matrices
-mat_x <- model_x$weights
-mat_y <- model_y$weights
+# Comparing weight matrices (with the states as row and column names)
+states <- c("A", "B")
+mat_x <- matrix(c(0.6, 0.3, 0.4, 0.7), 2, 2, dimnames = list(states, states))
+mat_y <- matrix(c(0.5, 0.2, 0.5, 0.8), 2, 2, dimnames = list(states, states))
 comp2 <- compare(mat_x, mat_y)
-
-# Comparing a matrix to a TNA model
-comp3 <- compare(mat_x, model_y)
+print(comp2)
 
 }
 \seealso{

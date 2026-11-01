@@ -46,10 +46,14 @@ stats::simulate
 #'   probability 1 to the corresponding state (self loop) and option
 #'   `"uniform"` assigns a uniform distribution.
 #' @param ... Ignored.
-#' @return A `data.frame` of the simulated sequence data.
+#' @return A `data.frame` of the simulated sequence data. In `wide` format,
+#'   one row per sequence and one column per time point (`T1`, `T2`, ...).
+#'   In `long` format, one row per observation with the columns `id`,
+#'   `time`, and `state`.
 #' @examples
 #' model <- tna(group_regulation)
-#' sim <- simulate(model, nsim = 10, max_len = 10)
+#' sim <- simulate(model, nsim = 10, max_len = 10, seed = 1)
+#' print(sim)
 #'
 simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
                          na_range = c(0L, 0L), zero_row = "self", 
@@ -135,7 +139,9 @@ simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
 #'   length of all simulated sequences. If a single integer is provided, the 
 #'   maximum length is the same for each group.
 #' @inheritParams simulate.tna
-#' @return A `data.frame` of the simulated sequence data.
+#' @return A `data.frame` of the simulated sequence data, as for
+#'   [simulate.tna()], with the group of each sequence in the first column
+#'   `group`.
 #' @examples
 #' model <- group_tna(
 #'   group_regulation,

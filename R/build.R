@@ -9,8 +9,10 @@
 #' @export
 #' @family basic
 #' @rdname build_model
-#' @param x A `stslist` (from `TraMineR`), `data.frame`, a `matrix`, or
-#'   a `tna_data` object (see [prepare_data()]).
+#' @param x A `stslist` (from `TraMineR`), `data.frame`, a `matrix`,
+#'   a `tna_data` object (see [prepare_data()]), or a `tsn` object (a long
+#'   table with the columns `id`, `state`, and `time`, as produced by the
+#'   `tsn` package).
 #'   For `stslist` and `data.frame` objects `x`
 #'   should describe a sequence of events or states to be used for building the
 #'   Markov model.  If `x` is a matrix, it is assumed that the element on row
@@ -35,7 +37,7 @@
 #'       option.
 #'   * `"attention"` aggregates all downstream pairs of states with an
 #'       exponential decay for the gap between states. The parameter `lambda`
-#'       can be used to control the decay rate (the default is 1)-
+#'       can be used to control the decay rate (the default is 1).
 #'
 #' @param scaling A `character` vector describing how to scale the weights
 #'   defined by `type`. When a vector is provided, the scaling options are
@@ -107,15 +109,21 @@
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
-#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `weights`: The square adjacency `matrix` of the model (weight matrix),
+#'     with one row and one column per state. The element on row `i` and
+#'     column `j` is the weight of the edge from state `i` to state `j`.
 #'   * `inits`: A `numeric` vector of initial values for each state.
 #'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
-#'     directly provided
+#'     directly provided.
 #'   * `labels`: A `character` vector of the state labels, or `NULL` if
 #'     there are no labels.
 #'   * `data`: The original sequence data that has been converted to an
-#'     internal format used by the package when `x` is a `stslist` or a
-#'     `data.frame` object. Otherwise `NULL`.
+#'     internal format used by the package when `x` is sequence data
+#'     (a `stslist`, a `data.frame`, a `tna_data`, or a `tsn` object).
+#'     Otherwise `NULL`.
+#'
+#'   The model type, the scaling, and the `params` used are stored in the
+#'   attributes `type`, `scaling`, and `params`.
 #'
 #' @examples
 #' model <- build_model(group_regulation)
@@ -211,7 +219,6 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = tidyselect::everything(),
                                 params = list(), concat = 1L,
@@ -454,12 +461,16 @@ tsn <- function(x, ...) {
 #' @param aggregate A `function` to use for aggregating the weights. The
 #' default is [sum()].
 #' @param ... Additional arguments passed to `aggregate`.
-#' @return A `tna` object representing the model.
+#' @return A `tna` object representing the model. Its `weights` element is a
+#'   square `matrix` with one row and column per state, holding the
+#'   aggregated weight of each pair of states (zero when the pair does not
+#'   occur). The `inits` and `data` elements are `NULL`.
 #' @examples
 #' set.seed(123)
+#' states <- c("A", "B", "C", "D")
 #' d <- data.frame(
-#'   from = sample(LETTERS[1:4], 100, replace = TRUE),
-#'   to = sample(LETTERS[1:4], 100, replace = TRUE),
+#'   from = sample(states, 100, replace = TRUE),
+#'   to = sample(states, 100, replace = TRUE),
 #'   weight = rexp(100)
 #' )
 #' model <- sna(d)

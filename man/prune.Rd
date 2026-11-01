@@ -21,7 +21,7 @@ prune(x, ...)
 \method{prune}{group_tna}(x, ...)
 }
 \arguments{
-\item{x}{An object of class \code{tna} or \code{group_tna}}
+\item{x}{An object of class \code{tna} or \code{group_tna}.}
 
 \item{...}{Arguments passed to \code{\link[=bootstrap]{bootstrap()}} when
 using \code{method = "bootstrap"} and when a \code{tna_bootstrap} is not supplied.
@@ -33,9 +33,9 @@ The available options are \code{"threshold"}, \code{"lowest"}, \code{"bootstrap"
 \code{"disparity"}, corresponding to the methods listed in Details. The default
 is \code{"threshold"}.}
 
-\item{threshold}{A numeric value specifying the edge weight threshold.
+\item{threshold}{A \code{numeric} value specifying the edge weight threshold.
 Edges with weights below or equal to this threshold will be considered for
-removal.}
+removal. The default is \code{0.1}.}
 
 \item{lowest}{A \code{numeric} value specifying the lowest percentage
 of non-zero edges. This percentage of edges with the lowest weights will be
@@ -50,20 +50,35 @@ if \code{method} is omitted. A warning is issued if it conflicts with an
 explicitly supplied \code{method}.}
 }
 \value{
-A pruned \code{tna} or \code{group_tna} object. Details on the pruning can be
-viewed with \code{\link[=pruning_details]{pruning_details()}}. The original model can be restored with
-\code{\link[=deprune]{deprune()}}.
+A pruned \code{tna} or \code{group_tna} object: the removed edges have
+weight zero in \code{weights}, and the pruning is recorded in the attribute
+\code{pruning}. Details on the pruning can be viewed with \code{\link[=pruning_details]{pruning_details()}}.
+The original model can be restored with \code{\link[=deprune]{deprune()}}.
 }
 \description{
 Prunes a network represented by a \code{tna} object by removing
 edges based on a specified threshold, lowest percent of non-zero edge
-weights, or the disparity filter algorithm (Serrano et al., 2009).
-It ensures the network remains weakly connected.
+weights, the disparity filter algorithm (Serrano et al., 2009), or
+bootstrap significance.
+}
+\details{
+The available methods are:
+\itemize{
+\item \code{"threshold"}: Removes the edges whose weight is at most \code{threshold}.
+\item \code{"lowest"}: Removes the edges whose weight is at most the \code{lowest}
+quantile of the positive edge weights.
+\item \code{"disparity"}: Keeps the edges that are significant at level \code{level}
+under the disparity filter of Serrano et al. (2009), either among the
+outgoing edges of their source state or among the incoming edges of
+their target state. Self-loops are always removed by this method.
+\item \code{"bootstrap"}: Keeps the edges that are significant in \code{\link[=bootstrap]{bootstrap()}}
+(the \code{model} element of a \code{tna_bootstrap} object).
+}
 
-Prunes a network represented by a \code{tna} object by removing
-edges based on a specified threshold, lowest percent of non-zero edge
-weights, or the disparity filter algorithm (Serrano et al., 2009).
-It ensures the network remains weakly connected.
+With \code{"threshold"} and \code{"lowest"}, an edge is only removed when the
+network stays weakly connected without it, so some edges below the
+cut-off can be retained. The \code{"disparity"} and \code{"bootstrap"} methods do
+not check the connectivity.
 }
 \examples{
 model <- tna(group_regulation)
@@ -71,6 +86,12 @@ pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
 pruned_percentile <- prune(model, method = "lowest", lowest = 0.05)
 pruned_disparity <- prune(model, method = "disparity", level = 0.5)
 
+}
+\references{
+Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
+multiscale backbone of complex weighted networks. \emph{Proceedings of the
+National Academy of Sciences}, 106(16), 6483--6488.
+\doi{10.1073/pnas.0808904106}
 }
 \seealso{
 Validation functions
@@ -95,44 +116,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
-\code{\link{print.tna_markov_order}()},
-\code{\link{print.tna_permutation}()},
-\code{\link{print.tna_reliability}()},
-\code{\link{print.tna_stability}()},
-\code{\link{pruning_details}()},
-\code{\link{reliability}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()},
-\code{\link{summary.tna_markov_order}()},
-\code{\link{summary.tna_permutation}()},
-\code{\link{summary.tna_reliability}()},
-\code{\link{summary.tna_stability}()}
-
-Validation functions
-\code{\link{bootstrap}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{markov_order}()},
-\code{\link{permutation_test}()},
-\code{\link{permutation_test.group_tna}()},
-\code{\link{plot.group_tna_bootstrap}()},
-\code{\link{plot.group_tna_permutation}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot.tna_bootstrap}()},
-\code{\link{plot.tna_markov_order}()},
-\code{\link{plot.tna_permutation}()},
-\code{\link{plot.tna_reliability}()},
-\code{\link{plot.tna_stability}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_permutation}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{print.summary.tna_bootstrap}()},
-\code{\link{print.summary.tna_markov_order}()},
-\code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

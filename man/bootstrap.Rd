@@ -100,9 +100,12 @@ intervals for the edge weights.
 \item \code{ci_upper}: The upper bound \code{matrix} of the bootstrap confidence
 intervals for the edge weights.
 \item \code{p_values}: The \code{matrix} of estimated p-values for the edge weights.
-\item \code{summary}: A \code{data.frame} summarizing the edges, their weights,
-p-values, statistical significance, consistency ranges, and
-confidence intervals.
+\item \code{summary}: A \code{data.frame} with one row per edge with a positive
+weight and the columns \code{from}, \code{to}, \code{weight}, \code{p_value}, \code{sig},
+\code{cr_lower}, \code{cr_upper}, \code{ci_lower}, and \code{ci_upper}. The same table is
+returned by \code{\link[=summary.tna_bootstrap]{summary.tna_bootstrap()}}.
+\item \code{model}: The \code{tna} model pruned to the significant edges (see
+\code{\link[=prune]{prune()}} with \code{method = "bootstrap"}).
 }
 
 If \code{x} is a \code{group_tna} object, the output is a \code{group_tna_bootstrap}
@@ -162,7 +165,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

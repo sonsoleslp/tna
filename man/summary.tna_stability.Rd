@@ -26,7 +26,7 @@ Summarize Case-Dropping Stability Results
 \examples{
 # A small subset and few iterations
 small <- estimate_cs(
-  tna(group_regulation[1:200, ]),
+  tna(head(group_regulation, 200)),
   drop_prop = c(0.3, 0.6),
   measures = "InStrength",
   iter = 5,
@@ -70,7 +70,6 @@ Validation functions
 \code{\link{print.summary.tna_bootstrap}()},
 \code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
 \code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},

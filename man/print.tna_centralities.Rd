@@ -7,7 +7,7 @@
 \method{print}{tna_centralities}(x, ...)
 }
 \arguments{
-\item{x}{A \code{centralities} object.}
+\item{x}{A \code{tna_centralities} object.}
 
 \item{...}{Ignored.}
 }

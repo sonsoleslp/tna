@@ -317,8 +317,8 @@ plot(cqs)
 Compare high achievers (first 1000) with low achievers (last 1000)
 
 ``` r
-tna_model_start_high <- tna(group_regulation[1:1000, ])
-tna_model_start_low <- tna(group_regulation[1001:2000, ])
+tna_model_start_high <- tna(head(group_regulation, 1000))
+tna_model_start_low <- tna(tail(group_regulation, 1000))
 comparison <- permutation_test(
   tna_model_start_high, 
   tna_model_start_low,
@@ -338,7 +338,7 @@ plot(comparison)
 Compare centralities
 
 ``` r
-print(comparison$centralities$stats)
+summary(comparison, what = "centralities")
 ```
 
 <div id="bpwgsnxlgh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">

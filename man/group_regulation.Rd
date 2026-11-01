@@ -5,7 +5,10 @@
 \alias{group_regulation}
 \title{Example Wide Data on Group Regulation}
 \format{
-A \code{data.frame} object.
+A \code{data.frame} with 2000 sequences (rows) and 26 time points
+(columns \code{T1} to \code{T26}). Shorter sequences end in missing values. The
+first 1000 rows are the sequences of high achievers and the last 1000
+rows those of low achievers (see \code{group_regulation_long}).
 }
 \source{
 The data was generated synthetically.

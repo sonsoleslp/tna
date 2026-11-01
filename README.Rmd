@@ -164,7 +164,7 @@ plot(coms)
 ```
 
 Find and plot cliques
-```{r, eval = F}
+```{r, eval = FALSE}
 cqs <- cliques(tna_model, threshold = 0.12)
 plot(cqs)
 ```
@@ -177,8 +177,8 @@ plot(cqs)
 
 Compare high achievers (first 1000) with low achievers (last 1000)
 ```{r}
-tna_model_start_high <- tna(group_regulation[1:1000, ])
-tna_model_start_low <- tna(group_regulation[1001:2000, ])
+tna_model_start_high <- tna(head(group_regulation, 1000))
+tna_model_start_low <- tna(tail(group_regulation, 1000))
 comparison <- permutation_test(
   tna_model_start_high, 
   tna_model_start_low,
@@ -195,11 +195,11 @@ plot(comparison)
 
 Compare centralities
 ```{r, eval = FALSE}
-print(comparison$centralities$stats)
+summary(comparison, what = "centralities")
 ```
 
 ```{r, echo = FALSE}
-comparison$centralities$stats |>
+summary(comparison, what = "centralities") |>
   gt::gt() |>
   gt::as_raw_html()
 ```
