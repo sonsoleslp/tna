@@ -57,12 +57,14 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
   inits <- x$inits
   clique_idx <- integer(0)
   mat <- weights
-  mat[mat < threshold] <- 0
   if (sum_weights) {
+    # The threshold applies to the summed weight of each pair of states
+    mat[(weights + t(weights)) < threshold] <- 0
     g <- as.igraph(mat, mode = "plus")
     cliq <- igraph::cliques(g, min = size, max = size)
     cliq_idx <- lapply(cliq, function(y) which(labels %in% attr(y, "names")))
   } else {
+    mat[mat < threshold] <- 0
     g1 <- as.igraph(mat, mode = "upper")
     g2 <- as.igraph(mat, mode = "lower")
     cliq1 <- igraph::cliques(g1, min = size, max = size)

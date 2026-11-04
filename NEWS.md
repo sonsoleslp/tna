@@ -1,3 +1,86 @@
+# tna 1.5.4
+
+Corrections to numerical results. Results from the functions below can
+differ from earlier versions.
+
+* `bootstrap_cliques()` resampled from the first sequences only, as many as
+  there were cliques (for example, 22 of 2,000 sequences), so its
+  p-values and confidence intervals were invalid. Each bootstrap sample now
+  draws as many sequences as the data has.
+* `reliability()` counted the transitions of the model it was given for
+  every requested type, so `types` only switched the row normalization on
+  or off: `"co-occurrence"`, `"gap"`, `"attention"`, and the other types all
+  gave the frequency result. Each type is now estimated as `build_model()`
+  defines it. The default `types` is the type of the model (it was
+  `"relative"` for every model).
+* `compare()`: the Canberra distance omitted the edges present in only one
+  network (each contributes 1), and the distance correlation was reported
+  squared. The states of the two networks are matched by name, so two
+  networks listing the same states in a different order are compared
+  correctly; networks with different states, or a matrix without state
+  names, are an error of class `tna_error_states` (they were compared by
+  position).
+* `summary()` of a model reported the standard deviation of the in-strength
+  as that of the out-strength and vice versa (the means are equal by
+  construction).
+* `estimate_cs()`: a subsample in which the correlation is undefined (the
+  measure is constant in it) was dropped from the share of draws above
+  `threshold`, which could raise the CS-coefficient. It now counts as a
+  draw below the threshold.
+* `BetweennessRSP` counted the correction for walks absorbed at a target
+  once for every state, also for states that cannot reach it. In a network
+  that is not strongly connected (for example, with a state that is never
+  entered) the values were wrong. Only sources that reach the target are
+  counted; strongly connected networks are unchanged.
+* `simulate()`: `zero_row` was replaced by the value of `format`, so
+  `zero_row = "uniform"` had no effect for frequency models, and states
+  that are never left (such as a state that only ends sequences) moved
+  arbitrarily in relative models. `zero_row` now applies to both model
+  types. `max_len = 1` and `na_range` values with equal ends or a zero
+  lower end no longer fail.
+* `prune(method = "disparity")` set the absent edges of a state with no
+  outgoing or no incoming edges to `NA`. They stay 0.
+* `build_model()` of a wide `data.frame` discarded `window_size`,
+  `window_span`, and `windowed` given in `params`. They are now used.
+* Backward (and bidirectional) attention paired every time point with
+  itself, adding a self-loop of full weight at every observation. Only
+  earlier time points are attended to, as forward attention uses only later
+  ones.
+* `group_model()` kept the unused factor levels of `group`, so a level
+  with no sequences became an empty network with `NaN` initial
+  probabilities. Unused levels are dropped.
+* `print()` of a model without initial probabilities (for example,
+  `build_model()` of a matrix) failed. `plot()` of a model failed when
+  `node_size` or `vsize` was given, and `plot_sequences(show_n = FALSE)`
+  failed.
+* `permutation_test()` and `estimate_cs()` took the observed network from
+  the weights of the model but rebuilt the resamples from the sequence
+  data, so a pruned model was compared with unpruned resamples (a model
+  tested against its own pruned version showed significant differences).
+  The observed network is now rebuilt from the sequence data too, as in
+  `bootstrap()`. Results for unpruned models are unchanged.
+* `end_state` was not added when no sequence filled the last column of the
+  data (for example, in a subset of the rows, or with an empty trailing
+  column). It is now always added after the last observation.
+* `build_model()` of a `tsn` object ordered the time points by first
+  appearance in the data, not by time, which could reverse transitions.
+  They are now ordered by time.
+* `cliques(sum_weights = TRUE)` applied `threshold` to each direction
+  before summing them, so a pair whose summed weight exceeded the
+  threshold could be missed. The threshold now applies to the sum, as
+  documented. This also affects `bootstrap_cliques()` with a positive
+  `threshold`.
+* `import_onehot(window_type = "sliding")` widened the windows of width 3
+  or more (each lag was applied to the already widened rows), and treated
+  width 1 as width 2. Each window now covers exactly `window_size` rows,
+  and the incomplete windows at the start are dropped. Width 2 is
+  unchanged.
+* `plot_associations()` drew every residual in the reverse direction (from
+  target to source).
+* `plot()` of grouped communities colored every state of a group with the
+  same color. Each community now has its own color, as for a single
+  group.
+
 # tna 1.5.3
 
 * Documentation revision. The help pages describe what the functions

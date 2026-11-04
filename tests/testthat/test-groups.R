@@ -229,3 +229,16 @@ test_that("scaled groups and their networks are not resampled", {
   set.seed(2)
   expect_s3_class(bootstrap(single, iter = 3), "tna_bootstrap")
 })
+
+test_that("unused group factor levels do not become empty groups", {
+  d <- head(group_regulation, 200)
+  g <- factor(rep(c("X", "Y"), each = 100), levels = c("X", "Y", "Z"))
+  model <- group_model(d, group = g)
+  expect_named(model, c("X", "Y"))
+  inits_finite <- vapply(model, function(m) all(is.finite(m$inits)),
+                         logical(1L))
+  expect_true(all(inits_finite))
+  # Dropping the level changes nothing for the groups that remain
+  same <- group_model(d, group = droplevels(g))
+  expect_equal(model$X$weights, same$X$weights)
+})

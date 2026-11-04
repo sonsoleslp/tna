@@ -79,8 +79,9 @@ row of the data/sequence. Must have the same length as the number of
 rows/sequences of \code{x}. Alternatively, a single \code{character} string giving
 the column name of the data that defines the group when \code{x} is a wide
 format \code{data.frame} or a \code{tna_data} object. Required for sequence data
-(an error is raised when it is missing). Not used when \code{x} is a mixture
-Markov model or a clustering result.}
+(an error is raised when it is missing). Factor levels that no sequence
+belongs to are dropped. Not used when \code{x} is a mixture Markov model or a
+clustering result.}
 
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:

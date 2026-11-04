@@ -145,7 +145,10 @@ to 0.9 in increments of 0.1.}
 calculating the CS-coefficient. The default is 0.7.}
 
 \item{certainty}{A \code{numeric} value specifying the desired level of certainty
-for the CS-coefficient. Default is 0.95.}
+for the CS-coefficient. Default is 0.95. The certainty is the share of
+all subsamples whose correlation reaches \code{threshold}; a subsample in
+which the correlation is undefined (the measure is constant in it)
+counts as one that does not reach it.}
 
 \item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is
 displayed. Defaults to \code{FALSE}.}

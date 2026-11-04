@@ -261,9 +261,12 @@ build_model.data.frame <- function(x, type = "relative",
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
-  params$window_span <- attr(x, "window_span")
-  params$window_size <- attr(x, "window_size")
-  params$windowed <- !is.null(params$window_size) ||
+  # Windows recorded by import_onehot() take precedence; otherwise the
+  # window parameters given in `params` are kept
+  params$window_span <- attr(x, "window_span") %||% params$window_span
+  params$window_size <- attr(x, "window_size") %||% params$window_size
+  params$windowed <- isTRUE(params$windowed) ||
+    !is.null(params$window_size) ||
     !is.null(params$window_span)
   x <- create_seqdata(
     x = x,
@@ -346,7 +349,9 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
       id_cols = "id",
       values_from = !!rlang::sym("state"),
       names_from = !!rlang::sym("time"),
-      names_prefix = "T"
+      names_prefix = "T",
+      # Time points become columns in time order, not in order of appearance
+      names_sort = TRUE
     ) |>
     dplyr::select(!(!!rlang::sym("id")))
   x <- create_seqdata(
@@ -635,11 +640,12 @@ create_seqdata <- function(x, cols, alphabet, concat = 1L,
   if (!missing(end_state)) {
     last_obs <- max.col(!is.na(x), ties.method = "last")
     new_max <- max(x, na.rm = TRUE) + 1L
+    # A column is added only when a sequence has no room for the end state
     if (any(last_obs == ncol(x))) {
       x <- cbind(x, NA_integer_)
-      idx <- cbind(seq_len(nrow(x)), last_obs + 1L)
-      x[idx] <- new_max
     }
+    idx <- cbind(seq_len(nrow(x)), last_obs + 1L)
+    x[idx] <- new_max
     alphabet <- c(alphabet, end_state)
     labels <- c(labels, end_state)
     colors <- c(colors, "darkgray")
@@ -681,6 +687,23 @@ initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
     labels = labels,
     trans = onlyif(transitions, trans)
   )
+}
+
+#' Edge Weights of a Model Rebuilt From Its Sequence Data
+#'
+#' The weights are recomputed with the type, scaling and parameters of the
+#' model, so any pruning of `x$weights` is ignored. For an unpruned model the
+#' result is identical to `x$weights`.
+#'
+#' @param x A `tna` object with sequence data.
+#' @noRd
+data_weights <- function(x) {
+  initialize_model(
+    x$data,
+    attr(x, "type"),
+    attr(x, "scaling"),
+    attr(x, "params")
+  )$weights
 }
 
 #' Compute Network Transitions Based on TNA Type
@@ -798,7 +821,8 @@ compute_transitions <- function(m, a, type, params) {
       }
       if (direction %in% c("backward", "both")) {
         if (i > 1) {
-          for (j in seq(1L, i)) {
+          # Earlier time points only: a position does not attend to itself
+          for (j in seq_len(i - 1L)) {
             from <- m[, i]
             to <- m[, j]
             any_na <- is.na(from) | is.na(to)

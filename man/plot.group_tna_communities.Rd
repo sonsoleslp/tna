@@ -11,7 +11,8 @@
 
 \item{title}{A \code{character} vector of titles to use for each plot.}
 
-\item{colors}{A \code{character} vector of colors to use.}
+\item{colors}{A \code{character} vector of colors for the communities. The same
+colors are used in every group.}
 
 \item{...}{Arguments passed to \code{\link[=plot.tna_communities]{plot.tna_communities()}}.}
 }

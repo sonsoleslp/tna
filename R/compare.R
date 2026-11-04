@@ -13,7 +13,9 @@
 #' @param x A `tna` object or a `matrix` of weights. A `matrix` must have
 #'   the state names as row and column names.
 #' @param y A `tna` object or a `matrix` of weights, with the same states as
-#'   `x`.
+#'   `x`. The states are matched by name, so their order may differ; an
+#'   error of class `tna_error_states` is raised when the states differ or a
+#'   matrix has no state names.
 #' @param scaling A  `character` string naming a scaling method to
 #' apply to the weights before comparing them. The supported options are:
 #'
@@ -137,10 +139,10 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     is_tna(y) || is.matrix(y),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
   )
-  x <- ifelse_(is_tna(x), x$weights, x)
-  y <- ifelse_(is_tna(y), y$weights, y)
   x_arg <- ifelse_(is_tna(x), "x$weights", "x")
   y_arg <- ifelse_(is_tna(y), "y$weights", "y")
+  x <- ifelse_(is_tna(x), x$weights, x)
+  y <- ifelse_(is_tna(y), y$weights, y)
   n <- ncol(x)
   stopifnot_(
     n == nrow(x),
@@ -159,6 +161,21 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     all(!is.na(y)),
     "Weight matrix {.arg {y_arg}} must not contain missing values."
   )
+  check_state_names(x, x_arg)
+  check_state_names(y, y_arg)
+  states_x <- rownames(x)
+  states_y <- rownames(y)
+  only_one <- c(setdiff(states_x, states_y), setdiff(states_y, states_x))
+  stopifnot_(
+    length(only_one) == 0L,
+    c(
+      "{.arg {x_arg}} and {.arg {y_arg}} must have the same states.",
+      `x` = "States found in only one of them: {.val {only_one}}."
+    ),
+    class = "tna_error_states"
+  )
+  # Edges are compared by state name, not by position
+  y <- y[states_x, states_x, drop = FALSE]
   scaling_methods <- list(
     none = identity,
     minmax = ranger,
@@ -179,7 +196,9 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
   abs_diff <- abs(x_vec - y_vec)
   abs_x <- abs(x_vec)
   abs_y <- abs(y_vec)
-  pos <- abs_x > 0 & abs_y > 0
+  # Canberra terms with 0 / 0 (an edge absent from both) contribute zero
+  canberra_den <- abs_x + abs_y
+  canberra_pos <- canberra_den > 0
   rn <- rownames(x)
 
   # Edge level metrics
@@ -249,7 +268,7 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     value = c(
       sqrt(sum(abs_diff^2)),
       sum(abs_diff),
-      sum(abs_diff[pos] / (abs_x[pos] + abs_y[pos])),
+      sum(abs_diff[canberra_pos] / canberra_den[canberra_pos]),
       sum(abs_diff) / sum(abs_x + abs_y),
       sqrt(sum(abs_diff^2)) / sqrt(n / 2)
     )
@@ -353,6 +372,10 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
 
 #' Distance correlation coefficient
 #'
+#' The square root of the squared sample distance covariance divided by the
+#' geometric mean of the squared distance variances, and zero when either
+#' distance variance is zero (Székely, Rizzo and Bakirov, 2007).
+#'
 #' @param x A `numeric` vector.
 #' @param y A `numeric` vector.
 #' @noRd
@@ -371,7 +394,11 @@ distance_correlation <- function(x, y) {
   v_xy <- n^-2 * sum(xx * yy)
   v_x <- n^-2 * sum(xx^2)
   v_y <- n^-2 * sum(yy^2)
-  v_xy / sqrt(v_x * v_y)
+  if (!isTRUE(v_x * v_y > 0)) {
+    return(0)
+  }
+  # v_xy is non-negative in exact arithmetic; clamp rounding noise below zero
+  sqrt(max(v_xy, 0) / sqrt(v_x * v_y))
 }
 
 #' RV Coefficient

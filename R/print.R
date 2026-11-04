@@ -68,8 +68,8 @@ print.tna <- function(x, generic = FALSE, ...) {
   cat("  ", paste(x$labels, collapse = ", "), "\n")
   cat("\n", mat_type, " Matrix :\n\n", sep = "")
   print(x$weights, ...)
-  inits <- stats::setNames(x$inits, x$labels)
   if (!is.null(x$inits)) {
+    inits <- stats::setNames(x$inits, x$labels)
     cat("\nInitial Probabilities : \n\n", sep = "")
     print(inits, ...)
   }

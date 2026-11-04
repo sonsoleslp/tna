@@ -179,6 +179,7 @@ Compare high achievers (first 1000) with low achievers (last 1000)
 ```{r}
 tna_model_start_high <- tna(head(group_regulation, 1000))
 tna_model_start_low <- tna(tail(group_regulation, 1000))
+set.seed(1)
 comparison <- permutation_test(
   tna_model_start_high, 
   tna_model_start_low,

@@ -358,10 +358,16 @@ reprune.tna <- function(x, ...) {
 disparity_filter <- function(mat, level) {
   d <- dim(mat)[2]
   idx_mat <- 1L * (mat > 0)
-  out_edges <- mat / .rowSums(mat, m = d, n = d)
+  # A state with no outgoing (incoming) edges has nothing to normalize;
+  # dividing by 1 keeps its absent edges at weight 0 instead of 0 / 0 = NaN
+  out_sums <- .rowSums(mat, m = d, n = d)
+  in_sums <- .colSums(mat, m = d, n = d)
+  out_sums[!(out_sums > 0)] <- 1
+  in_sums[!(in_sums > 0)] <- 1
+  out_edges <- mat / out_sums
   out_degree <- .rowSums(idx_mat, m = d, n = d)
   out_p_values <- (1 - out_edges)^(out_degree - 1)
-  in_edges <- t(mat) / .colSums(mat, m = d, n = d)
+  in_edges <- t(mat) / in_sums
   in_degree <- .colSums(idx_mat, m = d, n = d)
   in_p_values <- t((1 - in_edges)^(in_degree - 1))
   p_values <- pmin(out_p_values, in_p_values)

@@ -9,7 +9,7 @@ reliability(x, ...)
 
 \method{reliability}{tna}(
   x,
-  types = "relative",
+  types = NULL,
   split = 0.5,
   iter = 1000,
   scaling = "none",
@@ -24,8 +24,11 @@ resampled (an error of class \code{tna_error_scaling}).}
 
 \item{...}{Ignored.}
 
-\item{types}{A \code{character} vector giving the model types to fit.
-See \code{\link[=build_model]{build_model()}} for available options.}
+\item{types}{A \code{character} vector giving the model types to fit. The
+default \code{NULL} uses the type of \code{x}. For every type, the transitions are
+counted from the sequence data of \code{x} as that type defines them, with the
+parameters (\code{params}) and scaling of \code{x}. See \code{\link[=build_model]{build_model()}} for the
+available types.}
 
 \item{split}{A \code{numeric} value between \code{0} and \code{1} specifying the proportion
 of data for the split. The default is \code{0.5} for an even split.}

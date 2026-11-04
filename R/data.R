@@ -864,21 +864,21 @@ import_onehot <- function(data, cols, actor, session, interval,
     ) |>
     dplyr::group_by(!!rlang::sym(actor), !!rlang::sym(session))
   if (window_type == "sliding") {
-    for (w in seq(1, window_size - 1)) {
-      out <- out |>
-        dplyr::mutate(
-          dplyr::across(
-            tidyselect::all_of(cols),
-            ~ ifelse(
-              !is.na(.x) | !is.na(dplyr::lag(.x, n = w)),
-              dplyr::cur_column(),
-              NA_character_
-            )
-          )
-        )
+    # Row t of a window of width w marks the states active in rows
+    # t - w + 1, ..., t of the original data. Lags are taken of the original
+    # rows, and the first w - 1 rows (incomplete windows) are dropped.
+    lags <- seq_len(window_size - 1L)
+    in_window <- function(x) {
+      Reduce(`|`, lapply(lags, \(k) !is.na(dplyr::lag(x, n = k))), !is.na(x))
     }
     out <- out |>
-      dplyr::slice(-1) |>
+      dplyr::mutate(
+        dplyr::across(
+          tidyselect::all_of(cols),
+          ~ ifelse(in_window(.x), dplyr::cur_column(), NA_character_)
+        )
+      ) |>
+      dplyr::filter(dplyr::row_number() >= window_size) |>
       dplyr::mutate(
         .window = floor(seq_len(dplyr::n()) - 1)
       )

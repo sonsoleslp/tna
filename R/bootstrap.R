@@ -262,7 +262,9 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
 #'
 #' Bootstrap the edge weights of all cliques of a given size in a `tna`
 #' model, producing per-clique mean weights, p-values, confidence intervals,
-#' and consistency-range bounds.
+#' and consistency-range bounds. Each bootstrap sample draws as many
+#' sequences as the data has, with replacement, and recomputes the clique
+#' weights from them.
 #'
 #' @export
 #' @inheritParams cliques
@@ -345,9 +347,11 @@ bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
   weights_boot <- array(0.0, dim = c(iter, a, a))
   clique_weights_boot <- matrix(0.0, iter, n)
   p_values <- numeric(n)
-  idx <- seq_len(n)
+  # Resample sequences (the units of the data), not cliques
+  n_seq <- dim(trans)[1L]
   for (i in seq_len(iter)) {
-    trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
+    trans_boot <- trans[sample.int(n_seq, n_seq, replace = TRUE), , ,
+                        drop = FALSE]
     weights_boot[i, , ] <- compute_weights(
       trans_boot, type, scaling, a, params
     )

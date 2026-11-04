@@ -39,8 +39,9 @@ summary.tna <- function(object, ...) {
   check_class(object, "tna")
   weights <- object$weights
   g <- as.igraph(object)
-  in_strength <- igraph::strength(g, mode = "out")
-  out_strength <- igraph::strength(g, mode = "in")
+  # Rows are sources: out-strength is the row sum, in-strength the column sum
+  out_strength <- igraph::strength(g, mode = "out")
+  in_strength <- igraph::strength(g, mode = "in")
   out_degree <- igraph::degree(g, mode = "out")
   cent_out <- igraph::centr_degree(g, mode = "out", loops = FALSE)
   cent_in <- igraph::centr_degree(g, mode = "in", loops = FALSE)

@@ -450,3 +450,59 @@ test_that("reliability analysis can be plotted", {
     NA
   )
 })
+
+test_that("explicit node sizes are passed to the plot", {
+  model <- tna(group_regulation)
+  pdf(NULL)
+  on.exit(dev.off(), add = TRUE, after = FALSE)
+  expect_no_error(plot(model, node_size = 20))
+  expect_no_error(plot(model, vsize = 20))
+  expect_no_error(plot(model, node_size = seq(10, 26, by = 2)))
+})
+
+test_that("sequence plots work without the counts in the title", {
+  pdf(NULL)
+  on.exit(dev.off(), add = TRUE, after = FALSE)
+  d <- head(group_regulation, 50)
+  expect_no_error(print(plot_sequences(d, show_n = FALSE)))
+  expect_no_error(
+    print(plot_sequences(d, show_n = FALSE, type = "distribution"))
+  )
+})
+
+test_that("association plots show residuals from source to target", {
+  model <- ftna(group_regulation)
+  pdf(NULL)
+  on.exit(dev.off(), add = TRUE, after = FALSE)
+  p <- plot_associations(model)
+  # Oracle: adjusted residuals with rows as sources, by hand
+  o <- model$weights
+  n <- sum(o)
+  r <- rowSums(o)
+  cc <- colSums(o)
+  e <- outer(r, cc) / n
+  oracle <- (o - e) / sqrt(e * outer(1 - r / n, 1 - cc / n))
+  # The plotted residuals are rounded to two decimals
+  expect_equal(unname(p$weights), round(unname(oracle), 2))
+})
+
+test_that("grouped community plots color each community", {
+  d <- data.frame(
+    T1 = rep(c("A", "B", "C", "D"), 2),
+    T2 = rep(c("B", "A", "D", "C"), 2),
+    T3 = rep(c("A", "B", "C", "D"), 2)
+  )
+  comm <- communities(
+    group_tna(d, group = rep(c("G1", "G2"), each = 4)),
+    methods = "fast_greedy"
+  )
+  pdf(NULL)
+  on.exit(dev.off(), add = TRUE, after = FALSE)
+  grouped <- plot(comm)
+  lapply(names(comm), \(g) {
+    n_comm <- length(unique(comm[[g]]$assignment$fast_greedy))
+    expect_length(unique(grouped[[g]]$nodes$node_fill), n_comm)
+    # Same colors as plotting the group on its own
+    expect_equal(grouped[[g]]$nodes$node_fill, plot(comm[[g]])$nodes$node_fill)
+  })
+})

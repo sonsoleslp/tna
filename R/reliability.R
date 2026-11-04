@@ -8,8 +8,11 @@
 #' @param x A `tna` object.
 #'   Grouped models with scaled edge weights, and their networks, are not
 #'   resampled (an error of class `tna_error_scaling`).
-#' @param types A `character` vector giving the model types to fit.
-#'   See [build_model()] for available options.
+#' @param types A `character` vector giving the model types to fit. The
+#'   default `NULL` uses the type of `x`. For every type, the transitions are
+#'   counted from the sequence data of `x` as that type defines them, with the
+#'   parameters (`params`) and scaling of `x`. See [build_model()] for the
+#'   available types.
 #' @param split A `numeric` value between `0` and `1` specifying the proportion
 #'   of data for the split. The default is `0.5` for an even split.
 #' @param iter An `integer` specifying number of iterations (splits). The
@@ -45,7 +48,7 @@ reliability <- function(x, ...) {
 
 #' @export
 #' @rdname reliability
-reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
+reliability.tna <- function(x, types = NULL, split = 0.5, iter = 1000,
                             scaling = "none", actor = NULL, ...) {
   check_tna_seq(x)
   check_not_scaled_group(x, "The reliability analysis")
@@ -56,11 +59,18 @@ reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
   type <- attr(x, "type")
   scaling_ <- attr(x, "scaling")
   params <- attr(x, "params")
-  model <- initialize_model(d, type, scaling_, params, transitions = TRUE)
-  trans <- model$trans
-  weights_a <- model$weights
-  weights_b <- model$weights
+  # The model's own type by default; other types are validated by name
+  types <- types %||% type
+  types <- vapply(
+    types,
+    function(y) ifelse_(identical(y, type), y, check_model_type(y)),
+    character(1L),
+    USE.NAMES = FALSE
+  )
   alphabet <- attr(d, "alphabet")
+  weights_a <- matrix(0.0, length(alphabet), length(alphabet),
+                      dimnames = list(alphabet, alphabet))
+  weights_b <- weights_a
   n <- nrow(d)
   m <- length(types)
   a <- length(alphabet)
@@ -70,7 +80,8 @@ reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
   n_sample <- round(length(units) * split)
   res <- vector(mode = "list", length = length(types))
   for (i in seq_len(m)) {
-    check_model_type(types[i])
+    # Transitions are counted as the requested type defines them
+    trans <- compute_transitions(d, a, types[i], params)
     comparisons <- vector(mode = "list", length = iter)
     for (j in seq_len(iter)) {
       half <- sample(seq_along(units), n_sample, replace = FALSE)
@@ -81,8 +92,8 @@ reliability.tna <- function(x, types = "relative", split = 0.5, iter = 1000,
       )
       trans_a <- trans[idx_a, , , drop = FALSE]
       trans_b <- trans[idx_b, , , drop = FALSE]
-      weights_a[] <- compute_weights(trans_a, types[i], scaling_, a)
-      weights_b[] <- compute_weights(trans_b, types[i], scaling_, a)
+      weights_a[] <- compute_weights(trans_a, types[i], scaling_, a, params)
+      weights_b[] <- compute_weights(trans_b, types[i], scaling_, a, params)
       comparisons[[j]] <- compare(
         x = weights_a,
         y = weights_b,

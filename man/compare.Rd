@@ -19,7 +19,9 @@ the state names as row and column names.}
 \item{...}{Ignored.}
 
 \item{y}{A \code{tna} object or a \code{matrix} of weights, with the same states as
-\code{x}.}
+\code{x}. The states are matched by name, so their order may differ; an
+error of class \code{tna_error_states} is raised when the states differ or a
+matrix has no state names.}
 
 \item{scaling}{A  \code{character} string naming a scaling method to
 apply to the weights before comparing them. The supported options are:

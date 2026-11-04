@@ -247,7 +247,10 @@ estimate_centrality_stability <- estimate_cs
 #' @param threshold A `numeric` value specifying the correlation threshold for
 #'   calculating the CS-coefficient. The default is 0.7.
 #' @param certainty A `numeric` value specifying the desired level of certainty
-#'   for the CS-coefficient. Default is 0.95.
+#'   for the CS-coefficient. Default is 0.95. The certainty is the share of
+#'   all subsamples whose correlation reaches `threshold`; a subsample in
+#'   which the correlation is undefined (the measure is constant in it)
+#'   counts as one that does not reach it.
 #' @param progressbar A `logical` value. If `TRUE`, a progress bar is
 #'   displayed. Defaults to `FALSE`.
 #' @param detailed Deprecated. This argument is ignored and will be removed in 
@@ -355,8 +358,10 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE, invert = TRUE,
   n_prop <- length(drop_prop)
   n_measures <- length(measures)
   if (n_measures > 0L) {
+    # Observed values come from the full data, like the subsamples, so
+    # pruning of x does not enter the estimate
     centralities_orig <- centralities_(
-      x = x$weights,
+      x = model$weights,
       loops = loops,
       normalize = normalize,
       invert = invert,
@@ -376,8 +381,8 @@ estimate_cs.tna <- function(x, loops = FALSE, normalize = FALSE, invert = TRUE,
   }
   # An edge that is absent from the full data is absent from every subsample,
   # so only the edges of the network are compared (self-loops included)
-  edge_mask <- !is.na(x$weights) & x$weights != 0
-  edges_orig <- x$weights[edge_mask]
+  edge_mask <- !is.na(model$weights) & model$weights != 0
+  edges_orig <- model$weights[edge_mask]
   if (edges && !isTRUE(stats::sd(edges_orig) > 0)) {
     warning_(
       "The edge weights of {.arg x} do not vary, so their stability
@@ -513,8 +518,11 @@ stability_cor <- function(sub, orig, method) {
 #' @inheritParams estimate_centrality_stability
 #' @noRd
 calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
+  # An undefined correlation (a subsample in which the measure is constant)
+  # is a draw that does not reach the threshold, so it stays in the
+  # denominator rather than being dropped from it
   prop_above <- apply(corr_mat, 2, function(x) {
-    mean(x >= threshold, na.rm = TRUE)
+    mean(!is.na(x) & x >= threshold)
   })
   valid_indices <- which(prop_above >= certainty)
   ifelse_(
@@ -541,12 +549,18 @@ rsp_bet <- function(mat, beta = 0.01) {
   C[is.infinite(C)] <- 0
   W <- P_ref * exp(-beta * C)
   Z <- solve(diag(1, n, n) - W)
+  # reach[s, t] is TRUE when t can be reached from s (or s == t). Only these
+  # pairs have random-shortest-path walks: unreachable entries of Z are
+  # mathematically zero, and their finite solver noise must not enter.
+  g <- igraph::graph_from_adjacency_matrix(1L * (mat > 0), mode = "directed")
+  reach <- is.finite(igraph::distances(g, mode = "out"))
   Z_recip <- Z^-1
-  # Entries that are mathematically zero can contain finite solver noise.
-  # Taking their reciprocal amplifies that noise into phantom centrality.
-  Z_recip[!is.finite(Z_recip) | abs(Z) < 1e-12] <- 0
-  Z_recip_diag <- diag(Z_recip) * diag(1, n, n)
-  out <- diag(tcrossprod(Z, Z_recip - n * Z_recip_diag) %*% Z)
+  Z_recip[!reach | !is.finite(Z_recip)] <- 0
+  # The correction for absorbing walks at target t is counted once per
+  # source that reaches t (n of them in a strongly connected network)
+  n_sources <- .colSums(reach, n, n)
+  Z_recip_diag <- diag(n_sources * diag(Z_recip), n, n)
+  out <- diag(tcrossprod(Z, Z_recip - Z_recip_diag) %*% Z)
   out <- round(out)
   out <- out - min(out) + 1
   out

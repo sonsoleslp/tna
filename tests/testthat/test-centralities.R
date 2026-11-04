@@ -158,7 +158,11 @@ test_that("RSP ignores finite solver noise for zero entries", {
   mat[7, ] <- c(1, 0, 0, 0, 0, 0, 0)
   mat <- mat / rowSums(mat)
 
-  expect_equal(rsp_bet(mat), c(59, 16, 48, 40, 60, 17, 1))
+  # s7 has no incoming edges, so only s7 reaches it. Before 1.5.4 the
+  # correction for target s7 was counted for all 7 sources, giving
+  # c(59, 16, 48, 40, 60, 17, 1); the definition (rsp_oracle() below)
+  # gives the values here.
+  expect_equal(rsp_bet(mat), c(53, 10, 42, 34, 54, 11, 1))
 })
 
 # ---- Diffusion is always normalized ----
@@ -441,4 +445,90 @@ test_that("states are named when the only measure returns no names", {
     character(1L)
   )
   expect_true(all(states == paste(model$labels, collapse = ",")))
+})
+
+test_that("an undefined stability correlation counts against the CS", {
+  # 99 undefined draws and 1 above the threshold: 1% reach it, not 100%
+  corr <- matrix(c(rep(NA_real_, 99), 0.9), ncol = 1L)
+  expect_equal(calculate_cs(corr, 0.7, 0.95, 0.5), 0)
+  # Fully defined draws are unaffected
+  corr <- matrix(c(rep(0.8, 96), rep(0.5, 4)), ncol = 1L)
+  expect_equal(calculate_cs(corr, 0.7, 0.95, 0.5), 0.5)
+  corr <- matrix(c(rep(0.8, 94), rep(NA_real_, 6)), ncol = 1L)
+  expect_equal(calculate_cs(corr, 0.7, 0.95, 0.5), 0)
+})
+
+# Randomized shortest path betweenness by its definition (Kivimaki et al.,
+# 2016): make the target t absorbing and sum the expected visits to each
+# node k != t over the walks from every source s that reaches t.
+rsp_oracle <- function(mat, beta = 0.01) {
+  n <- ncol(mat)
+  p_ref <- mat / rowSums(mat)
+  cost <- 1 / mat
+  cost[is.infinite(cost)] <- 0
+  w <- p_ref * exp(-beta * cost)
+  pairs <- subset(expand.grid(s = seq_len(n), t = seq_len(n)), s != t)
+  visits <- vapply(
+    seq_len(nrow(pairs)),
+    function(r) {
+      s <- pairs$s[r]
+      t <- pairs$t[r]
+      w_t <- w
+      w_t[t, ] <- 0
+      z <- solve(diag(n) - w_t)
+      if (z[s, t] < 1e-12) {
+        return(numeric(n))
+      }
+      v <- z[s, ] * z[, t] / z[s, t]
+      v[t] <- 0
+      v
+    },
+    numeric(n)
+  )
+  out <- round(unname(rowSums(visits)))
+  out - min(out) + 1
+}
+
+test_that("RSP betweenness matches its definition on connected networks", {
+  set.seed(17)
+  mats <- replicate(
+    10,
+    {
+      m <- matrix(stats::runif(25), 5, dimnames = list(LETTERS[1:5],
+                                                         LETTERS[1:5]))
+      diag(m) <- 0
+      m
+    },
+    simplify = FALSE
+  )
+  lapply(mats, function(m) expect_equal(rsp_bet(m), rsp_oracle(m)))
+})
+
+test_that("RSP betweenness counts only reachable pairs", {
+  st <- LETTERS[1:5]
+  w <- matrix(0, 5, 5, dimnames = list(st, st))
+  w[1, 2] <- w[2, 1] <- 1
+  w[3:5, 3:5] <- 1
+  diag(w) <- 0
+  rsp <- centralities(w, measures = "BetweennessRSP")$BetweennessRSP
+  expect_equal(rsp, rsp_oracle(w))
+  expect_equal(rsp, c(1, 1, 4, 4, 4))
+  # Relabelling the states permutes the result
+  perm <- c(4, 1, 5, 2, 3)
+  rsp_perm <- centralities(w[perm, perm], measures = "BetweennessRSP")
+  expect_equal(rsp_perm$BetweennessRSP, rsp[perm])
+})
+
+test_that("pruning does not enter the centrality stability estimate", {
+  model <- tna(group_regulation[1:200, ])
+  pruned <- prune(model, threshold = 0.1)
+  set.seed(2)
+  cs_pruned <- estimate_cs(
+    pruned, iter = 20, drop_prop = c(0.1, 0.5), edges = TRUE
+  )
+  set.seed(2)
+  cs_model <- estimate_cs(
+    model, iter = 20, drop_prop = c(0.1, 0.5), edges = TRUE
+  )
+  expect_equal(cs_pruned, cs_model)
 })

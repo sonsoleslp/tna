@@ -103,11 +103,9 @@ plot.tna <- function(x, node_list, use_list_order = TRUE,
     scale_nodes
   )
   args <- list(...)
-  args$node_size <- ifelse_(
-    is.null(args$node_size) & is.null(args$vsize),
-    rep(8 * exp(-n / 80)),
-    args$node_size | args$vsize
-  )
+  # node_size, or the qgraph-style vsize, or the default size
+  args$node_size <- args$node_size %||% args$vsize %||% (8 * exp(-n / 80))
+  args$vsize <- NULL
  
   if (length(scale_nodes) > 0) {
     check_string(scale_nodes)
@@ -1703,6 +1701,8 @@ plot_sequences_ <- function(x, lev, lab, cols, group, type, scale,
       state = factor(!!rlang::sym("state"), levels = lev, labels = lab)
     )
   colors <- colors %m% color_palette(n_unique(long_data$state))
+  # An empty string expression leaves the title without the counts
+  title_n <- "\"\""
   if (show_n) {
     if (!missing(group)) {
       group_n <- x |>
@@ -2014,7 +2014,8 @@ plot.group_tna_cliques <- function(x, title, ...) {
 #' @family communities
 #' @param x A `group_tna_communities` object.
 #' @param title A `character` vector of titles to use for each plot.
-#' @param colors A `character` vector of colors to use.
+#' @param colors A `character` vector of colors for the communities. The same
+#'   colors are used in every group.
 #' @param ... Arguments passed to [plot.tna_communities()].
 #' @return A `list` (invisibly) of `cograph_network` objects in which the
 #'   nodes are colored by community for each cluster.
@@ -2027,18 +2028,17 @@ plot.group_tna_communities <- function(x, title, colors, ...) {
   check_missing(x)
   check_class(x, "group_tna_communities")
   n <- length(x)
+  # Every group uses the whole palette, one color per community
   colors <- colors %m% default_colors
-  colors <- rep_len(colors, n)
   title <- title %m% names(x)
   title <- rep_len(title, n)
   invisible(
     Map(
-      function(y, i, j) {
-        plot(y, title = i, colors = j, ...)
+      function(y, i) {
+        plot(y, title = i, colors = colors, ...)
       },
       x,
-      title,
-      colors
+      title
     )
   )
 }
@@ -2371,7 +2371,8 @@ plot_associations.tna <- function(x, edge_color, ...) {
     "Association network plots are supported only for
      integer-valued weight matrices."
   )
-  tab <- as.table(t(x$weights))
+  # Rows are sources and columns are targets, as in the plotted network
+  tab <- as.table(x$weights)
   chisq <- suppressWarnings(stats::chisq.test(tab))
   res <- as.numeric(chisq$stdres)
   dim(res) <- dim(tab)

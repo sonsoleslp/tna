@@ -696,3 +696,38 @@ test_that("prepare_data with explicit sessions emits no dplyr grouping message",
   expect_named(out$statistics$sessions_per_user, c("user", "n_sessions"))
   expect_equal(out$statistics$total_sessions, 4L)
 })
+
+test_that("sliding one-hot windows cover exactly window_size rows", {
+  d <- data.frame(
+    A = c(1, 0, 0, 0, 0, 1, 0),
+    B = c(0, 0, 1, 0, 0, 0, 0),
+    C = c(0, 1, 0, 0, 0, 0, 1)
+  )
+  states <- c("A", "B", "C")
+  # Oracle: window t of width w holds the states active in rows t..t+w-1
+  oracle <- function(w) {
+    lapply(
+      seq_len(nrow(d) - w + 1L),
+      \(t) states[colSums(d[t:(t + w - 1L), states, drop = FALSE]) > 0]
+    )
+  }
+  observed <- function(w) {
+    out <- import_onehot(d, A:C, window_size = w, window_type = "sliding")
+    lapply(
+      seq_len(ncol(out) / length(states)) - 1L,
+      \(k) {
+        vals <- unlist(out[1L, paste0("W", k, "_T", seq_along(states))])
+        sort(unname(vals[!is.na(vals)]))
+      }
+    )
+  }
+  lapply(
+    seq_len(4L),
+    \(w) expect_equal(observed(w), oracle(w), info = paste("window_size =", w))
+  )
+  # Width 1 is the same window for both window types
+  expect_equal(
+    import_onehot(d, A:C, window_size = 1, window_type = "sliding"),
+    import_onehot(d, A:C, window_size = 1, window_type = "tumbling")
+  )
+})

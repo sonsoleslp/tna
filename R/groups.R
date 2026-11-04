@@ -17,8 +17,9 @@
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
 #'   format `data.frame` or a `tna_data` object. Required for sequence data
-#'   (an error is raised when it is missing). Not used when `x` is a mixture
-#'   Markov model or a clustering result.
+#'   (an error is raised when it is missing). Factor levels that no sequence
+#'   belongs to are dropped. Not used when `x` is a mixture Markov model or a
+#'   clustering result.
 #' @param cols An `expression` giving a tidy selection of the
 #'   columns that should be considered as sequence data.
 #'   The default is all columns. The columns are
@@ -115,6 +116,9 @@ group_model.default <- function(x, group, type = "relative",
   } else if (!is.factor(group)) {
     labels <- paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
     group <- factor(group, labels = labels)
+  } else {
+    # A level without sequences (e.g. left by subsetting) is not a group
+    group <- droplevels(group)
   }
   group <- ifelse_(group_na && !na.rm, addNA(group), group)
   levs <- levels(group)

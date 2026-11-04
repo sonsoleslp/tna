@@ -243,8 +243,10 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
   attr(combined_data, "alphabet") <- attr(data_x, "alphabet")
   attr(combined_data, "labels") <- attr(data_x, "labels")
   n_xy <- n_x + n_y
-  weights_x <- x$weights
-  weights_y <- y$weights
+  # The observed networks are rebuilt from the sequence data, like the
+  # permuted ones, so pruning of x or y does not enter the test
+  weights_x <- data_weights(x)
+  weights_y <- data_weights(y)
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
   params <- attr(x, "params")
@@ -261,8 +263,8 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
   n_measures <- length(measures)
   include_centralities <- n_measures > 0L
   if (include_centralities) {
-    cent_x <- centralities(x, measures = measures, ...)
-    cent_y <- centralities(y, measures = measures, ...)
+    cent_x <- centralities(weights_x, measures = measures, ...)
+    cent_y <- centralities(weights_y, measures = measures, ...)
     cent_diffs_true <- as.matrix(cent_x[, -1L] - cent_y[, -1L])
     cent_diffs_true_abs <- abs(cent_diffs_true)
   }

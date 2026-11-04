@@ -175,3 +175,20 @@ test_that("summary of a permutation test returns the centralities on request", {
     class = "tna_error_permutation"
   )
 })
+
+test_that("pruning does not enter the permutation test", {
+  model <- tna(group_regulation[1:200, ])
+  pruned <- prune(model, threshold = 0.1)
+  set.seed(1)
+  res_pruned <- permutation_test(
+    model, pruned, iter = 30, measures = c("InStrength", "Betweenness")
+  )
+  # Both networks come from the same data, so no difference is observed
+  expect_true(all(res_pruned$edges$diffs_true == 0))
+  expect_true(all(res_pruned$centralities$stats$diff_true == 0))
+  set.seed(1)
+  res_model <- permutation_test(
+    model, model, iter = 30, measures = c("InStrength", "Betweenness")
+  )
+  expect_equal(res_pruned, res_model)
+})

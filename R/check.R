@@ -406,3 +406,23 @@ check_dots <- function(...) {
     "Argument{?/s} {.arg {invalid_dots}} {?is/are} not recognized."
   )
 }
+
+#' Check that a Weight Matrix Names Its States
+#'
+#' The row names must equal the column names and be unique, so that two
+#' matrices can be matched by state.
+#'
+#' @param x A weight `matrix`.
+#' @param arg A `character` string naming the argument in error messages.
+#' @noRd
+check_state_names <- function(x, arg) {
+  states <- rownames(x)
+  stopifnot_(
+    !is.null(states) &&
+      identical(states, colnames(x)) &&
+      anyDuplicated(states) == 0L,
+    "The weight matrix {.arg {arg}} must have the same unique state names
+     as its row and column names.",
+    class = "tna_error_states"
+  )
+}
