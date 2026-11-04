@@ -1,3 +1,7 @@
+# tna 1.5.5
+
+* NEWS.md wording.
+
 # tna 1.5.4
 
 Corrections to numerical results. Results from the functions below can
@@ -122,8 +126,8 @@ differ from earlier versions.
 
 # tna 1.5.1
 
-* Every help page now has examples that run: small examples on a subset of
-  the data come before the `\donttest{}` blocks of `compare_sequences()`,
+* Small examples on a subset of the data come before the `\donttest{}`
+  blocks of `compare_sequences()`,
   `estimate_cs()`, `plot_frequencies()` for groups, and the print, plot and
   summary methods of sequence comparisons and stability results. The
   `as.igraph()` methods have examples.
@@ -191,13 +195,11 @@ differ from earlier versions.
   orders are tested in sequence, and the results also report the
   log-likelihood, AIC, and BIC of the multi-order model of each order
   (Scholtes, 2017). Methods for `tna` and `group_tna` objects, with `print()`,
-  `summary()`, and `plot()` methods. `plot()` draws two panels, as
-  Nestimate does: the log-likelihood, AIC, and BIC across the orders with the
+  `summary()`, and `plot()` methods. `plot()` draws two panels: the
+  log-likelihood, AIC, and BIC across the orders with the
   selected order marked, and the permutation null density of each order with
   the observed statistic (`panel = "ic"` or `"permutation"` draws one;
-  unknown arguments are errors). The results agree with
-  `Nestimate::markov_order_test()`; the function is named `markov_order()`
-  so that it does not mask Nestimate's when both packages are attached.
+  unknown arguments are errors).
   Because the tests stop at the first order that does not reject, a
   dependence that skips an order is not selected: a warning of class
   `tna_warning_markov_order` and a printed note flag a higher order whose
@@ -227,8 +229,7 @@ differ from earlier versions.
   differences in edge betweenness; `reliability()` uses the transitions of
   that model. `betweenness_network()` also has a method for `group_tna`
   objects, so `permutation_test(betweenness_network(models))` compares edge
-  betweenness between all groups in one call. The results agree with
-  `Nestimate::permutation()` on `Nestimate::net_edge_betweenness()` objects.
+  betweenness between all groups in one call.
 
   Edge betweenness networks created by earlier versions must be rebuilt to
   be resampled, and `betweenness_network()` refuses a network that is
