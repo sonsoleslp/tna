@@ -50,10 +50,9 @@ A \code{ggplot} object.
 Plot the Frequency Distribution of States
 }
 \examples{
-\donttest{
 model <- group_model(engagement_mmm)
-# Default
 plot_frequencies(model)
+\donttest{
 # Default labels outside and custom colors
 plot_frequencies(
   model,

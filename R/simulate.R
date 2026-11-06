@@ -42,14 +42,19 @@ stats::simulate
 #' @param format A `character` string indicating whether the data should be
 #'   returned in `wide` or `long` format.
 #' @param zero_row A `character` string describing how to process zero rows
-#'   in the weight matrix. The option `"self"` (the default) assigns
+#'   in the weight matrix, i.e., states that are never left, such as states
+#'   that only end sequences. The option `"self"` (the default) assigns
 #'   probability 1 to the corresponding state (self loop) and option
-#'   `"uniform"` assigns a uniform distribution.
+#'   `"uniform"` assigns a uniform distribution. Applies to both model types.
 #' @param ... Ignored.
-#' @return A `data.frame` of the simulated sequence data.
+#' @return A `data.frame` of the simulated sequence data. In `wide` format,
+#'   one row per sequence and one column per time point (`T1`, `T2`, ...).
+#'   In `long` format, one row per observation with the columns `id`,
+#'   `time`, and `state`.
 #' @examples
 #' model <- tna(group_regulation)
-#' sim <- simulate(model, nsim = 10, max_len = 10)
+#' sim <- simulate(model, nsim = 10, max_len = 10, seed = 1)
+#' print(sim)
 #'
 simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
                          na_range = c(0L, 0L), zero_row = "self", 
@@ -65,7 +70,7 @@ simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
   check_values(nsim, strict = TRUE)
   check_values(max_len, strict = TRUE)
   zero_row <- check_match(zero_row, c("self", "uniform"))
-  zero_row <- check_match(format, c("wide", "long"))
+  format <- check_match(format, c("wide", "long"))
   na_range <- as.integer(na_range)
   stopifnot_(
     na_range[1L] >= 0L &&
@@ -88,12 +93,12 @@ simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
     is.matrix(prob) && nrow(prob) == n && ncol(prob) == n,
     "Invalid transition matrix dimensions."
   )
-  if (type == "frequency") {
-    prob <- freq_to_prob(prob, zero_row = zero_row)
-  }
+  # Rows are normalized and zero rows (states never left, e.g. terminal
+  # states of relative models) follow the `zero_row` policy for both types
+  prob <- freq_to_prob(prob, zero_row = zero_row)
   out <- matrix(0L, nrow = nsim, ncol = max_len)
   out[, 1L] <- sample(seq_len(n), size = nsim, replace = TRUE, prob = init)
-  for (i in seq(2L, max_len)) {
+  for (i in seq_len(max_len)[-1L]) {
     # Gumbel softmax trick
     log_prob <- log(prob[out[, i - 1L], , drop = FALSE])
     out[, i] <- max.col(log_prob - log(-log(stats::runif(nu))))
@@ -101,17 +106,12 @@ simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
   out <- apply(out, 2L, function(y) labels[y], simplify = FALSE)
   out <- as.data.frame(out, col.names = paste0("T", seq_len(max_len)))
   if (na_range[2L] > 0L) {
-    max_seq <- seq(na_range[1L], na_range[2L])
-    nas <- sample(max_seq, size = nsim, replace = TRUE)
-    seqs <- vector(mode = "list", length = na_range[2])
-    seqs[[na_range[2L]]] <- seq(max_len - na_range[2L] + 1L, max_len)
-    for (i in seq(na_range[2L] - 1L, na_range[1L])) {
-      seqs[[i]] <- seqs[[i + 1]][-1L]
-    }
-    for (i in max_seq) {
-      idx <- which(nas == i)
-      out[idx, seqs[[i]]] <- NA
-    }
+    # Number of trailing missing values per sequence, uniform on the range
+    n_values <- na_range[2L] - na_range[1L] + 1L
+    nas <- na_range[1L] - 1L + sample.int(n_values, size = nsim, replace = TRUE)
+    # Cell (r, j) is missing when j is among the last nas[r] time points
+    trailing <- outer(nas, seq_len(max_len), function(k, j) j > max_len - k)
+    out[trailing] <- NA
   }
   ifelse_(
     format == "long",
@@ -135,7 +135,9 @@ simulate.tna <- function(object, nsim = 1, seed = NULL, max_len = 100L,
 #'   length of all simulated sequences. If a single integer is provided, the 
 #'   maximum length is the same for each group.
 #' @inheritParams simulate.tna
-#' @return A `data.frame` of the simulated sequence data.
+#' @return A `data.frame` of the simulated sequence data, as for
+#'   [simulate.tna()], with the group of each sequence in the first column
+#'   `group`.
 #' @examples
 #' model <- group_tna(
 #'   group_regulation,

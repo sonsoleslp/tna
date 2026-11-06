@@ -12,8 +12,9 @@
 \item{...}{Ignored.}
 }
 \value{
-A \code{summary.group_tna_bootstrap} object containing the weight,
-estimated p-value and confidence interval of each edge for each cluster.
+A \code{summary.group_tna_bootstrap} object, which is a \code{data.frame}
+with the columns of \code{\link[=summary.tna_bootstrap]{summary.tna_bootstrap()}} preceded by the column
+\code{group}: one row per cluster and edge with a positive weight.
 }
 \description{
 Summarize Bootstrap Results for a Grouped Transition Network
@@ -30,12 +31,14 @@ Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{markov_order}()},
 \code{\link{permutation_test}()},
 \code{\link{permutation_test.group_tna}()},
 \code{\link{plot.group_tna_bootstrap}()},
 \code{\link{plot.group_tna_permutation}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_markov_order}()},
 \code{\link{plot.tna_permutation}()},
 \code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
@@ -44,8 +47,9 @@ Validation functions
 \code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
+\code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
 \code{\link{print.tna_stability}()},
@@ -53,6 +57,10 @@ Validation functions
 \code{\link{pruning_details}()},
 \code{\link{reliability}()},
 \code{\link{reprune}()},
-\code{\link{summary.tna_bootstrap}()}
+\code{\link{summary.tna_bootstrap}()},
+\code{\link{summary.tna_markov_order}()},
+\code{\link{summary.tna_permutation}()},
+\code{\link{summary.tna_reliability}()},
+\code{\link{summary.tna_stability}()}
 }
 \concept{validation}

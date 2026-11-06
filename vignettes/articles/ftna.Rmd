@@ -19,14 +19,8 @@ knitr::opts_chunk$set(
 )
 suppressPackageStartupMessages({
   library("tna")
-  library("tibble")
-  library("dplyr")
-  library("ggplot2")
 })
-options(scipen = 99)
-options(digits = 2)
-options(max.print = 30)
-options(width = 83)
+old_options <- options(scipen = 99, digits = 2, max.print = 30, width = 83)
 ```
 
 
@@ -60,30 +54,16 @@ print(model_scaled) # Print the FTNA model with scaled weights
 
 ## Plotting
 
+Scaling should change the units of the weights, not their relative order. Plotting the absolute weights against the scaled weights checks this: `compare()` pairs the edges of the two models and its scatterplot shows the Pearson correlation of the weights.
+
 ```{r, fig.align='center'}
 # Plotting the two weights together to see if the scaling distorts the data
-
-# Combine weights from absolute and scaled models into a data frame for plotting
-weights_data <- data.frame(
-  Absolute = as.vector(model$weights), # Extract absolute weights as a vector
-  Scaled = as.vector(model_scaled$weights) # Extract scaled weights as a vector
+plot(
+  compare(model, model_scaled),
+  type = "scatterplot",
+  name_x = "Absolute",
+  name_y = "Scaled"
 )
-corr <- cor(weights_data$Absolute, weights_data$Scaled, method = c("pearson")) |>
-  round(digits = 2)
-
-# Create a scatter plot comparing absolute vs. scaled weights
-plot_abs_scaled <- ggplot(weights_data, aes(x = Absolute, y = Scaled)) +
-  geom_point(color = "steelblue", alpha = 0.6, size = 2) +  # Add points with specified aesthetics
-  geom_smooth(formula = y ~ x, method = "lm", color = "red", linetype = "dashed") + # Add a linear trend line
-  # geom_smooth(method = lm, formula = y ~ x, se = FALSE) +
-  geom_text(x = 0.1, y = 0.9, label = paste0('r = ', corr), color = 'red')
-  # stat_cor(aes(label = after_stat(r.label)), label.x = 0.1, label.y = 0.9, 
-  #          size = 4, color = "black", method = "spearman") + # Display Spearman correlation
-  labs(x = "Absolute Weights", y = "Scaled Weights") + # Label axes
-  theme_minimal() # Apply a minimal theme for the plot
-
-# Display the scatter plot
-plot_abs_scaled
 ```
 
 
@@ -95,26 +75,17 @@ print(model_ranked) # Print the FTNA model with ranked weights
 ```
 
 
+Ranking keeps the order of the weights but not their distances, so the relation with the absolute weights is monotone but not linear. The Spearman correlation measures that agreement in order.
+
 ```{r, fig.align='center'}
-# Combine weights from absolute and ranked models into a data frame for plotting
-weights_data <- data.frame(
-  Absolute = as.vector(model$weights), # Extract absolute weights as a vector
-  Ranked = as.vector(model_ranked$weights) # Extract ranked weights as a vector
+# Compare the absolute and the ranked weights
+plot(
+  compare(model, model_ranked),
+  type = "scatterplot",
+  method = "spearman",
+  name_x = "Absolute",
+  name_y = "Ranked"
 )
-
-# Create a scatter plot comparing Absolute vs. Ranked weights with correlation annotations
-plot_abs_ranked <- ggplot(weights_data, aes(x = Absolute, y = Ranked)) +
-  geom_point(color = "steelblue", alpha = 0.6, size = 2) +  # Add points with specified aesthetics
-  geom_smooth(formula = y ~ x, method = "lm", color = "red", linetype = "dashed") +  # Add a linear trend line
-  # stat_cor(aes(label = paste("Spearman: ", round(after_stat(r), 2))), 
-  #          method = "spearman", label.x = 0.1, label.y = 0.9, size = 4, color = "black") + # Spearman correlation annotation
-  # stat_cor(aes(label = paste("Pearson: ", round(after_stat(r), 2))), 
-  #          method = "pearson", label.x = 0.1, label.y = 0.8, size = 4, color = "darkgreen") + # Pearson correlation annotation
-  labs(x = "Absolute Weights", y = "Ranked Weights") + # Label axes
-  theme_minimal() # Apply a minimal theme for the plot
-
-# Display the scatter plot
-plot_abs_ranked
 ```
 
 
@@ -125,7 +96,7 @@ layout(matrix(1:4, ncol = 2))
 # Pruning with different methods
 pruned_threshold <- prune(model_scaled, method = "threshold", threshold = 0.1)
 pruned_lowest <- prune(model_scaled, method = "lowest", lowest = 0.15)
-pruned_disparity <- prune(model_scaled, method = "disparity", alpha = 0.5)
+pruned_disparity <- prune(model_scaled, method = "disparity", level = 0.5)
 
 # Plotting for comparison
 plot(pruned_threshold)
@@ -150,7 +121,7 @@ cliques_of_two <- cliques(
 
 # Print and visualize the identified 2-cliques (dyads)
 print(cliques_of_two)  # Display details of 2-cliques
-plot(cliques_of_two, ask = F)   # Visualize 2-cliques in the network
+plot(cliques_of_two, ask = FALSE)   # Visualize 2-cliques in the network
 ```
 ```{r, fig.align='center'}
 layout(matrix(1:6, ncol = 3))
@@ -229,15 +200,11 @@ plot(centrality_measures)
 # calculate HITS (Hub and Authority) scores
 hits_results <- igraph::hits_scores(as.igraph(model_scaled))
 
-# Extract the hub and authority scores from the HITS results for further analysis
-hub_scores <- hits_results$hub
-authority_scores <- hits_results$authority
 ```
 
 ```{r}
-# Print the hub and authority scores to view influential nodes
-print(hub_scores)
-print(authority_scores)
+# Print the hub and authority scores (and the eigenvalue) to view influential nodes
+print(hits_results)
 ```
 
 
@@ -253,7 +220,7 @@ plot(edge_between)
 ```{r, fig.align='center', fig.width=5, fig.height=5}
 detected_communities <- communities(model_scaled)
 plot(detected_communities, method = "leading_eigen")
-print(detected_communities, method = "leading_eigen")
+print(detected_communities)
 ```
 
 ## Bootstrapping
@@ -261,7 +228,7 @@ print(detected_communities, method = "leading_eigen")
 ```{r}
 # Perform bootstrapping on the FTNA model with a fixed seed for reproducibility
 set.seed(265)
-boot <- bootstrap(model_scaled, threshold = 0.05)
+boot <- bootstrap(model_scaled)
 
 # Print the combined results data frame containing
 print(summary(boot))
@@ -274,19 +241,19 @@ print(boot, type = "nonsig")
 
 ```{r, fig.align='center', fig.height=5, fig.width=5, layout = c(1,1)}
 # Create FTNA for the high-achievers subset (rows 1 to 1000)
-Hi <- ftna(group_regulation[1:1000, ], scaling = "minmax")
+Hi <- ftna(head(group_regulation, 1000), scaling = "minmax")
 
 # Create FTNA for the low-achievers subset (rows 1001 to 2000)
-Lo <- ftna(group_regulation[1001:2000, ], scaling = "minmax")
+Lo <- ftna(tail(group_regulation, 1000), scaling = "minmax")
 
 # Plot a comparison of the "Hi" and "Lo" models
-# The 'minimum' parameter is set to 0.001, so edges with weights >= 0.001 are shown
+# The 'minimum' parameter is set to 0.0001, so edges with weights >= 0.0001 are shown
 plot_compare(Hi, Lo, minimum = 0.0001)
 
 # Run a permutation test to determine statistical significance of 
 # differences between "Hi" and "Lo"
-# The 'it' parameter is set to 1000, meaning 1000 permutations are performed
-Permutation <- permutation_test(Hi, Lo, it = 1000)
+# The 'iter' argument is set to 1000, meaning 1000 permutations are performed
+Permutation <- permutation_test(Hi, Lo, iter = 1000)
 
 # Plot the significant differences identified in the permutation test
 plot(Permutation)
@@ -297,4 +264,11 @@ plot(Permutation)
 ```{r, fig.width=7, fig.height=4}
 Centrality_stability <- estimate_centrality_stability(model_scaled, iter = 100)
 plot(Centrality_stability)
+```
+
+```{r, child = "../_tutorials.md"}
+```
+
+```{r, include = FALSE}
+options(old_options)
 ```

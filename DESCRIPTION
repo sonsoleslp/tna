@@ -1,6 +1,6 @@
 Package: tna
 Title: Transition Network Analysis (TNA)
-Version: 1.3.1
+Version: 1.5.6
 Authors@R: c(
     person("Mohammed", "Saqr", role = "aut"),
     person("Santtu", "Tikka", role = "aut"),
@@ -12,7 +12,7 @@ Description: Provides tools for performing Transition Network Analysis (TNA) to
     models, calculating centrality measures, and identifying dominant events and 
     patterns. TNA statistical techniques (e.g., bootstrapping and permutation 
     tests) ensure the reliability of observed insights and confirm that 
-    identified dynamics are meaningful. See (Saqr et al., 2025) 
+    identified dynamics are meaningful. See Saqr et al. (2025)
     <doi:10.1145/3706468.3706513> for more details on TNA.
 License: MIT + file LICENSE
 URL: https://github.com/sonsoleslp/tna/, https://sonsoles.me/tna/
@@ -28,9 +28,10 @@ Imports:
     dplyr,
     ggplot2,
     graphics,
+    grid,
     igraph,
     RColorBrewer,
-    rlang,
+    rlang (>= 1.0.0),
     stats,
     tibble,
     tidyr,

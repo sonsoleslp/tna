@@ -23,6 +23,8 @@
 #' @export
 #' @family validation
 #' @param x A `tna` or a `group_tna` object created from sequence data.
+#'   Grouped models with scaled edge weights, and their networks, are not
+#'   resampled (an error of class `tna_error_scaling`).
 #' @param iter An `integer` specifying the number of bootstrap samples to
 #' draw. Defaults to `1000`.
 #' @param level A `numeric` value representing the significance level for
@@ -44,9 +46,19 @@
 #' `method = "threshold"`.
 #' @param seed A single `numeric` random seed for reproducible resampling, or
 #' `NULL` (the default) to use the current RNG state.
+#' @param actor An optional actor identifier for sequences nested in actors
+#' (for example, several sessions per student). Either a `character` string
+#' naming a non-sequence column of the data the model was built from (such as
+#' a column of `meta_data` from [prepare_data()]), or a vector with one
+#' identifier per sequence (per sequence of the data the grouped model was
+#' built from, for a `group_tna` object). When given, whole actors are
+#' resampled with replacement instead of single sequences (a cluster
+#' bootstrap; Davison & Hinkley, 1997, Section 3.8), so that sequences nested
+#' in actors are not treated as independent. The default `NULL` resamples
+#' sequences.
 #' @return A `tna_bootstrap` object which is a `list` containing the
 #' following elements:
-#
+#'
 #'   * `weights_orig`: The original edge weight `matrix`.
 #'   * `weights_sig`: The `matrix` of significant transitions
 #'     (those with estimated p-values below the significance level).
@@ -61,12 +73,19 @@
 #'   * `ci_upper`: The upper bound `matrix` of the bootstrap confidence
 #'     intervals for the edge weights.
 #'   * `p_values`: The `matrix` of estimated p-values for the edge weights.
-#'   * `summary`: A `data.frame` summarizing the edges, their weights,
-#'     p-values, statistical significance, consistency ranges, and
-#'     confidence intervals.
+#'   * `summary`: A `data.frame` with one row per edge with a positive
+#'     weight and the columns `from`, `to`, `weight`, `p_value`, `sig`,
+#'     `cr_lower`, `cr_upper`, `ci_lower`, and `ci_upper`. The same table is
+#'     returned by [summary.tna_bootstrap()].
+#'   * `model`: The `tna` model pruned to the significant edges (see
+#'     [prune()] with `method = "bootstrap"`).
 #'
 #' If `x` is a `group_tna` object, the output is a `group_tna_bootstrap`
 #' object, which is a `list` of `tna_bootstrap` objects.
+#'
+#' @references
+#' Davison, A. C., & Hinkley, D. V. (1997). *Bootstrap Methods and their
+#' Application*. Cambridge University Press.
 #'
 #' @examples
 #' model <- tna(group_regulation)
@@ -74,7 +93,7 @@
 #' bootstrap(model, iter = 10)
 #'
 bootstrap <- function(x, iter, level, method, threshold, consistency_range,
-                      seed = NULL) {
+                      seed = NULL, actor = NULL) {
   UseMethod("bootstrap")
 }
 
@@ -82,9 +101,10 @@ bootstrap <- function(x, iter, level, method, threshold, consistency_range,
 #' @rdname bootstrap
 bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
                           threshold, consistency_range = c(0.75, 1.25),
-                          seed = NULL) {
+                          seed = NULL, actor = NULL) {
   check_missing(x)
   check_tna_seq(x)
+  check_not_scaled_group(x, "Bootstrapping")
   check_values(iter, strict = TRUE)
   check_range(level, lower = 0, upper = 1)
   method <- check_match(method, c("stability", "threshold"))
@@ -101,6 +121,7 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
     "Argument {.arg consistency_range} must be a sorted {.cls numeric}
      vector of length 2 containing positive values."
   )
+  check_actor(actor)
   if (!is.null(seed)) {
     check_numeric(seed)
     set.seed(seed)
@@ -115,23 +136,27 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
   dim_names <- list(alphabet, alphabet)
   n <- nrow(d)
   a <- length(alphabet)
-  weights <- compute_weights(trans, type, scaling, a)
+  weights <- compute_weights(trans, type, scaling, a, params)
   dimnames(weights) <- dim_names
   weights_boot <- array(0.0, dim = c(iter, a, a))
   p_values <- matrix(0, a, a)
-  idx <- seq_len(n)
+  resample <- bootstrap_sampler(x, actor)
   if (method == "stability") {
     for (i in seq_len(iter)) {
-      trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
-      weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
+      trans_boot <- trans[resample(), , , drop = FALSE]
+      weights_boot[i, , ] <- compute_weights(
+        trans_boot, type, scaling, a, params
+      )
       p_values[] <- p_values +
         1L * (weights_boot[i, , ] <= weights * consistency_range[1] | 
           weights_boot[i, , ] >= weights * consistency_range[2])
     }
   } else {
     for (i in seq_len(iter)) {
-      trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
-      weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
+      trans_boot <- trans[resample(), , , drop = FALSE]
+      weights_boot[i, , ] <- compute_weights(
+        trans_boot, type, scaling, a, params
+      )
       p_values <- p_values + 1L * (weights_boot[i, , ] < threshold)
     }
   }
@@ -206,14 +231,12 @@ bootstrap.tna <- function(x, iter = 1000, level = 0.05, method = "stability",
 bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
                                 method = "stability", threshold,
                                 consistency_range = c(0.75, 1.25),
-                                seed = NULL) {
+                                seed = NULL, actor = NULL) {
   check_missing(x)
   check_class(x, "group_tna")
-  stopifnot_(
-    length(attr(x, "scaling")) == 0L || attr(x, "groupwise"),
-    "Bootstrapping is not supported for
-     grouped models with globally scaled edge weights."
-  )
+  check_not_scaled_group(x, "Bootstrapping")
+  check_actor(actor)
+  actors <- group_actor(x, actor)
   if (!is.null(seed)) {
     check_numeric(seed)
     set.seed(seed)
@@ -221,8 +244,8 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
   structure(
     stats::setNames(
       lapply(
-        x,
-        bootstrap,
+        seq_along(x),
+        function(i, ...) bootstrap(x[[i]], actor = actors[[i]], ...),
         iter = iter,
         level = level,
         method = method,
@@ -239,7 +262,9 @@ bootstrap.group_tna <- function(x, iter = 1000, level = 0.05,
 #'
 #' Bootstrap the edge weights of all cliques of a given size in a `tna`
 #' model, producing per-clique mean weights, p-values, confidence intervals,
-#' and consistency-range bounds.
+#' and consistency-range bounds. Each bootstrap sample draws as many
+#' sequences as the data has, with replacement, and recomputes the clique
+#' weights from them.
 #'
 #' @export
 #' @inheritParams cliques
@@ -265,6 +290,7 @@ bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
                                   seed = NULL) {
   check_missing(x)
   check_tna_seq(x)
+  check_not_scaled_group(x, "Bootstrapping")
   check_values(threshold, type = "numeric")
   stopifnot_(
     checkmate::test_int(x = size, lower = 2),
@@ -309,7 +335,7 @@ bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
   alphabet <- attr(d, "alphabet")
   dim_names <- list(alphabet, alphabet)
   a <- length(alphabet)
-  weights <- compute_weights(trans, type, scaling, a)
+  weights <- compute_weights(trans, type, scaling, a, params)
   clique_weights <- vapply(
     cliq$indices,
     function(y) {
@@ -321,10 +347,14 @@ bootstrap_cliques.tna <- function(x, size = 2L, threshold = 0,
   weights_boot <- array(0.0, dim = c(iter, a, a))
   clique_weights_boot <- matrix(0.0, iter, n)
   p_values <- numeric(n)
-  idx <- seq_len(n)
+  # Resample sequences (the units of the data), not cliques
+  n_seq <- dim(trans)[1L]
   for (i in seq_len(iter)) {
-    trans_boot <- trans[sample(idx, n, replace = TRUE), , , drop = FALSE]
-    weights_boot[i, , ] <- compute_weights(trans_boot, type, scaling, a)
+    trans_boot <- trans[sample.int(n_seq, n_seq, replace = TRUE), , ,
+                        drop = FALSE]
+    weights_boot[i, , ] <- compute_weights(
+      trans_boot, type, scaling, a, params
+    )
     clique_weights_boot[i, ] <- vapply(
       cliq$indices,
       function(y) {

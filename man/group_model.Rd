@@ -78,9 +78,10 @@ This can also be the output of clustering from
 row of the data/sequence. Must have the same length as the number of
 rows/sequences of \code{x}. Alternatively, a single \code{character} string giving
 the column name of the data that defines the group when \code{x} is a wide
-format \code{data.frame} or a \code{tna_data} object. If not provided, each row of
-the data forms a cluster. Not used when \code{x} is a mixture Markov model
-or a clustering result.}
+format \code{data.frame} or a \code{tna_data} object. Required for sequence data
+(an error is raised when it is missing). Factor levels that no sequence
+belongs to are dropped. Not used when \code{x} is a mixture Markov model or a
+clustering result.}
 
 \item{type}{A \code{character} string describing the weight matrix type.
 Currently supports the following types:
@@ -99,7 +100,7 @@ The resulting weight matrix is the transpose of the \code{"frequency"}
 option.
 \item \code{"attention"} aggregates all downstream pairs of states with an
 exponential decay for the gap between states. The parameter \code{lambda}
-can be used to control the decay rate (the default is 1)-
+can be used to control the decay rate (the default is 1).
 }}
 
 \item{scaling}{A \code{character} vector describing how to scale the weights
@@ -120,7 +121,12 @@ positive ranks, unlike \code{"minmax"} when all weights are positive.
 }}
 
 \item{groupwise}{A \code{logical} value that indicates whether scaling methods
-should be applied by group (\code{TRUE}) or globally (\code{FALSE}, the default).}
+should be applied by group (\code{TRUE}) or globally (\code{FALSE}, the default).
+A grouped model with scaled edge weights (either way) and its networks
+cannot be resampled: \code{\link[=bootstrap]{bootstrap()}}, \code{\link[=permutation_test]{permutation_test()}},
+\code{\link[=estimate_cs]{estimate_cs()}}, \code{\link[=reliability]{reliability()}}, and \code{\link[=compare_sequences]{compare_sequences()}} raise an
+error of class \code{tna_error_scaling}. Scaling across groups depends on
+every group, so a resample of one group cannot reproduce it.}
 
 \item{cols}{An \code{expression} giving a tidy selection of the
 columns that should be considered as sequence data.
@@ -170,13 +176,14 @@ This is an alternative to \code{time}.
 to concatenate. The default is 1 (no concatenation).}
 
 \item{na.rm}{A \code{logical} value that determines if observations with \code{NA}
-value in \code{group} be removed. If \code{FALSE}, an additional category for \code{NA}
-values will be added. The default is \code{FALSE} and a warning is issued
-if \code{NA} values are detected.}
+value in \code{group} are removed. The default is \code{TRUE}: the observations
+are removed, with a warning. If \code{FALSE}, an additional category for \code{NA}
+values is added.}
 }
 \value{
-An object of class \code{group_tna} which is a \code{list} containing one
-element per cluster. Each element is a \code{tna} object.
+An object of class \code{group_tna} which is a named \code{list} containing
+one element per group (cluster). Each element is a \code{tna} object (see
+\code{\link[=build_model]{build_model()}}).
 }
 \description{
 This function constructs a transition network analysis (TNA) model for
@@ -202,8 +209,10 @@ model <- group_atna(group_regulation, group = gl(2, 1000))
 }
 \seealso{
 Cluster-related functions
+\code{\link{cluster_data}()},
 \code{\link{communities}()},
 \code{\link{mmm_stats}()},
+\code{\link{print.tna_clustering}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

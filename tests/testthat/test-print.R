@@ -234,3 +234,12 @@ test_that("reliability analysis can be printed", {
     NA
   )
 })
+
+test_that("a model without initial probabilities prints", {
+  st <- c("A", "B")
+  model <- build_model(matrix(c(0.6, 0.3, 0.4, 0.7), 2, dimnames = list(st, st)))
+  expect_null(model$inits)
+  out <- capture.output(print(model))
+  expect_true(any(grepl("Matrix :", out, fixed = TRUE)))
+  expect_false(any(grepl("Initial Probabilities", out, fixed = TRUE)))
+})

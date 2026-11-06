@@ -36,3 +36,8 @@ vignettes/articles/*cache
 /tmp/
 AGENT-NOTE-r-equivalence-bugs.md
 HANDOFF.md
+AGENT-NOTE-jtna-defects.md
+AGENT-NOTE-nestimate-port-review.md
+local_testing_and_equivalence/
+CHANGES.md
+LEARNINGS.md

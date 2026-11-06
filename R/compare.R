@@ -10,8 +10,12 @@
 #'
 #' @export
 #' @family comparison
-#' @param x A `tna` object or a `matrix` of weights.
-#' @param y A `tna` object or a `matrix` of weights.
+#' @param x A `tna` object or a `matrix` of weights. A `matrix` must have
+#'   the state names as row and column names.
+#' @param y A `tna` object or a `matrix` of weights, with the same states as
+#'   `x`. The states are matched by name, so their order may differ; an
+#'   error of class `tna_error_states` is raised when the states differ or a
+#'   matrix has no state names.
 #' @param scaling A  `character` string naming a scaling method to
 #' apply to the weights before comparing them. The supported options are:
 #'
@@ -45,28 +49,33 @@
 #' * `matrices`: A `list` containing the scaled matrices of the input `tna`
 #'   objects or the scaled inputs themselves in the case of matrices.
 #' * `difference_matrix`: A `matrix` of differences `x - y`.
-#' * `edge_metrics`: A `data.frame` of edge-level metrics about the differences.
-#' * `summary_metrics`: A `data.frame` of summary metrics of the differences
-#'   across all edges.
-#' * `network_metrics`: A `data.frame` of network metrics for both `x` and `y`.
-#' * `centrality_differences`: A `data.frame` of differences in centrality
-#'   measures computes from `x` and `y`.
-#' * `centrality_correlations`: A `numeric` vector of correlations of the
-#'   centrality measures between `x` and `y`.
+#' * `edge_metrics`: A `data.frame` with one row per pair of states (columns
+#'   `source` and `target`), the weights `weight_x` and `weight_y`, and
+#'   edge-level metrics of their difference.
+#' * `summary_metrics`: A `data.frame` with one row per summary metric of the
+#'   differences across all edges, with the columns `category`, `metric`,
+#'   and `value`.
+#' * `network_metrics`: A `data.frame` with one row per network metric and
+#'   the columns `metric`, `x`, and `y`.
+#' * `centrality_differences`: A `data.frame` with one row per state and
+#'   centrality measure, with the columns `state`, `centrality`, `x`, `y`,
+#'   and `difference`. Only present when `measures` is not empty.
+#' * `centrality_correlations`: A `data.frame` with one row per centrality
+#'   measure and the correlation of the measure between `x` and `y`. Only
+#'   present when `measures` is not empty.
 #'
 #' @examples
 #' # Comparing TNA models
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
+#' model_x <- tna(head(group_regulation, 200))
+#' model_y <- tna(tail(group_regulation, 200))
 #' comp1 <- compare(model_x, model_y)
 #'
-#' # Comparing matrices
-#' mat_x <- model_x$weights
-#' mat_y <- model_y$weights
+#' # Comparing weight matrices (with the states as row and column names)
+#' states <- c("A", "B")
+#' mat_x <- matrix(c(0.6, 0.3, 0.4, 0.7), 2, 2, dimnames = list(states, states))
+#' mat_y <- matrix(c(0.5, 0.2, 0.5, 0.8), 2, 2, dimnames = list(states, states))
 #' comp2 <- compare(mat_x, mat_y)
-#'
-#' # Comparing a matrix to a TNA model
-#' comp3 <- compare(mat_x, model_y)
+#' print(comp2)
 #'
 compare <- function(x, ...) {
   UseMethod("compare")
@@ -92,11 +101,11 @@ compare.matrix <- function(x, y, scaling = "none", measures = character(0),
 #' @family comparison
 #' @param x A `group_tna` object.
 #' @param i An `integer` index or the name of the principal cluster as a
-#' `character` string.
+#' `character` string. The default is the first cluster.
 #' @param j An `integer` index or the name of the secondary cluster as a
-#' `character` string.
+#' `character` string. The default is the second cluster.
 #' @inheritParams compare
-#' @param ... Additional arguments passed to [compare.tna()].
+#' @param ... Ignored.
 #' @return A `tna_comparison` object. See [compare.tna()] for details.
 #' @examples
 #' model <- group_model(engagement_mmm)
@@ -130,10 +139,10 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     is_tna(y) || is.matrix(y),
     "Argument {.arg x} must be a {.cls tna} object or a numeric {.cls matrix}."
   )
-  x <- ifelse_(is_tna(x), x$weights, x)
-  y <- ifelse_(is_tna(y), y$weights, y)
   x_arg <- ifelse_(is_tna(x), "x$weights", "x")
   y_arg <- ifelse_(is_tna(y), "y$weights", "y")
+  x <- ifelse_(is_tna(x), x$weights, x)
+  y <- ifelse_(is_tna(y), y$weights, y)
   n <- ncol(x)
   stopifnot_(
     n == nrow(x),
@@ -152,6 +161,21 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     all(!is.na(y)),
     "Weight matrix {.arg {y_arg}} must not contain missing values."
   )
+  check_state_names(x, x_arg)
+  check_state_names(y, y_arg)
+  states_x <- rownames(x)
+  states_y <- rownames(y)
+  only_one <- c(setdiff(states_x, states_y), setdiff(states_y, states_x))
+  stopifnot_(
+    length(only_one) == 0L,
+    c(
+      "{.arg {x_arg}} and {.arg {y_arg}} must have the same states.",
+      `x` = "States found in only one of them: {.val {only_one}}."
+    ),
+    class = "tna_error_states"
+  )
+  # Edges are compared by state name, not by position
+  y <- y[states_x, states_x, drop = FALSE]
   scaling_methods <- list(
     none = identity,
     minmax = ranger,
@@ -172,7 +196,9 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
   abs_diff <- abs(x_vec - y_vec)
   abs_x <- abs(x_vec)
   abs_y <- abs(y_vec)
-  pos <- abs_x > 0 & abs_y > 0
+  # Canberra terms with 0 / 0 (an edge absent from both) contribute zero
+  canberra_den <- abs_x + abs_y
+  canberra_pos <- canberra_den > 0
   rn <- rownames(x)
 
   # Edge level metrics
@@ -242,7 +268,7 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
     value = c(
       sqrt(sum(abs_diff^2)),
       sum(abs_diff),
-      sum(abs_diff[pos] / (abs_x[pos] + abs_y[pos])),
+      sum(abs_diff[canberra_pos] / canberra_den[canberra_pos]),
       sum(abs_diff) / sum(abs_x + abs_y),
       sqrt(sum(abs_diff^2)) / sqrt(n / 2)
     )
@@ -346,6 +372,10 @@ compare_ <- function(x, y, scaling = "none", measures, network, ...) {
 
 #' Distance correlation coefficient
 #'
+#' The square root of the squared sample distance covariance divided by the
+#' geometric mean of the squared distance variances, and zero when either
+#' distance variance is zero (Székely, Rizzo and Bakirov, 2007).
+#'
 #' @param x A `numeric` vector.
 #' @param y A `numeric` vector.
 #' @noRd
@@ -364,7 +394,11 @@ distance_correlation <- function(x, y) {
   v_xy <- n^-2 * sum(xx * yy)
   v_x <- n^-2 * sum(xx^2)
   v_y <- n^-2 * sum(yy^2)
-  v_xy / sqrt(v_x * v_y)
+  if (!isTRUE(v_x * v_y > 0)) {
+    return(0)
+  }
+  # v_xy is non-negative in exact arithmetic; clamp rounding noise below zero
+  sqrt(max(v_xy, 0) / sqrt(v_x * v_y))
 }
 
 #' RV Coefficient
@@ -401,14 +435,16 @@ rv_coefficient <- function(x, y) {
 #' @export
 #' @family comparison
 #' @param x A `group_tna` object or a `data.frame` containing sequence data in
-#'   wide format.
+#'   wide format. A `group_tna` object with scaled edge weights is not
+#'   resampled (an error of class `tna_error_scaling`).
 #' @param group A `vector` indicating the group assignment of each
 #'   row of the data/sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
 #'   format `data.frame` or a `tna_data` object.
 #' @param sub An `integer` vector of pattern lengths to analyze.
-#'   The default is `2:5`.
+#'   The default is `1:5` (patterns of length 1 are the states themselves),
+#'   or up to the number of time points when the sequences are shorter.
 #' @param min_freq An `integer` giving the minimum number of times that a
 #'   specific pattern has to be observed in each group to be included in the
 #'   analysis. The default is `5`.
@@ -422,26 +458,31 @@ rv_coefficient <- function(x, y) {
 #'   [stats::p.adjust] methods: `"holm"`, `"hochberg"`, `"hommel"`,
 #'   `"bonferroni"`, `"BH"`, `"BY"`, `"fdr"`, `"none"`. The adjustment
 #'   is carried out within sequences of the same length.
-#' @param ... Not used.
+#' @param actor An optional actor identifier for sequences nested in actors:
+#'   a `character` string naming a non-sequence column of the data, or a
+#'   vector with one identifier per row/sequence of `x` (of the data the
+#'   grouped model was built from, for a `group_tna` object). When given, the
+#'   permutation test reassigns whole actors between the groups, and shuffles
+#'   the sequences of actors present in several groups within the actor
+#'   (Good, 2005). The default `NULL` permutes single sequences.
+#' @param ... Not used. A misspelled or unknown argument is an error.
 #' @return A `tna_sequence_comparison` object, which is a `data.frame` with
-#'   columns giving the names of the patterns, pattern frequencies, pattern
-#'   proportions (within patterns of the same length), effect sizes,
-#'   and p-values of the tests.
+#'   one row per pattern that passes `min_freq`, and the columns `pattern`
+#'   (the states of the pattern joined by `->`), `freq_<group>` (the count
+#'   of the pattern in each group), `prop_<group>` (its proportion among the
+#'   patterns of the same length in the group), and, when `test = TRUE`,
+#'   `effect_size` and `p_value` (adjusted with `adjust`).
 #'
 #' @examples
+#' # A small subset (100 high and 100 low achievers) without the test
+#' sequences <- rbind(head(group_regulation, 100), tail(group_regulation, 100))
+#' group <- rep(c("High", "Low"), each = 100)
+#' compare_sequences(sequences, group, test = FALSE)
 #' \donttest{
-#' # Use a subset to keep the example fast.
-#' idx <- c(1:500, 1001:1500)
-#' group <- c(rep("High", 500), rep("Low", 500))
-#' comp <- compare_sequences(group_regulation[idx, ], group)
-#'
-#' # With permutation test (small number of iterations for CRAN)
-#' comp_test <- compare_sequences(
-#'   group_regulation[idx, ],
-#'   group,
-#'   test = TRUE,
-#'   iter = 5
-#' )
+#' # With the permutation test (small number of iterations for CRAN)
+#' sequences <- rbind(head(group_regulation, 500), tail(group_regulation, 500))
+#' group <- rep(c("High", "Low"), each = 500)
+#' compare_sequences(sequences, group, sub = 2:3, iter = 20)
 #' }
 #'
 #' @export
@@ -453,7 +494,8 @@ compare_sequences <- function(x, ...) {
 #' @rdname compare_sequences
 compare_sequences.default <- function(x, group, sub, min_freq = 5L,
                                       test = TRUE, iter = 1000L,
-                                      adjust = "bonferroni", ...) {
+                                      adjust = "bonferroni", actor = NULL,
+                                      ...) {
   check_missing(group)
   model <- group_tna(x, group = group)
   compare_sequences.group_tna(
@@ -463,6 +505,7 @@ compare_sequences.default <- function(x, group, sub, min_freq = 5L,
     test = test,
     iter = iter,
     adjust = adjust,
+    actor = actor,
     ...
   )
 }
@@ -471,7 +514,9 @@ compare_sequences.default <- function(x, group, sub, min_freq = 5L,
 #' @rdname compare_sequences
 compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
                                         test = TRUE, iter = 1000L,
-                                        adjust = "bonferroni", ...) {
+                                        adjust = "bonferroni", actor = NULL,
+                                        ...) {
+  rlang::check_dots_empty()
   check_missing(x)
   check_class(x, "group_tna")
   sub <- sub %m% seq(1, min(5, ncol(x[[1L]]$data)))
@@ -485,6 +530,7 @@ compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
   check_values(min_freq)
   check_flag(test)
   check_values(iter, strict = TRUE)
+  check_actor(actor)
   adjust <- check_match(adjust, stats::p.adjust.methods)
   compare_sequences_(
     x = x,
@@ -492,12 +538,14 @@ compare_sequences.group_tna <- function(x, sub, min_freq = 5L,
     min_freq = min_freq,
     test = test,
     iter = iter,
-    adjust = adjust
+    adjust = adjust,
+    actor = actor
   )
 }
 
 # Internal sequence comparison
-compare_sequences_ <- function(x, len, min_freq, test, iter, adjust) {
+compare_sequences_ <- function(x, len, min_freq, test, iter, adjust,
+                               actor = NULL) {
   data <- combine_data(x)
   group <- data$.group
   data$.group <- NULL
@@ -510,7 +558,7 @@ compare_sequences_ <- function(x, len, min_freq, test, iter, adjust) {
   patterns <- factorize_patterns(pattern_matrices, group)
   perm <- onlyif(
     test,
-    permutation_test_patterns(x, len, iter, adjust)
+    permutation_test_patterns(x, len, iter, adjust, actor)
   )
   out <- vector(mode = "list", length = k)
   freq_cols <- paste0("freq_", groups)

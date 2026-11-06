@@ -15,11 +15,14 @@ permutation_test(x, ...)
   paired = FALSE,
   level = 0.05,
   measures = character(0),
+  actor = NULL,
   ...
 )
 }
 \arguments{
-\item{x}{A \code{tna} object containing sequence data for the first \code{tna} model.}
+\item{x}{A \code{tna} object containing sequence data for the first \code{tna} model.
+Grouped models with scaled edge weights, and their networks, are not
+resampled (an error of class \code{tna_error_scaling}).}
 
 \item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 
@@ -41,18 +44,39 @@ permutation tests. The default is 0.05.}
 
 \item{measures}{A \code{character} vector of centrality measures to test.
 See \code{\link[=centralities]{centralities()}} for a list of available centrality measures.}
+
+\item{actor}{An optional actor identifier for sequences nested in actors
+(for example, several sessions per student). Either a \code{character} string
+naming a non-sequence column of the data the models were built from (such
+as a column of \code{meta_data} from \code{\link[=prepare_data]{prepare_data()}}), or a vector with one
+identifier per sequence (the sequences of \code{x} first, then those of \code{y}).
+When given, the permutation respects the nesting: actors whose sequences
+are all in one group are reassigned between the groups as whole units, and
+the sequences of actors present in both groups are shuffled within the
+actor (Good, 2005). A warning is given when the actors allow too few
+distinct permutations to reach \code{level}. Cannot be combined with
+\code{paired = TRUE}. The default \code{NULL} permutes single sequences.}
 }
 \value{
 A \code{tna_permutation} object which is a \code{list} with two elements:
-\code{edges} and \code{centralities}, both containing the following elements:
+\code{edges} and \code{centralities} (\code{NULL} when \code{measures} is empty). Both contain
+the following elements:
 \itemize{
 \item \code{stats}: A \code{data.frame} of original differences, effect sizes, and
-estimated p-values for each edge or centrality measure. The effect size
-is computed as the observed difference divided by the standard deviation
-of the differences of the permuted samples.
-\item \code{diffs_true}: A \code{matrix} of differences in the data.
-\item \code{diffs_sig}: A \code{matrix} showing the significant differences.
+estimated p-values, with one row per edge (columns \code{edge_name},
+\code{diff_true}, \code{effect_size}, \code{p_value}) or per state and centrality
+measure (columns \code{state}, \code{centrality}, \code{diff_true}, \code{effect_size},
+\code{p_value}). The effect size is the observed difference divided by the
+standard deviation of the differences of the permuted samples, and
+\code{NA} when the permuted differences do not vary.
+\item \code{diffs_true}: The differences in the data: a \code{matrix} for the edges,
+and a \code{data.frame} with one row per state and one column per measure
+for the centralities.
+\item \code{diffs_sig}: The same as \code{diffs_true} with the non-significant
+differences set to zero.
 }
+
+Use \code{\link[=summary.tna_permutation]{summary.tna_permutation()}} for the results as a tidy table.
 }
 \description{
 This function compares two networks built from sequence data using
@@ -62,22 +86,28 @@ performing permutation tests. It returns the differences in transition
 probabilities, effect sizes, estimated p-values, and confidence intervals.
 }
 \examples{
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 # Small number of iterations for CRAN
 permutation_test(model_x, model_y, iter = 20)
 
+}
+\references{
+Good, P. (2005). \emph{Permutation, Parametric, and Bootstrap Tests of
+Hypotheses} (3rd ed.). Springer.
 }
 \seealso{
 Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{markov_order}()},
 \code{\link{permutation_test.group_tna}()},
 \code{\link{plot.group_tna_bootstrap}()},
 \code{\link{plot.group_tna_permutation}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_markov_order}()},
 \code{\link{plot.tna_permutation}()},
 \code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
@@ -86,8 +116,9 @@ Validation functions
 \code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
+\code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
 \code{\link{print.tna_stability}()},
@@ -96,6 +127,10 @@ Validation functions
 \code{\link{reliability}()},
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()}
+\code{\link{summary.tna_bootstrap}()},
+\code{\link{summary.tna_markov_order}()},
+\code{\link{summary.tna_permutation}()},
+\code{\link{summary.tna_reliability}()},
+\code{\link{summary.tna_stability}()}
 }
 \concept{validation}

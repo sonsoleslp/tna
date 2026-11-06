@@ -24,39 +24,17 @@ data <- data.frame(
   T3 = c("C", "C", "A", "B", "B", "C")
 )
 
-# PAM clustering with optimal string alignment (default)
+# PAM clustering with the Hamming distance (the defaults)
 result <- cluster_sequences(data, k = 2)
 print(result)
 
 }
 \seealso{
-Validation functions
-\code{\link{bootstrap}()},
-\code{\link{deprune}()},
-\code{\link{estimate_cs}()},
-\code{\link{permutation_test}()},
-\code{\link{permutation_test.group_tna}()},
-\code{\link{plot.group_tna_bootstrap}()},
-\code{\link{plot.group_tna_permutation}()},
-\code{\link{plot.group_tna_stability}()},
-\code{\link{plot.tna_bootstrap}()},
-\code{\link{plot.tna_permutation}()},
-\code{\link{plot.tna_reliability}()},
-\code{\link{plot.tna_stability}()},
-\code{\link{print.group_tna_bootstrap}()},
-\code{\link{print.group_tna_permutation}()},
-\code{\link{print.group_tna_stability}()},
-\code{\link{print.summary.group_tna_bootstrap}()},
-\code{\link{print.summary.tna_bootstrap}()},
-\code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_permutation}()},
-\code{\link{print.tna_reliability}()},
-\code{\link{print.tna_stability}()},
-\code{\link{prune}()},
-\code{\link{pruning_details}()},
-\code{\link{reliability}()},
-\code{\link{reprune}()},
-\code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()}
+Cluster-related functions
+\code{\link{cluster_data}()},
+\code{\link{communities}()},
+\code{\link{group_model}()},
+\code{\link{mmm_stats}()},
+\code{\link{rename_groups}()}
 }
-\concept{validation}
+\concept{clusters}

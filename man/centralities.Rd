@@ -23,7 +23,8 @@ a square \code{matrix} representing edge weights.}
 network when computing the centrality measures. The default is \code{FALSE}.}
 
 \item{normalize}{A \code{logical} value indicating whether the centralities
-should be normalized. The default is \code{FALSE}.}
+should be normalized. The default is \code{FALSE}. \code{Diffusion} is always
+normalized (see 'Details').}
 
 \item{invert}{A \code{logical} value indicating whether the weights should be
 inverted for distance-based measures. The default is \code{TRUE}.}
@@ -33,8 +34,11 @@ measures should be computed. If missing, all available measures are
 returned. See 'Details' for the available measures.}
 }
 \value{
-A \code{tna_centralities} object which is a tibble (\code{tbl_df}).
-containing centrality measures for each state.
+A \code{tna_centralities} object, which is a tibble (\code{tbl_df}) with
+one row per state, the column \code{state}, and one \code{numeric} column per
+requested measure (in the order listed in 'Details'). For a \code{group_tna}
+object, a \code{group_tna_centralities} object: the same table for every
+group stacked, with the group name in the first column \code{group}.
 }
 \description{
 Calculates several centrality measures. See 'Details' for
@@ -65,7 +69,13 @@ paths (Kivimäki et al. 2016). It measures the extent to which a
 node lies on the shortest paths between other nodes.
 \item \code{Diffusion}: Diffusion centrality of Banerjee et.al. (2014).
 It measures the influence of a node in spreading information through
-the network.
+the network. Diffusion is always min-max normalized to the range
+from 0 to 1, whatever the value of \code{normalize}, because its raw
+values grow with powers of the edge weights (for a frequency model
+they easily exceed \code{1e30}). When the raw values are equal for every
+state, for example in a relative transition network with
+\code{loops = TRUE} where every row sums to one, the normalized values are
+\code{NaN}: the measure does not distinguish the states.
 \item \code{Clustering}: Signed clustering coefficient of Zhang and Horvath (2005)
 based on the symmetric adjacency matrix (sum of the adjacency matrix
 and its transpose). It measures the degree to which nodes tend to
@@ -77,15 +87,28 @@ cluster together.
 \examples{
 model <- tna(group_regulation)
 
-# Centrality measures including loops in the network
+# Centrality measures excluding loops in the network (the default)
 centralities(model)
 
-# Centrality measures excluding loops in the network
-centralities(model, loops = FALSE)
+# Centrality measures including loops in the network
+centralities(model, loops = TRUE)
 
 # Centrality measures normalized
 centralities(model, normalize = TRUE)
 
+}
+\references{
+Banerjee, A., Chandrasekhar, A. G., Duflo, E., & Jackson, M. O. (2014).
+Gossip: Identifying central individuals in a social network.
+Working Paper.
+
+Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016). Two
+betweenness centrality measures based on randomized shortest paths.
+\emph{Scientific Reports}, 6, 19668. \doi{10.1038/srep19668}
+
+Zhang, B., & Horvath, S. (2005). A general framework for weighted gene
+co-expression network analysis. \emph{Statistical Applications in Genetics and
+Molecular Biology}, 4(1), Article 17. \doi{10.2202/1544-6115.1128}
 }
 \seealso{
 Centrality measure functions

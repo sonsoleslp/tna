@@ -35,17 +35,20 @@ print(tna_model)
 plot(tna_model)
 ```
 
-Next, we apply several community finding algorithms to the model (see `?communities` for more details), and plot the results for the `leading_eigen` algorithm.
+Communities are groups of states that the process moves between more often than it leaves them, such as a phase of planning or of socio-emotional talk. Next, we apply several community finding algorithms to the model (see `?communities` for more details), and plot the results for the `leading_eigen` algorithm. `print(cd)` shows how many communities each algorithm finds and the community of every state; agreement between algorithms indicates that the grouping is a property of the network rather than of one algorithm.
 ```{r, warning = FALSE}
 cd <- communities(tna_model)
 plot(cd, method = "leading_eigen")
 ```
 
-Cliques can be obtained with the `cliques` function. Here we look for dyads and triads by setting `size = 2` and `size = 3`, respectively. Finally, we plot the results.
+Cliques are sets of states that are all connected to each other in both directions with at least the `threshold` weight, that is, states that the process cycles between. Cliques can be obtained with the `cliques` function. Here we look for dyads and triads by setting `size = 2` and `size = 3`, respectively. Finally, we plot the results.
 ```{r, figures-side, fig.show="hold", fig.height=6, fig.width=8}
 layout(matrix(1:4, ncol = 2, byrow = TRUE))
 dyads <- cliques(tna_model, size = 2, threshold = 0.2)
 triads <- cliques(tna_model, size = 3, threshold = 0.05)
 plot(dyads, ask = FALSE)
 plot(triads, ask = FALSE)
+```
+
+```{r, child = "_tutorials.md"}
 ```

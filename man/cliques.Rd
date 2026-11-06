@@ -29,14 +29,18 @@ weights should be above the \code{threshold} instead of individual weights of th
 directed edges. Defaults to \code{FALSE}.}
 }
 \value{
-A \code{tna_cliques} object which is a \code{list} of two elements:
+A \code{tna_cliques} object which is a \code{list} of three elements, each
+a \code{list} with one element per clique found:
 \itemize{
-\item \code{weights} is a \code{matrix} of the edge weights in the clique.
-\item \code{inits} is a \code{numeric} vector of initial weights for the clique.
+\item \code{weights}: The \code{matrix} of the edge weights among the states of the
+clique.
+\item \code{inits}: The \code{numeric} vector of initial probabilities of the states
+of the clique.
+\item \code{indices}: The \code{integer} indices of the states of the clique.
 }
 
 If \code{x} is a \code{group_tna} object, a \code{group_tna_cliques} object is returned
-instead, which is a \code{list} or \code{tna_cliques} objects.
+instead, which is a \code{list} of \code{tna_cliques} objects.
 }
 \description{
 This function identifies cliques of a specified size in a transition network.
@@ -47,7 +51,7 @@ in the \code{tna} object.
 \examples{
 model <- tna(group_regulation)
 
-# Find  2-cliques (dyads)
+# Find 2-cliques (dyads)
 cliq <- cliques(model, size = 2)
 
 model <- group_tna(engagement_mmm)

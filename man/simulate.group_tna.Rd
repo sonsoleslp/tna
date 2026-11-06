@@ -45,9 +45,10 @@ of missing values is drawn uniformly from this range. If both values are
 zero (the default), no missing values are generated.}
 
 \item{zero_row}{A \code{character} string describing how to process zero rows
-in the weight matrix. The option \code{"self"} (the default) assigns
+in the weight matrix, i.e., states that are never left, such as states
+that only end sequences. The option \code{"self"} (the default) assigns
 probability 1 to the corresponding state (self loop) and option
-\code{"uniform"} assigns a uniform distribution.}
+\code{"uniform"} assigns a uniform distribution. Applies to both model types.}
 
 \item{format}{A \code{character} string indicating whether the data should be
 returned in \code{wide} or \code{long} format.}
@@ -55,7 +56,9 @@ returned in \code{wide} or \code{long} format.}
 \item{...}{Ignored.}
 }
 \value{
-A \code{data.frame} of the simulated sequence data.
+A \code{data.frame} of the simulated sequence data, as for
+\code{\link[=simulate.tna]{simulate.tna()}}, with the group of each sequence in the first column
+\code{group}.
 }
 \description{
 Simulate Data from a Group Transition Network Analysis Model

@@ -25,10 +25,11 @@ A \code{ggplot} object.
 Plot State Frequencies as a Mosaic Between Two Groups
 }
 \examples{
+set.seed(1)
 d <- data.frame(
-  time = rep(1:5, rep = 4),
+  time = rep(1:5, times = 4),
   group = rep(1:4, each = 5),
-  event = sample(LETTERS[1:3], 20, replace = TRUE)
+  event = sample(c("A", "B", "C"), 20, replace = TRUE)
 )
 sequence_data <- prepare_data(
   d,

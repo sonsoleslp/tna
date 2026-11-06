@@ -186,3 +186,26 @@ test_that("pruning function fails with invalid tna object", {
     "no applicable method for 'prune' applied to an object of class \"not_tna\""
   )
 })
+
+test_that("disparity pruning keeps absent edges at zero around sources and sinks", {
+  d <- data.frame(T1 = c("A", "A", "B", "C"), T2 = c("B", "C", "C", "B"),
+                  T3 = c("C", "B", "D", "D"))
+  model <- tna(d)
+  # A is never entered (zero column) and D is never left (zero row)
+  expect_equal(unname(colSums(model$weights))[1L], 0)
+  expect_equal(unname(rowSums(model$weights))[4L], 0)
+  pruned <- prune(model, method = "disparity", level = 0.5)
+  expect_false(anyNA(pruned$weights))
+  # Pruning only removes edges: kept weights are the original ones
+  kept <- pruned$weights > 0
+  expect_equal(pruned$weights[kept], model$weights[kept])
+  # Oracle (Serrano et al., 2009): edge i -> j is kept when
+  # min over both endpoints of (1 - p)^(k - 1) < level, where p is its
+  # share of the out-strength of i (in-strength of j) and k the degree
+  w <- model$weights
+  out_p <- (1 - w / pmax(rowSums(w), 1e-300))^(rowSums(w > 0) - 1)
+  in_p <- t((1 - t(w) / pmax(colSums(w), 1e-300))^(colSums(w > 0) - 1))
+  keep <- pmin(out_p, in_p) < 0.5 & w > 0
+  diag(keep) <- FALSE
+  expect_equal(unname(kept), unname(keep))
+})

@@ -10,18 +10,20 @@
 \item{x}{A \code{group_tna} object.}
 
 \item{i}{An \code{integer} index or the name of the principal cluster as a
-\code{character} string. When \code{NULL}, defaults are chosen automatically (see
-\code{\link[cograph:plot_compare]{cograph::plot_compare()}}).}
+\code{character} string. When \code{i} and \code{j} are both \code{NULL} (the default),
+every pair of clusters is compared.}
 
 \item{j}{An \code{integer} index or the name of the secondary cluster as a
-\code{character} string. When \code{NULL}, defaults are chosen automatically (see
-\code{\link[cograph:plot_compare]{cograph::plot_compare()}}).}
+\code{character} string. See \code{i}.}
 
 \item{...}{Additional arguments passed to \code{\link[cograph:plot_compare]{cograph::plot_compare()}}.}
 }
 \value{
-A \code{cograph_network} object displaying the difference network between
-the two clusters
+The difference networks are drawn, and returned invisibly: for
+one pair of clusters (two clusters, or \code{i} and \code{j} given), a \code{list} with
+the elements \code{weights} and \code{inits} (the differences, see
+\code{\link[=plot_compare.tna]{plot_compare.tna()}}); otherwise a named \code{list} with such a \code{list} for
+each pair of clusters.
 }
 \description{
 Plot the Difference Network Between Two Groups

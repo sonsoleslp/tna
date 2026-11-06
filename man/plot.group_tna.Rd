@@ -7,10 +7,10 @@
 \method{plot}{group_tna}(x, title, which, ...)
 }
 \arguments{
-\item{x}{A \code{group_model} object.}
+\item{x}{A \code{group_tna} object.}
 
 \item{title}{A title for each plot. It can be a single string (the same one
-will be used for all plots) or a list (one per group)}
+will be used for all plots) or a list (one per group).}
 
 \item{which}{An optional \code{integer} vector of groups to plot. By default, all
 groups are plotted.}

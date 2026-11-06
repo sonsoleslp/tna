@@ -1,3 +1,272 @@
+# tna 1.5.6
+
+* `group_model()`, `group_tna()`, `group_ftna()` and `group_ctna()`: window
+  parameters in `params` and windows recorded by `import_onehot()` had no
+  effect, so a grouped model of the same call as `tna()` gave different weights.
+  They are now used, as in `build_model()`.
+
+# tna 1.5.5
+
+* NEWS.md wording.
+
+# tna 1.5.4
+
+Corrections to numerical results. Results from the functions below can
+differ from earlier versions.
+
+* `bootstrap_cliques()` resampled from the first sequences only, as many as
+  there were cliques (for example, 22 of 2,000 sequences), so its
+  p-values and confidence intervals were invalid. Each bootstrap sample now
+  draws as many sequences as the data has.
+* `reliability()` counted the transitions of the model it was given for
+  every requested type, so `types` only switched the row normalization on
+  or off: `"co-occurrence"`, `"gap"`, `"attention"`, and the other types all
+  gave the frequency result. Each type is now estimated as `build_model()`
+  defines it. The default `types` is the type of the model (it was
+  `"relative"` for every model).
+* `compare()`: the Canberra distance omitted the edges present in only one
+  network (each contributes 1), and the distance correlation was reported
+  squared. The states of the two networks are matched by name, so two
+  networks listing the same states in a different order are compared
+  correctly; networks with different states, or a matrix without state
+  names, are an error of class `tna_error_states` (they were compared by
+  position).
+* `summary()` of a model reported the standard deviation of the in-strength
+  as that of the out-strength and vice versa (the means are equal by
+  construction).
+* `estimate_cs()`: a subsample in which the correlation is undefined (the
+  measure is constant in it) was dropped from the share of draws above
+  `threshold`, which could raise the CS-coefficient. It now counts as a
+  draw below the threshold.
+* `BetweennessRSP` counted the correction for walks absorbed at a target
+  once for every state, also for states that cannot reach it. In a network
+  that is not strongly connected (for example, with a state that is never
+  entered) the values were wrong. Only sources that reach the target are
+  counted; strongly connected networks are unchanged.
+* `simulate()`: `zero_row` was replaced by the value of `format`, so
+  `zero_row = "uniform"` had no effect for frequency models, and states
+  that are never left (such as a state that only ends sequences) moved
+  arbitrarily in relative models. `zero_row` now applies to both model
+  types. `max_len = 1` and `na_range` values with equal ends or a zero
+  lower end no longer fail.
+* `prune(method = "disparity")` set the absent edges of a state with no
+  outgoing or no incoming edges to `NA`. They stay 0.
+* `build_model()` of a wide `data.frame` discarded `window_size`,
+  `window_span`, and `windowed` given in `params`. They are now used.
+* Backward (and bidirectional) attention paired every time point with
+  itself, adding a self-loop of full weight at every observation. Only
+  earlier time points are attended to, as forward attention uses only later
+  ones.
+* `group_model()` kept the unused factor levels of `group`, so a level
+  with no sequences became an empty network with `NaN` initial
+  probabilities. Unused levels are dropped.
+* `print()` of a model without initial probabilities (for example,
+  `build_model()` of a matrix) failed. `plot()` of a model failed when
+  `node_size` or `vsize` was given, and `plot_sequences(show_n = FALSE)`
+  failed.
+* `permutation_test()` and `estimate_cs()` took the observed network from
+  the weights of the model but rebuilt the resamples from the sequence
+  data, so a pruned model was compared with unpruned resamples (a model
+  tested against its own pruned version showed significant differences).
+  The observed network is now rebuilt from the sequence data too, as in
+  `bootstrap()`. Results for unpruned models are unchanged.
+* `end_state` was not added when no sequence filled the last column of the
+  data (for example, in a subset of the rows, or with an empty trailing
+  column). It is now always added after the last observation.
+* `build_model()` of a `tsn` object ordered the time points by first
+  appearance in the data, not by time, which could reverse transitions.
+  They are now ordered by time.
+* `cliques(sum_weights = TRUE)` applied `threshold` to each direction
+  before summing them, so a pair whose summed weight exceeded the
+  threshold could be missed. The threshold now applies to the sum, as
+  documented. This also affects `bootstrap_cliques()` with a positive
+  `threshold`.
+* `import_onehot(window_type = "sliding")` widened the windows of width 3
+  or more (each lag was applied to the already widened rows), and treated
+  width 1 as width 2. Each window now covers exactly `window_size` rows,
+  and the incomplete windows at the start are dropped. Width 2 is
+  unchanged.
+* `plot_associations()` drew every residual in the reverse direction (from
+  target to source).
+* `plot()` of grouped communities colored every state of a group with the
+  same color. Each community now has its own color, as for a single
+  group.
+
+# tna 1.5.3
+
+* Documentation revision. The help pages describe what the functions
+  return as they do now: `summary()` of a model (a table of 13 metrics, not
+  a list), `communities()`, `cliques()`, `compare()`, `compare_sequences()`
+  (the default `sub` is `1:5`), `permutation_test()`, `bootstrap()` (with
+  its `model` element), `reliability()`, `prepare_data()`, `import_data()`,
+  `import_onehot()`, `simulate()`, `plot_compare()`, and `pruning_details()`.
+  The default of `na.rm` in `group_model()` is `TRUE`, as in the code, and
+  a missing `group` is an error. `prune()` documents its four methods,
+  including that only `"threshold"` and `"lowest"` keep the network weakly
+  connected, and `reprune()` has its own help page.
+* Examples no longer reach into result objects with `$` or subset the data
+  with brackets; `print(<tna_data>)` examples use the `data` argument
+  (they used `which`, which was ignored). `centralities()`, `prune()`, and
+  `cluster_sequences()` cite the methods they implement.
+* Vignettes and articles: the tables of the getting-started vignette, the
+  grouped-sequences vignette, and the README use `print()` and `summary()`
+  instead of `$weights`, `$inits`, and `$centralities$stats`; the clusters
+  are built with `group_tna(<clustering>)`; `bootstrap()` calls no longer
+  pass a `threshold` that the default method ignores; the time threshold of
+  `prepare_data()` is in seconds; the frequency and attention articles
+  restore their `options()`, and the frequency article compares the scaled
+  weights with `compare()`.
+
+# tna 1.5.2
+
+* `summary()` of a permutation test returns the centrality results with
+  `what = "centralities"` (the edges remain the default).
+* New `summary()` method for `reliability()` results: all 22 split-half
+  metrics, with their category, as a tidy table (`print()` shows four).
+* New article "Validating a transition network" covering `markov_order()`,
+  `bootstrap()` and bootstrap pruning, `estimate_cs()`, `reliability()`,
+  `permutation_test()` (including edge betweenness), `compare_sequences()`,
+  and the `actor` argument for nested data.
+* Every vignette and article ends with a list of the package articles, the
+  TNA tutorials and book chapters, and the Dynalytics resources (package
+  sites, tools, CarmNotes, and selected articles).
+
+# tna 1.5.1
+
+* Small examples on a subset of the data come before the `\donttest{}`
+  blocks of `compare_sequences()`,
+  `estimate_cs()`, `plot_frequencies()` for groups, and the print, plot and
+  summary methods of sequence comparisons and stability results. The
+  `as.igraph()` methods have examples.
+* `permutation_test()` for groups and the `plot()` methods of bootstrap and
+  reliability results document what they return.
+* The vignette "A showcase of the main tna functions" restores the
+  `options()` it changes.
+* The plots of the README are no longer part of the package, which reduces
+  the installed size from 6.3 to 4.1 MB.
+
+# tna 1.5.0
+
+* `compare_sequences()` now rejects arguments it does not use. A misspelled
+  argument such as `correction = "fdr"` (the argument is `adjust`) was
+  silently ignored and the default Bonferroni correction applied; the
+  vignette on grouped sequences had this mistake and now uses
+  `adjust = "fdr"` as its text describes.
+* Fixed `build_model()` and `group_model()` for data with a single time
+  point: the sequences were joined into one row, which created transitions
+  that do not exist (and `group_model()` failed).
+* Fixed `group_model()` and `group_tna()` with a `character` `group`: when the
+  data did not start with the alphabetically first group, every network was
+  labelled with another group's name. Groups keep their order of first
+  appearance and now hold their own sequences.
+* Fixed scaling across groups (`groupwise = FALSE`, the default) dropping
+  the state names of the weight matrices, which made `communities()` and
+  `compare()` fail.
+* Fixed `centralities()` naming the states `1`, `2`, ... instead of their
+  labels when the only measures requested were `Diffusion` or
+  `BetweennessRSP` (whose computations return unnamed values); the
+  centrality table of `permutation_test(measures = "Diffusion")` had the same
+  problem.
+* New `summary()` methods for `tna_permutation`, `group_tna_permutation`,
+  `tna_stability`, and `group_tna_stability` objects return tidy tables: one
+  row per edge (`from`, `to`, `diff_true`, `effect_size`, `p_value`) and one
+  row per measure (`measure`, `cs_coefficient`).
+* Permutation effect sizes are `NA` where the permuted differences do not
+  vary, instead of `Inf` or `NaN` (`permutation_test()` for edges and
+  centralities, and `compare_sequences()`). Whether they vary is judged
+  against the magnitude of the compared values, so the rule does not depend
+  on the measurement scale.
+* Grouped models with scaled edge weights (`group_model(scaling = )`, with
+  either value of `groupwise`) and the networks they contain are no longer
+  resampled: `bootstrap()`, `bootstrap_cliques()`, `permutation_test()`,
+  `estimate_cs()`, `reliability()`, and `compare_sequences()` raise an error
+  of class `tna_error_scaling`. Scaling across groups depends on every
+  group, so a resample of one group cannot reproduce it. Before,
+  `bootstrap()` and `permutation_test()` refused such a group as a whole,
+  but `estimate_cs()` on the group, and every resampling function on one of
+  its networks (for example `bootstrap(model[[1]])`), rebuilt the resamples
+  without the scaling and compared them with the scaled network. Resampling
+  of single scaled models (`tna(x, scaling = )`) is unchanged.
+* Fixed `centralities(measures = "BetweennessRSP")` returning a single row
+  for a network with a state that has no outgoing transitions;
+  `BetweennessRSP` is `NA` for every state there.
+* `summary()` of an `estimate_cs()` result keeps its columns when nothing
+  could be estimated, and a grouped summary no longer fails when one group
+  has no results.
+
+* New `markov_order()` tests whether sequences are described by a
+  first-order Markov chain, the assumption of a transition network, or depend
+  on states further back. Each order is tested against the order below with
+  the likelihood-ratio statistic (Anderson & Goodman, 1957) and a conditional
+  permutation test that shuffles the next states within each context. The
+  orders are tested in sequence, and the results also report the
+  log-likelihood, AIC, and BIC of the multi-order model of each order
+  (Scholtes, 2017). Methods for `tna` and `group_tna` objects, with `print()`,
+  `summary()`, and `plot()` methods. `plot()` draws two panels: the
+  log-likelihood, AIC, and BIC across the orders with the
+  selected order marked, and the permutation null density of each order with
+  the observed statistic (`panel = "ic"` or `"permutation"` draws one;
+  unknown arguments are errors).
+  Because the tests stop at the first order that does not reject, a
+  dependence that skips an order is not selected: a warning of class
+  `tna_warning_markov_order` and a printed note flag a higher order whose
+  test rejects and AIC or BIC choosing another order. The same warning is
+  raised when `iter` is too small for any p-value to fall below `level`.
+* `estimate_cs()` gains the argument `edges`: with `edges = TRUE`, the
+  stability of the edge weights is estimated alongside the centralities and
+  returned as the element `Edges`. Only the edges present in the network are
+  compared, because an edge absent from the data cannot appear in a
+  subsample and would only add agreeing zeros.
+* `Diffusion` centrality is now always normalized to the range from 0 to 1
+  (min-max), whatever the value of `normalize`, in `centralities()` and in
+  everything that uses it (`permutation_test(measures = )`, `compare()`,
+  `estimate_cs()`, plots). Its raw values grow with powers of the edge
+  weights and exceed `1e30` for frequency models. Where diffusion does not
+  vary across the states (a relative model with `loops = TRUE`), it is `NaN`.
+* Fixed resampling of edge betweenness networks. The resampling functions
+  rebuilt a model from `betweenness_network()` with all weights equal to
+  zero, so `permutation_test()` gave the smallest possible p-value and an
+  infinite effect size to every edge whose betweenness differed,
+  `bootstrap()` returned no edges, every CS-coefficient of `estimate_cs()`
+  was 0, and `reliability()` compared empty networks.
+  `betweenness_network()` now records the model it was built from. In
+  `permutation_test()`, `bootstrap()`, and `estimate_cs()`, every resample
+  rebuilds that model and recomputes edge betweenness, so
+  `permutation_test()` on two edge betweenness networks tests their
+  differences in edge betweenness; `reliability()` uses the transitions of
+  that model. `betweenness_network()` also has a method for `group_tna`
+  objects, so `permutation_test(betweenness_network(models))` compares edge
+  betweenness between all groups in one call.
+
+  Edge betweenness networks created by earlier versions must be rebuilt to
+  be resampled, and `betweenness_network()` refuses a network that is
+  already an edge betweenness network.
+
+# tna 1.4.0
+
+* New `actor` argument for sequences nested in actors (for example, several
+  sessions per student) in every resampling method: `permutation_test()`,
+  `bootstrap()`, `estimate_cs()`, `reliability()`,
+  `compare_sequences()`, and `prune(method = "bootstrap")` through
+  `bootstrap()`. `actor` is a column name of the data the model was built
+  from, or a vector with one identifier per sequence. With one sequence per
+  actor, every method gives the same result as without `actor`.
+  * Permutation tests reassign whole actors between groups and shuffle the
+    sequences of actors present in several groups within the actor
+    (Good, 2005). A warning is given when the actors allow too few distinct
+    permutations to reach the significance level.
+  * Bootstraps resample whole actors with replacement (cluster bootstrap;
+    Davison & Hinkley, 1997).
+  * Case-dropping (`estimate_cs()`) drops whole actors, and split-half
+    reliability puts all sequences of an actor in the same half.
+* Models keep the non-sequence columns of their data (one row per sequence),
+  so `actor` can name any of them. This includes models built from
+  `prepare_data()` output, grouped models, and `cluster_data()` of
+  `prepare_data()` output. With `concat > 1`, the columns that are constant
+  within each concatenated block are kept. Grouped models record the rows of
+  each group, so an `actor` vector for the full data applies to every group,
+  including groups from mixture models.
+
 # tna 1.3.1
 
 * Fixed `prepare_data()` emitting a dplyr grouping message when computing

@@ -18,10 +18,10 @@
 \item{x}{A \code{group_tna} object.}
 
 \item{i}{An \code{integer} index or the name of the principal cluster as a
-\code{character} string.}
+\code{character} string. The default is the first cluster.}
 
 \item{j}{An \code{integer} index or the name of the secondary cluster as a
-\code{character} string.}
+\code{character} string. The default is the second cluster.}
 
 \item{scaling}{A  \code{character} string naming a scaling method to
 apply to the weights before comparing them. The supported options are:
@@ -52,7 +52,7 @@ available measures. No measures are included by default.}
 \item{network}{A \code{logical} value indicating whether network metrics should
 be included in the comparison. The default is \code{TRUE}.}
 
-\item{...}{Additional arguments passed to \code{\link[=compare.tna]{compare.tna()}}.}
+\item{...}{Ignored.}
 }
 \value{
 A \code{tna_comparison} object. See \code{\link[=compare.tna]{compare.tna()}} for details.

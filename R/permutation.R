@@ -9,6 +9,8 @@
 #' @export
 #' @family validation
 #' @param x A `tna` object containing sequence data for the first `tna` model.
+#'   Grouped models with scaled edge weights, and their networks, are not
+#'   resampled (an error of class `tna_error_scaling`).
 #' @param y A `tna` object containing sequence data for the second `tna` model.
 #' @param adjust A `character` string for the method to adjust p-values with
 #' for multiple comparisons. The default is `"none"` for no adjustment.
@@ -22,20 +24,44 @@
 #' permutation tests. The default is 0.05.
 #' @param measures A `character` vector of centrality measures to test.
 #' See [centralities()] for a list of available centrality measures.
+#' @param actor An optional actor identifier for sequences nested in actors
+#' (for example, several sessions per student). Either a `character` string
+#' naming a non-sequence column of the data the models were built from (such
+#' as a column of `meta_data` from [prepare_data()]), or a vector with one
+#' identifier per sequence (the sequences of `x` first, then those of `y`).
+#' When given, the permutation respects the nesting: actors whose sequences
+#' are all in one group are reassigned between the groups as whole units, and
+#' the sequences of actors present in both groups are shuffled within the
+#' actor (Good, 2005). A warning is given when the actors allow too few
+#' distinct permutations to reach `level`. Cannot be combined with
+#' `paired = TRUE`. The default `NULL` permutes single sequences.
 #' @param ... Additional arguments passed to [centralities()].
 #' @return A `tna_permutation` object which is a `list` with two elements:
-#' `edges` and `centralities`, both containing the following elements:
+#' `edges` and `centralities` (`NULL` when `measures` is empty). Both contain
+#' the following elements:
 #'
 #'   * `stats`: A `data.frame` of original differences, effect sizes, and
-#'     estimated p-values for each edge or centrality measure. The effect size
-#'     is computed as the observed difference divided by the standard deviation
-#'     of the differences of the permuted samples.
-#'   * `diffs_true`: A `matrix` of differences in the data.
-#'   * `diffs_sig`: A `matrix` showing the significant differences.
+#'     estimated p-values, with one row per edge (columns `edge_name`,
+#'     `diff_true`, `effect_size`, `p_value`) or per state and centrality
+#'     measure (columns `state`, `centrality`, `diff_true`, `effect_size`,
+#'     `p_value`). The effect size is the observed difference divided by the
+#'     standard deviation of the differences of the permuted samples, and
+#'     `NA` when the permuted differences do not vary.
+#'   * `diffs_true`: The differences in the data: a `matrix` for the edges,
+#'     and a `data.frame` with one row per state and one column per measure
+#'     for the centralities.
+#'   * `diffs_sig`: The same as `diffs_true` with the non-significant
+#'     differences set to zero.
+#'
+#' Use [summary.tna_permutation()] for the results as a tidy table.
+#'
+#' @references
+#' Good, P. (2005). *Permutation, Parametric, and Bootstrap Tests of
+#' Hypotheses* (3rd ed.). Springer.
 #'
 #' @examples
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
+#' model_x <- tna(head(group_regulation, 200))
+#' model_y <- tna(tail(group_regulation, 200))
 #' # Small number of iterations for CRAN
 #' permutation_test(model_x, model_y, iter = 20)
 #'
@@ -47,15 +73,31 @@ permutation_test <- function(x, ...) {
 #' @rdname permutation_test
 permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
                                  paired = FALSE, level = 0.05,
-                                 measures = character(0), ...) {
+                                 measures = character(0), actor = NULL,
+                                 ...) {
   check_missing(x)
   check_missing(y)
   check_tna_seq(x)
   check_tna_seq(y)
+  check_not_scaled_group(x, "The permutation test")
+  check_not_scaled_group(y, "The permutation test")
   check_values(iter, strict = TRUE)
   check_flag(paired)
+  check_actor(actor, paired)
   check_range(level, lower = 0, upper = 1)
   adjust <- check_match(adjust, stats::p.adjust.methods, match_case = TRUE)
+  actor_x <- actor_y <- actor
+  if (!is.null(actor) && !is_actor_column(actor)) {
+    n_x <- nrow(x$data)
+    n_xy <- n_x + nrow(y$data)
+    stopifnot_(
+      length(actor) == n_xy,
+      "Argument {.arg actor} must have one value per sequence of
+       {.arg x} and {.arg y} ({n_xy}), not {length(actor)}."
+    )
+    actor_x <- actor[seq_len(n_x)]
+    actor_y <- actor[-seq_len(n_x)]
+  }
   permutation_test_(
     x = x,
     y = y,
@@ -64,6 +106,7 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
     paired = paired,
     level = level,
     measures = measures,
+    ids = pair_actor_ids(x, y, actor_x, actor_y),
     ...
   )
 }
@@ -75,7 +118,9 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #'
 #' @export
 #' @family validation
-#' @param x A `group_tna` object
+#' @param x A `group_tna` object.
+#'   Grouped models with scaled edge weights, and their networks, are not
+#'   resampled (an error of class `tna_error_scaling`).
 #' @param groups An `integer` vector or a `character` vector of group indices
 #' or names, respectively, defining which groups to compare. When not provided,
 #' all pairs are compared (the default).
@@ -84,6 +129,9 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 #' of the groups. If `TRUE`, only comparisons between consecutive pairs
 #' of groups are performed.
 #' @inheritParams permutation_test.tna
+#' @return A `group_tna_permutation` object, which is a `list` of
+#'   `tna_permutation` objects (see [permutation_test()]), one per compared
+#'   pair of groups, named after the pair.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' # Small number of iterations for CRAN
@@ -92,16 +140,14 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
 permutation_test.group_tna <- function(x, groups, adjust = "none",
                                        iter = 1000, paired = FALSE,
                                        level = 0.05, measures = character(0),
-                                       consecutive = FALSE, ...) {
+                                       consecutive = FALSE, actor = NULL,
+                                       ...) {
   check_missing(x)
   check_class(x, "group_tna")
-  stopifnot_(
-    length(attr(x, "scaling")) == 0L || attr(x, "groupwise"),
-    "Permutation test is not supported for
-     grouped models with globally scaled edge weights."
-  )
+  check_not_scaled_group(x, "The permutation test")
   check_values(iter, strict = TRUE)
   check_flag(paired)
+  check_actor(actor, paired)
   check_range(level, lower = 0, upper = 1)
   adjust <- check_match(adjust, stats::p.adjust.methods, match_case = TRUE)
   x_names <- names(x)
@@ -117,6 +163,7 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
     n_groups >= 2L,
     "Argument {.arg groups} must contain at least two groups to compare."
   )
+  actors <- group_actor(x, actor)
   if (consecutive) {
     out <- vector(mode = "list", length = n_groups - 1L)
     for (i in seq_len(n_groups - 1L)) {
@@ -130,6 +177,9 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
         paired = paired,
         level = level,
         measures = measures,
+        ids = pair_actor_ids(
+          x[[group_i]], x[[group_j]], actors[[group_i]], actors[[group_j]]
+        ),
         ...
       )
       names(out)[i] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
@@ -151,6 +201,9 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
           paired = paired,
           level = level,
           measures = measures,
+          ids = pair_actor_ids(
+            x[[group_i]], x[[group_j]], actors[[group_i]], actors[[group_j]]
+          ),
           ...
         )
         names(out)[idx] <- paste0(x_names[group_i], " vs. ", x_names[group_j])
@@ -164,7 +217,7 @@ permutation_test.group_tna <- function(x, groups, adjust = "none",
 }
 
 permutation_test_ <- function(x, y, adjust, iter, paired, level,
-                              measures, ...) {
+                              measures, ids = NULL, ...) {
   data_x <- x$data
   data_y <- y$data
   n_x <- nrow(data_x)
@@ -190,16 +243,28 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
   attr(combined_data, "alphabet") <- attr(data_x, "alphabet")
   attr(combined_data, "labels") <- attr(data_x, "labels")
   n_xy <- n_x + n_y
-  weights_x <- x$weights
-  weights_y <- y$weights
+  # The observed networks are rebuilt from the sequence data, like the
+  # permuted ones, so pruning of x or y does not enter the test
+  weights_x <- data_weights(x)
+  weights_y <- data_weights(y)
   type <- attr(x, "type")
   scaling <- attr(x, "scaling")
   params <- attr(x, "params")
+  if ("betweenness" %in% c(type, attr(y, "type"))) {
+    stopifnot_(
+      identical(type, attr(y, "type")) &&
+        identical(params$betweenness, attr(y, "params")$betweenness),
+      "Edge betweenness networks {.arg x} and {.arg y} must both be built
+       with {.fn betweenness_network} from the same type of model and with
+       the same {.arg directed} and {.arg invert} values.",
+      class = "tna_error_betweenness"
+    )
+  }
   n_measures <- length(measures)
   include_centralities <- n_measures > 0L
   if (include_centralities) {
-    cent_x <- centralities(x, measures = measures, ...)
-    cent_y <- centralities(y, measures = measures, ...)
+    cent_x <- centralities(weights_x, measures = measures, ...)
+    cent_y <- centralities(weights_y, measures = measures, ...)
     cent_diffs_true <- as.matrix(cent_x[, -1L] - cent_y[, -1L])
     cent_diffs_true_abs <- abs(cent_diffs_true)
   }
@@ -210,8 +275,6 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     to = colnames(weights_y)
   )
   edge_names <- paste0(edge_names$from, " -> ", edge_names$to)
-  idx_x <- seq_len(n_x)
-  idx_y <- seq(n_x + 1L, n_xy)
   combined_model <- initialize_model(
     combined_data,
     type,
@@ -220,6 +283,15 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     transitions = TRUE
   )
   combined_trans <- combined_model$trans
+  design <- onlyif(
+    !is.null(ids),
+    actor_design(
+      ids = ids,
+      labels = rep(c(TRUE, FALSE), c(n_x, n_y)),
+      level = level
+    )
+  )
+  n_perm_x <- n_x
   edge_diffs_perm <- array(0L, dim = c(iter, a, a))
   cent_diffs_perm <- array(0L, dim = c(iter, a, n_measures))
   edge_p_values <- matrix(0L, a, a)
@@ -230,14 +302,24 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
       pair_idx <- matrix(seq_len(n_xy), ncol = 2)
       permuted_pairs <- t(apply(pair_idx, 1, sample))
       perm_idx <- c(permuted_pairs)
-    } else {
+    } else if (is.null(design)) {
       # For unpaired data, perform complete randomization
       perm_idx <- sample(n_xy)
+    } else {
+      # For nested data, permute within the restrictions set by actors
+      perm_x <- actor_permute(design)
+      perm_idx <- c(which(perm_x), which(!perm_x))
+      n_perm_x <- sum(perm_x)
     }
+    idx_x <- seq_len(n_perm_x)
     trans_perm_x <- combined_trans[perm_idx[idx_x], , , drop = FALSE]
-    trans_perm_y <- combined_trans[perm_idx[idx_y], , , drop = FALSE]
-    weights_perm_x <- compute_weights(trans_perm_x, type, scaling, a)
-    weights_perm_y <- compute_weights(trans_perm_y, type, scaling, a)
+    trans_perm_y <- combined_trans[perm_idx[-idx_x], , , drop = FALSE]
+    weights_perm_x <- compute_weights(
+      trans_perm_x, type, scaling, a, params
+    )
+    weights_perm_y <- compute_weights(
+      trans_perm_y, type, scaling, a, params
+    )
     if (include_centralities) {
       cent_perm_x <- centralities(weights_perm_x, measures = measures, ...)
       cent_perm_y <- centralities(weights_perm_y, measures = measures, ...)
@@ -261,7 +343,11 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
   edge_stats <- data.frame(
     edge_name = edge_names,
     diff_true = c(edge_diffs_true),
-    effect_size = c(edge_diffs_true) / c(edge_diffs_sd),
+    effect_size = effect_size(
+      c(edge_diffs_true),
+      c(edge_diffs_sd),
+      c(pmax(abs(weights_x), abs(weights_y)))
+    ),
     p_value = c(edge_p_values)
   )
   out <- list(
@@ -281,7 +367,11 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
     cent_diffs_sig <- cent_diffs_true * (cent_p_values < level)
     cent_stats <- expand.grid(state = cent_x$state, centrality = measures)
     cent_stats$diff_true <- c(cent_diffs_true)
-    cent_stats$effect_size <- c(cent_diffs_true) / c(cent_diffs_sd)
+    cent_stats$effect_size <- effect_size(
+      c(cent_diffs_true),
+      c(cent_diffs_sd),
+      c(pmax(abs(as.matrix(cent_x[, -1L])), abs(as.matrix(cent_y[, -1L]))))
+    )
     cent_stats$p_value <- c(cent_p_values)
     cent_diffs_true <- cbind(
       data.frame(state = cent_x$state),
@@ -305,12 +395,8 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
   )
 }
 
-permutation_test_patterns <- function(x, len, iter, adjust) {
-  stopifnot_(
-    length(attr(x, "scaling")) == 0L || attr(x, "groupwise"),
-    "Permutation test is not supported for
-     grouped models with globally scaled edge weights."
-  )
+permutation_test_patterns <- function(x, len, iter, adjust, actor = NULL) {
+  check_not_scaled_group(x, "The permutation test")
   check_values(iter, strict = TRUE)
   data <- combine_data(x)
   group <- data$.group
@@ -322,6 +408,15 @@ permutation_test_patterns <- function(x, len, iter, adjust) {
   pattern_matrices <- extract_patterns(m, len, labels)
   patterns <- factorize_patterns(pattern_matrices, group)
   stat_true <- lapply(patterns, pattern_statistic)
+  # Clusters are combined in order, so their actor ids line up with `group`
+  design <- onlyif(
+    !is.null(actor),
+    actor_design(
+      ids = unlist(Map(actor_ids, x, group_actor(x, actor))),
+      labels = group,
+      level = 0.05
+    )
+  )
   stat_perm <- vector(mode = "list", length = k)
   stat_p_value <- vector(mode = "list", length = k)
   for (j in seq_len(k)) {
@@ -330,8 +425,11 @@ permutation_test_patterns <- function(x, len, iter, adjust) {
     stat_p_value[[j]] <- numeric(u)
   }
   for (i in seq_len(iter)) {
-    perm_idx <- sample(n)
-    perm_group <- group[perm_idx]
+    perm_group <- ifelse_(
+      is.null(design),
+      group[sample(n)],
+      actor_permute(design)
+    )
     perm_patterns <- factorize_patterns(pattern_matrices, perm_group)
     for (j in seq_len(k)) {
       stat_perm[[j]][, i] <- pattern_statistic(perm_patterns[[j]])
@@ -343,8 +441,13 @@ permutation_test_patterns <- function(x, len, iter, adjust) {
   for (j in seq_len(k)) {
     stat_perm_mean <- apply(stat_perm[[j]], 1, mean)
     stat_perm_sd <- apply(stat_perm[[j]], 1, stats::sd)
+    stat_scale <- pmax(abs(stat_true[[j]]), apply(abs(stat_perm[[j]]), 1, max))
     out[[j]] <- data.frame(
-      effect_size = (stat_true[[j]] - stat_perm_mean) / stat_perm_sd,
+      effect_size = effect_size(
+        stat_true[[j]] - stat_perm_mean,
+        stat_perm_sd,
+        stat_scale
+      ),
       p_value = stats::p.adjust(
         (stat_p_value[[j]] + 1) / (iter + 1),
         method = adjust
@@ -362,4 +465,26 @@ pattern_statistic <- function(x) {
   cs <- .colSums(x, m = nr, n = nc)
   expected <- outer(rs, cs) / n
   sqrt(.rowSums((x - expected)^2, m = nr, n = nc))
+}
+
+#' Standardized Effect Size of a Permutation Test
+#'
+#' @param diff A `numeric` vector of observed differences.
+#' @param sd A `numeric` vector of the standard deviations of the permuted
+#'   differences.
+#' @param scale A `numeric` vector of the magnitudes of the values whose
+#'   differences are taken (e.g. the larger absolute weight of the two
+#'   networks).
+#' @return `diff / sd`, or `NA` where the permuted differences do not vary
+#'   (the effect size is then undefined).
+#' @noRd
+effect_size <- function(diff, sd, scale) {
+  # A standard deviation at the rounding level of the compared values is
+  # zero; judging it against their own magnitude keeps the rule free of
+  # the measurement scale
+  defined <- !is.na(sd) & !is.na(scale) &
+    sd > sqrt(.Machine$double.eps) * abs(scale)
+  out <- rep(NA_real_, length(diff))
+  out[defined] <- diff[defined] / sd[defined]
+  out
 }

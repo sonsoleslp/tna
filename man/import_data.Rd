@@ -26,8 +26,11 @@ sequence grouping. Default is 1 (each row is a separate window).}
 in \code{cols} with \code{NA}. The default is \code{TRUE}.}
 }
 \value{
-A \code{data.frame} in long format with added columns for window and
-sequence order.
+A tibble in long format with one row per non-missing value of
+\code{cols}: the remaining columns of \code{data}, the \code{id_cols}, the columns
+\code{action} (the name of the column in \code{cols}) and \code{value}, and the column
+\code{order} (the position of the action within its window of rows and
+combination of \code{id_cols}). Can be passed to \code{\link[=prepare_data]{prepare_data()}}.
 }
 \description{
 This function transforms wide format data where features are in separate

@@ -2,10 +2,13 @@
 % Please edit documentation in R/pruning.R
 \name{reprune}
 \alias{reprune}
+\alias{reprune.tna}
 \alias{reprune.group_tna}
 \title{Restore Previous Pruning of a Transition Network Analysis Model}
 \usage{
 reprune(x, ...)
+
+\method{reprune}{tna}(x, ...)
 
 \method{reprune}{group_tna}(x, ...)
 }
@@ -15,8 +18,8 @@ reprune(x, ...)
 \item{...}{Ignored.}
 }
 \value{
-A \code{tna} or \code{group_tna} object that has not been pruned. The previous
-pruning result can be reactivated with \code{\link[=reprune]{reprune()}}.
+A \code{tna} or \code{group_tna} object with the previous pruning of a
+model restored with \code{\link[=deprune]{deprune()}} applied again.
 }
 \description{
 Restore Previous Pruning of a Transition Network Analysis Model
@@ -33,12 +36,14 @@ Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{markov_order}()},
 \code{\link{permutation_test}()},
 \code{\link{permutation_test.group_tna}()},
 \code{\link{plot.group_tna_bootstrap}()},
 \code{\link{plot.group_tna_permutation}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_markov_order}()},
 \code{\link{plot.tna_permutation}()},
 \code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
@@ -47,8 +52,9 @@ Validation functions
 \code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
+\code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
 \code{\link{print.tna_stability}()},
@@ -56,6 +62,10 @@ Validation functions
 \code{\link{pruning_details}()},
 \code{\link{reliability}()},
 \code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()}
+\code{\link{summary.tna_bootstrap}()},
+\code{\link{summary.tna_markov_order}()},
+\code{\link{summary.tna_permutation}()},
+\code{\link{summary.tna_reliability}()},
+\code{\link{summary.tna_stability}()}
 }
 \concept{validation}

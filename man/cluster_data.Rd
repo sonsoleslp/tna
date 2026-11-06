@@ -60,16 +60,20 @@ supported for the Hamming distance.}
 \item{...}{Additional arguments passed to \code{\link[stringdist:stringdist]{stringdist::stringdist()}}.}
 }
 \value{
-A \code{tna_clustering} object which is a  \code{list} containing:
+A \code{tna_clustering} object which is a \code{list} containing:
 \itemize{
 \item \code{data}: The original data.
 \item \code{k}: The number of clusters.
-\item \code{assignments}: An \code{integer} vector of cluster assignments.
-\item \code{silhouette}: Silhouette score measuring clustering quality.
+\item \code{assignments}: An \code{integer} vector of cluster assignments, one per
+sequence (row of \code{data}).
+\item \code{silhouette}: The average silhouette width of the clustering.
 \item \code{sizes}: An \code{integer} vector of cluster sizes.
 \item \code{method}: The clustering method used.
-\item \code{distance}: The distance matrix.
+\item \code{distance}: The dissimilarity matrix (a \code{dist} object).
 }
+
+The result can be passed to \code{\link[=group_model]{group_model()}} to build a TNA model for
+each cluster.
 }
 \description{
 Performs clustering using specified dissimilarity measures
@@ -84,7 +88,30 @@ data <- data.frame(
   T3 = c("C", "C", "A", "B", "B", "C")
 )
 
-# PAM clustering with optimal string alignment (default)
+# PAM clustering with the Hamming distance (the defaults)
 result <- cluster_sequences(data, k = 2)
+print(result)
+
+# Hierarchical clustering with the optimal string alignment distance
+result <- cluster_sequences(data, k = 2, dissimilarity = "osa",
+                            method = "complete")
 
 }
+\references{
+Kaufman, L., & Rousseeuw, P. J. (1990). \emph{Finding Groups in Data: An
+Introduction to Cluster Analysis}. Wiley. \doi{10.1002/9780470316801}
+
+Rousseeuw, P. J. (1987). Silhouettes: A graphical aid to the
+interpretation and validation of cluster analysis. \emph{Journal of
+Computational and Applied Mathematics}, 20, 53--65.
+\doi{10.1016/0377-0427(87)90125-7}
+}
+\seealso{
+Cluster-related functions
+\code{\link{communities}()},
+\code{\link{group_model}()},
+\code{\link{mmm_stats}()},
+\code{\link{print.tna_clustering}()},
+\code{\link{rename_groups}()}
+}
+\concept{clusters}

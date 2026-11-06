@@ -22,3 +22,11 @@ Rplots.pdf
 ^doc$
 ^vignettes/*_files$
 ^vignettes/*\.R$
+^AGENT-NOTE-jtna-defects\.md$
+^AGENT-NOTE-nestimate-port-review\.md$
+^local_testing_and_equivalence$
+^CHANGES\.md$
+^LEARNINGS\.md$
+^Tutorial_docs$
+^man/figures/README-
+^codexclaims\.md$

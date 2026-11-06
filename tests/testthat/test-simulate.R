@@ -219,3 +219,52 @@ test_that("simulate.tna seed parameter produces reproducible results", {
   sim2 <- simulate(mock_tna, nsim = 5, max_len = 10, seed = 123)
   expect_equal(sim1, sim2)
 })
+
+test_that("zero_row applies to frequency models and is not replaced by format", {
+  st <- c("A", "B")
+  m <- ftna(matrix(c(1, 0, 0, 0), 2, byrow = TRUE, dimnames = list(st, st)),
+            inits = c(0, 1))
+  # Every sequence starts in B, which is never left
+  self <- simulate(m, nsim = 200, max_len = 2, zero_row = "self", seed = 1)
+  expect_true(all(self$T2 == "B"))
+  unif <- simulate(m, nsim = 4000, max_len = 2, zero_row = "uniform",
+                   seed = 1)
+  share_a <- mean(unif$T2 == "A")
+  # Binomial(4000, 0.5): well within 5 standard deviations of one half
+  expect_lt(abs(share_a - 0.5), 5 * sqrt(0.25 / 4000))
+  long <- simulate(m, nsim = 3, max_len = 2, format = "long", seed = 1)
+  expect_named(long, c("id", "time", "state"))
+})
+
+test_that("terminal states of relative models follow zero_row", {
+  m <- tna(data.frame(T1 = "A", T2 = "B"))
+  # A -> B with probability 1 and B is never left: with "self" the
+  # sequence stays in B, so all of T2, T3, T4 are B
+  s <- simulate(m, nsim = 100, max_len = 4, zero_row = "self", seed = 1)
+  expect_true(all(s$T1 == "A"))
+  expect_true(all(unlist(s[, c("T2", "T3", "T4")]) == "B"))
+  u <- simulate(m, nsim = 2000, max_len = 3, zero_row = "uniform", seed = 1)
+  expect_lt(abs(mean(u$T3 == "A") - 0.5), 5 * sqrt(0.25 / 2000))
+})
+
+test_that("simulation handles length one and boundary missing counts", {
+  model <- tna(group_regulation)
+  one <- simulate(model, nsim = 5, max_len = 1, seed = 1)
+  expect_equal(dim(one), c(5L, 1L))
+  trailing_na <- function(s) {
+    m <- is.na(as.matrix(s))
+    # Missing values form a suffix: once missing, missing to the end
+    stopifnot(all(m[, -1L] >= m[, -ncol(m)]))
+    rowSums(m)
+  }
+  s11 <- simulate(model, nsim = 50, max_len = 6, na_range = c(1, 1),
+                  seed = 2)
+  expect_true(all(trailing_na(s11) == 1L))
+  s02 <- simulate(model, nsim = 300, max_len = 6, na_range = c(0, 2),
+                  seed = 3)
+  counts <- trailing_na(s02)
+  expect_setequal(unique(counts), 0:2)
+  s35 <- simulate(model, nsim = 50, max_len = 6, na_range = c(3, 5),
+                  seed = 4)
+  expect_true(all(trailing_na(s35) %in% 3:5))
+})
