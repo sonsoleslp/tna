@@ -1,3 +1,10 @@
+# tna 1.5.6
+
+* `group_model()`, `group_tna()`, `group_ftna()` and `group_ctna()`: window
+  parameters in `params` and windows recorded by `import_onehot()` had no
+  effect, so a grouped model of the same call as `tna()` gave different weights.
+  They are now used, as in `build_model()`.
+
 # tna 1.5.5
 
 * NEWS.md wording.

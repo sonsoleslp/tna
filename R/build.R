@@ -261,13 +261,7 @@ build_model.data.frame <- function(x, type = "relative",
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
-  # Windows recorded by import_onehot() take precedence; otherwise the
-  # window parameters given in `params` are kept
-  params$window_span <- attr(x, "window_span") %||% params$window_span
-  params$window_size <- attr(x, "window_size") %||% params$window_size
-  params$windowed <- isTRUE(params$windowed) ||
-    !is.null(params$window_size) ||
-    !is.null(params$window_span)
+  params <- window_params(x, params)
   x <- create_seqdata(
     x = x,
     cols = cols,
@@ -835,6 +829,24 @@ compute_transitions <- function(m, a, type, params) {
     }
   }
   trans
+}
+
+#' Resolve the window parameters of a model
+#'
+#' Windows recorded by `import_onehot()` take precedence; otherwise the window
+#' parameters given in `params` are kept.
+#'
+#' @param x A `data.frame` of sequence data.
+#' @param params A `list` of model parameters.
+#' @return `params` with `window_span`, `window_size` and `windowed` resolved.
+#' @noRd
+window_params <- function(x, params) {
+  params$window_span <- attr(x, "window_span") %||% params$window_span
+  params$window_size <- attr(x, "window_size") %||% params$window_size
+  params$windowed <- isTRUE(params$windowed) ||
+    !is.null(params$window_size) ||
+    !is.null(params$window_span)
+  params
 }
 
 compute_transitions_windowed <- function(m, a, type, params) {

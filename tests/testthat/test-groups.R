@@ -242,3 +242,61 @@ test_that("unused group factor levels do not become empty groups", {
   same <- group_model(d, group = droplevels(g))
   expect_equal(model$X$weights, same$X$weights)
 })
+
+test_that("window parameters given for wide data are used in groups", {
+  # Blocks {T1, T2} and {T3, T4}: each row gives A-C, A-D, B-C, B-D once.
+  d <- data.frame(
+    T1 = "A", T2 = "B", T3 = "C", T4 = "D",
+    g = c("x", "x", "y"),
+    stringsAsFactors = FALSE
+  )
+  model <- group_model(
+    d, group = "g", type = "frequency", cols = T1:T4,
+    params = list(window_size = 2L)
+  )
+  expect_equal(unname(model$x$weights["A", ]), c(0, 0, 2, 2))
+  expect_equal(unname(model$y$weights["B", ]), c(0, 0, 1, 1))
+  expect_equal(model$x$weights[["A", "B"]], 0)
+  expect_true(attr(model$x, "params")$windowed)
+})
+
+test_that("groups window the same way as a model of each group", {
+  set.seed(4)
+  d <- as.data.frame(
+    matrix(sample(c("A", "B", "C"), 200L, TRUE), 25L, 8L),
+    stringsAsFactors = FALSE
+  )
+  states <- names(d)
+  d$g <- rep(c("x", "y"), length.out = nrow(d))
+  params <- list(window_size = 3L)
+  ref <- function(fit, g) {
+    fit(d[d$g == g, states], params = params)$weights
+  }
+  grouped <- group_tna(d, group = "g", cols = tidyselect::all_of(states),
+                       params = params)
+  expect_equal(unclass(grouped$x$weights), unclass(ref(tna, "x")),
+               ignore_attr = TRUE)
+  expect_equal(unclass(grouped$y$weights), unclass(ref(tna, "y")),
+               ignore_attr = TRUE)
+  co <- group_ctna(d, group = "g", cols = tidyselect::all_of(states),
+                   params = params)
+  expect_equal(unclass(co$x$weights), unclass(ref(ctna, "x")),
+               ignore_attr = TRUE)
+})
+
+test_that("windows recorded by import_onehot are used in groups", {
+  set.seed(5)
+  d <- data.frame(
+    a = rbinom(40L, 1L, 0.5), b = rbinom(40L, 1L, 0.5), c = rbinom(40L, 1L, 0.5)
+  )
+  onehot <- import_onehot(d, a:c, window_size = 2L)
+  onehot$g <- rep(c("x", "y"), length.out = nrow(onehot))
+  states <- setdiff(names(onehot), "g")
+  attrs <- attributes(onehot)[c("windowed", "window_size", "window_span")]
+  attributes(onehot)[names(attrs)] <- attrs
+  grouped <- group_ftna(onehot, group = "g", cols = tidyselect::all_of(states))
+  x <- onehot[onehot$g == "x", states]
+  attributes(x)[names(attrs)] <- attrs
+  expect_equal(unclass(grouped$x$weights), unclass(ftna(x)$weights),
+               ignore_attr = TRUE)
+})

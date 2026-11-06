@@ -71,10 +71,12 @@ group_model.default <- function(x, group, type = "relative",
     {.cls data.frame}, a {.cls tna_data} object."
   )
   if (inherits(x, "tna_data")) {
+    params <- window_params(x$sequence_data, params)
     wide <- cbind(x$sequence_data, x$meta_data)
     cols <- names(x$sequence_data)
     x <- wide
   } else {
+    params <- window_params(x, params)
     cols <- get_cols(rlang::enquo(cols), x)
   }
   type <- check_model_type(type)
