@@ -16,16 +16,20 @@ default is \code{\link[=sum]{sum()}}.}
 \item{...}{Additional arguments passed to \code{aggregate}.}
 }
 \value{
-A \code{tna} object representing the model.
+A \code{tna} object representing the model. Its \code{weights} element is a
+square \code{matrix} with one row and column per state, holding the
+aggregated weight of each pair of states (zero when the pair does not
+occur). The \code{inits} and \code{data} elements are \code{NULL}.
 }
 \description{
 Build a Social Network Analysis Model
 }
 \examples{
 set.seed(123)
+states <- c("A", "B", "C", "D")
 d <- data.frame(
-  from = sample(LETTERS[1:4], 100, replace = TRUE),
-  to = sample(LETTERS[1:4], 100, replace = TRUE),
+  from = sample(states, 100, replace = TRUE),
+  to = sample(states, 100, replace = TRUE),
   weight = rexp(100)
 )
 model <- sna(d)

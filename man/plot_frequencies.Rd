@@ -14,7 +14,7 @@ plot_frequencies(x, ...)
 
 \item{...}{Ignored.}
 
-\item{width}{A \code{numeric} value for the Width of the bars. Default is 0.7,}
+\item{width}{A \code{numeric} value for the width of the bars. Default is 0.7.}
 
 \item{hjust}{A \code{numeric} value for the horizontal adjustment of the labels.
 Default is 1.2.}

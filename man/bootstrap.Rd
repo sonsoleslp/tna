@@ -6,7 +6,16 @@
 \alias{bootstrap.group_tna}
 \title{Bootstrap Transition Networks from Sequence Data}
 \usage{
-bootstrap(x, iter, level, method, threshold, consistency_range, seed = NULL)
+bootstrap(
+  x,
+  iter,
+  level,
+  method,
+  threshold,
+  consistency_range,
+  seed = NULL,
+  actor = NULL
+)
 
 \method{bootstrap}{tna}(
   x,
@@ -15,7 +24,8 @@ bootstrap(x, iter, level, method, threshold, consistency_range, seed = NULL)
   method = "stability",
   threshold,
   consistency_range = c(0.75, 1.25),
-  seed = NULL
+  seed = NULL,
+  actor = NULL
 )
 
 \method{bootstrap}{group_tna}(
@@ -25,11 +35,14 @@ bootstrap(x, iter, level, method, threshold, consistency_range, seed = NULL)
   method = "stability",
   threshold,
   consistency_range = c(0.75, 1.25),
-  seed = NULL
+  seed = NULL,
+  actor = NULL
 )
 }
 \arguments{
-\item{x}{A \code{tna} or a \code{group_tna} object created from sequence data.}
+\item{x}{A \code{tna} or a \code{group_tna} object created from sequence data.
+Grouped models with scaled edge weights, and their networks, are not
+resampled (an error of class \code{tna_error_scaling}).}
 
 \item{iter}{An \code{integer} specifying the number of bootstrap samples to
 draw. Defaults to \code{1000}.}
@@ -57,6 +70,17 @@ only when \code{method = "stability"}.}
 
 \item{seed}{A single \code{numeric} random seed for reproducible resampling, or
 \code{NULL} (the default) to use the current RNG state.}
+
+\item{actor}{An optional actor identifier for sequences nested in actors
+(for example, several sessions per student). Either a \code{character} string
+naming a non-sequence column of the data the model was built from (such as
+a column of \code{meta_data} from \code{\link[=prepare_data]{prepare_data()}}), or a vector with one
+identifier per sequence (per sequence of the data the grouped model was
+built from, for a \code{group_tna} object). When given, whole actors are
+resampled with replacement instead of single sequences (a cluster
+bootstrap; Davison & Hinkley, 1997, Section 3.8), so that sequences nested
+in actors are not treated as independent. The default \code{NULL} resamples
+sequences.}
 }
 \value{
 A \code{tna_bootstrap} object which is a \code{list} containing the
@@ -76,9 +100,12 @@ intervals for the edge weights.
 \item \code{ci_upper}: The upper bound \code{matrix} of the bootstrap confidence
 intervals for the edge weights.
 \item \code{p_values}: The \code{matrix} of estimated p-values for the edge weights.
-\item \code{summary}: A \code{data.frame} summarizing the edges, their weights,
-p-values, statistical significance, consistency ranges, and
-confidence intervals.
+\item \code{summary}: A \code{data.frame} with one row per edge with a positive
+weight and the columns \code{from}, \code{to}, \code{weight}, \code{p_value}, \code{sig},
+\code{cr_lower}, \code{cr_upper}, \code{ci_lower}, and \code{ci_upper}. The same table is
+returned by \code{\link[=summary.tna_bootstrap]{summary.tna_bootstrap()}}.
+\item \code{model}: The \code{tna} model pruned to the significant edges (see
+\code{\link[=prune]{prune()}} with \code{method = "bootstrap"}).
 }
 
 If \code{x} is a \code{group_tna} object, the output is a \code{group_tna_bootstrap}
@@ -112,16 +139,22 @@ model <- tna(group_regulation)
 bootstrap(model, iter = 10)
 
 }
+\references{
+Davison, A. C., & Hinkley, D. V. (1997). \emph{Bootstrap Methods and their
+Application}. Cambridge University Press.
+}
 \seealso{
 Validation functions
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{markov_order}()},
 \code{\link{permutation_test}()},
 \code{\link{permutation_test.group_tna}()},
 \code{\link{plot.group_tna_bootstrap}()},
 \code{\link{plot.group_tna_permutation}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_markov_order}()},
 \code{\link{plot.tna_permutation}()},
 \code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
@@ -130,8 +163,9 @@ Validation functions
 \code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
+\code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
 \code{\link{print.tna_stability}()},
@@ -140,6 +174,10 @@ Validation functions
 \code{\link{reliability}()},
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()}
+\code{\link{summary.tna_bootstrap}()},
+\code{\link{summary.tna_markov_order}()},
+\code{\link{summary.tna_permutation}()},
+\code{\link{summary.tna_reliability}()},
+\code{\link{summary.tna_stability}()}
 }
 \concept{validation}

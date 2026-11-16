@@ -83,6 +83,34 @@ check_tna_seq <- function(x) {
   )
 }
 
+#' Check that `x` Is Not a Grouped Model with Scaled Edge Weights
+#'
+#' Grouped models with scaled edge weights are not resampled: scaling across
+#' groups depends on every group, so a resample of one group cannot
+#' reproduce it. The networks of such a model carry `params$group_scaling`,
+#' so they are not resampled on their own either.
+#'
+#' @param x A `tna` or a `group_tna` object.
+#' @param what A `character` string, the resampling method for the message.
+#' @noRd
+check_not_scaled_group <- function(x, what) {
+  scaled <- ifelse_(
+    inherits(x, "group_tna"),
+    length(attr(x, "scaling")) > 0L,
+    length(attr(x, "params")$group_scaling) > 0L
+  )
+  stopifnot_(
+    !scaled,
+    c(
+      "{what} is not supported for grouped models with scaled edge
+       weights, or for the networks of such a model.",
+      `i` = "Build the groups without {.arg scaling} to resample them."
+    ),
+    class = "tna_error_scaling",
+    call = rlang::caller_env()
+  )
+}
+
 #' Check that `x` contains valid centrality measures
 #'
 #' @param x An \R object expected to be a `character` vector.
@@ -376,5 +404,25 @@ check_dots <- function(...) {
   stopifnot_(
     length(invalid_dots) == 0L,
     "Argument{?/s} {.arg {invalid_dots}} {?is/are} not recognized."
+  )
+}
+
+#' Check that a Weight Matrix Names Its States
+#'
+#' The row names must equal the column names and be unique, so that two
+#' matrices can be matched by state.
+#'
+#' @param x A weight `matrix`.
+#' @param arg A `character` string naming the argument in error messages.
+#' @noRd
+check_state_names <- function(x, arg) {
+  states <- rownames(x)
+  stopifnot_(
+    !is.null(states) &&
+      identical(states, colnames(x)) &&
+      anyDuplicated(states) == 0L,
+    "The weight matrix {.arg {arg}} must have the same unique state names
+     as its row and column names.",
+    class = "tna_error_states"
   )
 }

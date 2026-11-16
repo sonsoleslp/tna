@@ -9,20 +9,26 @@ reliability(x, ...)
 
 \method{reliability}{tna}(
   x,
-  types = "relative",
+  types = NULL,
   split = 0.5,
   iter = 1000,
   scaling = "none",
+  actor = NULL,
   ...
 )
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A \code{tna} object.
+Grouped models with scaled edge weights, and their networks, are not
+resampled (an error of class \code{tna_error_scaling}).}
 
 \item{...}{Ignored.}
 
-\item{types}{A \code{character} vector giving the model types to fit.
-See \code{\link[=build_model]{build_model()}} for available options.}
+\item{types}{A \code{character} vector giving the model types to fit. The
+default \code{NULL} uses the type of \code{x}. For every type, the transitions are
+counted from the sequence data of \code{x} as that type defines them, with the
+parameters (\code{params}) and scaling of \code{x}. See \code{\link[=build_model]{build_model()}} for the
+available types.}
 
 \item{split}{A \code{numeric} value between \code{0} and \code{1} specifying the proportion
 of data for the split. The default is \code{0.5} for an even split.}
@@ -30,10 +36,29 @@ of data for the split. The default is \code{0.5} for an even split.}
 \item{iter}{An \code{integer} specifying number of iterations (splits). The
 default is \code{1000}.}
 
-\item{scaling}{See \code{\link[=compare]{compare()}}.}
+\item{scaling}{A \code{character} string naming the scaling applied to the
+weights of the two halves before they are compared. The default is
+\code{"none"}. See \code{\link[=compare]{compare()}} for the options.}
+
+\item{actor}{An optional actor identifier for sequences nested in actors:
+a \code{character} string naming a non-sequence column of the data the model
+was built from, or a vector with one identifier per sequence. When given,
+the actors are split, so that all sequences of an actor fall in the same
+half, and \code{split} is the proportion of actors. The default \code{NULL} splits
+single sequences.}
 }
 \value{
-A \code{tna_reliability} object.
+A \code{tna_reliability} object, which is a \code{list} with two tibbles:
+\itemize{
+\item \code{metrics}: One row per split and comparison metric, with the columns
+\code{category}, \code{metric}, and \code{value} (and \code{model_type} when several
+\code{types} are given).
+\item \code{summary}: One row per metric with the \code{mean}, \code{sd}, \code{median}, \code{min},
+\code{max}, and quartiles (\code{q25}, \code{q75}) of the metric over the splits.
+}
+
+\code{\link[=summary.tna_reliability]{summary.tna_reliability()}} returns all metrics with their category as
+a tidy table.
 }
 \description{
 Performs reliability analysis and outputs a concise summary of key
@@ -50,12 +75,14 @@ Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
 \code{\link{estimate_cs}()},
+\code{\link{markov_order}()},
 \code{\link{permutation_test}()},
 \code{\link{permutation_test.group_tna}()},
 \code{\link{plot.group_tna_bootstrap}()},
 \code{\link{plot.group_tna_permutation}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_markov_order}()},
 \code{\link{plot.tna_permutation}()},
 \code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
@@ -64,8 +91,9 @@ Validation functions
 \code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
+\code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
 \code{\link{print.tna_stability}()},
@@ -73,6 +101,10 @@ Validation functions
 \code{\link{pruning_details}()},
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()}
+\code{\link{summary.tna_bootstrap}()},
+\code{\link{summary.tna_markov_order}()},
+\code{\link{summary.tna_permutation}()},
+\code{\link{summary.tna_reliability}()},
+\code{\link{summary.tna_stability}()}
 }
 \concept{validation}

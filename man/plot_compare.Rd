@@ -24,18 +24,21 @@ the first group has a higher value. See \code{\link[cograph:splot]{cograph::splo
 the second group has a higher value. See \code{\link[cograph:splot]{cograph::splot()}}.}
 }
 \value{
-A \code{cograph_network} object displaying the difference network
-between the two models.
+The difference network is drawn, and a \code{list} is returned
+invisibly with the elements \code{weights} (the \code{matrix} of edge weight
+differences \code{x - y}) and \code{inits} (the differences in the initial
+probabilities).
 }
 \description{
 Plots the difference network between model \code{x} and model \code{y}. The edges are
 computed from subtracting the two models. The pie chart is the difference in
 initial probabilities between model \code{x} and model \code{y}. Green color indicates
-that \code{x}is greater than \code{y}and red indicates otherwise.
+that \code{x} is greater than \code{y} and red indicates otherwise.
 }
 \examples{
-model_x <- tna(group_regulation[group_regulation[, 1] == "plan", ])
-model_y <- tna(group_regulation[group_regulation[, 1] != "plan", ])
+# Sequences that start with "plan" against the other sequences
+model_x <- tna(subset(group_regulation, T1 == "plan"))
+model_y <- tna(subset(group_regulation, T1 != "plan"))
 plot_compare(model_x, model_y)
 
 }

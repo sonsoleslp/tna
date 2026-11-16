@@ -71,7 +71,8 @@ defaults (which may themselves be drawn at random when \code{NULL}).}
 (the default) for fresh randomness on every call.}
 }
 \value{
-A \code{group_tna} object.
+A \code{group_tna} object: a named \code{list} with one \code{tna} object per
+group (see \code{\link[=group_model]{group_model()}}).
 }
 \description{
 Construct a fully-functional \code{group_tna} object from synthetic parameters.

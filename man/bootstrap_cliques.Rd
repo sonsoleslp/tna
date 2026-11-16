@@ -58,7 +58,9 @@ one row per clique and the columns \code{clique}, \code{mean_weight}, \code{p_va
 \description{
 Bootstrap the edge weights of all cliques of a given size in a \code{tna}
 model, producing per-clique mean weights, p-values, confidence intervals,
-and consistency-range bounds.
+and consistency-range bounds. Each bootstrap sample draws as many
+sequences as the data has, with replacement, and recomputes the clique
+weights from them.
 }
 \examples{
 model <- tna(group_regulation)

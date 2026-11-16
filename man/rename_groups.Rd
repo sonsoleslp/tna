@@ -12,7 +12,8 @@ rename_groups(x, new_names)
 \item{new_names}{A \code{character} vector containing one name per cluster.}
 }
 \value{
-A renamed \code{group_tna} object.
+The \code{group_tna} object \code{x} with its elements (groups) renamed to
+\code{new_names}.
 }
 \description{
 Rename Groups
@@ -24,8 +25,10 @@ model_renamed <- rename_groups(model, c("A", "B", "C"))
 }
 \seealso{
 Cluster-related functions
+\code{\link{cluster_data}()},
 \code{\link{communities}()},
 \code{\link{group_model}()},
-\code{\link{mmm_stats}()}
+\code{\link{mmm_stats}()},
+\code{\link{print.tna_clustering}()}
 }
 \concept{clusters}

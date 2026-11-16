@@ -9,8 +9,10 @@
 #' @export
 #' @family basic
 #' @rdname build_model
-#' @param x A `stslist` (from `TraMineR`), `data.frame`, a `matrix`, or
-#'   a `tna_data` object (see [prepare_data()]).
+#' @param x A `stslist` (from `TraMineR`), `data.frame`, a `matrix`,
+#'   a `tna_data` object (see [prepare_data()]), or a `tsn` object (a long
+#'   table with the columns `id`, `state`, and `time`, as produced by the
+#'   `tsn` package).
 #'   For `stslist` and `data.frame` objects `x`
 #'   should describe a sequence of events or states to be used for building the
 #'   Markov model.  If `x` is a matrix, it is assumed that the element on row
@@ -35,7 +37,7 @@
 #'       option.
 #'   * `"attention"` aggregates all downstream pairs of states with an
 #'       exponential decay for the gap between states. The parameter `lambda`
-#'       can be used to control the decay rate (the default is 1)-
+#'       can be used to control the decay rate (the default is 1).
 #'
 #' @param scaling A `character` vector describing how to scale the weights
 #'   defined by `type`. When a vector is provided, the scaling options are
@@ -107,15 +109,21 @@
 #' @return An object of class `tna` which is a `list` containing the
 #'   following elements:
 #'
-#'   * `weights`: An adjacency `matrix` of the model (weight matrix).
+#'   * `weights`: The square adjacency `matrix` of the model (weight matrix),
+#'     with one row and one column per state. The element on row `i` and
+#'     column `j` is the weight of the edge from state `i` to state `j`.
 #'   * `inits`: A `numeric` vector of initial values for each state.
 #'     For `matrix` type `x`, this element will be `NULL` if `inits` is not
-#'     directly provided
+#'     directly provided.
 #'   * `labels`: A `character` vector of the state labels, or `NULL` if
 #'     there are no labels.
 #'   * `data`: The original sequence data that has been converted to an
-#'     internal format used by the package when `x` is a `stslist` or a
-#'     `data.frame` object. Otherwise `NULL`.
+#'     internal format used by the package when `x` is sequence data
+#'     (a `stslist`, a `data.frame`, a `tna_data`, or a `tsn` object).
+#'     Otherwise `NULL`.
+#'
+#'   The model type, the scaling, and the `params` used are stored in the
+#'   attributes `type`, `scaling`, and `params`.
 #'
 #' @examples
 #' model <- build_model(group_regulation)
@@ -211,7 +219,6 @@ build_model.matrix <- function(x, type = "relative", scaling = character(0L),
 
 #' @export
 #' @rdname build_model
-
 build_model.stslist <- function(x, type = "relative", scaling = character(0L),
                                 cols = tidyselect::everything(),
                                 params = list(), concat = 1L,
@@ -254,10 +261,7 @@ build_model.data.frame <- function(x, type = "relative",
   type <- check_model_type(type)
   scaling <- check_model_scaling(scaling)
   cols <- get_cols(rlang::enquo(cols), x)
-  params$window_span <- attr(x, "window_span")
-  params$window_size <- attr(x, "window_size")
-  params$windowed <- !is.null(params$window_size) ||
-    !is.null(params$window_span)
+  params <- window_params(x, params)
   x <- create_seqdata(
     x = x,
     cols = cols,
@@ -339,7 +343,9 @@ build_model.tsn <- function(x, type = "relative", scaling = character(0L),
       id_cols = "id",
       values_from = !!rlang::sym("state"),
       names_from = !!rlang::sym("time"),
-      names_prefix = "T"
+      names_prefix = "T",
+      # Time points become columns in time order, not in order of appearance
+      names_sort = TRUE
     ) |>
     dplyr::select(!(!!rlang::sym("id")))
   x <- create_seqdata(
@@ -454,12 +460,16 @@ tsn <- function(x, ...) {
 #' @param aggregate A `function` to use for aggregating the weights. The
 #' default is [sum()].
 #' @param ... Additional arguments passed to `aggregate`.
-#' @return A `tna` object representing the model.
+#' @return A `tna` object representing the model. Its `weights` element is a
+#'   square `matrix` with one row and column per state, holding the
+#'   aggregated weight of each pair of states (zero when the pair does not
+#'   occur). The `inits` and `data` elements are `NULL`.
 #' @examples
 #' set.seed(123)
+#' states <- c("A", "B", "C", "D")
 #' d <- data.frame(
-#'   from = sample(LETTERS[1:4], 100, replace = TRUE),
-#'   to = sample(LETTERS[1:4], 100, replace = TRUE),
+#'   from = sample(states, 100, replace = TRUE),
+#'   to = sample(states, 100, replace = TRUE),
 #'   weight = rexp(100)
 #' )
 #' model <- sna(d)
@@ -567,13 +577,28 @@ create_seqdata <- function(x, cols, alphabet, concat = 1L,
     }
     colors <- color_palette(length(labels))
     x[, cols] <- as.data.frame(
-      lapply(x[, cols], function(y) factor(y, levels = alphabet))
+      lapply(x[, cols, drop = FALSE], function(y) factor(y, levels = alphabet))
     )
+  }
+  # Non-sequence columns, one row per sequence (e.g. actor ids)
+  meta <- onlyif(
+    ncol(x) > length(cols),
+    as.data.frame(x)[, -cols, drop = FALSE]
+  )
+  if (!is.null(meta) && concat > 1L) {
+    # Concatenated sequences keep the columns constant within each block
+    block <- (seq_len(nrow(meta)) - 1L) %/% concat
+    constant <- vapply(
+      meta,
+      function(y) all(tapply(y, block, n_unique) == 1L),
+      logical(1L)
+    )
+    meta <- meta[!duplicated(block), constant, drop = FALSE]
   }
   x <- as.matrix(
     as.data.frame(
       lapply(
-        x[, cols],
+        x[, cols, drop = FALSE],
         function(y) {
           as.integer(replace(y, which(!y %in% alphabet), NA))
         }
@@ -609,11 +634,12 @@ create_seqdata <- function(x, cols, alphabet, concat = 1L,
   if (!missing(end_state)) {
     last_obs <- max.col(!is.na(x), ties.method = "last")
     new_max <- max(x, na.rm = TRUE) + 1L
+    # A column is added only when a sequence has no room for the end state
     if (any(last_obs == ncol(x))) {
       x <- cbind(x, NA_integer_)
-      idx <- cbind(seq_len(nrow(x)), last_obs + 1L)
-      x[idx] <- new_max
     }
+    idx <- cbind(seq_len(nrow(x)), last_obs + 1L)
+    x[idx] <- new_max
     alphabet <- c(alphabet, end_state)
     labels <- c(labels, end_state)
     colors <- c(colors, "darkgray")
@@ -623,7 +649,8 @@ create_seqdata <- function(x, cols, alphabet, concat = 1L,
     class = c("tna_seq_data", "matrix", "array"),
     alphabet = alphabet,
     labels = labels,
-    colors = colors
+    colors = colors,
+    meta = meta
   )
 }
 
@@ -644,7 +671,7 @@ initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   inits <- factor(x[, 1L], levels = seq_len(a), labels = alphabet)
   inits <- as.vector(table(inits))
   trans <- compute_transitions(x, a, type, params)
-  weights <- compute_weights(trans, type, scaling, a)
+  weights <- compute_weights(trans, type, scaling, a, params)
   inits <- inits / sum(inits)
   names(inits) <- alphabet
   dimnames(weights) <- list(alphabet, alphabet)
@@ -656,6 +683,23 @@ initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
   )
 }
 
+#' Edge Weights of a Model Rebuilt From Its Sequence Data
+#'
+#' The weights are recomputed with the type, scaling and parameters of the
+#' model, so any pruning of `x$weights` is ignored. For an unpruned model the
+#' result is identical to `x$weights`.
+#'
+#' @param x A `tna` object with sequence data.
+#' @noRd
+data_weights <- function(x) {
+  initialize_model(
+    x$data,
+    attr(x, "type"),
+    attr(x, "scaling"),
+    attr(x, "params")
+  )$weights
+}
+
 #' Compute Network Transitions Based on TNA Type
 #'
 #' @param m A `matrix` of sequences
@@ -664,6 +708,11 @@ initialize_model <- function(x, type, scaling, params, transitions = FALSE) {
 #' @param params Parameters for the transition model.
 #' @noRd
 compute_transitions <- function(m, a, type, params) {
+  if (identical(type, "betweenness")) {
+    # Transitions are counted as in the model the network was built from
+    source <- betweenness_source(params)
+    return(compute_transitions(m, a, source$type, params))
+  }
   if (isTRUE(params$windowed)) {
     return(compute_transitions_windowed(m, a, type, params))
   }
@@ -766,7 +815,8 @@ compute_transitions <- function(m, a, type, params) {
       }
       if (direction %in% c("backward", "both")) {
         if (i > 1) {
-          for (j in seq(1L, i)) {
+          # Earlier time points only: a position does not attend to itself
+          for (j in seq_len(i - 1L)) {
             from <- m[, i]
             to <- m[, j]
             any_na <- is.na(from) | is.na(to)
@@ -779,6 +829,24 @@ compute_transitions <- function(m, a, type, params) {
     }
   }
   trans
+}
+
+#' Resolve the window parameters of a model
+#'
+#' Windows recorded by `import_onehot()` take precedence; otherwise the window
+#' parameters given in `params` are kept.
+#'
+#' @param x A `data.frame` of sequence data.
+#' @param params A `list` of model parameters.
+#' @return `params` with `window_span`, `window_size` and `windowed` resolved.
+#' @noRd
+window_params <- function(x, params) {
+  params$window_span <- attr(x, "window_span") %||% params$window_span
+  params$window_size <- attr(x, "window_size") %||% params$window_size
+  params$windowed <- isTRUE(params$windowed) ||
+    !is.null(params$window_size) ||
+    !is.null(params$window_span)
+  params
 }
 
 compute_transitions_windowed <- function(m, a, type, params) {
@@ -892,11 +960,20 @@ get_transitions <- function(x) { # nocov start
 #' @param type Type of the transition network as a `character` string.
 #' @param scaling Scaling methods to apply as a `character` vector.
 #' @param a An `integer`, the number of states.
+#' @param params A `list` of parameters for the transition model. Required
+#'   when `type` is `"betweenness"`.
 #' @return A `matrix` of transition probabilities or frequencies,
 #' based on `type`.
 #' @noRd
-compute_weights <- function(transitions, type, scaling, a) {
+compute_weights <- function(transitions, type, scaling, a, params = NULL) {
   weights <- apply(transitions, c(2, 3), sum)
+  if (identical(type, "betweenness")) {
+    source <- betweenness_source(params)
+    weights <- scale_weights(weights, source$type, source$scaling, a)
+    return(
+      edge_betweenness_weights(weights, source$directed, source$invert)
+    )
+  }
   scale_weights(weights, type, scaling, a)
 }
 
@@ -912,7 +989,6 @@ scale_weights <- function(weights, type, scaling, a) {
     rs <- .rowSums(weights, m = a, n = a)
     pos <- which(rs > 0)
     weights[pos, ] <- weights[pos, ] / rs[pos]
-    weights[!pos, ] <- NA
   }
   for (i in seq_along(scaling)) {
     if (scaling[i] == "minmax") {

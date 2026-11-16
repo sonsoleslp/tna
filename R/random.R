@@ -49,9 +49,11 @@
 #'   Default is `FALSE`.
 #' @param seed An `integer` random seed for reproducibility, or `NULL`
 #'   (the default) for fresh randomness on every call.
-#' @return A `tna` object, or a `list` with elements `model`,
-#'   `trans_matrix`, `init_probs`, `sequences`, `labels`, and `category`
-#'   when `return_params = TRUE`.
+#' @return A `tna` object, or, when `return_params = TRUE`, a `list` with
+#'   the elements `model` (the `tna` object), `trans_matrix` (the true
+#'   transition `matrix`), `init_probs` (the true initial probabilities),
+#'   `sequences` (the simulated sequences as a wide `data.frame`), `labels`
+#'   (the state labels), and `category` (the label pool used).
 #' @examples
 #' # Fresh random model on every call
 #' model <- random_tna()
@@ -62,9 +64,9 @@
 #' # Reproducible model
 #' model <- random_tna(seed = 42)
 #'
-#' # Recover the ground-truth parameters
+#' # Recover the ground-truth parameters along with the model
 #' out <- random_tna(seed = 7, return_params = TRUE)
-#' out$trans_matrix
+#' str(out, max.level = 1)
 #'
 random_tna <- function(n_states = NULL, states = NULL, category = NULL,
                        alpha = NULL, diag_boost = NULL,
@@ -143,7 +145,8 @@ random_tna <- function(n_states = NULL, states = NULL, category = NULL,
 #'   `n_sequences`, `seq_length`. Unset entries fall back to the top-level
 #'   defaults (which may themselves be drawn at random when `NULL`).
 #' @inheritParams random_tna
-#' @return A `group_tna` object.
+#' @return A `group_tna` object: a named `list` with one `tna` object per
+#'   group (see [group_model()]).
 #' @examples
 #' # Fresh random group model on every call
 #' model <- random_group_tna()

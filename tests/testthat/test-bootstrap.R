@@ -68,3 +68,33 @@ test_that("bootstrap seed makes clique resampling reproducible", {
 
   expect_identical(first, second)
 })
+
+test_that("bootstrap_cliques resamples sequences, not clique indices", {
+  d <- head(group_regulation, 300)
+  model <- tna(d)
+  iter <- 40L
+  boot <- bootstrap_cliques(
+    model, size = 2, threshold = 0.1, iter = iter, seed = 9
+  )
+  cl <- cliques(model, size = 2, threshold = 0.1, sum_weights = TRUE)
+  # Oracle: redraw the same bootstrap samples of sequences by hand and
+  # rebuild each network with tna()
+  set.seed(9)
+  n_seq <- nrow(d)
+  draws <- vapply(
+    seq_len(iter),
+    function(i) {
+      w <- tna(d[sample.int(n_seq, n_seq, replace = TRUE), ])$weights
+      vapply(cl$indices, function(idx) mean(w[idx, idx]), numeric(1L))
+    },
+    numeric(length(cl$indices))
+  )
+  draws <- matrix(draws, nrow = length(cl$indices))
+  expect_equal(boot$ci_lower, apply(draws, 1L, stats::quantile, 0.025),
+               ignore_attr = TRUE)
+  expect_equal(boot$ci_upper, apply(draws, 1L, stats::quantile, 0.975),
+               ignore_attr = TRUE)
+  # A resample of all sequences stays close to the observed clique weight
+  expect_true(all(boot$mean_weight >= boot$ci_lower - 0.05))
+  expect_true(all(boot$mean_weight <= boot$ci_upper + 0.05))
+})

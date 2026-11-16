@@ -6,7 +6,10 @@
 #'   object built by [random_tna_mmm()].
 #' @param level A `numeric` value representing the significance level for
 #' hypothesis testing and confidence intervals. Defaults to `0.05`.
-#' @return A `data.frame` object.
+#' @return A `data.frame` with one row per cluster (other than the reference
+#'   cluster) and covariate of the membership model, with the columns
+#'   `cluster`, `variable`, `estimate`, `std_error`, `ci_lower`, `ci_upper`
+#'   (the `1 - level` confidence interval), `z_value`, and `p_value`.
 #' @examples
 #' mmm_stats(engagement_mmm)
 #'

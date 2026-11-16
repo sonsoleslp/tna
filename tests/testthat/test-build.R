@@ -417,3 +417,102 @@ test_that("build_model.matrix handles negative inits", {
     "non-negative"
   )
 })
+
+test_that("data with a single time point give no transitions", {
+  single <- data.frame(T1 = c("A", "B", "A"))
+  weights <- build_model(single)$weights
+  expect_equal(unname(weights), matrix(0, 2, 2))
+  expect_s3_class(
+    group_model(single, group = factor(c("x", "x", "y"))),
+    "group_tna"
+  )
+  # Adding a second column gives exactly the transitions of that column
+  two <- data.frame(T1 = c("A", "B", "A"), T2 = c("B", "B", "A"))
+  expect_equal(
+    unname(build_model(two, type = "frequency")$weights),
+    matrix(c(1, 0, 1, 1), 2)
+  )
+})
+
+test_that("summary reports out-strength as row sums and in-strength as column sums", {
+  st <- c("A", "B", "C")
+  w <- matrix(c(0, 5, 5, 0, 0, 1, 0, 0, 0), 3, byrow = TRUE,
+              dimnames = list(st, st))
+  s <- summary(build_model(w, type = "frequency", inits = rep(1, 3)))
+  value <- function(m) subset(s, metric == m)$value
+  # out-strengths 10, 1, 0; in-strengths 0, 5, 6
+  expect_equal(value("SD Out-Strength"), stats::sd(c(10, 1, 0)))
+  expect_equal(value("SD In-Strength"), stats::sd(c(0, 5, 6)))
+  # The means agree by construction: both are the total weight per state
+  expect_equal(value("Mean Out-Strength"), 11 / 3)
+  expect_equal(value("Mean In-Strength"), 11 / 3)
+})
+
+test_that("window parameters given for wide data are used", {
+  d <- data.frame(T1 = "A", T2 = "B", T3 = "C", T4 = "A", T5 = "B", T6 = "C")
+  model <- build_model(d, type = "frequency", params = list(window_size = 3))
+  # Hand count: every state of window {A, B, C} (T1-T3) is followed by
+  # every state of window {A, B, C} (T4-T6), once each
+  expect_equal(unname(model$weights), matrix(1, 3, 3))
+  expect_true(attr(model, "params")$windowed)
+  # Without window parameters the ordinary transitions are counted
+  plain <- build_model(d, type = "frequency")
+  expect_equal(sum(plain$weights), 5)
+})
+
+test_that("backward attention does not pair a time point with itself", {
+  d <- data.frame(T1 = "A", T2 = "B", T3 = "C")
+  bw <- atna(d, params = list(direction = "backward", lambda = 1))
+  # Hand computation with exp(-|i - j|): B -> A at distance 1,
+  # C -> B at distance 1, C -> A at distance 2; nothing else
+  expected <- matrix(0, 3, 3, dimnames = list(c("A", "B", "C"),
+                                               c("A", "B", "C")))
+  expected["B", "A"] <- exp(-1)
+  expected["C", "B"] <- exp(-1)
+  expected["C", "A"] <- exp(-2)
+  expect_equal(bw$weights, expected)
+  # Backward attention is forward attention with the time order reversed
+  rev_d <- data.frame(T1 = "C", T2 = "B", T3 = "A")
+  fw_rev <- atna(rev_d, params = list(direction = "forward", lambda = 1))
+  expect_equal(bw$weights, fw_rev$weights)
+})
+
+test_that("end state is added when no sequence fills the last column", {
+  d <- data.frame(T1 = c("A", "B"), T2 = c("B", "A"), T3 = c(NA, NA))
+  model <- ftna(d, end_state = "END")
+  # Sequences A B and B A end in B and A
+  expect_equal(unname(model$weights[c("A", "B"), "END"]), c(1, 1))
+  # An all-missing column does not change the model
+  expect_equal(
+    model$weights,
+    ftna(d[, c("T1", "T2")], end_state = "END")$weights
+  )
+  # One end state per sequence
+  short <- group_regulation[rowSums(!is.na(group_regulation)) < 26L, ]
+  short <- head(short, 30)
+  expect_equal(sum(ftna(short, end_state = "END")$weights[, "END"]), 30)
+})
+
+test_that("tsn input is ordered by time", {
+  as_tsn <- function(x) structure(x, class = c("tsn", class(x)))
+  long <- data.frame(
+    id = c(1, 1, 1, 2, 2, 2),
+    state = c("C", "A", "B", "A", "B", "C"),
+    time = c(10, 1, 2, 1, 2, 10)
+  )
+  model <- build_model(as_tsn(long), type = "frequency")
+  # Both sequences are A B C in time order (10 after 2, not before 1)
+  expected <- matrix(
+    c(0, 2, 0, 0, 0, 2, 0, 0, 0),
+    3,
+    byrow = TRUE,
+    dimnames = list(c("A", "B", "C"), c("A", "B", "C"))
+  )
+  expect_equal(model$weights, expected)
+  # The row order of the input does not matter
+  shuffled <- long[c(6, 2, 4, 1, 5, 3), ]
+  expect_equal(
+    build_model(as_tsn(shuffled), type = "frequency")$weights,
+    expected
+  )
+})

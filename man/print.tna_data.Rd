@@ -10,9 +10,9 @@
 \item{x}{A \code{tna_data} object.}
 
 \item{data}{A \code{character} string that defines the data to be printed
-tibble. Accepts either \code{"sequence"} (default) for wide format sequence data,
-\code{"meta"}, for the wide format metadata, or \code{"long"} for the long format
-data.}
+as a tibble. Accepts either \code{"sequence"} (default) for wide format sequence
+data, \code{"meta"}, for the wide format metadata, or \code{"long"} for the long
+format data.}
 
 \item{...}{Arguments passed to the tibble \code{print} method.}
 }
@@ -23,11 +23,12 @@ data.}
 Print a TNA Data Object
 }
 \examples{
-res <- prepare_data(group_regulation_long, action = "Action", actor = "Actor",
-time = "Time")
-print(res, which = "sequence")
-print(res, which = "meta")
-print(res, which = "long")
+res <- prepare_data(
+  group_regulation_long, action = "Action", actor = "Actor", time = "Time"
+)
+print(res, data = "sequence")
+print(res, data = "meta")
+print(res, data = "long")
 
 }
 \seealso{

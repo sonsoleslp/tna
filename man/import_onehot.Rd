@@ -42,12 +42,17 @@ multiple occurrences into a single occurrence. Option \code{FALSE} keeps
 all occurrences (the default).}
 }
 \value{
-The processed data as a \code{data.frame}.
+A tibble in wide format with one row per actor/session
+combination (or per \code{interval} windows) and one column per time point,
+named \verb{W<window>_T<position>}. Each cell holds the name of the column of
+\code{cols} that was active, or \code{NA}. The result can be passed to
+\code{\link[=build_model]{build_model()}}, for example with \code{type = "co-occurrence"}.
 }
 \description{
 Import One-Hot Data
 }
 \examples{
+set.seed(1)
 d <- data.frame(
   actor = gl(100, 5),
   session = gl(10, 50),

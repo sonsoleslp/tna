@@ -5,10 +5,13 @@
 \alias{group_regulation_long}
 \title{Example Long Data on Group Regulation}
 \format{
-A \code{data.frame} object.
+A tibble with 27533 rows (one per action) and 6 columns:
+\code{Actor} (\code{integer}), \code{Achiever} (\code{"High"} or \code{"Low"}), \code{Group}
+(\code{numeric}), \code{Course} (\code{character}), \code{Time} (\code{POSIXct}), and \code{Action}
+(\code{character}).
 }
 \source{
-The data was generated synthetically from \code{group_regulation}
+The data was generated synthetically from \code{group_regulation}.
 }
 \usage{
 group_regulation_long

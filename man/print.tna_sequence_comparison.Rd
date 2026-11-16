@@ -18,10 +18,16 @@
 Print a Comparison of Sequences
 }
 \examples{
+# A small subset (100 high and 100 low achievers) without the test
+sequences <- rbind(head(group_regulation, 100), tail(group_regulation, 100))
+group <- rep(c("High", "Low"), each = 100)
+comp <- compare_sequences(sequences, group, test = FALSE)
+print(comp)
 \donttest{
-idx <- c(1:500, 1001:1500)
-group <- c(rep("High", 500), rep("Low", 500))
-comp <- compare_sequences(group_regulation[idx, ], group)
+# With the permutation test (small number of iterations for CRAN)
+sequences <- rbind(head(group_regulation, 500), tail(group_regulation, 500))
+group <- rep(c("High", "Low"), each = 500)
+comp <- compare_sequences(sequences, group, sub = 2:3, iter = 20)
 print(comp)
 }
 

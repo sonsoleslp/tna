@@ -7,7 +7,7 @@
 #'
 #' @export
 #' @family data
-#' @param data A `data.frame` or containing the action/event data.
+#' @param data A `data.frame` containing the action/event data.
 #' @param actor A `character` vector or an `expression` that represents
 #' a tidy selection of the names of the columns that
 #' represent a user/actor identifiers. If not provided and neither `time` nor
@@ -59,17 +59,22 @@
 #' * `meta_data`: Other variables from the original data in wide format.
 #' * `time_data`: Parsed timestamps in wide format when `time` is supplied,
 #' or `NULL` otherwise.
-#' * `statistics`: A `list` containing summary statistics: total
-#' sessions, total actions, unique users, time range (if applicable), and
-#' top sessions and user by activities.
+#' * `statistics`: A `list` containing summary statistics:
+#' `total_sessions`, `total_actions`, `max_sequence_length`,
+#' `unique_users`, `sessions_per_user` and `actions_per_session` (tibbles
+#' with one row per user and per session), and `time_range` (when `time`
+#' is supplied).
+#'
+#' The statistics are also reported as messages while the data is
+#' prepared. [print.tna_data()] prints the sequence data, the metadata, or
+#' the long data.
 #'
 #' @examples
 #' results <- prepare_data(
 #'   group_regulation_long, actor = "Actor", time = "Time", action = "Action"
 #' )
-#' print(results$sequence_data)
-#' print(results$meta_data)
-#' print(results$statistics)
+#' print(results)
+#' print(results, data = "meta")
 #'
 #' # Custom order column
 #' data_ordered <- tibble::tibble(
@@ -83,9 +88,7 @@
 #' results_ordered <- prepare_data(
 #'   data_ordered, actor = "user", order = "order", action = "action"
 #' )
-#' print(results_ordered$sequence_data)
-#' print(results_ordered$meta_data)
-#' print(results_ordered$statistics)
+#' print(results_ordered)
 #'
 #' # No actor scenario leading to a single session
 #' data_single_session <- tibble::tibble(
@@ -95,9 +98,7 @@
 #'    )
 #' )
 #' results_single <- prepare_data(data_single_session, action = "action")
-#' print(results_single$sequence_data)
-#' print(results_single$meta_data)
-#' print(results_single$statistics)
+#' print(results_single)
 #'
 #' # Multiple actors
 #' data_multi_actor <- tibble::tibble(
@@ -111,9 +112,8 @@
 #' results_multi_actor <- prepare_data(
 #'   data_multi_actor, actor = c("user", "session"), action = "action"
 #' )
-#' print(results_multi_actor$sequence_data)
-#' print(results_multi_actor$meta_data)
-#' print(results_multi_actor$statistics)
+#' print(results_multi_actor)
+#' print(results_multi_actor, data = "meta")
 #'
 prepare_data <- function(data, actor, time, action, order,
                          time_threshold = 900, custom_format = NULL,
@@ -701,8 +701,11 @@ check_timezone <- function(timezone) {
 #'   sequence grouping. Default is 1 (each row is a separate window).
 #' @param replace_zeros A `logical` value indicating whether to replace 0s
 #'   in `cols` with `NA`. The default is `TRUE`.
-#' @return A `data.frame` in long format with added columns for window and
-#'   sequence order.
+#' @return A tibble in long format with one row per non-missing value of
+#'   `cols`: the remaining columns of `data`, the `id_cols`, the columns
+#'   `action` (the name of the column in `cols`) and `value`, and the column
+#'   `order` (the position of the action within its window of rows and
+#'   combination of `id_cols`). Can be passed to [prepare_data()].
 #' @examples
 #' data <- data.frame(
 #'   ID = c("A", "A", "B", "B"),
@@ -812,8 +815,13 @@ import_data <- function(data, cols, id_cols,
 #'   of the same event within a window are processed. Option `TRUE` aggregates
 #'   multiple occurrences into a single occurrence. Option `FALSE` keeps
 #'   all occurrences (the default).
-#' @return The processed data as a `data.frame`.
+#' @return A tibble in wide format with one row per actor/session
+#'   combination (or per `interval` windows) and one column per time point,
+#'   named `W<window>_T<position>`. Each cell holds the name of the column of
+#'   `cols` that was active, or `NA`. The result can be passed to
+#'   [build_model()], for example with `type = "co-occurrence"`.
 #' @examples
+#' set.seed(1)
 #' d <- data.frame(
 #'   actor = gl(100, 5),
 #'   session = gl(10, 50),
@@ -856,21 +864,21 @@ import_onehot <- function(data, cols, actor, session, interval,
     ) |>
     dplyr::group_by(!!rlang::sym(actor), !!rlang::sym(session))
   if (window_type == "sliding") {
-    for (w in seq(1, window_size - 1)) {
-      out <- out |>
-        dplyr::mutate(
-          dplyr::across(
-            tidyselect::all_of(cols),
-            ~ ifelse(
-              !is.na(.x) | !is.na(dplyr::lag(.x, n = w)),
-              dplyr::cur_column(),
-              NA_character_
-            )
-          )
-        )
+    # Row t of a window of width w marks the states active in rows
+    # t - w + 1, ..., t of the original data. Lags are taken of the original
+    # rows, and the first w - 1 rows (incomplete windows) are dropped.
+    lags <- seq_len(window_size - 1L)
+    in_window <- function(x) {
+      Reduce(`|`, lapply(lags, \(k) !is.na(dplyr::lag(x, n = k))), !is.na(x))
     }
     out <- out |>
-      dplyr::slice(-1) |>
+      dplyr::mutate(
+        dplyr::across(
+          tidyselect::all_of(cols),
+          ~ ifelse(in_window(.x), dplyr::cur_column(), NA_character_)
+        )
+      ) |>
+      dplyr::filter(dplyr::row_number() >= window_size) |>
       dplyr::mutate(
         .window = floor(seq_len(dplyr::n()) - 1)
       )

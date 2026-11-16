@@ -71,9 +71,11 @@ Default is \code{FALSE}.}
 (the default) for fresh randomness on every call.}
 }
 \value{
-A \code{tna} object, or a \code{list} with elements \code{model},
-\code{trans_matrix}, \code{init_probs}, \code{sequences}, \code{labels}, and \code{category}
-when \code{return_params = TRUE}.
+A \code{tna} object, or, when \code{return_params = TRUE}, a \code{list} with
+the elements \code{model} (the \code{tna} object), \code{trans_matrix} (the true
+transition \code{matrix}), \code{init_probs} (the true initial probabilities),
+\code{sequences} (the simulated sequences as a wide \code{data.frame}), \code{labels}
+(the state labels), and \code{category} (the label pool used).
 }
 \description{
 Construct a fully-functional \code{tna} object from synthetic parameters
@@ -94,9 +96,9 @@ model <- random_tna(n_states = 3, category = "engagement")
 # Reproducible model
 model <- random_tna(seed = 42)
 
-# Recover the ground-truth parameters
+# Recover the ground-truth parameters along with the model
 out <- random_tna(seed = 7, return_params = TRUE)
-out$trans_matrix
+str(out, max.level = 1)
 
 }
 \seealso{

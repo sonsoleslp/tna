@@ -16,24 +16,31 @@
 #'   row of the data/sequence. Must have the same length as the number of
 #'   rows/sequences of `x`. Alternatively, a single `character` string giving
 #'   the column name of the data that defines the group when `x` is a wide
-#'   format `data.frame` or a `tna_data` object. If not provided, each row of
-#'   the data forms a cluster. Not used when `x` is a mixture Markov model
-#'   or a clustering result.
+#'   format `data.frame` or a `tna_data` object. Required for sequence data
+#'   (an error is raised when it is missing). Factor levels that no sequence
+#'   belongs to are dropped. Not used when `x` is a mixture Markov model or a
+#'   clustering result.
 #' @param cols An `expression` giving a tidy selection of the
 #'   columns that should be considered as sequence data.
 #'   The default is all columns. The columns are
 #'   automatically determined for `tna_data` objects. The `group` column
 #'   is automatically removed from these columns if provided.
 #' @param na.rm A `logical` value that determines if observations with `NA`
-#'   value in `group` be removed. If `FALSE`, an additional category for `NA`
-#'   values will be added. The default is `FALSE` and a warning is issued
-#'   if `NA` values are detected.
+#'   value in `group` are removed. The default is `TRUE`: the observations
+#'   are removed, with a warning. If `FALSE`, an additional category for `NA`
+#'   values is added.
 #' @param groupwise A `logical` value that indicates whether scaling methods
 #'   should be applied by group (`TRUE`) or globally (`FALSE`, the default).
+#'   A grouped model with scaled edge weights (either way) and its networks
+#'   cannot be resampled: [bootstrap()], [permutation_test()],
+#'   [estimate_cs()], [reliability()], and [compare_sequences()] raise an
+#'   error of class `tna_error_scaling`. Scaling across groups depends on
+#'   every group, so a resample of one group cannot reproduce it.
 #' @inheritParams build_model
 #' @param ... Ignored.
-#' @return An object of class `group_tna` which is a `list` containing one
-#'   element per cluster. Each element is a `tna` object.
+#' @return An object of class `group_tna` which is a named `list` containing
+#'   one element per group (cluster). Each element is a `tna` object (see
+#'   [build_model()]).
 #'
 #' @examples
 #' # Manually specified groups
@@ -64,10 +71,12 @@ group_model.default <- function(x, group, type = "relative",
     {.cls data.frame}, a {.cls tna_data} object."
   )
   if (inherits(x, "tna_data")) {
+    params <- window_params(x$sequence_data, params)
     wide <- cbind(x$sequence_data, x$meta_data)
     cols <- names(x$sequence_data)
     x <- wide
   } else {
+    params <- window_params(x, params)
     cols <- get_cols(rlang::enquo(cols), x)
   }
   type <- check_model_type(type)
@@ -103,13 +112,15 @@ group_model.default <- function(x, group, type = "relative",
       )
     )
   }
-  if (!is.factor(group)) {
-    labels <- ifelse_(
-      is.character(group),
-      unique(group),
-      paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
-    )
+  if (is.character(group)) {
+    # Groups in order of first appearance, each with its own sequences
+    group <- factor(group, levels = unique(group[!is.na(group)]))
+  } else if (!is.factor(group)) {
+    labels <- paste0("Group ", seq_len(n_unique(group[!is.na(group)])))
     group <- factor(group, labels = labels)
+  } else {
+    # A level without sequences (e.g. left by subsetting) is not a group
+    group <- droplevels(group)
   }
   group <- ifelse_(group_na && !na.rm, addNA(group), group)
   levs <- levels(group)
@@ -119,6 +130,12 @@ group_model.default <- function(x, group, type = "relative",
     levs
   )
   group_scaling <- ifelse_(groupwise, scaling, character(0L))
+  # The networks of a scaled group remember it, so they are not resampled
+  group_params <- ifelse_(
+    length(scaling) > 0L,
+    c(params, list(group_scaling = scaling)),
+    params
+  )
   groups <- vector(mode = "list", length = n_group)
   group <- as.integer(group)
   # TODO remove workaround if TraMineR is fixed
@@ -147,6 +164,8 @@ group_model.default <- function(x, group, type = "relative",
     attr(d, "alphabet") <- alphabet
     attr(d, "labels") <- alphabet
     attr(d, "colors") <- attr(seq_data, "colors")
+    attr(d, "meta") <- attr(seq_data, "meta")[rows, , drop = FALSE]
+    attr(d, "rows") <- rows
     inits <- factor(d[, 1L], levels = seq_len(a), labels = alphabet)
     inits <- as.vector(table(inits))
     weights <- compute_weights(
@@ -163,11 +182,11 @@ group_model.default <- function(x, group, type = "relative",
       type = type,
       scaling = group_scaling,
       data = d,
-      params = params
+      params = group_params
     )
   }
   names(groups) <- names(clusters)
-  if (!groupwise && length(scaling > 0)) {
+  if (!groupwise && length(scaling) > 0L) {
     weights <- scale_weights_global(
       weights = lapply(clusters, "[[", "weights"),
       type = type,
@@ -188,6 +207,7 @@ group_model.default <- function(x, group, type = "relative",
     groupwise = groupwise,
     type = type,
     scaling = scaling,
+    n_rows = nrow(seq_data),
     class = "group_tna"
   )
 }
@@ -242,9 +262,12 @@ group_model.tna_clustering <- function(x, type = "relative",
                                        na.rm = TRUE, ...) {
   check_missing(x)
   check_class(x, "tna_clustering")
+  seq_cols <- names(x$data)
+  meta <- attr(x, "meta")
   group_model.default(
-    x = x$data,
+    x = ifelse_(is.null(meta), x$data, cbind(x$data, meta)),
     group = x$assignment,
+    cols = tidyselect::all_of(seq_cols),
     type = type,
     scaling = scaling,
     groupwise = groupwise,
@@ -297,7 +320,8 @@ group_atna <- function(x, ...) {
 #' @family clusters
 #' @param x A `group_tna` object.
 #' @param new_names A `character` vector containing one name per cluster.
-#' @return A renamed `group_tna` object.
+#' @return The `group_tna` object `x` with its elements (groups) renamed to
+#'   `new_names`.
 #' @examples
 #' model <- group_model(engagement_mmm)
 #' model_renamed <- rename_groups(model, c("A", "B", "C"))
@@ -333,7 +357,6 @@ scale_weights_global <- function(weights, type, scaling, a) {
       rs <- .rowSums(w, m = a, n = a)
       pos <- which(rs > 0)
       w[pos, ] <- w[pos, ] / rs[pos]
-      w[!pos, ] <- NA
       weights[[i]] <- w
     }
   }
@@ -349,7 +372,12 @@ scale_weights_global <- function(weights, type, scaling, a) {
   }
   idx <- seq_len(a^2)
   for (i in seq_len(g)) {
-    weights[[i]] <- matrix(weights_vec[idx], nrow = a, ncol = a)
+    weights[[i]] <- matrix(
+      weights_vec[idx],
+      nrow = a,
+      ncol = a,
+      dimnames = dimnames(weights[[i]])
+    )
     idx <- idx + a^2
   }
   weights

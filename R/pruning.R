@@ -1,14 +1,5 @@
-#' Prune a Transition Network based on Transition Probabilities
-#'
-#' Prunes a network represented by a `tna` object by removing
-#' edges based on a specified threshold, lowest percent of non-zero edge
-#' weights, or the disparity filter algorithm (Serrano et al., 2009).
-#' It ensures the network remains weakly connected.
-#'
 #' @export
-#' @family validation
-#' @param x An object of class `tna` or `group_tna`.
-#' @param ... Potential additional arguments passed to the pruning method.
+#' @rdname prune
 prune <- function(x, ...) {
   UseMethod("prune")
 }
@@ -18,20 +9,37 @@ prune <- function(x, ...) {
 #'
 #' Prunes a network represented by a `tna` object by removing
 #' edges based on a specified threshold, lowest percent of non-zero edge
-#' weights, or the disparity filter algorithm (Serrano et al., 2009).
-#' It ensures the network remains weakly connected.
+#' weights, the disparity filter algorithm (Serrano et al., 2009), or
+#' bootstrap significance.
+#'
+#' The available methods are:
+#'
+#' * `"threshold"`: Removes the edges whose weight is at most `threshold`.
+#' * `"lowest"`: Removes the edges whose weight is at most the `lowest`
+#'   quantile of the positive edge weights.
+#' * `"disparity"`: Keeps the edges that are significant at level `level`
+#'   under the disparity filter of Serrano et al. (2009), either among the
+#'   outgoing edges of their source state or among the incoming edges of
+#'   their target state. Self-loops are always removed by this method.
+#' * `"bootstrap"`: Keeps the edges that are significant in [bootstrap()]
+#'   (the `model` element of a `tna_bootstrap` object).
+#'
+#' With `"threshold"` and `"lowest"`, an edge is only removed when the
+#' network stays weakly connected without it, so some edges below the
+#' cut-off can be retained. The `"disparity"` and `"bootstrap"` methods do
+#' not check the connectivity.
 #'
 #' @export
 #' @family validation
 #' @rdname prune
-#' @param x An object of class `tna` or `group_tna`
+#' @param x An object of class `tna` or `group_tna`.
 #' @param method A `character` string describing the pruning method.
 #' The available options are `"threshold"`, `"lowest"`, `"bootstrap"` and
 #' `"disparity"`, corresponding to the methods listed in Details. The default
 #' is `"threshold"`.
-#' @param threshold A numeric value specifying the edge weight threshold.
+#' @param threshold A `numeric` value specifying the edge weight threshold.
 #' Edges with weights below or equal to this threshold will be considered for
-#' removal.
+#' removal. The default is `0.1`.
 #' @param lowest A `numeric` value specifying the lowest percentage
 #' of non-zero edges. This percentage of edges with the lowest weights will be
 #' considered for removal. The default is `0.05`.
@@ -45,9 +53,15 @@ prune <- function(x, ...) {
 #' using `method = "bootstrap"` and when a `tna_bootstrap` is not supplied.
 #' Method-specific arguments supplied for another method are ignored with a
 #' warning instead of being silently discarded.
-#' @return A pruned `tna` or `group_tna` object. Details on the pruning can be
-#' viewed with [pruning_details()]. The original model can be restored with
-#' [deprune()].
+#' @return A pruned `tna` or `group_tna` object: the removed edges have
+#' weight zero in `weights`, and the pruning is recorded in the attribute
+#' `pruning`. Details on the pruning can be viewed with [pruning_details()].
+#' The original model can be restored with [deprune()].
+#' @references
+#' Serrano, M. A., Boguna, M., & Vespignani, A. (2009). Extracting the
+#' multiscale backbone of complex weighted networks. *Proceedings of the
+#' National Academy of Sciences*, 106(16), 6483--6488.
+#' \doi{10.1073/pnas.0808904106}
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
@@ -223,8 +237,11 @@ prune_disparity <- function(x, level, labels) {
 #' @rdname pruning_details
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
-#' @return A `data.frame` containing the removed edges if `x` is a `tna` object,
-#' or a `list` of `data.frame` objects in the case of `group_tna` object.
+#' @return The pruning method and the numbers of removed and retained edges
+#' are printed. Invisibly, a `data.frame` of the removed edges with one row per
+#' edge and the columns `from`, `to`, and `weight` if `x` is a `tna` object,
+#' or a named `list` of such `data.frame` objects (one per cluster) in the
+#' case of a `group_tna` object.
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_threshold <- prune(model, method = "threshold", threshold = 0.1)
@@ -302,8 +319,8 @@ deprune.tna <- function(x, ...) {
 #' @rdname reprune
 #' @param x A `tna` or `group_tna` object.
 #' @param ... Ignored.
-#' @return A `tna` or `group_tna` object that has not been pruned. The previous
-#' pruning result can be reactivated with [reprune()].
+#' @return A `tna` or `group_tna` object with the previous pruning of a
+#' model restored with [deprune()] applied again.
 #' @examples
 #' model <- tna(group_regulation)
 #' pruned_model <- prune(model, method = "threshold", threshold = 0.1)
@@ -315,7 +332,7 @@ reprune <- function(x, ...) {
 }
 
 #' @export
-#' @rdname deprune
+#' @rdname reprune
 reprune.tna <- function(x, ...) {
   check_missing(x)
   check_class(x, "tna")
@@ -341,10 +358,16 @@ reprune.tna <- function(x, ...) {
 disparity_filter <- function(mat, level) {
   d <- dim(mat)[2]
   idx_mat <- 1L * (mat > 0)
-  out_edges <- mat / .rowSums(mat, m = d, n = d)
+  # A state with no outgoing (incoming) edges has nothing to normalize;
+  # dividing by 1 keeps its absent edges at weight 0 instead of 0 / 0 = NaN
+  out_sums <- .rowSums(mat, m = d, n = d)
+  in_sums <- .colSums(mat, m = d, n = d)
+  out_sums[!(out_sums > 0)] <- 1
+  in_sums[!(in_sums > 0)] <- 1
+  out_edges <- mat / out_sums
   out_degree <- .rowSums(idx_mat, m = d, n = d)
   out_p_values <- (1 - out_edges)^(out_degree - 1)
-  in_edges <- t(mat) / .colSums(mat, m = d, n = d)
+  in_edges <- t(mat) / in_sums
   in_degree <- .colSums(idx_mat, m = d, n = d)
   in_p_values <- t((1 - in_edges)^(in_degree - 1))
   p_values <- pmin(out_p_values, in_p_values)

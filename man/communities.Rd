@@ -35,14 +35,14 @@ If not provided, all methods are applied.}
 behavior of certain algorithms like the Spin Glass method. Defaults to \code{1}.}
 }
 \value{
-An object of class \code{tna_communities} which is a \code{list} with an
-element for each cluster containing:
+An object of class \code{tna_communities} which is a \code{list} with the
+elements:
 \itemize{
-\item \code{counts}: A \code{list} with the number of communities found
-by each algorithm.
-\item \code{assignments}: A \code{data.frame} where each row corresponds to a
-node and each column to a community detection algorithm,
-with color-coded community assignments.
+\item \code{counts}: A named \code{integer} vector with the number of communities
+found by each algorithm.
+\item \code{assignments}: A \code{data.frame} with one row per state, the column
+\code{state}, and one column per algorithm giving the community (an
+\code{integer}) that the state is assigned to.
 }
 
 If \code{x} is a \code{group_tna} object, a \code{group_tna_communities} object is returned
@@ -52,13 +52,11 @@ instead, which is a \code{list} of \code{tna_communities} objects.
 This function detects communities within the transition networks
 (represented by the \code{tna} object).
 It uses various algorithms to find communities in the graph representation
-of transitions and returns a \code{list} of communities for each cluster or a
-specified cluster. If multiple transition matrices exist, the function
-iterates over each cluster in the \code{tna} object to find communities using
-different algorithms. The function uses the \code{igraph} package to convert
-the transition matrices into graphs and then applies community detection
-algorithms (e.g., Walktrap, Fast Greedy, Label Propagation, Infomap,
-Edge Betweenness, Leading Eigenvector, and Spin Glass).
+of transitions. For a \code{group_tna} object, the communities are detected in
+the network of each cluster. The function uses the \code{igraph} package to
+convert the transition matrices into graphs and then applies community
+detection algorithms (e.g., Walktrap, Fast Greedy, Label Propagation,
+Infomap, Edge Betweenness, Leading Eigenvector, and Spin Glass).
 }
 \examples{
 model <- tna(group_regulation)
@@ -73,8 +71,10 @@ Community detection functions
 \code{\link{print.tna_communities}()}
 
 Cluster-related functions
+\code{\link{cluster_data}()},
 \code{\link{group_model}()},
 \code{\link{mmm_stats}()},
+\code{\link{print.tna_clustering}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

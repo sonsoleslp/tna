@@ -19,8 +19,6 @@ knitr::opts_chunk$set(
 )
 suppressPackageStartupMessages({
   library("tna")
-  library("tibble")
-  library("dplyr")
   library("gt")
 })
 ```
@@ -31,8 +29,6 @@ First, we load the packages we will use for this example.
 
 ```{r, eval = FALSE}
 library("tna")
-library("tibble")
-library("dplyr")
 library("gt")
 ```
 
@@ -40,7 +36,7 @@ library("gt")
 
 We import the data in long format and prepare it for analysis. The `prepare_data()` function converts the long-format event log into wide-format sequences. The unused columns in the dataset are stored in the metadata of `prepared` and we can use them later on.
 
-```{r, message = F}
+```{r, message = FALSE}
 data("group_regulation_long", package = "tna")
 prepared <- prepare_data(group_regulation_long,
                          actor = "Actor",
@@ -68,7 +64,7 @@ plot_compare(achievers)
 
 ### Permutation test
 
-A permutation test can be used to assess whether the observed differences between the two groups are statistically significant.
+The difference network shows how large the differences are, but not whether they exceed what the random assignment of students to the two groups would produce. A permutation test answers that question: it reassigns the sequences to the groups many times and keeps only the edges whose observed difference is unlikely under these reassignments.
 
 ```{r}
 permutation_test_results <- permutation_test(achievers)
@@ -83,39 +79,32 @@ We can also compare the frequency of subsequences across groups. Here we look at
 subsequence_comparison  <- compare_sequences(achievers,
                                                   sub = 3:5,
                                                   min_freq = 5,
-                                                  correction = "fdr")
+                                                  adjust = "fdr")
 plot(subsequence_comparison, cells = TRUE)
 ```
 
 ## Groups from sequence clustering
 
-When no pre-existing grouping variable is available, we can cluster the sequences based on their pairwise dissimilarity. The `cluster_sequences()`.
+When no pre-existing grouping variable is available, we can cluster the sequences based on their pairwise dissimilarity. The `cluster_sequences()` function computes the dissimilarity between every pair of sequences (the Hamming distance by default) and partitions the sequences into `k` clusters (with PAM by default).
 
 ```{r}
 clustering_results <- cluster_sequences(prepared, k = 3)
 ```
 
-To choose an appropriate number of clusters, we can plot the silhouette score for different values of *k*. Higher silhouette values indicate better-separated clusters.
+To choose an appropriate number of clusters, we can compare the silhouette score for different values of *k*, which the printed clustering reports. Higher silhouette values indicate better-separated clusters.
 
 ```{r}
-plot(
-  2:8,
-  sapply(2:8, \(k) cluster_sequences(prepared, k = k)$silhouette),
-  type = "b",
-  xlab = "Number of clusters (k)",
-  ylab = "Silhouette",
-  xaxt = "n"
-)
+lapply(2:4, \(k) cluster_sequences(prepared, k = k))
 ```
 
-Once we have chosen *k*, we build the grouped TNA model using the cluster assignments.
+Once we have chosen *k*, we build the grouped TNA model directly from the clustering result, which carries the sequences and their cluster assignments.
 
 ```{r}
-tna_model_clus <- group_tna(prepared, group = clustering_results$assignments)
+tna_model_clus <- group_tna(clustering_results)
 ```
 
 ```{r, fig.width=9, fig.height=9}
-layout(matrix(1:4, byrow = T, ncol = 2))
+layout(matrix(1:4, byrow = TRUE, ncol = 2))
 plot(tna_model_clus)
 ```
 
@@ -129,48 +118,22 @@ summary(tna_model_clus) |>
   fmt_number(decimals = 2)
 ```
 
-Initial probabilities show which states are most common at the start of the sequences in each cluster.
+Printing the grouped model shows, for each cluster, the full transition probability matrix and the initial probabilities, which show which states are most common at the start of the sequences in each cluster.
 
 ```{r}
-mat <- sapply(
-  tna_model_clus,
-  \(x) setNames(x$inits, x$labels)
-)
-
-df <- data.frame(label = rownames(mat), mat, row.names = NULL)
-
-gt(df, rowname_col = "label") |> fmt_percent(columns = -label)
-```
-
-The full transition probability matrices can also be inspected for each cluster.
-
-```{r}
-transitions <- lapply(
-  tna_model_clus,
-  function(x) {
-    x$weights |>
-      data.frame() |>
-      rownames_to_column("From\\To") |>
-      gt() |>
-      fmt_percent()
-  }
-)
-
-transitions[[1]] |> tab_header(title = names(tna_model_clus)[1])
-transitions[[2]] |> tab_header(title = names(tna_model_clus)[2])
-transitions[[3]] |> tab_header(title = names(tna_model_clus)[3])
+print(tna_model_clus, digits = 2)
 ```
 
 ### Pruning with bootstrap
 
-Just like ordinary TNA models, we can retain only the statistically robust edges.
+Just like ordinary TNA models, we can retain only the statistically robust edges. The bootstrap resamples the sequences of each cluster and keeps the edges whose weight stays within the consistency range (by default 75% to 125% of the observed weight) in at least 95% of the resamples, so the plotted networks show only the transitions that do not depend on a few sequences.
 
 ```{r}
 cluster_boot <- bootstrap(tna_model_clus)
 ```
 
-```{r, fig.width=9, fig.height=9, message = F}
-layout(matrix(1:4, byrow = T, ncol = 2))
+```{r, fig.width=9, fig.height=9, message = FALSE}
+layout(matrix(1:4, byrow = TRUE, ncol = 2))
 plot(cluster_boot)
 ```
 
@@ -200,7 +163,9 @@ plot(
 Finally, we can compare subsequence frequencies across the clusters, just as we did for the pre-existing groups above.
 
 ```{r}
-subsequence_comparison  <- compare_sequences(tna_model_clus, sub = 3:5, min_freq = 5, correction = "fdr")
+subsequence_comparison  <- compare_sequences(tna_model_clus, sub = 3:5, min_freq = 5, adjust = "fdr")
 plot(subsequence_comparison, cells = TRUE)
 ```
 
+```{r, child = "_tutorials.md"}
+```

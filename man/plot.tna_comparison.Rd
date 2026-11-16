@@ -23,7 +23,8 @@ available options are \code{"heatmap"} (the default), \code{"scatterplot"},
 
 \item{population}{A \code{"character"} string naming the population for which
 to produce the heatmaps, i.e, one of \code{"x"}, \code{"y"}, or \code{"difference"} for
-the differences. Ignored for \code{type = "scatterplot"}. Defaults to \code{"diff"}.}
+the differences. Ignored for \code{type = "scatterplot"}. Defaults to
+\code{"difference"}.}
 
 \item{method}{A \code{character} string naming the correlation coefficient to
 use when plotting a scatterplot. The available options are \code{"pearson"}
@@ -47,10 +48,11 @@ A \code{ggplot} object.
 Plot the Comparison of Two TNA Models or Matrices
 }
 \examples{
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 comp <- compare(model_x, model_y)
 plot(comp)
+plot(comp, type = "scatterplot", name_x = "High", name_y = "Low")
 
 }
 \references{

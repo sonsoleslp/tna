@@ -18,18 +18,22 @@
 #' weights should be above the `threshold` instead of individual weights of the
 #' directed edges. Defaults to `FALSE`.
 #' @param ... Ignored.
-#' @return A `tna_cliques` object which is a `list` of two elements:
+#' @return A `tna_cliques` object which is a `list` of three elements, each
+#'   a `list` with one element per clique found:
 #'
-#'   * `weights` is a `matrix` of the edge weights in the clique.
-#'   * `inits` is a `numeric` vector of initial weights for the clique.
+#'   * `weights`: The `matrix` of the edge weights among the states of the
+#'     clique.
+#'   * `inits`: The `numeric` vector of initial probabilities of the states
+#'     of the clique.
+#'   * `indices`: The `integer` indices of the states of the clique.
 #'
 #' If `x` is a `group_tna` object, a `group_tna_cliques` object is returned
-#' instead, which is a `list` or `tna_cliques` objects.
+#' instead, which is a `list` of `tna_cliques` objects.
 #'
 #' @examples
 #' model <- tna(group_regulation)
 #'
-#' # Find  2-cliques (dyads)
+#' # Find 2-cliques (dyads)
 #' cliq <- cliques(model, size = 2)
 #'
 cliques <- function(x, ...) {
@@ -53,12 +57,14 @@ cliques.tna <- function(x, size = 2, threshold = 0, sum_weights = FALSE, ...) {
   inits <- x$inits
   clique_idx <- integer(0)
   mat <- weights
-  mat[mat < threshold] <- 0
   if (sum_weights) {
+    # The threshold applies to the summed weight of each pair of states
+    mat[(weights + t(weights)) < threshold] <- 0
     g <- as.igraph(mat, mode = "plus")
     cliq <- igraph::cliques(g, min = size, max = size)
     cliq_idx <- lapply(cliq, function(y) which(labels %in% attr(y, "names")))
   } else {
+    mat[mat < threshold] <- 0
     g1 <- as.igraph(mat, mode = "upper")
     g2 <- as.igraph(mat, mode = "lower")
     cliq1 <- igraph::cliques(g1, min = size, max = size)

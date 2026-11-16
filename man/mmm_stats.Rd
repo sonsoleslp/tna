@@ -20,7 +20,10 @@ object built by \code{\link[=random_tna_mmm]{random_tna_mmm()}}.}
 hypothesis testing and confidence intervals. Defaults to \code{0.05}.}
 }
 \value{
-A \code{data.frame} object.
+A \code{data.frame} with one row per cluster (other than the reference
+cluster) and covariate of the membership model, with the columns
+\code{cluster}, \code{variable}, \code{estimate}, \code{std_error}, \code{ci_lower}, \code{ci_upper}
+(the \code{1 - level} confidence interval), \code{z_value}, and \code{p_value}.
 }
 \description{
 Retrieve Statistics from a Mixture Markov Model (MMM)
@@ -31,8 +34,10 @@ mmm_stats(engagement_mmm)
 }
 \seealso{
 Cluster-related functions
+\code{\link{cluster_data}()},
 \code{\link{communities}()},
 \code{\link{group_model}()},
+\code{\link{print.tna_clustering}()},
 \code{\link{rename_groups}()}
 }
 \concept{clusters}

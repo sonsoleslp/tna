@@ -21,7 +21,9 @@ estimate_cs(
   threshold,
   certainty,
   progressbar = NULL,
-  detailed = NULL
+  detailed = NULL,
+  actor = NULL,
+  edges = FALSE
 )
 
 estimate_centrality_stability(
@@ -36,7 +38,9 @@ estimate_centrality_stability(
   threshold,
   certainty,
   progressbar = NULL,
-  detailed = NULL
+  detailed = NULL,
+  actor = NULL,
+  edges = FALSE
 )
 
 \method{estimate_cs}{tna}(
@@ -51,7 +55,9 @@ estimate_centrality_stability(
   threshold = 0.7,
   certainty = 0.95,
   progressbar = FALSE,
-  detailed = NULL
+  detailed = NULL,
+  actor = NULL,
+  edges = FALSE
 )
 
 \method{estimate_centrality_stability}{tna}(
@@ -66,7 +72,9 @@ estimate_centrality_stability(
   threshold = 0.7,
   certainty = 0.95,
   progressbar = FALSE,
-  detailed = NULL
+  detailed = NULL,
+  actor = NULL,
+  edges = FALSE
 )
 
 \method{estimate_cs}{group_tna}(
@@ -81,7 +89,9 @@ estimate_centrality_stability(
   threshold = 0.7,
   certainty = 0.95,
   progressbar = FALSE,
-  detailed = NULL
+  detailed = NULL,
+  actor = NULL,
+  edges = FALSE
 )
 
 \method{estimate_centrality_stability}{group_tna}(
@@ -96,12 +106,16 @@ estimate_centrality_stability(
   threshold = 0.7,
   certainty = 0.95,
   progressbar = FALSE,
-  detailed = NULL
+  detailed = NULL,
+  actor = NULL,
+  edges = FALSE
 )
 }
 \arguments{
 \item{x}{A \code{tna} or a \code{group_tna} object representing the temporal network
-analysis data. The object should be created from a sequence data object.}
+analysis data. The object should be created from a sequence data object.
+Grouped models with scaled edge weights, and their networks, are not
+resampled (an error of class \code{tna_error_scaling}).}
 
 \item{loops}{A \code{logical} value indicating whether to include loops in the
 network when computing the centrality measures. The default is \code{FALSE}.}
@@ -131,23 +145,44 @@ to 0.9 in increments of 0.1.}
 calculating the CS-coefficient. The default is 0.7.}
 
 \item{certainty}{A \code{numeric} value specifying the desired level of certainty
-for the CS-coefficient. Default is 0.95.}
+for the CS-coefficient. Default is 0.95. The certainty is the share of
+all subsamples whose correlation reaches \code{threshold}; a subsample in
+which the correlation is undefined (the measure is constant in it)
+counts as one that does not reach it.}
 
-\item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is displayed
-Defaults to \code{FALSE}}
+\item{progressbar}{A \code{logical} value. If \code{TRUE}, a progress bar is
+displayed. Defaults to \code{FALSE}.}
 
 \item{detailed}{Deprecated. This argument is ignored and will be removed in
 a future version.}
+
+\item{actor}{An optional actor identifier for sequences nested in actors:
+a \code{character} string naming a non-sequence column of the data the model
+was built from, or a vector with one identifier per sequence (per
+sequence of the data the grouped model was built from, for a \code{group_tna}
+object). When given, \code{drop_prop} is the proportion of actors dropped,
+and each actor's sequences are dropped together. The default \code{NULL}
+drops single sequences.}
+
+\item{edges}{A \code{logical} value. If \code{TRUE}, the stability of the edge
+weights is also estimated and returned as the element \code{Edges}. The
+default is \code{FALSE}.}
 }
 \value{
 A \code{tna_stability} object which is a \code{list} with an element for each
-\code{measure} with the following elements:
+\code{measure} (and an element \code{Edges} when \code{edges = TRUE}) with the following
+elements:
 \itemize{
 \item \code{cs_coefficient}: The centrality stability (CS) coefficient
 of the measure.
 \item \code{correlations}: A \code{matrix} of correlations between the original
-centrality and the resampled centralities for each drop proportion.
+centrality and the resampled centralities, with one row per resample
+(\code{iter} rows) and one column per drop proportion.
 }
+
+The drop proportions and the correlation threshold are stored in the
+attributes \code{drop_prop} and \code{threshold}. Use \code{\link[=summary.tna_stability]{summary.tna_stability()}} for
+the CS-coefficients as a table.
 
 If \code{x} is a \code{group_tna} object, a \code{group_tna_stability} object is returned
 instead, which is a \code{list} of \code{tna_stability} objects.
@@ -167,12 +202,29 @@ centrality measure is then summarized using a centrality stability (CS)
 coefficient, which represents the proportion of dropped cases at which
 the correlations drop below a given threshold (default 0.7).
 
+With \code{edges = TRUE}, the stability of the edge weights is estimated in the
+same way: in each subsample the network is estimated again and its edge
+weights are correlated with the edge weights of the original network
+(Epskamp et al., 2018). Only the edges present in the original network
+are compared, self-loops included. An edge that is absent from the
+original data cannot appear in a subsample, so including the absent edges
+would add pairs of zeros that always agree and inflate the correlation.
+The \code{loops}, \code{normalize}, and \code{invert} arguments do not affect the edge
+weights.
+
 The results can be visualized by plotting the output object showing the
 stability of the centrality measures across different drop proportions,
 along with confidence intervals. The CS-coefficients are displayed in the
 subtitle.
 }
 \examples{
+# A small subset and few iterations
+estimate_cs(
+  tna(head(group_regulation, 200)),
+  drop_prop = c(0.3, 0.6),
+  measures = "InStrength",
+  iter = 5
+)
 \donttest{
 model <- tna(group_regulation)
 # Small number of iterations and drop proportions for CRAN
@@ -182,19 +234,33 @@ estimate_cs(
   measures = c("InStrength", "OutStrength"),
   iter = 10
 )
+# Stability of the edge weights alongside the centralities
+estimate_cs(
+  model,
+  drop_prop = seq(0.3, 0.9, by = 0.2),
+  measures = "InStrength",
+  iter = 10,
+  edges = TRUE
+)
 }
-
+}
+\references{
+Epskamp, S., Borsboom, D., & Fried, E. I. (2018). Estimating psychological
+networks and their accuracy: A tutorial paper. \emph{Behavior Research Methods},
+50(1), 195--212. \doi{10.3758/s13428-017-0862-1}
 }
 \seealso{
 Validation functions
 \code{\link{bootstrap}()},
 \code{\link{deprune}()},
+\code{\link{markov_order}()},
 \code{\link{permutation_test}()},
 \code{\link{permutation_test.group_tna}()},
 \code{\link{plot.group_tna_bootstrap}()},
 \code{\link{plot.group_tna_permutation}()},
 \code{\link{plot.group_tna_stability}()},
 \code{\link{plot.tna_bootstrap}()},
+\code{\link{plot.tna_markov_order}()},
 \code{\link{plot.tna_permutation}()},
 \code{\link{plot.tna_reliability}()},
 \code{\link{plot.tna_stability}()},
@@ -203,8 +269,9 @@ Validation functions
 \code{\link{print.group_tna_stability}()},
 \code{\link{print.summary.group_tna_bootstrap}()},
 \code{\link{print.summary.tna_bootstrap}()},
+\code{\link{print.summary.tna_markov_order}()},
 \code{\link{print.tna_bootstrap}()},
-\code{\link{print.tna_clustering}()},
+\code{\link{print.tna_markov_order}()},
 \code{\link{print.tna_permutation}()},
 \code{\link{print.tna_reliability}()},
 \code{\link{print.tna_stability}()},
@@ -213,6 +280,10 @@ Validation functions
 \code{\link{reliability}()},
 \code{\link{reprune}()},
 \code{\link{summary.group_tna_bootstrap}()},
-\code{\link{summary.tna_bootstrap}()}
+\code{\link{summary.tna_bootstrap}()},
+\code{\link{summary.tna_markov_order}()},
+\code{\link{summary.tna_permutation}()},
+\code{\link{summary.tna_reliability}()},
+\code{\link{summary.tna_stability}()}
 }
 \concept{validation}

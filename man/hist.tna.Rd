@@ -30,7 +30,7 @@
 
 \item{main}{A \code{character} string defining the title of the plot.}
 
-\item{xlab}{A \code{character} string defining the vertical axis label.}
+\item{xlab}{A \code{character} string defining the horizontal axis label.}
 
 \item{border}{the color of the border around the bars.  The default
     is to use the standard foreground color.}

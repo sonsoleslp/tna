@@ -38,13 +38,14 @@ than 1 will result in greater differences. The default is \code{0.5}.}
 \code{\link[cograph:plot_htna]{cograph::plot_htna()}}.}
 }
 \value{
-A \code{cograph_network} plot of the transition network.
+A \code{cograph_network} object of the plotted transition network,
+invisibly.
 }
 \description{
 This function plots a transition network analysis (TNA) model using
-the \code{cograph} package. The nodes in the graph represent states, with node
-sizes corresponding to initial state probabilities. Edge labels represent
-the edge weights of the network. See \code{\link[cograph:splot]{cograph::splot()}} for details on
+the \code{cograph} package. The nodes in the graph represent states, and the
+filled share of the ring (donut) around each node is its initial state
+probability. Edge labels represent the edge weights of the network. See \code{\link[cograph:splot]{cograph::splot()}} for details on
 how to further configure the plot.
 }
 \examples{

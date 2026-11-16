@@ -9,34 +9,23 @@
 \arguments{
 \item{object}{A \code{group_tna} object.}
 
-\item{combined}{A logical indicating whether the summary results should be
-combined into a single data frame for all clusters (defaults to \code{TRUE})}
+\item{combined}{A \code{logical} value indicating whether the summary results
+should be combined into a single table for all clusters. The default is
+\code{TRUE}.}
 
-\item{...}{Ignored}
+\item{...}{Ignored.}
 }
 \value{
-A \code{summary.group_tna} object which is a \code{list} of \code{list}s or a
-combined \code{data.frame}  containing the following network metrics:
-\itemize{
-\item \code{node_count}: The total number of nodes.
-\item \code{edge_count}: The total number of edges.
-\item \code{network_Density}: The density of the network.
-\item \code{mean_distance}: The mean shortest path length.
-\item \code{mean_out_strength}: The mean out-strength of nodes.
-\item \code{sd_out_strength}: The standard deviation of out-strength.
-\item \code{mean_in_strength}: The mean in-strength of nodes.
-\item \code{sd_in_strength}: The standard deviation of in-strength.
-\item \code{mean_out_degree}: The mean out-degree of nodes.
-\item \code{sd_out_degree}: The standard deviation of out-degree.
-\item \code{centralization_out_degree}: The centralization of out-degree.
-\item \code{centralization_in_degree}: The centralization of in-degree.
-\item \code{reciprocity}: The reciprocity of the network.
-}
+A \code{summary.group_tna} object. When \code{combined = TRUE}, a tibble
+with one row per metric (see \code{\link[=summary.tna]{summary.tna()}}), the column \code{metric}, and
+one column of values per cluster. When \code{combined = FALSE}, a named
+\code{list} with the \code{\link[=summary.tna]{summary.tna()}} table of each cluster.
 }
 \description{
-This function calculates a variety of network metrics for a \code{tna} object.
-It computes key metrics such as node and edge counts, network density,
-mean distance, strength measures, degree centrality, and reciprocity.
+This function calculates a variety of network metrics for each network
+of a \code{group_tna} object. It computes key metrics such as node and edge
+counts, network density, mean distance, strength measures, degree
+centrality, and reciprocity.
 }
 \details{
 The function extracts the \code{igraph} network for each cluster and

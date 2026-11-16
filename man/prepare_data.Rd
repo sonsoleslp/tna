@@ -20,7 +20,7 @@ prepare_data(
 )
 }
 \arguments{
-\item{data}{A \code{data.frame} or containing the action/event data.}
+\item{data}{A \code{data.frame} containing the action/event data.}
 
 \item{actor}{A \code{character} vector or an \code{expression} that represents
 a tidy selection of the names of the columns that
@@ -81,10 +81,16 @@ with actions/events as different variables structured with sequences.
 \item \code{meta_data}: Other variables from the original data in wide format.
 \item \code{time_data}: Parsed timestamps in wide format when \code{time} is supplied,
 or \code{NULL} otherwise.
-\item \code{statistics}: A \code{list} containing summary statistics: total
-sessions, total actions, unique users, time range (if applicable), and
-top sessions and user by activities.
+\item \code{statistics}: A \code{list} containing summary statistics:
+\code{total_sessions}, \code{total_actions}, \code{max_sequence_length},
+\code{unique_users}, \code{sessions_per_user} and \code{actions_per_session} (tibbles
+with one row per user and per session), and \code{time_range} (when \code{time}
+is supplied).
 }
+
+The statistics are also reported as messages while the data is
+prepared. \code{\link[=print.tna_data]{print.tna_data()}} prints the sequence data, the metadata, or
+the long data.
 }
 \description{
 Processes a dataset to create user sessions based on time gaps,
@@ -102,9 +108,8 @@ the collision-safe key and \code{.session_label} is its readable display label.
 results <- prepare_data(
   group_regulation_long, actor = "Actor", time = "Time", action = "Action"
 )
-print(results$sequence_data)
-print(results$meta_data)
-print(results$statistics)
+print(results)
+print(results, data = "meta")
 
 # Custom order column
 data_ordered <- tibble::tibble(
@@ -118,9 +123,7 @@ data_ordered <- tibble::tibble(
 results_ordered <- prepare_data(
   data_ordered, actor = "user", order = "order", action = "action"
 )
-print(results_ordered$sequence_data)
-print(results_ordered$meta_data)
-print(results_ordered$statistics)
+print(results_ordered)
 
 # No actor scenario leading to a single session
 data_single_session <- tibble::tibble(
@@ -130,9 +133,7 @@ data_single_session <- tibble::tibble(
    )
 )
 results_single <- prepare_data(data_single_session, action = "action")
-print(results_single$sequence_data)
-print(results_single$meta_data)
-print(results_single$statistics)
+print(results_single)
 
 # Multiple actors
 data_multi_actor <- tibble::tibble(
@@ -146,9 +147,8 @@ data_multi_actor <- tibble::tibble(
 results_multi_actor <- prepare_data(
   data_multi_actor, actor = c("user", "session"), action = "action"
 )
-print(results_multi_actor$sequence_data)
-print(results_multi_actor$meta_data)
-print(results_multi_actor$statistics)
+print(results_multi_actor)
+print(results_multi_actor, data = "meta")
 
 }
 \seealso{

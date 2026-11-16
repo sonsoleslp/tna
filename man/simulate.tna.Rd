@@ -43,9 +43,10 @@ of missing values is drawn uniformly from this range. If both values are
 zero (the default), no missing values are generated.}
 
 \item{zero_row}{A \code{character} string describing how to process zero rows
-in the weight matrix. The option \code{"self"} (the default) assigns
+in the weight matrix, i.e., states that are never left, such as states
+that only end sequences. The option \code{"self"} (the default) assigns
 probability 1 to the corresponding state (self loop) and option
-\code{"uniform"} assigns a uniform distribution.}
+\code{"uniform"} assigns a uniform distribution. Applies to both model types.}
 
 \item{format}{A \code{character} string indicating whether the data should be
 returned in \code{wide} or \code{long} format.}
@@ -53,14 +54,18 @@ returned in \code{wide} or \code{long} format.}
 \item{...}{Ignored.}
 }
 \value{
-A \code{data.frame} of the simulated sequence data.
+A \code{data.frame} of the simulated sequence data. In \code{wide} format,
+one row per sequence and one column per time point (\code{T1}, \code{T2}, ...).
+In \code{long} format, one row per observation with the columns \code{id},
+\code{time}, and \code{state}.
 }
 \description{
 Simulate Data from a Transition Network Analysis Model
 }
 \examples{
 model <- tna(group_regulation)
-sim <- simulate(model, nsim = 10, max_len = 10)
+sim <- simulate(model, nsim = 10, max_len = 10, seed = 1)
+print(sim)
 
 }
 \seealso{

@@ -3,14 +3,17 @@
 \name{betweenness_network}
 \alias{betweenness_network}
 \alias{betweenness_network.tna}
+\alias{betweenness_network.group_tna}
 \title{Build and Visualize a Network with Edge Betweenness}
 \usage{
 betweenness_network(x, directed = TRUE, invert = TRUE)
 
 \method{betweenness_network}{tna}(x, directed = TRUE, invert = TRUE)
+
+\method{betweenness_network}{group_tna}(x, directed = TRUE, invert = TRUE)
 }
 \arguments{
-\item{x}{A \code{tna} object.}
+\item{x}{A \code{tna} or a \code{group_tna} object.}
 
 \item{directed}{A \code{logical} value. If \code{TRUE}, the network is considered
 directed.}
@@ -20,14 +23,36 @@ inverted for distance-based measures. The default is \code{TRUE}.}
 }
 \value{
 A \code{tna} object where the edge weights are edge betweenness values.
+For a \code{group_tna} object, a \code{group_tna} object of such networks, one per
+group.
 }
 \description{
 This function builds a network from a transition matrix in a \code{tna} object
 and computes edge betweenness for the network.
 }
+\details{
+The returned model remembers the model it was built from (its type and
+scaling) and the values of \code{directed} and \code{invert}. The resampling
+methods \code{\link[=permutation_test]{permutation_test()}}, \code{\link[=bootstrap]{bootstrap()}}, and \code{\link[=estimate_cs]{estimate_cs()}} use
+this information: every resample rebuilds the
+original transition network from the resampled sequences and then
+recomputes edge betweenness. For example, \code{permutation_test()} applied to
+two edge betweenness networks tests the differences in edge betweenness
+between the two groups. As for any network of a grouped model with
+scaled edge weights, the edge betweenness networks of such a model are
+not resampled.
+}
 \examples{
 model <- tna(group_regulation)
 betweenness_network(model)
+
+# Compare edge betweenness between groups
+models <- group_tna(
+  group_regulation,
+  group = rep(c("first", "second"), each = 1000)
+)
+# Small number of iterations for CRAN
+permutation_test(betweenness_network(models), iter = 20)
 
 }
 \seealso{

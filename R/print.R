@@ -68,8 +68,8 @@ print.tna <- function(x, generic = FALSE, ...) {
   cat("  ", paste(x$labels, collapse = ", "), "\n")
   cat("\n", mat_type, " Matrix :\n\n", sep = "")
   print(x$weights, ...)
-  inits <- stats::setNames(x$inits, x$labels)
   if (!is.null(x$inits)) {
+    inits <- stats::setNames(x$inits, x$labels)
     cat("\nInitial Probabilities : \n\n", sep = "")
     print(inits, ...)
   }
@@ -122,7 +122,7 @@ print.tna_bootstrap <- function(x, digits = getOption("digits"),
 #'
 #' @export
 #' @family centralities
-#' @param x A `centralities` object.
+#' @param x A `tna_centralities` object.
 #' @param ... Ignored.
 #' @return `x` (invisibly).
 #' @examples
@@ -164,8 +164,8 @@ print.tna_communities <- function(x, ...) {
 #' @param ... Additional arguments passed to the tibble `print` method.
 #' @return `x` (invisibly).
 #' @examples
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
+#' model_x <- tna(head(group_regulation, 200))
+#' model_y <- tna(tail(group_regulation, 200))
 #' comp <- compare(model_x, model_y)
 #' print(comp)
 #'
@@ -195,7 +195,7 @@ print.tna_comparison <- function(x, ...) {
 #' @family cliques
 #' @param x A `tna_cliques` object.
 #' @param n An `integer` defining the maximum number of cliques to show.
-#' The defaults is `6`.
+#' The default is `6`.
 #' @param first An `integer` giving the index of the first clique to show.
 #' The default index is `1`.
 #' @param digits An `integer` giving the minimal number of
@@ -247,17 +247,18 @@ print.tna_cliques <- function(x, n = 6, first = 1,
 #' @family data
 #' @param x A `tna_data` object.
 #' @param data A `character` string that defines the data to be printed
-#' tibble. Accepts either `"sequence"` (default) for wide format sequence data,
-#' `"meta"`, for the wide format metadata, or `"long"` for the long format
-#' data.
+#' as a tibble. Accepts either `"sequence"` (default) for wide format sequence
+#' data, `"meta"`, for the wide format metadata, or `"long"` for the long
+#' format data.
 #' @param ... Arguments passed to the tibble `print` method.
 #' @return `x` (invisibly).
 #' @examples
-#' res <- prepare_data(group_regulation_long, action = "Action", actor = "Actor",
-#' time = "Time")
-#' print(res, which = "sequence")
-#' print(res, which = "meta")
-#' print(res, which = "long")
+#' res <- prepare_data(
+#'   group_regulation_long, action = "Action", actor = "Actor", time = "Time"
+#' )
+#' print(res, data = "sequence")
+#' print(res, data = "meta")
+#' print(res, data = "long")
 #'
 print.tna_data <- function(x, data = "sequence", ...) {
   check_missing(x)
@@ -290,7 +291,13 @@ print.tna_stability <- function(x, ...) {
   check_class(x, "tna_stability")
   cs_coefs <- unlist(lapply(x, "[[", "cs_coefficient"))
   names(cs_coefs) <- names(x)
-  cat("Centrality Stability Coefficients\n\n")
+  cat(
+    ifelse_(
+      "Edges" %in% names(x),
+      "Centrality and Edge Stability Coefficients\n\n",
+      "Centrality Stability Coefficients\n\n"
+    )
+  )
   print(cs_coefs, ...)
   invisible(x)
 }
@@ -303,8 +310,8 @@ print.tna_stability <- function(x, ...) {
 #' @param ... Additional arguments passed to the `tibble` print method.
 #' @return `x` (invisibly).
 #' @examples
-#' model_x <- tna(group_regulation[1:200, ])
-#' model_y <- tna(group_regulation[1001:1200, ])
+#' model_x <- tna(head(group_regulation, 200))
+#' model_y <- tna(tail(group_regulation, 200))
 #' # Small number of iterations for CRAN
 #' perm <- permutation_test(model_x, model_y, iter = 20)
 #' print(perm)
@@ -326,7 +333,7 @@ print.tna_permutation <- function(x, ...) {
 #' Print the Results of Clustering
 #'
 #' @export
-#' @family validation
+#' @family clusters
 #' @param x A `tna_clustering` object.
 #' @param ... Additional arguments passed to the generic print method.
 #' @return `x` (invisibly).
@@ -337,7 +344,7 @@ print.tna_permutation <- function(x, ...) {
 #'   T3 = c("C", "C", "A", "B", "B", "C")
 #' )
 #'
-#' # PAM clustering with optimal string alignment (default)
+#' # PAM clustering with the Hamming distance (the defaults)
 #' result <- cluster_sequences(data, k = 2)
 #' print(result)
 #' 
@@ -358,10 +365,16 @@ print.tna_clustering <- function(x, ...) {
 #' @param ... Arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
 #' @examples
+#' # A small subset (100 high and 100 low achievers) without the test
+#' sequences <- rbind(head(group_regulation, 100), tail(group_regulation, 100))
+#' group <- rep(c("High", "Low"), each = 100)
+#' comp <- compare_sequences(sequences, group, test = FALSE)
+#' print(comp)
 #' \donttest{
-#' idx <- c(1:500, 1001:1500)
-#' group <- c(rep("High", 500), rep("Low", 500))
-#' comp <- compare_sequences(group_regulation[idx, ], group)
+#' # With the permutation test (small number of iterations for CRAN)
+#' sequences <- rbind(head(group_regulation, 500), tail(group_regulation, 500))
+#' group <- rep(c("High", "Low"), each = 500)
+#' comp <- compare_sequences(sequences, group, sub = 2:3, iter = 20)
 #' print(comp)
 #' }
 #'
@@ -374,7 +387,9 @@ print.tna_sequence_comparison <- function(x, ...) {
 #' @export
 #' @family validation
 #' @param x A `tna_reliability` object.
-#' @param summary_metrics A `character` vector of metrics to display.
+#' @param summary_metrics A `character` vector of metrics to display. The
+#'   default is `"Mean Abs. Diff."`, `"Median Abs. Diff."`, `"Pearson"`, and
+#'   `"Bray-Curtis"`. See [summary.tna_reliability()] for all metrics.
 #' @param ... Arguments passed to the generic `print` method.
 #' @return `x` (invisibly).
 #' @examples

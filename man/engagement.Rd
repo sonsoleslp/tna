@@ -5,7 +5,9 @@
 \alias{engagement}
 \title{Example Data on Student Engagement}
 \format{
-A \code{stslist} object (sequence data).
+A \code{stslist} object (sequence data) with 1000 sequences (rows) and
+25 time points (columns), over the states \code{"Active"}, \code{"Average"}, and
+\code{"Disengaged"}.
 }
 \source{
 \doi{10.1016/j.compedu.2023.104787}

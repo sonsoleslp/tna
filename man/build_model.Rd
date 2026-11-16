@@ -92,8 +92,10 @@ atna(x, ...)
 tsn(x, ...)
 }
 \arguments{
-\item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, a \code{matrix}, or
-a \code{tna_data} object (see \code{\link[=prepare_data]{prepare_data()}}).
+\item{x}{A \code{stslist} (from \code{TraMineR}), \code{data.frame}, a \code{matrix},
+a \code{tna_data} object (see \code{\link[=prepare_data]{prepare_data()}}), or a \code{tsn} object (a long
+table with the columns \code{id}, \code{state}, and \code{time}, as produced by the
+\code{tsn} package).
 For \code{stslist} and \code{data.frame} objects \code{x}
 should describe a sequence of events or states to be used for building the
 Markov model.  If \code{x} is a matrix, it is assumed that the element on row
@@ -122,7 +124,7 @@ The resulting weight matrix is the transpose of the \code{"frequency"}
 option.
 \item \code{"attention"} aggregates all downstream pairs of states with an
 exponential decay for the gap between states. The parameter \code{lambda}
-can be used to control the decay rate (the default is 1)-
+can be used to control the decay rate (the default is 1).
 }}
 
 \item{scaling}{A \code{character} vector describing how to scale the weights
@@ -201,16 +203,22 @@ signify the end of the sequence.}
 An object of class \code{tna} which is a \code{list} containing the
 following elements:
 \itemize{
-\item \code{weights}: An adjacency \code{matrix} of the model (weight matrix).
+\item \code{weights}: The square adjacency \code{matrix} of the model (weight matrix),
+with one row and one column per state. The element on row \code{i} and
+column \code{j} is the weight of the edge from state \code{i} to state \code{j}.
 \item \code{inits}: A \code{numeric} vector of initial values for each state.
 For \code{matrix} type \code{x}, this element will be \code{NULL} if \code{inits} is not
-directly provided
+directly provided.
 \item \code{labels}: A \code{character} vector of the state labels, or \code{NULL} if
 there are no labels.
 \item \code{data}: The original sequence data that has been converted to an
-internal format used by the package when \code{x} is a \code{stslist} or a
-\code{data.frame} object. Otherwise \code{NULL}.
+internal format used by the package when \code{x} is sequence data
+(a \code{stslist}, a \code{data.frame}, a \code{tna_data}, or a \code{tsn} object).
+Otherwise \code{NULL}.
 }
+
+The model type, the scaling, and the \code{params} used are stored in the
+attributes \code{type}, \code{scaling}, and \code{params}.
 }
 \description{
 Construct a transition network analysis (TNA) model from sequence data.
