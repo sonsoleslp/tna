@@ -2,7 +2,9 @@
 
 Bootstrap the edge weights of all cliques of a given size in a `tna`
 model, producing per-clique mean weights, p-values, confidence
-intervals, and consistency-range bounds.
+intervals, and consistency-range bounds. Each bootstrap sample draws as
+many sequences as the data has, with replacement, and recomputes the
+clique weights from them.
 
 ## Usage
 

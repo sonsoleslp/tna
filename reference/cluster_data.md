@@ -91,15 +91,40 @@ A `tna_clustering` object which is a `list` containing:
 
 - `k`: The number of clusters.
 
-- `assignments`: An `integer` vector of cluster assignments.
+- `assignments`: An `integer` vector of cluster assignments, one per
+  sequence (row of `data`).
 
-- `silhouette`: Silhouette score measuring clustering quality.
+- `silhouette`: The average silhouette width of the clustering.
 
 - `sizes`: An `integer` vector of cluster sizes.
 
 - `method`: The clustering method used.
 
-- `distance`: The distance matrix.
+- `distance`: The dissimilarity matrix (a `dist` object).
+
+The result can be passed to
+[`group_model()`](https://sonsoles.me/tna/reference/group_model.md) to
+build a TNA model for each cluster.
+
+## References
+
+Kaufman, L., & Rousseeuw, P. J. (1990). *Finding Groups in Data: An
+Introduction to Cluster Analysis*. Wiley.
+[doi:10.1002/9780470316801](https://doi.org/10.1002/9780470316801)
+
+Rousseeuw, P. J. (1987). Silhouettes: A graphical aid to the
+interpretation and validation of cluster analysis. *Journal of
+Computational and Applied Mathematics*, 20, 53–65.
+[doi:10.1016/0377-0427(87)90125-7](https://doi.org/10.1016/0377-0427%2887%2990125-7)
+
+## See also
+
+Cluster-related functions
+[`communities()`](https://sonsoles.me/tna/reference/communities.md),
+[`group_model()`](https://sonsoles.me/tna/reference/group_model.md),
+[`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`rename_groups()`](https://sonsoles.me/tna/reference/rename_groups.md)
 
 ## Examples
 
@@ -110,6 +135,17 @@ data <- data.frame(
   T3 = c("C", "C", "A", "B", "B", "C")
 )
 
-# PAM clustering with optimal string alignment (default)
+# PAM clustering with the Hamming distance (the defaults)
 result <- cluster_sequences(data, k = 2)
+print(result)
+#> Clustering method: pam 
+#> Number of clusters: 2 
+#> Silhouette score: 0.4345238 
+#> Cluster sizes:
+#> 1 2 
+#> 3 3 
+
+# Hierarchical clustering with the optimal string alignment distance
+result <- cluster_sequences(data, k = 2, dissimilarity = "osa",
+                            method = "complete")
 ```

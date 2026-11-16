@@ -26,6 +26,11 @@ print(model)
 
 #### Interpretation of the model
 
+The nodes are the states and the arrows the transition probabilities
+between them; the filled share of the ring (donut) around each node is
+its initial probability. The thicker an arrow, the more likely the
+process moves from one state to the other.
+
 ``` r
 
 # TNA visualization
@@ -38,6 +43,14 @@ plot(model)
 ![](complete_tutorial_files/figure-html/unnamed-chunk-4-1.png)
 
 #### Pruning and retaining edges that “matter”
+
+A transition network estimated from sequences has an edge for almost
+every observed pair of states, and most of them are rare. Pruning
+removes the weakest edges so that the backbone of the process is
+visible. The three methods differ in how they define weak: a fixed
+weight (`threshold`), a share of the weakest edges (`lowest`), or edges
+that are not significant relative to the other edges of the same state
+(`disparity`). The unpruned model is plotted last for reference.
 
 ``` r
 
@@ -58,6 +71,10 @@ plot(model)
 
 ### Patterns
 
+Cliques are groups of states that are all connected with each other in
+both directions, above a minimum weight. They show the states that the
+process moves back and forth between.
+
 ``` r
 
 layout(t(1:2))
@@ -66,7 +83,7 @@ layout(t(1:2))
 cliques_of_two <- cliques(
   model, 
   size = 2, 
-  threshold = 0.15  # Only consider edges with weight > 0.15
+  threshold = 0.15  # Only consider edges with weight >= 0.15
 )
 print(cliques_of_two)
 #> Number of 2-cliques = 2 (weight threshold = 0.15)
@@ -94,7 +111,7 @@ layout(t(1:3))
 cliques_of_three <- cliques(
   model, 
   size = 3, 
-  threshold = 0.05 # Only consider edges with weight > 0.05
+  threshold = 0.05 # Only consider edges with weight >= 0.05
 )
 print(cliques_of_three)
 #> Number of 3-cliques = 3 (weight threshold = 0.05)
@@ -129,7 +146,7 @@ plot(cliques_of_three, ask = FALSE)
 cliques_of_four <- cliques(
   model, 
   size = 4, 
-  threshold = 0.035 # Only consider edges with weight > 0.03
+  threshold = 0.035 # Only consider edges with weight >= 0.035
 )
 print(cliques_of_four)
 #> Number of 4-cliques = 1 (weight threshold = 0.035)
@@ -161,24 +178,93 @@ plot(Centralities)
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-9-1.png)
 
+Other measures can be computed with `igraph` after converting the model
+with [`as.igraph()`](https://r.igraph.org/reference/as.igraph.html). The
+hub score of a state is high when it leads to states with high authority
+scores, which in turn are the states that many hubs lead to.
+
 ``` r
 
 # Calculate hub scores and the authority scores for the network
 hits_scores <- igraph::hits_scores(as.igraph(model))
-hub_scores <- hits_scores$hub
-authority_scores <- hits_scores$authority
 
-# Print the calculated hub and authority scores for further analysis
-print(hub_scores)
+# Print the calculated hub and authority scores (and the eigenvalue)
+print(hits_scores)
+#> $hub
 #>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
 #>       0.96       1.00       0.65       0.69       0.74       0.82       0.74 
 #>       plan  synthesis 
-#>       0.87       0.90
-print(authority_scores)
+#>       0.87       0.90 
+#> 
+#> $authority
 #>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
 #>      0.122      0.301      1.000      0.195      0.439      0.333      0.122 
 #>       plan  synthesis 
-#>      0.511      0.059
+#>      0.511      0.059 
+#> 
+#> $value
+#> [1] 1.6
+#> 
+#> $options
+#> $options$bmat
+#> [1] "I"
+#> 
+#> $options$n
+#> [1] 9
+#> 
+#> $options$which
+#> [1] "LA"
+#> 
+#> $options$nev
+#> [1] 1
+#> 
+#> $options$tol
+#> [1] 0
+#> 
+#> $options$ncv
+#> [1] 0
+#> 
+#> $options$ldv
+#> [1] 0
+#> 
+#> $options$ishift
+#> [1] 1
+#> 
+#> $options$maxiter
+#> [1] 3000
+#> 
+#> $options$nb
+#> [1] 1
+#> 
+#> $options$mode
+#> [1] 1
+#> 
+#> $options$start
+#> [1] 1
+#> 
+#> $options$sigma
+#> [1] 0
+#> 
+#> $options$sigmai
+#> [1] 0
+#> 
+#> $options$info
+#> [1] 0
+#> 
+#> $options$iter
+#> [1] 3
+#> 
+#> $options$nconv
+#> [1] 1
+#> 
+#> $options$numop
+#> [1] 12
+#> 
+#> $options$numopb
+#> [1] 0
+#> 
+#> $options$numreo
+#> [1] 11
 ```
 
 ##### Edge-level measures
@@ -225,11 +311,16 @@ plot(communities, method = "leading_eigen")
 
 #### Bootstrapping
 
+An edge estimated from one sample of sequences can be large by chance.
+The bootstrap resamples the sequences and tests, for every edge, whether
+its weight stays within a consistency range around the observed weight
+(by default 75% to 125%) in at least 95% of the resamples.
+
 ``` r
 
 # Perform bootstrapping on the TNA model with a fixed seed for reproducibility
 set.seed(265)
-boot <- bootstrap(model, threshold = 0.05)
+boot <- bootstrap(model)
 
 # Print a summary of the bootstrap results
 print(summary(boot))
@@ -239,7 +330,7 @@ print(summary(boot))
 #> 4 coregulate adapt 0.0162    0.15 FALSE   0.0122   0.0203  0.01078   0.0222
 #>  [ reached 'max' / getOption("max.print") -- omitted 75 rows ]
 
-# Show the non-significant edges (p-value >= 0.05 in this case)
+# Show the non-significant edges (p-value >= 0.05, the default level)
 # These are edges that are less likely to be stable across bootstrap samples
 print(boot, type = "nonsig")
 #> Non-significant Edges
@@ -253,16 +344,22 @@ print(boot, type = "nonsig")
 
 #### Permutation
 
+A difference between the networks of two groups is only evidence of a
+group difference if it is larger than the differences that arise when
+the sequences are assigned to the groups at random. The permutation test
+reassigns the sequences many times and gives a p-value for the
+difference of every edge, and of the requested centralities.
+
 ``` r
 
 # Create TNA for the high-achievers subset (rows 1 to 1000)
-Hi <- tna(group_regulation[1:1000, ])
+Hi <- tna(head(group_regulation, 1000))
 
 # Create TNA for the low-achievers subset (rows 1001 to 2000)
-Lo <- tna(group_regulation[1001:2000, ])
+Lo <- tna(tail(group_regulation, 1000))
 
 # Plot a comparison of the "Hi" and "Lo" models
-# The 'minimum' parameter is set to 0.001, so edges with weights >= 0.001 are shown
+# The 'minimum' parameter is set to 0.01, so edges with weights >= 0.01 are shown
 plot_compare(Hi, Lo, minimum = 0.01)
 ```
 
@@ -282,19 +379,21 @@ plot(Permutation, minimum = 0.01)
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-14-2.png)
 
+The tables of the test give the observed difference, its effect size,
+and the p-value of every edge and of the betweenness of every state.
+
 ``` r
 
-print(Permutation$edges$stats)
-#>             edge_name diff_true effect_size p_value
-#> 1      adapt -> adapt   0.00000         NaN   1.000
-#> 2   cohesion -> adapt   0.00533       1.991   0.061
-#> 3  consensus -> adapt  -0.00132      -0.763   0.412
-#> 4 coregulate -> adapt   0.01122       2.002   0.048
-#> 5    discuss -> adapt  -0.09616     -11.482   0.001
-#> 6    emotion -> adapt   0.00167       0.907   0.460
-#> 7    monitor -> adapt  -0.00019      -0.034   0.943
-#>  [ reached 'max' / getOption("max.print") -- omitted 74 rows ]
-print(Permutation$centralities$stats)
+summary(Permutation)
+#>         from    to diff_true effect_size p_value
+#> 1      adapt adapt      0.00          NA   1.000
+#> 2   cohesion adapt      0.01        1.99   0.061
+#> 3  consensus adapt      0.00       -0.76   0.412
+#> 4 coregulate adapt      0.01        2.00   0.048
+#> 5    discuss adapt     -0.10      -11.48   0.001
+#> 6    emotion adapt      0.00        0.91   0.460
+#>  [ reached 'max' / getOption("max.print") -- omitted 75 rows ]
+summary(Permutation, what = "centralities")
 #>        state  centrality diff_true effect_size p_value
 #> 1      adapt Betweenness        -3       -6.69   0.001
 #> 2   cohesion Betweenness         0        0.00   1.000
@@ -307,6 +406,13 @@ print(Permutation$centralities$stats)
 
 #### Interpreting the Results of the Case-Dropping Bootstrap for Centrality Indices
 
+A centrality ranking is only worth interpreting if it does not change
+when part of the data is missing. The case-dropping bootstrap drops
+increasing proportions of the sequences and correlates the centralities
+of the remaining data with those of the full data; the CS-coefficient is
+the largest proportion of dropped sequences at which the correlation is
+at least 0.7 in at least 95% of the resamples.
+
 ``` r
 
 # Results of the Case-Dropping Bootstrap for Centrality Indices
@@ -315,3 +421,70 @@ plot(Centrality_stability)
 ```
 
 ![](complete_tutorial_files/figure-html/unnamed-chunk-16-1.png)
+
+### More tutorials
+
+**Package articles** · [sonsoles.me/tna](https://sonsoles.me/tna/)
+
+- [Getting started with tna](https://sonsoles.me/tna/articles/tna.html)
+  — build, plot, and summarize a transition network
+- [Preparing data](https://sonsoles.me/tna/articles/prepare_data.html) —
+  turn event logs into sequences with
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+- [A showcase of the main
+  functions](https://sonsoles.me/tna/articles/complete_tutorial.html) —
+  models, centralities, communities, and validation
+- [Grouped sequence
+  data](https://sonsoles.me/tna/articles/grouped_sequences.html) — build
+  and compare networks of groups
+- [Cliques and
+  communities](https://sonsoles.me/tna/articles/communities_and_cliques.html)
+  — find the densely connected states
+- [Frequency-based TNA](https://sonsoles.me/tna/articles/ftna.html) —
+  model transition counts instead of probabilities
+- [Attention TNA](https://sonsoles.me/tna/articles/atna.html) —
+  accumulate transitions across temporal distances
+- [Validating a transition
+  network](https://sonsoles.me/tna/articles/model-validation.html) —
+  Markov order, bootstrap, case-dropping, reliability, and permutation
+  tests
+- [Function reference
+  sheet](https://sonsoles.me/tna/articles/new-docs.html) — every
+  function with its arguments and an example
+
+**Tutorials** · [sonsoles.me](https://sonsoles.me/)
+
+- [A comprehensive TNA
+  tutorial](https://sonsoles.me/posts/tna-tutorial/) — an updated
+  walkthrough of transition network analysis
+- [Data preparation](https://sonsoles.me/posts/tna-data/) — from raw
+  event data to sequences
+- [Comparing models](https://sonsoles.me/posts/tna-compare/) — network
+  comparison of TNA models
+- [Clustering](https://sonsoles.me/posts/tna-clustering/) — discover and
+  analyze clusters of sequences
+- [Group analysis](https://sonsoles.me/posts/tna-group/) — permutation
+  tests, bootstrapping, and clusters
+
+**Book chapters** · *Advanced Learning Analytics Methods*
+
+- [Mapping relational dynamics with
+  TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) — a
+  primer and tutorial
+- [Frequency transition network
+  analysis](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
+  — a primer and tutorial on FTNA
+- [Mining patterns and clusters with
+  TNA](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
+  — a heterogeneity approach
+
+**Dynalytics** · [dynasite.org](https://dynasite.org/)
+
+- [Package sites](https://pak.dynasite.org/) — documentation of the R
+  packages of the Dynalytics framework
+- [Tools](https://dynasite.org/#/tools) — interactive web apps, jamovi,
+  and Python
+- [CarmNotes](https://dynasite.org/carmnotes) — single-file notebooks
+  that run the analyses in the browser, even offline
+- [Selected articles](https://dynasite.org/#/papers) — publications on
+  the framework and its methods

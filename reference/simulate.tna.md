@@ -58,9 +58,10 @@ simulate(
 - zero_row:
 
   A `character` string describing how to process zero rows in the weight
-  matrix. The option `"self"` (the default) assigns probability 1 to the
-  corresponding state (self loop) and option `"uniform"` assigns a
-  uniform distribution.
+  matrix, i.e., states that are never left, such as states that only end
+  sequences. The option `"self"` (the default) assigns probability 1 to
+  the corresponding state (self loop) and option `"uniform"` assigns a
+  uniform distribution. Applies to both model types.
 
 - format:
 
@@ -73,7 +74,10 @@ simulate(
 
 ## Value
 
-A `data.frame` of the simulated sequence data.
+A `data.frame` of the simulated sequence data. In `wide` format, one row
+per sequence and one column per time point (`T1`, `T2`, ...). In `long`
+format, one row per observation with the columns `id`, `time`, and
+`state`.
 
 ## See also
 
@@ -92,5 +96,28 @@ Other data:
 
 ``` r
 model <- tna(group_regulation)
-sim <- simulate(model, nsim = 10, max_len = 10)
+sim <- simulate(model, nsim = 10, max_len = 10, seed = 1)
+print(sim)
+#>           T1        T2         T3         T4         T5         T6        T7
+#> 1       plan   emotion  consensus  consensus    emotion    discuss consensus
+#> 2       plan      plan       plan    monitor    discuss    discuss synthesis
+#> 3    discuss consensus       plan    emotion   cohesion  consensus consensus
+#> 4   cohesion consensus      adapt  consensus    discuss   cohesion consensus
+#> 5  consensus      plan  consensus coregulate       plan coregulate   emotion
+#> 6   cohesion consensus       plan  consensus  consensus coregulate   discuss
+#> 7   cohesion consensus       plan  consensus       plan  consensus synthesis
+#> 8    emotion  cohesion       plan  consensus    discuss  synthesis   discuss
+#> 9    emotion  cohesion coregulate  consensus coregulate    emotion consensus
+#> 10 consensus   monitor    discuss    emotion   cohesion coregulate   monitor
+#>            T8        T9       T10
+#> 1        plan      plan      plan
+#> 2     emotion  cohesion consensus
+#> 3     discuss synthesis      plan
+#> 4     discuss consensus   discuss
+#> 5    cohesion consensus   emotion
+#> 6     emotion consensus      plan
+#> 7   consensus consensus      plan
+#> 8   consensus   discuss synthesis
+#> 9  coregulate   emotion consensus
+#> 10       plan      plan   discuss
 ```

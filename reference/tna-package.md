@@ -3,7 +3,8 @@
 Provides tools for performing transition network analysis (TNA),
 including functions for building TNA models, plotting transition
 networks, and calculating centrality measures. The package relies on the
-`igraph` for centrality measure calculations.
+`igraph` package for centrality measure calculations and on the
+`cograph` package for plotting the networks.
 
 ## References
 
@@ -12,6 +13,11 @@ Saqr M., López-Pernas S., Törmänen T., Kaliisa R., Misiejuk K., Tikka S.
 Visualizing, and Identifying the Temporal Patterns of Learners and
 Learning Processes. In *Proceedings of the 15th International Learning
 Analytics and Knowledge Conference (LAK '25)*, 351-361.
+[doi:10.1145/3706468.3706513](https://doi.org/10.1145/3706468.3706513)
+
+Tikka, S., López-Pernas, S., & Saqr, M. (2025). tna: An R Package for
+Transition Network Analysis. *Applied Psychological Measurement*.
+[doi:10.1177/01466216251348840](https://doi.org/10.1177/01466216251348840)
 
 Banerjee A., Chandrasekhar A., Duflo E., Jackson M. (2014). Gossip:
 Identifying Central Individuals in a Social Network. Working Paper.
@@ -19,14 +25,17 @@ Identifying Central Individuals in a Social Network. Working Paper.
 Kivimaki, I., Lebichot, B., Saramaki, J., Saerens, M. (2016). Two
 betweenness centrality measures based on Randomized Shortest Paths.
 *Scientific Reports*, 6, 19668.
+[doi:10.1038/srep19668](https://doi.org/10.1038/srep19668)
 
 Serrano, M. A., Boguna, M., Vespignani, A. (2009). Extracting the
 multiscale backbone of complex weighted networks. *Proceedings of the
 National Academy of Sciences*, 106, 6483-6488.
+[doi:10.1073/pnas.0808904106](https://doi.org/10.1073/pnas.0808904106)
 
 Zhang, B., Horvath, S. (2005). A general framework for weighted gene
 co-expression network analysis. *Statistical Applications in Genetics
 and Molecular Biology*, 4(1).
+[doi:10.2202/1544-6115.1128](https://doi.org/10.2202/1544-6115.1128)
 
 ## See also
 

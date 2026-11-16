@@ -7,6 +7,9 @@ Restore Previous Pruning of a Transition Network Analysis Model
 ``` r
 reprune(x, ...)
 
+# S3 method for class 'tna'
+reprune(x, ...)
+
 # S3 method for class 'group_tna'
 reprune(x, ...)
 ```
@@ -23,8 +26,10 @@ reprune(x, ...)
 
 ## Value
 
-A `tna` or `group_tna` object that has not been pruned. The previous
-pruning result can be reactivated with `reprune()`.
+A `tna` or `group_tna` object with the previous pruning of a model
+restored with
+[`deprune()`](https://sonsoles.me/tna/reference/deprune.md) applied
+again.
 
 ## See also
 
@@ -32,12 +37,14 @@ Validation functions
 [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
 [`deprune()`](https://sonsoles.me/tna/reference/deprune.md),
 [`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`markov_order()`](https://sonsoles.me/tna/reference/markov_order.md),
 [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md),
 [`permutation_test.group_tna()`](https://sonsoles.me/tna/reference/permutation_test.group_tna.md),
 [`plot.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
 [`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
 [`plot.group_tna_stability()`](https://sonsoles.me/tna/reference/plot.group_tna_stability.md),
 [`plot.tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_markov_order()`](https://sonsoles.me/tna/reference/plot.tna_markov_order.md),
 [`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md),
 [`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md),
 [`plot.tna_stability()`](https://sonsoles.me/tna/reference/plot.tna_stability.md),
@@ -46,8 +53,9 @@ Validation functions
 [`print.group_tna_stability()`](https://sonsoles.me/tna/reference/print.group_tna_stability.md),
 [`print.summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
 [`print.summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.summary.tna_markov_order()`](https://sonsoles.me/tna/reference/print.summary.tna_markov_order.md),
 [`print.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`print.tna_markov_order()`](https://sonsoles.me/tna/reference/print.tna_markov_order.md),
 [`print.tna_permutation()`](https://sonsoles.me/tna/reference/print.tna_permutation.md),
 [`print.tna_reliability()`](https://sonsoles.me/tna/reference/print.tna_reliability.md),
 [`print.tna_stability()`](https://sonsoles.me/tna/reference/print.tna_stability.md),
@@ -55,7 +63,11 @@ Validation functions
 [`pruning_details()`](https://sonsoles.me/tna/reference/pruning_details.md),
 [`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
 [`summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
-[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md),
+[`summary.tna_markov_order()`](https://sonsoles.me/tna/reference/summary.tna_markov_order.md),
+[`summary.tna_permutation()`](https://sonsoles.me/tna/reference/summary.tna_permutation.md),
+[`summary.tna_reliability()`](https://sonsoles.me/tna/reference/summary.tna_reliability.md),
+[`summary.tna_stability()`](https://sonsoles.me/tna/reference/summary.tna_stability.md)
 
 ## Examples
 

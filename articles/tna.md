@@ -3,14 +3,11 @@
 This vignette showcases some basic usage of the `tna` package. For more
 tutorials, please visit [the package website](https://sonsoles.me/tna/).
 
-First we load the package that we will use for this example.
+First we load the package.
 
 ``` r
 
 library("tna")
-library("tibble")
-library("dplyr")
-library("gt")
 ```
 
 We also load the `group_regulation` data available in the package (see
@@ -23,7 +20,10 @@ data("group_regulation", package = "tna")
 ```
 
 We build a TNA model using this data with the
-[`tna()`](https://sonsoles.me/tna/reference/build_model.md) function .
+[`tna()`](https://sonsoles.me/tna/reference/build_model.md) function.
+Each row of the data is one sequence of coded actions of a student, and
+the model estimates the probability of moving from each action to the
+next.
 
 ``` r
 
@@ -43,57 +43,80 @@ plot(tna_model)
 
 ![](tna_files/figure-html/unnamed-chunk-5-1.png)
 
-The initial state probabilities are
+Printing the model shows the transition probabilities (row: from,
+column: to) and the initial state probabilities, which tell how the
+sequences tend to start.
 
 ``` r
 
-data.frame(`Initial prob.` = tna_model$inits, check.names = FALSE) |>
-  rownames_to_column("Action") |>
-  arrange(desc(`Initial prob.`)) |>
-  gt() |>
-  fmt_percent()
+print(tna_model, digits = 2)
+#> State Labels : 
+#> 
+#>    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis 
+#> 
+#> Transition Probability Matrix :
+#> 
+#>              adapt cohesion consensus coregulate discuss emotion monitor  plan
+#> adapt      0.00000    0.273     0.477      0.022   0.059   0.120   0.033 0.016
+#> cohesion   0.00295    0.027     0.498      0.119   0.060   0.116   0.033 0.141
+#> consensus  0.00474    0.015     0.082      0.188   0.188   0.073   0.047 0.396
+#> coregulate 0.01624    0.036     0.135      0.023   0.274   0.172   0.086 0.239
+#> discuss    0.07137    0.048     0.321      0.084   0.195   0.106   0.022 0.012
+#> emotion    0.00247    0.325     0.320      0.034   0.102   0.077   0.036 0.100
+#> monitor    0.01117    0.056     0.159      0.058   0.375   0.091   0.018 0.216
+#> plan       0.00097    0.025     0.290      0.017   0.068   0.147   0.076 0.374
+#> synthesis  0.23466    0.034     0.466      0.044   0.063   0.071   0.012 0.075
+#>            synthesis
+#> adapt         0.0000
+#> cohesion      0.0035
+#> consensus     0.0076
+#> coregulate    0.0188
+#> discuss       0.1410
+#> emotion       0.0028
+#> monitor       0.0161
+#> plan          0.0018
+#> synthesis     0.0000
+#> 
+#> Initial Probabilities : 
+#> 
+#>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
+#>      0.011      0.060      0.214      0.019      0.175      0.151      0.144 
+#>       plan  synthesis 
+#>      0.204      0.019
 ```
 
-| Action     | Initial prob. |
-|------------|---------------|
-| consensus  | 21.40%        |
-| plan       | 20.45%        |
-| discuss    | 17.55%        |
-| emotion    | 15.15%        |
-| monitor    | 14.40%        |
-| cohesion   | 6.05%         |
-| synthesis  | 1.95%         |
-| coregulate | 1.90%         |
-| adapt      | 1.15%         |
-
-and the transitions probabilities are
+[`summary()`](https://rdrr.io/r/base/summary.html) gives the
+network-level metrics of the model as a table.
 
 ``` r
 
-tna_model$weights |>
-  data.frame() |>
-  rownames_to_column("From\\To") |>
-  gt() |>
-  fmt_percent()
+summary(tna_model)
+#> # A tibble: 13 × 2
+#>    metric                         value
+#>  * <chr>                          <dbl>
+#>  1 Node Count                  9   e+ 0
+#>  2 Edge Count                  7.8 e+ 1
+#>  3 Network Density             1   e+ 0
+#>  4 Mean Distance               4.72e- 2
+#>  5 Mean Out-Strength           1   e+ 0
+#>  6 SD Out-Strength             6.80e-17
+#>  7 Mean In-Strength            1   e+ 0
+#>  8 SD In-Strength              8.07e- 1
+#>  9 Mean Out-Degree             8.67e+ 0
+#> 10 SD Out-Degree               7.07e- 1
+#> 11 Centralization (Out-Degree) 1.56e- 2
+#> 12 Centralization (In-Degree)  1.56e- 2
+#> 13 Reciprocity                 9.86e- 1
 ```
-
-| From\To | adapt | cohesion | consensus | coregulate | discuss | emotion | monitor | plan | synthesis |
-|----|----|----|----|----|----|----|----|----|----|
-| adapt | 0.00% | 27.31% | 47.74% | 2.16% | 5.89% | 11.98% | 3.34% | 1.57% | 0.00% |
-| cohesion | 0.29% | 2.71% | 49.79% | 11.92% | 5.96% | 11.56% | 3.30% | 14.10% | 0.35% |
-| consensus | 0.47% | 1.49% | 8.20% | 18.77% | 18.80% | 7.27% | 4.66% | 39.58% | 0.76% |
-| coregulate | 1.62% | 3.60% | 13.45% | 2.34% | 27.36% | 17.21% | 8.63% | 23.91% | 1.88% |
-| discuss | 7.14% | 4.76% | 32.12% | 8.43% | 19.49% | 10.58% | 2.23% | 1.16% | 14.10% |
-| emotion | 0.25% | 32.53% | 32.04% | 3.42% | 10.19% | 7.68% | 3.63% | 9.98% | 0.28% |
-| monitor | 1.12% | 5.58% | 15.91% | 5.79% | 37.54% | 9.07% | 1.81% | 21.56% | 1.61% |
-| plan | 0.10% | 2.52% | 29.04% | 1.72% | 6.79% | 14.68% | 7.55% | 37.42% | 0.18% |
-| synthesis | 23.47% | 3.37% | 46.63% | 4.45% | 6.29% | 7.06% | 1.23% | 7.52% | 0.00% |
 
 The function
 [`centralities()`](https://sonsoles.me/tna/reference/centralities.md)
-can be used to compute various centrality measures (see
+computes various centrality measures (see
 [`?centralities`](https://sonsoles.me/tna/reference/centralities.md) for
-more information). These measures can also be visualized with the
+more information), which identify the actions that the process passes
+through (betweenness), that are reached quickly from the others
+(closeness), or that receive (in-strength) or lead to (out-strength)
+many transitions. These measures can also be visualized with the
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html) function.
 
 ``` r
@@ -105,7 +128,74 @@ cents_withoutloops <- centralities(
   loops = FALSE,
   normalize = TRUE
 )
-plot(cents_withoutloops, ncol = 2, model = tna_model)
+plot(cents_withoutloops, ncol = 2)
 ```
 
 ![](tna_files/figure-html/unnamed-chunk-8-1.png)
+
+## More tutorials
+
+**Package articles** · [sonsoles.me/tna](https://sonsoles.me/tna/)
+
+- [Getting started with tna](https://sonsoles.me/tna/articles/tna.html)
+  — build, plot, and summarize a transition network
+- [Preparing data](https://sonsoles.me/tna/articles/prepare_data.html) —
+  turn event logs into sequences with
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+- [A showcase of the main
+  functions](https://sonsoles.me/tna/articles/complete_tutorial.html) —
+  models, centralities, communities, and validation
+- [Grouped sequence
+  data](https://sonsoles.me/tna/articles/grouped_sequences.html) — build
+  and compare networks of groups
+- [Cliques and
+  communities](https://sonsoles.me/tna/articles/communities_and_cliques.html)
+  — find the densely connected states
+- [Frequency-based TNA](https://sonsoles.me/tna/articles/ftna.html) —
+  model transition counts instead of probabilities
+- [Attention TNA](https://sonsoles.me/tna/articles/atna.html) —
+  accumulate transitions across temporal distances
+- [Validating a transition
+  network](https://sonsoles.me/tna/articles/model-validation.html) —
+  Markov order, bootstrap, case-dropping, reliability, and permutation
+  tests
+- [Function reference
+  sheet](https://sonsoles.me/tna/articles/new-docs.html) — every
+  function with its arguments and an example
+
+**Tutorials** · [sonsoles.me](https://sonsoles.me/)
+
+- [A comprehensive TNA
+  tutorial](https://sonsoles.me/posts/tna-tutorial/) — an updated
+  walkthrough of transition network analysis
+- [Data preparation](https://sonsoles.me/posts/tna-data/) — from raw
+  event data to sequences
+- [Comparing models](https://sonsoles.me/posts/tna-compare/) — network
+  comparison of TNA models
+- [Clustering](https://sonsoles.me/posts/tna-clustering/) — discover and
+  analyze clusters of sequences
+- [Group analysis](https://sonsoles.me/posts/tna-group/) — permutation
+  tests, bootstrapping, and clusters
+
+**Book chapters** · *Advanced Learning Analytics Methods*
+
+- [Mapping relational dynamics with
+  TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) — a
+  primer and tutorial
+- [Frequency transition network
+  analysis](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
+  — a primer and tutorial on FTNA
+- [Mining patterns and clusters with
+  TNA](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
+  — a heterogeneity approach
+
+**Dynalytics** · [dynasite.org](https://dynasite.org/)
+
+- [Package sites](https://pak.dynasite.org/) — documentation of the R
+  packages of the Dynalytics framework
+- [Tools](https://dynasite.org/#/tools) — interactive web apps, jamovi,
+  and Python
+- [CarmNotes](https://dynasite.org/carmnotes) — single-file notebooks
+  that run the analyses in the browser, even offline
+- [Selected articles](https://dynasite.org/#/papers) — publications on
+  the framework and its methods

@@ -26,8 +26,11 @@ pruning_details(x, ...)
 
 ## Value
 
-A `data.frame` containing the removed edges if `x` is a `tna` object, or
-a `list` of `data.frame` objects in the case of `group_tna` object.
+The pruning method and the numbers of removed and retained edges are
+printed. Invisibly, a `data.frame` of the removed edges with one row per
+edge and the columns `from`, `to`, and `weight` if `x` is a `tna`
+object, or a named `list` of such `data.frame` objects (one per cluster)
+in the case of a `group_tna` object.
 
 ## See also
 
@@ -35,12 +38,14 @@ Validation functions
 [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
 [`deprune()`](https://sonsoles.me/tna/reference/deprune.md),
 [`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`markov_order()`](https://sonsoles.me/tna/reference/markov_order.md),
 [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md),
 [`permutation_test.group_tna()`](https://sonsoles.me/tna/reference/permutation_test.group_tna.md),
 [`plot.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
 [`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
 [`plot.group_tna_stability()`](https://sonsoles.me/tna/reference/plot.group_tna_stability.md),
 [`plot.tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_markov_order()`](https://sonsoles.me/tna/reference/plot.tna_markov_order.md),
 [`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md),
 [`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md),
 [`plot.tna_stability()`](https://sonsoles.me/tna/reference/plot.tna_stability.md),
@@ -49,8 +54,9 @@ Validation functions
 [`print.group_tna_stability()`](https://sonsoles.me/tna/reference/print.group_tna_stability.md),
 [`print.summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
 [`print.summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.summary.tna_markov_order()`](https://sonsoles.me/tna/reference/print.summary.tna_markov_order.md),
 [`print.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`print.tna_markov_order()`](https://sonsoles.me/tna/reference/print.tna_markov_order.md),
 [`print.tna_permutation()`](https://sonsoles.me/tna/reference/print.tna_permutation.md),
 [`print.tna_reliability()`](https://sonsoles.me/tna/reference/print.tna_reliability.md),
 [`print.tna_stability()`](https://sonsoles.me/tna/reference/print.tna_stability.md),
@@ -58,7 +64,11 @@ Validation functions
 [`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
 [`reprune()`](https://sonsoles.me/tna/reference/reprune.md),
 [`summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
-[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md),
+[`summary.tna_markov_order()`](https://sonsoles.me/tna/reference/summary.tna_markov_order.md),
+[`summary.tna_permutation()`](https://sonsoles.me/tna/reference/summary.tna_permutation.md),
+[`summary.tna_reliability()`](https://sonsoles.me/tna/reference/summary.tna_reliability.md),
+[`summary.tna_stability()`](https://sonsoles.me/tna/reference/summary.tna_stability.md)
 
 ## Examples
 

@@ -14,7 +14,9 @@ engagement
 
 ## Format
 
-A `stslist` object (sequence data).
+A `stslist` object (sequence data) with 1000 sequences (rows) and 25
+time points (columns), over the states `"Active"`, `"Average"`, and
+`"Disengaged"`.
 
 ## Source
 

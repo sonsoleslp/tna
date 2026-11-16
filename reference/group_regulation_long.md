@@ -15,11 +15,13 @@ group_regulation_long
 
 ## Format
 
-A `data.frame` object.
+A tibble with 27533 rows (one per action) and 6 columns: `Actor`
+(`integer`), `Achiever` (`"High"` or `"Low"`), `Group` (`numeric`),
+`Course` (`character`), `Time` (`POSIXct`), and `Action` (`character`).
 
 ## Source
 
-The data was generated synthetically from `group_regulation`
+The data was generated synthetically from `group_regulation`.
 
 ## See also
 

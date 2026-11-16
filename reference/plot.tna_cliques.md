@@ -18,7 +18,7 @@ plot(x, n = 6, first = 1, show_loops = FALSE, colors, ask = TRUE, ...)
 - n:
 
   An `integer` defining the maximum number of cliques to show. The
-  defaults is `6`.
+  default is `6`.
 
 - first:
 

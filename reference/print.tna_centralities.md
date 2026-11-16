@@ -13,7 +13,7 @@ print(x, ...)
 
 - x:
 
-  A `centralities` object.
+  A `tna_centralities` object.
 
 - ...:
 

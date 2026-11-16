@@ -26,15 +26,19 @@ sna(x, aggregate = sum, ...)
 
 ## Value
 
-A `tna` object representing the model.
+A `tna` object representing the model. Its `weights` element is a square
+`matrix` with one row and column per state, holding the aggregated
+weight of each pair of states (zero when the pair does not occur). The
+`inits` and `data` elements are `NULL`.
 
 ## Examples
 
 ``` r
 set.seed(123)
+states <- c("A", "B", "C", "D")
 d <- data.frame(
-  from = sample(LETTERS[1:4], 100, replace = TRUE),
-  to = sample(LETTERS[1:4], 100, replace = TRUE),
+  from = sample(states, 100, replace = TRUE),
+  to = sample(states, 100, replace = TRUE),
   weight = rexp(100)
 )
 model <- sna(d)

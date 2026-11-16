@@ -44,8 +44,12 @@ import_data(data, cols, id_cols, window_size = 1, replace_zeros = TRUE)
 
 ## Value
 
-A `data.frame` in long format with added columns for window and sequence
-order.
+A tibble in long format with one row per non-missing value of `cols`:
+the remaining columns of `data`, the `id_cols`, the columns `action`
+(the name of the column in `cols`) and `value`, and the column `order`
+(the position of the action within its window of rows and combination of
+`id_cols`). Can be passed to
+[`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md).
 
 ## See also
 

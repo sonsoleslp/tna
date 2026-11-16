@@ -12,7 +12,10 @@ group_regulation
 
 ## Format
 
-A `data.frame` object.
+A `data.frame` with 2000 sequences (rows) and 26 time points (columns
+`T1` to `T26`). Shorter sequences end in missing values. The first 1000
+rows are the sequences of high achievers and the last 1000 rows those of
+low achievers (see `group_regulation_long`).
 
 ## Source
 

@@ -33,7 +33,8 @@ plot(
 
   A `"character"` string naming the population for which to produce the
   heatmaps, i.e, one of `"x"`, `"y"`, or `"difference"` for the
-  differences. Ignored for `type = "scatterplot"`. Defaults to `"diff"`.
+  differences. Ignored for `type = "scatterplot"`. Defaults to
+  `"difference"`.
 
 - method:
 
@@ -83,9 +84,11 @@ Model comparison functions
 ## Examples
 
 ``` r
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 comp <- compare(model_x, model_y)
 plot(comp)
+
+plot(comp, type = "scatterplot", name_x = "High", name_y = "Low")
 
 ```

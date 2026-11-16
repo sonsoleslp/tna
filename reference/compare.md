@@ -22,7 +22,8 @@ compare(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 
 - x:
 
-  A `tna` object or a `matrix` of weights.
+  A `tna` object or a `matrix` of weights. A `matrix` must have the
+  state names as row and column names.
 
 - ...:
 
@@ -30,7 +31,10 @@ compare(x, y, scaling = "none", measures = character(0), network = TRUE, ...)
 
 - y:
 
-  A `tna` object or a `matrix` of weights.
+  A `tna` object or a `matrix` of weights, with the same states as `x`.
+  The states are matched by name, so their order may differ; an error of
+  class `tna_error_states` is raised when the states differ or a matrix
+  has no state names.
 
 - scaling:
 
@@ -87,20 +91,24 @@ elements:
 
 - `difference_matrix`: A `matrix` of differences `x - y`.
 
-- `edge_metrics`: A `data.frame` of edge-level metrics about the
-  differences.
+- `edge_metrics`: A `data.frame` with one row per pair of states
+  (columns `source` and `target`), the weights `weight_x` and
+  `weight_y`, and edge-level metrics of their difference.
 
-- `summary_metrics`: A `data.frame` of summary metrics of the
-  differences across all edges.
+- `summary_metrics`: A `data.frame` with one row per summary metric of
+  the differences across all edges, with the columns `category`,
+  `metric`, and `value`.
 
-- `network_metrics`: A `data.frame` of network metrics for both `x` and
-  `y`.
+- `network_metrics`: A `data.frame` with one row per network metric and
+  the columns `metric`, `x`, and `y`.
 
-- `centrality_differences`: A `data.frame` of differences in centrality
-  measures computes from `x` and `y`.
+- `centrality_differences`: A `data.frame` with one row per state and
+  centrality measure, with the columns `state`, `centrality`, `x`, `y`,
+  and `difference`. Only present when `measures` is not empty.
 
-- `centrality_correlations`: A `numeric` vector of correlations of the
-  centrality measures between `x` and `y`.
+- `centrality_correlations`: A `data.frame` with one row per centrality
+  measure and the correlation of the measure between `x` and `y`. Only
+  present when `measures` is not empty.
 
 ## See also
 
@@ -118,15 +126,61 @@ Model comparison functions
 
 ``` r
 # Comparing TNA models
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 comp1 <- compare(model_x, model_y)
 
-# Comparing matrices
-mat_x <- model_x$weights
-mat_y <- model_y$weights
+# Comparing weight matrices (with the states as row and column names)
+states <- c("A", "B")
+mat_x <- matrix(c(0.6, 0.3, 0.4, 0.7), 2, 2, dimnames = list(states, states))
+mat_y <- matrix(c(0.5, 0.2, 0.5, 0.8), 2, 2, dimnames = list(states, states))
 comp2 <- compare(mat_x, mat_y)
-
-# Comparing a matrix to a TNA model
-comp3 <- compare(mat_x, model_y)
+print(comp2)
+#> Edge difference metrics
+#> # A tibble: 4 × 16
+#>   source target weight_x weight_y raw_difference absolute_difference
+#>   <fct>  <fct>     <dbl>    <dbl>          <dbl>               <dbl>
+#> 1 A      A           0.6      0.5          0.1                 0.1  
+#> 2 B      A           0.3      0.2          0.1                 0.1  
+#> 3 A      B           0.4      0.5         -0.1                 0.1  
+#> 4 B      B           0.7      0.8         -0.100               0.100
+#> # ℹ 10 more variables: squared_difference <dbl>, relative_difference <dbl>,
+#> #   similarity_strength_index <dbl>, difference_index <dbl>,
+#> #   rank_difference <dbl>, percentile_difference <dbl>,
+#> #   logarithmic_ratio <dbl>, standardized_weight_x <dbl>,
+#> #   standardized_weight_y <dbl>, standardized_score_inflation <dbl>
+#> 
+#> Summary metrics of differences
+#> # A tibble: 22 × 3
+#>    category          metric               value
+#>    <chr>             <chr>                <dbl>
+#>  1 Weight Deviations Mean Abs. Diff.      0.1  
+#>  2 Weight Deviations Median Abs. Diff.    0.1  
+#>  3 Weight Deviations RMS Diff.            0.1  
+#>  4 Weight Deviations Max Abs. Diff.       0.100
+#>  5 Weight Deviations Rel. Mean Abs. Diff. 0.2  
+#>  6 Weight Deviations CV Ratio             0.745
+#>  7 Correlations      Pearson              0.894
+#>  8 Correlations      Spearman             0.949
+#>  9 Correlations      Kendall              0.913
+#> 10 Correlations      Distance             0.865
+#> # ℹ 12 more rows
+#> 
+#> Network metrics
+#> # A tibble: 13 × 3
+#>    metric                          x     y
+#>    <chr>                       <dbl> <dbl>
+#>  1 Node Count                  2     2    
+#>  2 Edge Count                  4     4    
+#>  3 Network Density             1     1    
+#>  4 Mean Distance               0.35  0.35 
+#>  5 Mean Out-Strength           1     1    
+#>  6 SD Out-Strength             0     0    
+#>  7 Mean In-Strength            1     1    
+#>  8 SD In-Strength              0.141 0.424
+#>  9 Mean Out-Degree             2     2    
+#> 10 SD Out-Degree               0     0    
+#> 11 Centralization (Out-Degree) 0     0    
+#> 12 Centralization (In-Degree)  0     0    
+#> 13 Reciprocity                 1     1    
 ```

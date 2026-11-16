@@ -96,15 +96,17 @@ tsn(x, ...)
 
 - x:
 
-  A `stslist` (from `TraMineR`), `data.frame`, a `matrix`, or a
-  `tna_data` object (see
-  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)).
-  For `stslist` and `data.frame` objects `x` should describe a sequence
-  of events or states to be used for building the Markov model. If `x`
-  is a matrix, it is assumed that the element on row `i` and column `j`
-  is the weight of the edge representing the transition from state `i`
-  to state `j`. If `x` is a `data.frame`, then it must be in wide format
-  (see `cols` on how to define columns for the time points).
+  A `stslist` (from `TraMineR`), `data.frame`, a `matrix`, a `tna_data`
+  object (see
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)),
+  or a `tsn` object (a long table with the columns `id`, `state`, and
+  `time`, as produced by the `tsn` package). For `stslist` and
+  `data.frame` objects `x` should describe a sequence of events or
+  states to be used for building the Markov model. If `x` is a matrix,
+  it is assumed that the element on row `i` and column `j` is the weight
+  of the edge representing the transition from state `i` to state `j`.
+  If `x` is a `data.frame`, then it must be in wide format (see `cols`
+  on how to define columns for the time points).
 
 - ...:
 
@@ -135,7 +137,7 @@ tsn(x, ...)
 
   - `"attention"` aggregates all downstream pairs of states with an
     exponential decay for the gap between states. The parameter `lambda`
-    can be used to control the decay rate (the default is 1)-
+    can be used to control the decay rate (the default is 1).
 
 - scaling:
 
@@ -242,18 +244,24 @@ tsn(x, ...)
 An object of class `tna` which is a `list` containing the following
 elements:
 
-- `weights`: An adjacency `matrix` of the model (weight matrix).
+- `weights`: The square adjacency `matrix` of the model (weight matrix),
+  with one row and one column per state. The element on row `i` and
+  column `j` is the weight of the edge from state `i` to state `j`.
 
 - `inits`: A `numeric` vector of initial values for each state. For
   `matrix` type `x`, this element will be `NULL` if `inits` is not
-  directly provided
+  directly provided.
 
 - `labels`: A `character` vector of the state labels, or `NULL` if there
   are no labels.
 
 - `data`: The original sequence data that has been converted to an
-  internal format used by the package when `x` is a `stslist` or a
-  `data.frame` object. Otherwise `NULL`.
+  internal format used by the package when `x` is sequence data (a
+  `stslist`, a `data.frame`, a `tna_data`, or a `tsn` object). Otherwise
+  `NULL`.
+
+The model type, the scaling, and the `params` used are stored in the
+attributes `type`, `scaling`, and `params`.
 
 ## See also
 

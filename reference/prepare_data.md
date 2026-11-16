@@ -27,7 +27,7 @@ prepare_data(
 
 - data:
 
-  A `data.frame` or containing the action/event data.
+  A `data.frame` containing the action/event data.
 
 - actor:
 
@@ -117,9 +117,15 @@ A `tna_data` object, which is a `list` with the following elements:
 - `time_data`: Parsed timestamps in wide format when `time` is supplied,
   or `NULL` otherwise.
 
-- `statistics`: A `list` containing summary statistics: total sessions,
-  total actions, unique users, time range (if applicable), and top
-  sessions and user by activities.
+- `statistics`: A `list` containing summary statistics:
+  `total_sessions`, `total_actions`, `max_sequence_length`,
+  `unique_users`, `sessions_per_user` and `actions_per_session` (tibbles
+  with one row per user and per session), and `time_range` (when `time`
+  is supplied).
+
+The statistics are also reported as messages while the data is prepared.
+[`print.tna_data()`](https://sonsoles.me/tna/reference/print.tna_data.md)
+prints the sequence data, the metadata, or the long data.
 
 ## Details
 
@@ -162,7 +168,7 @@ results <- prepare_data(
 #> ℹ Total number of actions: 27533
 #> ℹ Maximum sequence length: 26 actions
 #> ℹ Time range: 2025-01-01 08:01:16.009382 to 2025-01-01 13:03:20.238288
-print(results$sequence_data)
+print(results)
 #> # A tibble: 2,000 × 26
 #>    Action_T1 Action_T2  Action_T3  Action_T4 Action_T5 Action_T6 Action_T7
 #>    <chr>     <chr>      <chr>      <chr>     <chr>     <chr>     <chr>    
@@ -182,7 +188,7 @@ print(results$sequence_data)
 #> #   Action_T15 <chr>, Action_T16 <chr>, Action_T17 <chr>, Action_T18 <chr>,
 #> #   Action_T19 <chr>, Action_T20 <chr>, Action_T21 <chr>, Action_T22 <chr>,
 #> #   Action_T23 <chr>, Action_T24 <chr>, Action_T25 <chr>, Action_T26 <chr>
-print(results$meta_data)
+print(results, data = "meta")
 #> # A tibble: 2,000 × 8
 #>    .session_id Actor Achiever Group Course Time                .session_nr
 #>    <chr>       <int> <chr>    <dbl> <chr>  <dttm>                    <int>
@@ -198,54 +204,6 @@ print(results$meta_data)
 #> 10 10 s1          10 High         1 A      2025-01-01 08:23:45           1
 #> # ℹ 1,990 more rows
 #> # ℹ 1 more variable: .session_label <chr>
-print(results$statistics)
-#> $total_sessions
-#> [1] 2000
-#> 
-#> $total_actions
-#> [1] 27533
-#> 
-#> $max_sequence_length
-#> [1] 26
-#> 
-#> $unique_users
-#> [1] 2000
-#> 
-#> $sessions_per_user
-#> # A tibble: 2,000 × 2
-#>    Actor n_sessions
-#>    <int>      <int>
-#>  1     1          1
-#>  2     2          1
-#>  3     3          1
-#>  4     4          1
-#>  5     5          1
-#>  6     6          1
-#>  7     7          1
-#>  8     8          1
-#>  9     9          1
-#> 10    10          1
-#> # ℹ 1,990 more rows
-#> 
-#> $actions_per_session
-#> # A tibble: 2,000 × 2
-#>    .session_id n_actions
-#>    <chr>           <int>
-#>  1 1010 s1            26
-#>  2 1015 s1            26
-#>  3 1030 s1            26
-#>  4 1092 s1            26
-#>  5 1106 s1            26
-#>  6 1107 s1            26
-#>  7 1153 s1            26
-#>  8 1184 s1            26
-#>  9 1209 s1            26
-#> 10 1267 s1            26
-#> # ℹ 1,990 more rows
-#> 
-#> $time_range
-#> [1] "2025-01-01 08:01:16 UTC" "2025-01-01 13:03:20 UTC"
-#> 
 
 # Custom order column
 data_ordered <- tibble::tibble(
@@ -266,49 +224,13 @@ results_ordered <- prepare_data(
 #> ℹ Number of unique users: 3
 #> ℹ Total number of actions: 8
 #> ℹ Maximum sequence length: 3 actions
-print(results_ordered$sequence_data)
+print(results_ordered)
 #> # A tibble: 3 × 3
 #>   T1    T2       T3      
 #>   <chr> <chr>    <chr>   
 #> 1 view  click    add_cart
 #> 2 view  checkout NA      
 #> 3 view  click    share   
-print(results_ordered$meta_data)
-#> # A tibble: 3 × 5
-#>   .session_id user  order .session_nr .session_label
-#>   <chr>       <chr> <dbl>       <int> <chr>         
-#> 1 1           A         1           1 A             
-#> 2 2           B         1           1 B             
-#> 3 3           C         1           1 C             
-print(results_ordered$statistics)
-#> $total_sessions
-#> [1] 3
-#> 
-#> $total_actions
-#> [1] 8
-#> 
-#> $max_sequence_length
-#> [1] 3
-#> 
-#> $unique_users
-#> [1] 3
-#> 
-#> $sessions_per_user
-#> # A tibble: 3 × 2
-#>   user  n_sessions
-#>   <chr>      <int>
-#> 1 A              1
-#> 2 B              1
-#> 3 C              1
-#> 
-#> $actions_per_session
-#> # A tibble: 3 × 2
-#>   .session_id n_actions
-#>   <chr>           <int>
-#> 1 1                   3
-#> 2 3                   3
-#> 3 2                   2
-#> 
 
 # No actor scenario leading to a single session
 data_single_session <- tibble::tibble(
@@ -325,32 +247,11 @@ results_single <- prepare_data(data_single_session, action = "action")
 #> ℹ Total number of sessions: 1
 #> ℹ Total number of actions: 8
 #> ℹ Maximum sequence length: 8 actions
-print(results_single$sequence_data)
+print(results_single)
 #> # A tibble: 1 × 8
 #>   T1    T2    T3       T4    T5       T6    T7    T8   
 #>   <chr> <chr> <chr>    <chr> <chr>    <chr> <chr> <chr>
 #> 1 view  click add_cart view  checkout view  click share
-print(results_single$meta_data)
-#> # A tibble: 1 × 3
-#>   .session_id .session_nr .session_label
-#>   <chr>             <int> <chr>         
-#> 1 1                     1 session       
-print(results_single$statistics)
-#> $total_sessions
-#> [1] 1
-#> 
-#> $total_actions
-#> [1] 8
-#> 
-#> $max_sequence_length
-#> [1] 8
-#> 
-#> $actions_per_session
-#> # A tibble: 1 × 2
-#>   .session_id n_actions
-#>   <chr>           <int>
-#> 1 1                   8
-#> 
 
 # Multiple actors
 data_multi_actor <- tibble::tibble(
@@ -371,7 +272,7 @@ results_multi_actor <- prepare_data(
 #> ℹ Number of unique users: 4
 #> ℹ Total number of actions: 8
 #> ℹ Maximum sequence length: 2 actions
-print(results_multi_actor$sequence_data)
+print(results_multi_actor)
 #> # A tibble: 4 × 2
 #>   T1       T2   
 #>   <chr>    <chr>
@@ -379,7 +280,7 @@ print(results_multi_actor$sequence_data)
 #> 2 checkout view 
 #> 3 add_cart view 
 #> 4 click    share
-print(results_multi_actor$meta_data)
+print(results_multi_actor, data = "meta")
 #> # A tibble: 4 × 6
 #>   .session_id user  session .actor .session_nr .session_label
 #>   <chr>       <chr>   <dbl> <chr>        <int> <chr>         
@@ -387,35 +288,4 @@ print(results_multi_actor$meta_data)
 #> 2 2           B           1 B-1              1 B-1           
 #> 3 3           A           2 A-2              1 A-2           
 #> 4 4           B           2 B-2              1 B-2           
-print(results_multi_actor$statistics)
-#> $total_sessions
-#> [1] 4
-#> 
-#> $total_actions
-#> [1] 8
-#> 
-#> $max_sequence_length
-#> [1] 2
-#> 
-#> $unique_users
-#> [1] 4
-#> 
-#> $sessions_per_user
-#> # A tibble: 4 × 2
-#>   .actor n_sessions
-#>   <chr>       <int>
-#> 1 A-1             1
-#> 2 B-1             1
-#> 3 A-2             1
-#> 4 B-2             1
-#> 
-#> $actions_per_session
-#> # A tibble: 4 × 2
-#>   .session_id n_actions
-#>   <chr>           <int>
-#> 1 1                   2
-#> 2 2                   2
-#> 3 3                   2
-#> 4 4                   2
-#> 
 ```

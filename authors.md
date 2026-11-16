@@ -45,12 +45,12 @@ Analytics and Knowledge Conference (LAK '25)*, 351–361.
 Saqr M, Tikka S, López-Pernas S (2025). “tna: Transition Network
 Analysis (TNA).”
 [doi:10.32614/cran.package.tna](https://doi.org/10.32614/cran.package.tna).
-R package version 1.0.0.
+R package version 1.5.8.
 
     @Misc{tna_cran,
       title = {{tna}: Transition Network Analysis ({TNA})},
       author = {Mohammed Saqr and Santtu Tikka and Sonsoles López-Pernas},
-      note = {{R} package version 1.0.0},
+      note = {{R} package version 1.5.8},
       year = {2025},
       doi = {10.32614/cran.package.tna},
       journal = {CRAN: Contributed Packages},

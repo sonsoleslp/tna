@@ -18,7 +18,7 @@ engagement_mmm
 ## Format
 
 A `tna_mmm` object containing three clusters over the states
-`"Engaged"`, `"Moderate"`, `"Disengaged"`.
+`"Engaged"`, `"Moderate"`, `"Disengaged"`, for 1000 sequences.
 
 ## Source
 

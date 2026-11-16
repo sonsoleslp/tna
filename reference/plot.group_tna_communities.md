@@ -21,7 +21,8 @@ plot(x, title, colors, ...)
 
 - colors:
 
-  A `character` vector of colors to use.
+  A `character` vector of colors for the communities. The same colors
+  are used in every group.
 
 - ...:
 

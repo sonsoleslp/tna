@@ -13,12 +13,12 @@ plot(x, title, which, ...)
 
 - x:
 
-  A `group_model` object.
+  A `group_tna` object.
 
 - title:
 
   A title for each plot. It can be a single string (the same one will be
-  used for all plots) or a list (one per group)
+  used for all plots) or a list (one per group).
 
 - which:
 

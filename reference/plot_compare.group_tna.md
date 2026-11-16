@@ -18,16 +18,13 @@ plot_compare(x, i = NULL, j = NULL, ...)
 - i:
 
   An `integer` index or the name of the principal cluster as a
-  `character` string. When `NULL`, defaults are chosen automatically
-  (see
-  [`cograph::plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.html)).
+  `character` string. When `i` and `j` are both `NULL` (the default),
+  every pair of clusters is compared.
 
 - j:
 
   An `integer` index or the name of the secondary cluster as a
-  `character` string. When `NULL`, defaults are chosen automatically
-  (see
-  [`cograph::plot_compare()`](https://sonsoles.me/cograph/reference/plot_compare.html)).
+  `character` string. See `i`.
 
 - ...:
 
@@ -36,8 +33,11 @@ plot_compare(x, i = NULL, j = NULL, ...)
 
 ## Value
 
-A `cograph_network` object displaying the difference network between the
-two clusters
+The difference networks are drawn, and returned invisibly: for one pair
+of clusters (two clusters, or `i` and `j` given), a `list` with the
+elements `weights` and `inits` (the differences, see
+[`plot_compare.tna()`](https://sonsoles.me/tna/reference/plot_compare.md));
+otherwise a named `list` with such a `list` for each pair of clusters.
 
 ## See also
 

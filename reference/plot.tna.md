@@ -1,9 +1,9 @@
 # Plot a Transition Network Analysis Model
 
 This function plots a transition network analysis (TNA) model using the
-`cograph` package. The nodes in the graph represent states, with node
-sizes corresponding to initial state probabilities. Edge labels
-represent the edge weights of the network. See
+`cograph` package. The nodes in the graph represent states, and the
+filled share of the ring (donut) around each node is its initial state
+probability. Edge labels represent the edge weights of the network. See
 [`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
 for details on how to further configure the plot.
 
@@ -66,7 +66,7 @@ plot(
 
 ## Value
 
-A `cograph_network` plot of the transition network.
+A `cograph_network` object of the plotted transition network, invisibly.
 
 ## See also
 

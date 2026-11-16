@@ -1,9 +1,9 @@
 # Calculate Summary of Network Metrics for a grouped Transition Network
 
-This function calculates a variety of network metrics for a `tna`
-object. It computes key metrics such as node and edge counts, network
-density, mean distance, strength measures, degree centrality, and
-reciprocity.
+This function calculates a variety of network metrics for each network
+of a `group_tna` object. It computes key metrics such as node and edge
+counts, network density, mean distance, strength measures, degree
+centrality, and reciprocity.
 
 ## Usage
 
@@ -20,43 +20,22 @@ summary(object, combined = TRUE, ...)
 
 - combined:
 
-  A logical indicating whether the summary results should be combined
-  into a single data frame for all clusters (defaults to `TRUE`)
+  A `logical` value indicating whether the summary results should be
+  combined into a single table for all clusters. The default is `TRUE`.
 
 - ...:
 
-  Ignored
+  Ignored.
 
 ## Value
 
-A `summary.group_tna` object which is a `list` of `list`s or a combined
-`data.frame` containing the following network metrics:
-
-- `node_count`: The total number of nodes.
-
-- `edge_count`: The total number of edges.
-
-- `network_Density`: The density of the network.
-
-- `mean_distance`: The mean shortest path length.
-
-- `mean_out_strength`: The mean out-strength of nodes.
-
-- `sd_out_strength`: The standard deviation of out-strength.
-
-- `mean_in_strength`: The mean in-strength of nodes.
-
-- `sd_in_strength`: The standard deviation of in-strength.
-
-- `mean_out_degree`: The mean out-degree of nodes.
-
-- `sd_out_degree`: The standard deviation of out-degree.
-
-- `centralization_out_degree`: The centralization of out-degree.
-
-- `centralization_in_degree`: The centralization of in-degree.
-
-- `reciprocity`: The reciprocity of the network.
+A `summary.group_tna` object. When `combined = TRUE`, a tibble with one
+row per metric (see
+[`summary.tna()`](https://sonsoles.me/tna/reference/summary.tna.md)),
+the column `metric`, and one column of values per cluster. When
+`combined = FALSE`, a named `list` with the
+[`summary.tna()`](https://sonsoles.me/tna/reference/summary.tna.md)
+table of each cluster.
 
 ## Details
 
@@ -118,9 +97,9 @@ summary(model)
 #>  3 Network Density             1   e+ 0 1   e+ 0
 #>  4 Mean Distance               4.23e- 2 5.60e- 2
 #>  5 Mean Out-Strength           1   e+ 0 1   e+ 0
-#>  6 SD Out-Strength             9.14e- 1 7.19e- 1
+#>  6 SD Out-Strength             7.85e-17 3.93e-17
 #>  7 Mean In-Strength            1   e+ 0 1   e+ 0
-#>  8 SD In-Strength              7.85e-17 3.93e-17
+#>  8 SD In-Strength              9.14e- 1 7.19e- 1
 #>  9 Mean Out-Degree             8.44e+ 0 8.33e+ 0
 #> 10 SD Out-Degree               1.13e+ 0 8.66e- 1
 #> 11 Centralization (Out-Degree) 4.69e- 2 6.25e- 2

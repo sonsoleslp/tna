@@ -37,17 +37,20 @@ frequency, [`ctna()`](https://sonsoles.me/tna/reference/build_model.md)
 attention.
 
     build_model(x, type = "relative", scaling = character(0L), cols = everything(),
-                params = list(), inits, begin_state, end_state)
+                concat = 1L, params = list(), begin_state, end_state, ...)
 
 | Parameter | Description | Default |
 |----|----|----|
-| `x` | `data.frame` (wide), `stslist`, `matrix`, or `tna_data` | — |
-| `type` | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"window"`, `"reverse"`, `"attention"` | `"relative"` |
+| `x` | `data.frame` (wide), `stslist`, `matrix`, `tna_data`, or `tsn` | — |
+| `type` | `"relative"`, `"frequency"`, `"co-occurrence"`, `"n-gram"`, `"gap"`, `"reverse"`, `"attention"` | `"relative"` |
 | `scaling` | `"minmax"`, `"max"`, `"rank"`, or empty vector | `character(0)` |
-| `params` | List: `n_gram`, `max_gap`, `window_size`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration` | [`list()`](https://rdrr.io/r/base/list.html) |
+| `params` | List: `n_gram`, `max_gap`, `windowed`, `window_size`, `window_type`, `weighted`, `direction`, `decay`, `lambda`, `time`, `duration` | [`list()`](https://rdrr.io/r/base/list.html) |
 
-**Returns:** A `tna` object with `$weights`, `$inits`, `$labels`,
-`$data`.
+**Returns:** A `tna` object: a list with the weight matrix (`weights`),
+the initial probabilities (`inits`), the state labels (`labels`), and
+the sequence data (`data`).
+[`print()`](https://rdrr.io/r/base/print.html) shows the weights and the
+initial probabilities.
 
 ``` r
 
@@ -110,9 +113,9 @@ summary(model)
     #>  3 Network Density             1   e+ 0
     #>  4 Mean Distance               4.72e- 2
     #>  5 Mean Out-Strength           1   e+ 0
-    #>  6 SD Out-Strength             8.07e- 1
+    #>  6 SD Out-Strength             6.80e-17
     #>  7 Mean In-Strength            1   e+ 0
-    #>  8 SD In-Strength              6.80e-17
+    #>  8 SD In-Strength              8.07e- 1
     #>  9 Mean Out-Degree             8.67e+ 0
     #> 10 SD Out-Degree               7.07e- 1
     #> 11 Centralization (Out-Degree) 1.56e- 2
@@ -128,7 +131,6 @@ summary(model)
 | `"co-occurrence"` | Co-occurrence within sequences                    |
 | `"n-gram"`        | Higher-order transitions                          |
 | `"gap"`           | Non-adjacent transitions, weighted by gap         |
-| `"window"`        | Transitions within sliding window                 |
 | `"reverse"`       | Reverse order (reply networks)                    |
 | `"attention"`     | Exponential decay-weighted downstream pairs       |
 
@@ -139,7 +141,8 @@ Build a TNA model for each group. Accepts manual group assignments,
 `group_tna` directly — no need to specify groups again.
 
     group_model(x, group, type = "relative", scaling = character(0L),
-                groupwise = FALSE, cols = everything(), params = list(), na.rm = TRUE, ...)
+                groupwise = FALSE, cols = everything(), params = list(),
+                concat = 1L, na.rm = TRUE, ...)
 
 ``` r
 
@@ -212,9 +215,9 @@ summary(mmm_model)
     #>  3 Network Density                   1        1   e+ 0      1     
     #>  4 Mean Distance                     0.128    6.44e- 2      0.0991
     #>  5 Mean Out-Strength                 1        1   e+ 0      1     
-    #>  6 SD Out-Strength                   0.212    2.93e- 1      0.104 
+    #>  6 SD Out-Strength                   0        7.85e-17      0     
     #>  7 Mean In-Strength                  1        1   e+ 0      1     
-    #>  8 SD In-Strength                    0        7.85e-17      0     
+    #>  8 SD In-Strength                    0.212    2.93e- 1      0.104 
     #>  9 Mean Out-Degree                   3        3   e+ 0      3     
     #> 10 SD Out-Degree                     0        0             0     
     #> 11 Centralization (Out-Degree)       0        0             0     
@@ -236,9 +239,10 @@ weight).
 ``` r
 
 set.seed(42)
+states <- c("A", "B", "C", "D")
 d <- data.frame(
-  from = sample(LETTERS[1:4], 100, replace = TRUE),
-  to = sample(LETTERS[1:4], 100, replace = TRUE),
+  from = sample(states, 100, replace = TRUE),
+  to = sample(states, 100, replace = TRUE),
   weight = rexp(100)
 )
 model_sna <- sna(d)
@@ -254,12 +258,12 @@ returning `cograph_network` or `ggplot2` objects.
 
 ### `plot()`
 
-Plot a TNA model as a transition network.
+Plot a TNA model as a transition network with `cograph`. Styling
+arguments are passed to
+[`cograph::splot()`](https://sonsoles.me/cograph/reference/splot.html)
+through `...`.
 
-    plot(x, labels, colors, pie, cut, show_pruned = TRUE, pruned_edge_color = "pink",
-         edge.color = NA, edge.labels = TRUE, edge.label.position = 0.65,
-         layout = "circle", layout_args = list(), scale_nodes, scaling_factor = 0.5,
-         mar = rep(5, 4), theme = "colorblind", ...)
+    plot(x, node_list, use_list_order = TRUE, scale_nodes, scaling_factor = 0.5, ...)
 
 ``` r
 
@@ -362,8 +366,8 @@ greater.
 
 ``` r
 
-model_a <- tna(group_regulation[1:1000, ])
-model_b <- tna(group_regulation[1001:2000, ])
+model_a <- tna(head(group_regulation, 1000))
+model_b <- tna(tail(group_regulation, 1000))
 plot_compare(model_a, model_b)
 ```
 
@@ -414,7 +418,12 @@ Convert long-format event logs into wide-format sequences.
 
     prepare_data(data, actor, time, action, order, time_threshold = 900,
                  custom_format = NULL, is_unix_time = FALSE,
-                 unix_time_unit = "seconds", unused_fn = dplyr::first)
+                 unix_time_unit = "seconds", unused_fn = dplyr::first,
+                 timezone = "UTC", session = NULL)
+
+The summary statistics (sessions, actions, users, time range) are
+reported as messages while the data is prepared;
+[`print()`](https://rdrr.io/r/base/print.html) shows the sequences.
 
 ``` r
 
@@ -422,55 +431,49 @@ results <- prepare_data(
   group_regulation_long,
   actor = "Actor", time = "Time", action = "Action"
 )
-print(results$statistics)
 ```
 
-    #> $total_sessions
-    #> [1] 2000
-    #> 
-    #> $total_actions
-    #> [1] 27533
-    #> 
-    #> $max_sequence_length
-    #> [1] 26
-    #> 
-    #> $unique_users
-    #> [1] 2000
-    #> 
-    #> $sessions_per_user
-    #> # A tibble: 2,000 × 2
-    #>    Actor n_sessions
-    #>    <int>      <int>
-    #>  1     1          1
-    #>  2     2          1
-    #>  3     3          1
-    #>  4     4          1
-    #>  5     5          1
-    #>  6     6          1
-    #>  7     7          1
-    #>  8     8          1
-    #>  9     9          1
-    #> 10    10          1
+    #> ── Preparing Data ──────────────────────────────────────────────────────────────
+
+    #> ℹ Input data dimensions: 27533 rows, 6 columns
+    #> ℹ First few time values: 2025-01-01 08:27:07.712698, 2025-01-01
+    #>   08:35:20.712698, and 2025-01-01 08:42:18.712698
+    #> ℹ Number of values to parse: 27533
+    #> ℹ Sample values: 2025-01-01 08:27:07.712698, 2025-01-01 08:35:20.712698, and
+    #>   2025-01-01 08:42:18.712698
+    #> ℹ Sample of parsed times: 2025-01-01 08:27:07.712698, 2025-01-01
+    #>   08:35:20.712698, and 2025-01-01 08:42:18.712698
+    #> ℹ Time threshold for new session: 900 seconds
+    #> ℹ Total number of sessions: 2000
+    #> ℹ Number of unique users: 2000
+    #> ℹ Total number of actions: 27533
+    #> ℹ Maximum sequence length: 26 actions
+    #> ℹ Time range: 2025-01-01 08:01:16.009382 to 2025-01-01 13:03:20.238288
+
+``` r
+
+print(results)
+```
+
+    #> # A tibble: 2,000 × 26
+    #>    Action_T1 Action_T2  Action_T3  Action_T4 Action_T5 Action_T6 Action_T7
+    #>    <chr>     <chr>      <chr>      <chr>     <chr>     <chr>     <chr>    
+    #>  1 cohesion  consensus  discuss    synthesis adapt     consensus plan     
+    #>  2 plan      emotion    consensus  discuss   synthesis adapt     emotion  
+    #>  3 consensus coregulate monitor    consensus plan      emotion   consensus
+    #>  4 monitor   emotion    plan       discuss   synthesis consensus discuss  
+    #>  5 discuss   emotion    cohesion   NA        NA        NA        NA       
+    #>  6 plan      plan       consensus  plan      plan      plan      plan     
+    #>  7 plan      discuss    coregulate NA        NA        NA        NA       
+    #>  8 plan      emotion    consensus  discuss   consensus plan      consensus
+    #>  9 discuss   consensus  NA         NA        NA        NA        NA       
+    #> 10 emotion   cohesion   discuss    synthesis NA        NA        NA       
     #> # ℹ 1,990 more rows
-    #> 
-    #> $actions_per_session
-    #> # A tibble: 2,000 × 2
-    #>    .session_id n_actions
-    #>    <chr>           <int>
-    #>  1 1010 s1            26
-    #>  2 1015 s1            26
-    #>  3 1030 s1            26
-    #>  4 1092 s1            26
-    #>  5 1106 s1            26
-    #>  6 1107 s1            26
-    #>  7 1153 s1            26
-    #>  8 1184 s1            26
-    #>  9 1209 s1            26
-    #> 10 1267 s1            26
-    #> # ℹ 1,990 more rows
-    #> 
-    #> $time_range
-    #> [1] "2025-01-01 08:01:16 UTC" "2025-01-01 13:03:20 UTC"
+    #> # ℹ 19 more variables: Action_T8 <chr>, Action_T9 <chr>, Action_T10 <chr>,
+    #> #   Action_T11 <chr>, Action_T12 <chr>, Action_T13 <chr>, Action_T14 <chr>,
+    #> #   Action_T15 <chr>, Action_T16 <chr>, Action_T17 <chr>, Action_T18 <chr>,
+    #> #   Action_T19 <chr>, Action_T20 <chr>, Action_T21 <chr>, Action_T22 <chr>,
+    #> #   Action_T23 <chr>, Action_T24 <chr>, Action_T25 <chr>, Action_T26 <chr>
 
 ### `import_data()`
 
@@ -480,13 +483,16 @@ Transform wide-format feature data into long-format sequence data.
 
 ### `import_onehot()`
 
-Import one-hot encoded data as co-occurrence network.
+Import one-hot encoded data (one column per event, 1 when it occurs) as
+wide sequence data for a co-occurrence network.
 
-    import_onehot(data, cols, window = 1L)
+    import_onehot(data, cols, actor, session, interval, window_size = 1L,
+                  window_type = "tumbling", aggregate = FALSE)
 
 ### `simulate()`
 
-Simulate sequence data from a TNA model (requires `type = "relative"`).
+Simulate sequence data from a TNA model (requires `type = "relative"` or
+`type = "frequency"`).
 
 ``` r
 
@@ -516,7 +522,7 @@ print(sim)
 Calculate centrality measures. Works on `tna`, `group_tna`, and
 `matrix`.
 
-    centralities(x, loops = FALSE, normalize = FALSE, measures)
+    centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
 | Measure | Description |
 |----|----|
@@ -527,6 +533,7 @@ Calculate centrality measures. Works on `tna`, `group_tna`, and
 | `BetweennessRSP` | Randomized shortest paths betweenness |
 | `Diffusion` | Diffusion centrality |
 | `Clustering` | Signed clustering coefficient |
+| `PageRank` | Weighted PageRank |
 
 ``` r
 
@@ -634,11 +641,12 @@ print(bn)
 
 Centrality stability via subset sampling.
 
-    estimate_cs(x, loops = FALSE, normalize = FALSE,
+    estimate_cs(x, loops = FALSE, normalize = FALSE, invert = TRUE,
                 measures = c("InStrength", "OutStrength", "Betweenness"),
                 iter = 1000, method = "pearson",
                 drop_prop = seq(0.1, 0.9, by = 0.1),
-                threshold = 0.7, certainty = 0.95, progressbar = FALSE)
+                threshold = 0.7, certainty = 0.95, progressbar = FALSE,
+                actor = NULL, edges = FALSE)
 
 ``` r
 
@@ -881,7 +889,7 @@ print(comp)
     #>  7 Correlations      Pearson              0.921 
     #>  8 Correlations      Spearman             0.915 
     #>  9 Correlations      Kendall              0.767 
-    #> 10 Correlations      Distance             0.838 
+    #> 10 Correlations      Distance             0.916 
     #> # ℹ 12 more rows
     #> 
     #> Network metrics
@@ -893,9 +901,9 @@ print(comp)
     #>  3 Network Density             1   e+ 0 1   e+ 0
     #>  4 Mean Distance               4.23e- 2 5.60e- 2
     #>  5 Mean Out-Strength           1   e+ 0 1   e+ 0
-    #>  6 SD Out-Strength             9.14e- 1 7.19e- 1
+    #>  6 SD Out-Strength             7.85e-17 3.93e-17
     #>  7 Mean In-Strength            1   e+ 0 1   e+ 0
-    #>  8 SD In-Strength              7.85e-17 3.93e-17
+    #>  8 SD In-Strength              9.14e- 1 7.19e- 1
     #>  9 Mean Out-Degree             8.44e+ 0 8.33e+ 0
     #> 10 SD Out-Degree               1.13e+ 0 8.66e- 1
     #> 11 Centralization (Out-Degree) 4.69e- 2 6.25e- 2
@@ -914,7 +922,8 @@ plot(comp)
 Compare subsequence patterns between groups. Pass `group_tna` directly.
 
     # For group_tna (groups already defined)
-    compare_sequences(x, sub, min_freq = 5L, correction = "bonferroni", ...)
+    compare_sequences(x, sub, min_freq = 5L, test = TRUE, iter = 1000L,
+                      adjust = "bonferroni", actor = NULL)
 
 ``` r
 
@@ -957,12 +966,12 @@ plot(comp_seq)
 Permutation tests for edge weight and centrality differences.
 
     permutation_test(x, y, adjust = "none", iter = 1000, paired = FALSE,
-                     level = 0.05, measures = character(0), ...)
+                     level = 0.05, measures = character(0), actor = NULL, ...)
 
 ``` r
 
-model_x <- tna(group_regulation[1:200, ])
-model_y <- tna(group_regulation[1001:1200, ])
+model_x <- tna(head(group_regulation, 200))
+model_y <- tna(tail(group_regulation, 200))
 perm <- permutation_test(model_x, model_y, iter = 100)
 print(perm)
 ```
@@ -970,16 +979,16 @@ print(perm)
     #> # A tibble: 81 × 4
     #>    edge_name           diff_true effect_size p_value
     #>    <chr>                   <dbl>       <dbl>   <dbl>
-    #>  1 adapt -> adapt       0            NaN     1      
-    #>  2 cohesion -> adapt    0.00541        0.949 0.802  
-    #>  3 consensus -> adapt  -0.000679      -0.175 0.752  
-    #>  4 coregulate -> adapt  0.00769        0.568 0.624  
-    #>  5 discuss -> adapt    -0.130         -7.11  0.00990
-    #>  6 emotion -> adapt     0.0101         1.59  0.257  
-    #>  7 monitor -> adapt    -0.00480       -0.367 0.970  
-    #>  8 plan -> adapt        0.00339        1.56  0.0297 
-    #>  9 synthesis -> adapt  -0.159         -2.08  0.0594 
-    #> 10 adapt -> cohesion   -0.0907        -1.23  0.238  
+    #>  1 adapt -> adapt        0            NA     1      
+    #>  2 cohesion -> adapt     0.00541       0.923 0.960  
+    #>  3 consensus -> adapt    0.00106       0.286 0.970  
+    #>  4 coregulate -> adapt   0.0111        0.765 0.436  
+    #>  5 discuss -> adapt     -0.116        -5.62  0.00990
+    #>  6 emotion -> adapt      0.00275       0.331 0.931  
+    #>  7 monitor -> adapt     -0.0102       -0.797 0.604  
+    #>  8 plan -> adapt         0.00180       0.634 0.426  
+    #>  9 synthesis -> adapt   -0.0863       -1.18  0.218  
+    #> 10 adapt -> cohesion    -0.0361       -0.367 0.792  
     #> # ℹ 71 more rows
 
 ``` r
@@ -1005,7 +1014,8 @@ permg <- permutation_test(gmodel, iter = 100)
 Bootstrap transition networks for confidence intervals and significance.
 
     bootstrap(x, iter = 1000, level = 0.05, method = "stability",
-              threshold, consistency_range = c(0.75, 1.25))
+              threshold, consistency_range = c(0.75, 1.25), seed = NULL,
+              actor = NULL)
 
 ``` r
 
@@ -1074,7 +1084,7 @@ Cluster sequences using string distance-based dissimilarity.
 
 ``` r
 
-result <- cluster_sequences(group_regulation[1:200, ], k = 3, dissimilarity = "osa")
+result <- cluster_sequences(head(group_regulation, 200), k = 3, dissimilarity = "osa")
 print(result)
 ```
 
@@ -1145,9 +1155,9 @@ summary(model)
     #>  3 Network Density             1   e+ 0
     #>  4 Mean Distance               4.72e- 2
     #>  5 Mean Out-Strength           1   e+ 0
-    #>  6 SD Out-Strength             8.07e- 1
+    #>  6 SD Out-Strength             6.80e-17
     #>  7 Mean In-Strength            1   e+ 0
-    #>  8 SD In-Strength              6.80e-17
+    #>  8 SD In-Strength              8.07e- 1
     #>  9 Mean Out-Degree             8.67e+ 0
     #> 10 SD Out-Degree               7.07e- 1
     #> 11 Centralization (Out-Degree) 1.56e- 2
@@ -1167,9 +1177,9 @@ summary(gmodel)
     #>  3 Network Density             1   e+ 0 1   e+ 0
     #>  4 Mean Distance               4.23e- 2 5.60e- 2
     #>  5 Mean Out-Strength           1   e+ 0 1   e+ 0
-    #>  6 SD Out-Strength             9.14e- 1 7.19e- 1
+    #>  6 SD Out-Strength             7.85e-17 3.93e-17
     #>  7 Mean In-Strength            1   e+ 0 1   e+ 0
-    #>  8 SD In-Strength              7.85e-17 3.93e-17
+    #>  8 SD In-Strength              9.14e- 1 7.19e- 1
     #>  9 Mean Out-Degree             8.44e+ 0 8.33e+ 0
     #> 10 SD Out-Degree               1.13e+ 0 8.66e- 1
     #> 11 Centralization (Out-Degree) 4.69e- 2 6.25e- 2
@@ -1184,9 +1194,9 @@ g <- as.igraph(model)
 print(g)
 ```
 
-    #> IGRAPH 286961d DNW- 9 78 -- 
+    #> IGRAPH 3b22c87 DNW- 9 78 -- 
     #> + attr: name (v/c), weight (e/n)
-    #> + edges from 286961d (vertex names):
+    #> + edges from 3b22c87 (vertex names):
     #>  [1] adapt     ->cohesion   adapt     ->consensus  adapt     ->coregulate
     #>  [4] adapt     ->discuss    adapt     ->emotion    adapt     ->monitor   
     #>  [7] adapt     ->plan       cohesion  ->adapt      cohesion  ->cohesion  
@@ -1197,11 +1207,85 @@ print(g)
     #> [22] consensus ->emotion    consensus ->monitor    consensus ->plan      
     #> + ... omitted several edges
 
+### Further validation
+
+[`markov_order()`](https://sonsoles.me/tna/reference/markov_order.md),
+[`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
+`estimate_cs(edges = TRUE)`, and the `actor` argument for nested data
+are covered in the article “Validating a transition network”.
+
 ------------------------------------------------------------------------
 
-**tna** v1.1.0 \| MIT License \| Mohammed Saqr, Santtu Tikka, Sonsoles
+**tna** \| MIT License \| Mohammed Saqr, Santtu Tikka, Sonsoles
 Lopez-Pernas
 
 Reference: Saqr M., Lopez-Pernas S., et al. (2025). Transition Network
 Analysis. *Proc. LAK ’25*, 351-361.
 [doi:10.1145/3706468.3706513](https://doi.org/10.1145/3706468.3706513)
+
+### More tutorials
+
+**Package articles** · [sonsoles.me/tna](https://sonsoles.me/tna/)
+
+- [Getting started with tna](https://sonsoles.me/tna/articles/tna.html)
+  — build, plot, and summarize a transition network
+- [Preparing data](https://sonsoles.me/tna/articles/prepare_data.html) —
+  turn event logs into sequences with
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+- [A showcase of the main
+  functions](https://sonsoles.me/tna/articles/complete_tutorial.html) —
+  models, centralities, communities, and validation
+- [Grouped sequence
+  data](https://sonsoles.me/tna/articles/grouped_sequences.html) — build
+  and compare networks of groups
+- [Cliques and
+  communities](https://sonsoles.me/tna/articles/communities_and_cliques.html)
+  — find the densely connected states
+- [Frequency-based TNA](https://sonsoles.me/tna/articles/ftna.html) —
+  model transition counts instead of probabilities
+- [Attention TNA](https://sonsoles.me/tna/articles/atna.html) —
+  accumulate transitions across temporal distances
+- [Validating a transition
+  network](https://sonsoles.me/tna/articles/model-validation.html) —
+  Markov order, bootstrap, case-dropping, reliability, and permutation
+  tests
+- [Function reference
+  sheet](https://sonsoles.me/tna/articles/new-docs.html) — every
+  function with its arguments and an example
+
+**Tutorials** · [sonsoles.me](https://sonsoles.me/)
+
+- [A comprehensive TNA
+  tutorial](https://sonsoles.me/posts/tna-tutorial/) — an updated
+  walkthrough of transition network analysis
+- [Data preparation](https://sonsoles.me/posts/tna-data/) — from raw
+  event data to sequences
+- [Comparing models](https://sonsoles.me/posts/tna-compare/) — network
+  comparison of TNA models
+- [Clustering](https://sonsoles.me/posts/tna-clustering/) — discover and
+  analyze clusters of sequences
+- [Group analysis](https://sonsoles.me/posts/tna-group/) — permutation
+  tests, bootstrapping, and clusters
+
+**Book chapters** · *Advanced Learning Analytics Methods*
+
+- [Mapping relational dynamics with
+  TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) — a
+  primer and tutorial
+- [Frequency transition network
+  analysis](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
+  — a primer and tutorial on FTNA
+- [Mining patterns and clusters with
+  TNA](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
+  — a heterogeneity approach
+
+**Dynalytics** · [dynasite.org](https://dynasite.org/)
+
+- [Package sites](https://pak.dynasite.org/) — documentation of the R
+  packages of the Dynalytics framework
+- [Tools](https://dynasite.org/#/tools) — interactive web apps, jamovi,
+  and Python
+- [CarmNotes](https://dynasite.org/carmnotes) — single-file notebooks
+  that run the analyses in the browser, even offline
+- [Selected articles](https://dynasite.org/#/papers) — publications on
+  the framework and its methods

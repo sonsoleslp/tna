@@ -12,8 +12,6 @@ First, we load the packages we will use for this example.
 ``` r
 
 library("tna")
-library("tibble")
-library("dplyr")
 library("gt")
 ```
 
@@ -70,8 +68,11 @@ plot_compare(achievers)
 
 ### Permutation test
 
-A permutation test can be used to assess whether the observed
-differences between the two groups are statistically significant.
+The difference network shows how large the differences are, but not
+whether they exceed what the random assignment of students to the two
+groups would produce. A permutation test answers that question: it
+reassigns the sequences to the groups many times and keeps only the
+edges whose observed difference is unlikely under these reassignments.
 
 ``` r
 
@@ -92,7 +93,7 @@ least 5 times, and apply FDR correction for multiple comparisons.
 subsequence_comparison  <- compare_sequences(achievers,
                                                   sub = 3:5,
                                                   min_freq = 5,
-                                                  correction = "fdr")
+                                                  adjust = "fdr")
 plot(subsequence_comparison, cells = TRUE)
 ```
 
@@ -102,42 +103,61 @@ plot(subsequence_comparison, cells = TRUE)
 
 When no pre-existing grouping variable is available, we can cluster the
 sequences based on their pairwise dissimilarity. The
-[`cluster_sequences()`](https://sonsoles.me/tna/reference/cluster_data.md).
+[`cluster_sequences()`](https://sonsoles.me/tna/reference/cluster_data.md)
+function computes the dissimilarity between every pair of sequences (the
+Hamming distance by default) and partitions the sequences into `k`
+clusters (with PAM by default).
 
 ``` r
 
 clustering_results <- cluster_sequences(prepared, k = 3)
 ```
 
-To choose an appropriate number of clusters, we can plot the silhouette
-score for different values of *k*. Higher silhouette values indicate
-better-separated clusters.
+To choose an appropriate number of clusters, we can compare the
+silhouette score for different values of *k*, which the printed
+clustering reports. Higher silhouette values indicate better-separated
+clusters.
 
 ``` r
 
-plot(
-  2:8,
-  sapply(2:8, \(k) cluster_sequences(prepared, k = k)$silhouette),
-  type = "b",
-  xlab = "Number of clusters (k)",
-  ylab = "Silhouette",
-  xaxt = "n"
-)
+lapply(2:4, \(k) cluster_sequences(prepared, k = k))
+#> [[1]]
+#> Clustering method: pam 
+#> Number of clusters: 2 
+#> Silhouette score: 0.1838904 
+#> Cluster sizes:
+#>    1    2 
+#>  982 1018 
+#> 
+#> [[2]]
+#> Clustering method: pam 
+#> Number of clusters: 3 
+#> Silhouette score: 0.1850873 
+#> Cluster sizes:
+#>   1   2   3 
+#> 893 494 613 
+#> 
+#> [[3]]
+#> Clustering method: pam 
+#> Number of clusters: 4 
+#> Silhouette score: 0.1327345 
+#> Cluster sizes:
+#>   1   2   3   4 
+#> 707 506 379 408
 ```
 
-![](grouped_sequences_files/figure-html/unnamed-chunk-9-1.png)
-
-Once we have chosen *k*, we build the grouped TNA model using the
-cluster assignments.
+Once we have chosen *k*, we build the grouped TNA model directly from
+the clustering result, which carries the sequences and their cluster
+assignments.
 
 ``` r
 
-tna_model_clus <- group_tna(prepared, group = clustering_results$assignments)
+tna_model_clus <- group_tna(clustering_results)
 ```
 
 ``` r
 
-layout(matrix(1:4, byrow = T, ncol = 2))
+layout(matrix(1:4, byrow = TRUE, ncol = 2))
 plot(tna_model_clus)
 ```
 
@@ -162,114 +182,136 @@ summary(tna_model_clus) |>
 | Network Density             | 1.00    | 1.00    | 1.00    |
 | Mean Distance               | 0.04    | 0.05    | 0.05    |
 | Mean Out-Strength           | 1.00    | 1.00    | 1.00    |
-| SD Out-Strength             | 0.76    | 0.84    | 0.81    |
+| SD Out-Strength             | 0.00    | 0.00    | 0.00    |
 | Mean In-Strength            | 1.00    | 1.00    | 1.00    |
-| SD In-Strength              | 0.00    | 0.00    | 0.00    |
+| SD In-Strength              | 0.76    | 0.84    | 0.81    |
 | Mean Out-Degree             | 8.67    | 8.56    | 8.56    |
 | SD Out-Degree               | 0.71    | 0.73    | 0.73    |
 | Centralization (Out-Degree) | 0.02    | 0.03    | 0.03    |
 | Centralization (In-Degree)  | 0.02    | 0.03    | 0.03    |
 | Reciprocity                 | 0.99    | 0.97    | 0.97    |
 
-Initial probabilities show which states are most common at the start of
-the sequences in each cluster.
+Printing the grouped model shows, for each cluster, the full transition
+probability matrix and the initial probabilities, which show which
+states are most common at the start of the sequences in each cluster.
 
 ``` r
 
-mat <- sapply(
-  tna_model_clus,
-  \(x) setNames(x$inits, x$labels)
-)
-
-df <- data.frame(label = rownames(mat), mat, row.names = NULL)
-
-gt(df, rowname_col = "label") |> fmt_percent(columns = -label)
+print(tna_model_clus, digits = 2)
+#> Group 1 :
+#> State Labels : 
+#> 
+#>    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis 
+#> 
+#> Transition Probability Matrix :
+#> 
+#>              adapt cohesion consensus coregulate discuss emotion monitor   plan
+#> adapt      0.00000   0.3333     0.431      0.016   0.041   0.122   0.049 0.0081
+#> cohesion   0.00524   0.0209     0.476      0.113   0.089   0.128   0.034 0.1283
+#> consensus  0.00855   0.0093     0.082      0.205   0.221   0.076   0.042 0.3450
+#> coregulate 0.01305   0.0470     0.115      0.021   0.311   0.198   0.076 0.1906
+#> discuss    0.07395   0.0525     0.319      0.077   0.197   0.117   0.018 0.0086
+#> emotion    0.00306   0.3323     0.345      0.031   0.100   0.072   0.032 0.0827
+#> monitor    0.01401   0.0672     0.151      0.059   0.387   0.104   0.028 0.1849
+#> plan       0.00091   0.0183     0.286      0.012   0.073   0.166   0.091 0.3498
+#> synthesis  0.28000   0.0333     0.447      0.060   0.053   0.080   0.020 0.0267
+#>            synthesis
+#> adapt         0.0000
+#> cohesion      0.0052
+#> consensus     0.0109
+#> coregulate    0.0287
+#> discuss       0.1361
+#> emotion       0.0031
+#> monitor       0.0056
+#> plan          0.0027
+#> synthesis     0.0000
+#> 
+#> Initial Probabilities : 
+#> 
+#>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
+#>      0.010      0.060      0.170      0.015      0.177      0.157      0.151 
+#>       plan  synthesis 
+#>      0.236      0.024 
+#> 
+#> Group 2 :
+#> State Labels : 
+#> 
+#>    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis 
+#> 
+#> Transition Probability Matrix :
+#> 
+#>             adapt cohesion consensus coregulate discuss emotion monitor   plan
+#> adapt      0.0000    0.241     0.524      0.028   0.066   0.104   0.033 0.0047
+#> cohesion   0.0015    0.025     0.522      0.114   0.047   0.115   0.034 0.1391
+#> consensus  0.0040    0.014     0.092      0.178   0.187   0.071   0.048 0.3989
+#> coregulate 0.0131    0.033     0.149      0.024   0.260   0.165   0.100 0.2357
+#> discuss    0.0719    0.040     0.328      0.086   0.178   0.107   0.029 0.0130
+#> emotion    0.0000    0.320     0.326      0.034   0.101   0.077   0.041 0.0988
+#> monitor    0.0139    0.054     0.170      0.059   0.385   0.094   0.017 0.1854
+#> plan       0.0019    0.026     0.302      0.017   0.070   0.148   0.070 0.3627
+#> synthesis  0.2273    0.038     0.469      0.042   0.063   0.063   0.014 0.0839
+#>            synthesis
+#> adapt         0.0000
+#> cohesion      0.0015
+#> consensus     0.0069
+#> coregulate    0.0202
+#> discuss       0.1481
+#> emotion       0.0026
+#> monitor       0.0225
+#> plan          0.0019
+#> synthesis     0.0000
+#> 
+#> Initial Probabilities : 
+#> 
+#>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
+#>      0.010      0.067      0.184      0.028      0.194      0.140      0.128 
+#>       plan  synthesis 
+#>      0.229      0.020 
+#> 
+#> Group 3 :
+#> State Labels : 
+#> 
+#>    adapt, cohesion, consensus, coregulate, discuss, emotion, monitor, plan, synthesis 
+#> 
+#> Transition Probability Matrix :
+#> 
+#>             adapt cohesion consensus coregulate discuss emotion monitor  plan
+#> adapt      0.0000    0.270      0.45      0.017   0.063   0.138  0.0230 0.034
+#> cohesion   0.0031    0.033      0.49      0.129   0.055   0.108  0.0314 0.151
+#> consensus  0.0035    0.019      0.07      0.189   0.171   0.073  0.0478 0.421
+#> coregulate 0.0214    0.033      0.13      0.024   0.270   0.166  0.0763 0.268
+#> discuss    0.0691    0.053      0.31      0.088   0.213   0.098  0.0171 0.012
+#> emotion    0.0049    0.327      0.30      0.036   0.105   0.079  0.0333 0.112
+#> monitor    0.0060    0.050      0.15      0.056   0.357   0.078  0.0120 0.273
+#> plan       0.0000    0.027      0.28      0.019   0.064   0.137  0.0740 0.397
+#> synthesis  0.2130    0.028      0.48      0.037   0.069   0.074  0.0046 0.097
+#>            synthesis
+#> adapt         0.0000
+#> cohesion      0.0047
+#> consensus     0.0065
+#> coregulate    0.0120
+#> discuss       0.1360
+#> emotion       0.0029
+#> monitor       0.0160
+#> plan          0.0012
+#> synthesis     0.0000
+#> 
+#> Initial Probabilities : 
+#> 
+#>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
+#>      0.015      0.055      0.302      0.018      0.158      0.153      0.147 
+#>       plan  synthesis 
+#>      0.139      0.013
 ```
-
-|            | Group.1 | Group.2 | Group.3 |
-|------------|---------|---------|---------|
-| adapt      | 1.01%   | 1.01%   | 1.47%   |
-| cohesion   | 6.05%   | 6.68%   | 5.55%   |
-| consensus  | 17.02%  | 18.42%  | 30.18%  |
-| coregulate | 1.46%   | 2.83%   | 1.79%   |
-| discuss    | 17.69%  | 19.43%  | 15.82%  |
-| emotion    | 15.68%  | 13.97%  | 15.33%  |
-| monitor    | 15.12%  | 12.75%  | 14.68%  |
-| plan       | 23.63%  | 22.87%  | 13.87%  |
-| synthesis  | 2.35%   | 2.02%   | 1.31%   |
-
-The full transition probability matrices can also be inspected for each
-cluster.
-
-``` r
-
-transitions <- lapply(
-  tna_model_clus,
-  function(x) {
-    x$weights |>
-      data.frame() |>
-      rownames_to_column("From\\To") |>
-      gt() |>
-      fmt_percent()
-  }
-)
-
-transitions[[1]] |> tab_header(title = names(tna_model_clus)[1])
-```
-
-| Group 1 |  |  |  |  |  |  |  |  |  |
-|----|----|----|----|----|----|----|----|----|----|
-| From\To | adapt | cohesion | consensus | coregulate | discuss | emotion | monitor | plan | synthesis |
-| adapt | 0.00% | 33.33% | 43.09% | 1.63% | 4.07% | 12.20% | 4.88% | 0.81% | 0.00% |
-| cohesion | 0.52% | 2.09% | 47.64% | 11.26% | 8.90% | 12.83% | 3.40% | 12.83% | 0.52% |
-| consensus | 0.85% | 0.93% | 8.24% | 20.51% | 22.07% | 7.61% | 4.20% | 34.50% | 1.09% |
-| coregulate | 1.31% | 4.70% | 11.49% | 2.09% | 31.07% | 19.84% | 7.57% | 19.06% | 2.87% |
-| discuss | 7.40% | 5.25% | 31.94% | 7.72% | 19.72% | 11.68% | 1.82% | 0.86% | 13.61% |
-| emotion | 0.31% | 33.23% | 34.46% | 3.06% | 9.95% | 7.20% | 3.22% | 8.27% | 0.31% |
-| monitor | 1.40% | 6.72% | 15.13% | 5.88% | 38.66% | 10.36% | 2.80% | 18.49% | 0.56% |
-| plan | 0.09% | 1.83% | 28.58% | 1.19% | 7.31% | 16.62% | 9.13% | 34.98% | 0.27% |
-| synthesis | 28.00% | 3.33% | 44.67% | 6.00% | 5.33% | 8.00% | 2.00% | 2.67% | 0.00% |
-
-``` r
-
-transitions[[2]] |> tab_header(title = names(tna_model_clus)[2])
-```
-
-| Group 2 |  |  |  |  |  |  |  |  |  |
-|----|----|----|----|----|----|----|----|----|----|
-| From\To | adapt | cohesion | consensus | coregulate | discuss | emotion | monitor | plan | synthesis |
-| adapt | 0.00% | 24.06% | 52.36% | 2.83% | 6.60% | 10.38% | 3.30% | 0.47% | 0.00% |
-| cohesion | 0.15% | 2.51% | 52.22% | 11.39% | 4.73% | 11.54% | 3.40% | 13.91% | 0.15% |
-| consensus | 0.40% | 1.42% | 9.16% | 17.85% | 18.72% | 7.08% | 4.78% | 39.89% | 0.69% |
-| coregulate | 1.31% | 3.33% | 14.88% | 2.38% | 25.95% | 16.55% | 10.00% | 23.57% | 2.02% |
-| discuss | 7.19% | 4.03% | 32.78% | 8.55% | 17.78% | 10.66% | 2.91% | 1.30% | 14.81% |
-| emotion | 0.00% | 31.96% | 32.56% | 3.44% | 10.05% | 7.73% | 4.12% | 9.88% | 0.26% |
-| monitor | 1.39% | 5.37% | 16.98% | 5.89% | 38.47% | 9.36% | 1.73% | 18.54% | 2.25% |
-| plan | 0.19% | 2.63% | 30.17% | 1.74% | 6.95% | 14.83% | 7.03% | 36.27% | 0.19% |
-| synthesis | 22.73% | 3.85% | 46.85% | 4.20% | 6.29% | 6.29% | 1.40% | 8.39% | 0.00% |
-
-``` r
-
-transitions[[3]] |> tab_header(title = names(tna_model_clus)[3])
-```
-
-| Group 3 |  |  |  |  |  |  |  |  |  |
-|----|----|----|----|----|----|----|----|----|----|
-| From\To | adapt | cohesion | consensus | coregulate | discuss | emotion | monitor | plan | synthesis |
-| adapt | 0.00% | 27.01% | 45.40% | 1.72% | 6.32% | 13.79% | 2.30% | 3.45% | 0.00% |
-| cohesion | 0.31% | 3.30% | 48.51% | 12.87% | 5.49% | 10.83% | 3.14% | 15.07% | 0.47% |
-| consensus | 0.35% | 1.87% | 7.04% | 18.90% | 17.07% | 7.30% | 4.78% | 42.05% | 0.65% |
-| coregulate | 2.14% | 3.35% | 12.85% | 2.41% | 27.04% | 16.60% | 7.63% | 26.77% | 1.20% |
-| discuss | 6.91% | 5.27% | 31.48% | 8.76% | 21.30% | 9.76% | 1.71% | 1.21% | 13.60% |
-| emotion | 0.49% | 32.75% | 29.90% | 3.63% | 10.49% | 7.94% | 3.33% | 11.18% | 0.29% |
-| monitor | 0.60% | 5.01% | 15.23% | 5.61% | 35.67% | 7.82% | 1.20% | 27.25% | 1.60% |
-| plan | 0.00% | 2.71% | 28.06% | 1.94% | 6.39% | 13.67% | 7.40% | 39.71% | 0.12% |
-| synthesis | 21.30% | 2.78% | 47.69% | 3.70% | 6.94% | 7.41% | 0.46% | 9.72% | 0.00% |
 
 ### Pruning with bootstrap
 
 Just like ordinary TNA models, we can retain only the statistically
-robust edges.
+robust edges. The bootstrap resamples the sequences of each cluster and
+keeps the edges whose weight stays within the consistency range (by
+default 75% to 125% of the observed weight) in at least 95% of the
+resamples, so the plotted networks show only the transitions that do not
+depend on a few sequences.
 
 ``` r
 
@@ -278,11 +320,11 @@ cluster_boot <- bootstrap(tna_model_clus)
 
 ``` r
 
-layout(matrix(1:4, byrow = T, ncol = 2))
+layout(matrix(1:4, byrow = TRUE, ncol = 2))
 plot(cluster_boot)
 ```
 
-![](grouped_sequences_files/figure-html/unnamed-chunk-16-1.png)
+![](grouped_sequences_files/figure-html/unnamed-chunk-15-1.png)
 
 ### Centrality measures
 
@@ -307,7 +349,7 @@ plot(
 )
 ```
 
-![](grouped_sequences_files/figure-html/unnamed-chunk-17-1.png)
+![](grouped_sequences_files/figure-html/unnamed-chunk-16-1.png)
 
 ### Subsequence comparison across clusters
 
@@ -316,8 +358,75 @@ just as we did for the pre-existing groups above.
 
 ``` r
 
-subsequence_comparison  <- compare_sequences(tna_model_clus, sub = 3:5, min_freq = 5, correction = "fdr")
+subsequence_comparison  <- compare_sequences(tna_model_clus, sub = 3:5, min_freq = 5, adjust = "fdr")
 plot(subsequence_comparison, cells = TRUE)
 ```
 
-![](grouped_sequences_files/figure-html/unnamed-chunk-18-1.png)
+![](grouped_sequences_files/figure-html/unnamed-chunk-17-1.png)
+
+## More tutorials
+
+**Package articles** · [sonsoles.me/tna](https://sonsoles.me/tna/)
+
+- [Getting started with tna](https://sonsoles.me/tna/articles/tna.html)
+  — build, plot, and summarize a transition network
+- [Preparing data](https://sonsoles.me/tna/articles/prepare_data.html) —
+  turn event logs into sequences with
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+- [A showcase of the main
+  functions](https://sonsoles.me/tna/articles/complete_tutorial.html) —
+  models, centralities, communities, and validation
+- [Grouped sequence
+  data](https://sonsoles.me/tna/articles/grouped_sequences.html) — build
+  and compare networks of groups
+- [Cliques and
+  communities](https://sonsoles.me/tna/articles/communities_and_cliques.html)
+  — find the densely connected states
+- [Frequency-based TNA](https://sonsoles.me/tna/articles/ftna.html) —
+  model transition counts instead of probabilities
+- [Attention TNA](https://sonsoles.me/tna/articles/atna.html) —
+  accumulate transitions across temporal distances
+- [Validating a transition
+  network](https://sonsoles.me/tna/articles/model-validation.html) —
+  Markov order, bootstrap, case-dropping, reliability, and permutation
+  tests
+- [Function reference
+  sheet](https://sonsoles.me/tna/articles/new-docs.html) — every
+  function with its arguments and an example
+
+**Tutorials** · [sonsoles.me](https://sonsoles.me/)
+
+- [A comprehensive TNA
+  tutorial](https://sonsoles.me/posts/tna-tutorial/) — an updated
+  walkthrough of transition network analysis
+- [Data preparation](https://sonsoles.me/posts/tna-data/) — from raw
+  event data to sequences
+- [Comparing models](https://sonsoles.me/posts/tna-compare/) — network
+  comparison of TNA models
+- [Clustering](https://sonsoles.me/posts/tna-clustering/) — discover and
+  analyze clusters of sequences
+- [Group analysis](https://sonsoles.me/posts/tna-group/) — permutation
+  tests, bootstrapping, and clusters
+
+**Book chapters** · *Advanced Learning Analytics Methods*
+
+- [Mapping relational dynamics with
+  TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) — a
+  primer and tutorial
+- [Frequency transition network
+  analysis](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
+  — a primer and tutorial on FTNA
+- [Mining patterns and clusters with
+  TNA](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
+  — a heterogeneity approach
+
+**Dynalytics** · [dynasite.org](https://dynasite.org/)
+
+- [Package sites](https://pak.dynasite.org/) — documentation of the R
+  packages of the Dynalytics framework
+- [Tools](https://dynasite.org/#/tools) — interactive web apps, jamovi,
+  and Python
+- [CarmNotes](https://dynasite.org/carmnotes) — single-file notebooks
+  that run the analyses in the browser, even offline
+- [Selected articles](https://dynasite.org/#/papers) — publications on
+  the framework and its methods

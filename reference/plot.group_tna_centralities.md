@@ -41,8 +41,9 @@ plot(
 
 - colors:
 
-  The colors for each node (default is the model colors if the `tna`
-  model object is passed, otherwise `"black"`).
+  The colors for each state. The default is the state colors of the
+  model that the centralities were computed from, or `"black"` when they
+  are not available.
 
 - palette:
 

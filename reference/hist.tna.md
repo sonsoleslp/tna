@@ -48,7 +48,7 @@ hist(x, breaks, col = "lightblue", main, xlab, border = "white", ...)
 
 - xlab:
 
-  A `character` string defining the vertical axis label.
+  A `character` string defining the horizontal axis label.
 
 - border:
 

@@ -46,14 +46,19 @@ cliques(x, size = 2, threshold = 0, sum_weights = FALSE, ...)
 
 ## Value
 
-A `tna_cliques` object which is a `list` of two elements:
+A `tna_cliques` object which is a `list` of three elements, each a
+`list` with one element per clique found:
 
-- `weights` is a `matrix` of the edge weights in the clique.
+- `weights`: The `matrix` of the edge weights among the states of the
+  clique.
 
-- `inits` is a `numeric` vector of initial weights for the clique.
+- `inits`: The `numeric` vector of initial probabilities of the states
+  of the clique.
+
+- `indices`: The `integer` indices of the states of the clique.
 
 If `x` is a `group_tna` object, a `group_tna_cliques` object is returned
-instead, which is a `list` or `tna_cliques` objects.
+instead, which is a `list` of `tna_cliques` objects.
 
 ## See also
 
@@ -68,7 +73,7 @@ Clique-related functions
 ``` r
 model <- tna(group_regulation)
 
-# Find  2-cliques (dyads)
+# Find 2-cliques (dyads)
 cliq <- cliques(model, size = 2)
 
 model <- group_tna(engagement_mmm)

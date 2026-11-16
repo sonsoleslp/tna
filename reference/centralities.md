@@ -33,7 +33,8 @@ centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 - normalize:
 
   A `logical` value indicating whether the centralities should be
-  normalized. The default is `FALSE`.
+  normalized. The default is `FALSE`. `Diffusion` is always normalized
+  (see 'Details').
 
 - invert:
 
@@ -48,8 +49,11 @@ centralities(x, loops = FALSE, normalize = FALSE, invert = TRUE, measures)
 
 ## Value
 
-A `tna_centralities` object which is a tibble (`tbl_df`). containing
-centrality measures for each state.
+A `tna_centralities` object, which is a tibble (`tbl_df`) with one row
+per state, the column `state`, and one `numeric` column per requested
+measure (in the order listed in 'Details'). For a `group_tna` object, a
+`group_tna_centralities` object: the same table for every group stacked,
+with the group name in the first column `group`.
 
 ## Details
 
@@ -90,7 +94,13 @@ The following measures are provided:
 
 - `Diffusion`: Diffusion centrality of Banerjee et.al. (2014). It
   measures the influence of a node in spreading information through the
-  network.
+  network. Diffusion is always min-max normalized to the range from 0 to
+  1, whatever the value of `normalize`, because its raw values grow with
+  powers of the edge weights (for a frequency model they easily exceed
+  `1e30`). When the raw values are equal for every state, for example in
+  a relative transition network with `loops = TRUE` where every row sums
+  to one, the normalized values are `NaN`: the measure does not
+  distinguish the states.
 
 - `Clustering`: Signed clustering coefficient of Zhang and
   Horvath (2005) based on the symmetric adjacency matrix (sum of the
@@ -100,6 +110,22 @@ The following measures are provided:
 - `PageRank`: Weighted PageRank centrality calculated using
   [`igraph::page_rank()`](https://r.igraph.org/reference/page_rank.html)
   on the directed transition network.
+
+## References
+
+Banerjee, A., Chandrasekhar, A. G., Duflo, E., & Jackson, M. O. (2014).
+Gossip: Identifying central individuals in a social network. Working
+Paper.
+
+Kivimaki, I., Lebichot, B., Saramaki, J., & Saerens, M. (2016). Two
+betweenness centrality measures based on randomized shortest paths.
+*Scientific Reports*, 6, 19668.
+[doi:10.1038/srep19668](https://doi.org/10.1038/srep19668)
+
+Zhang, B., & Horvath, S. (2005). A general framework for weighted gene
+co-expression network analysis. *Statistical Applications in Genetics
+and Molecular Biology*, 4(1), Article 17.
+[doi:10.2202/1544-6115.1128](https://doi.org/10.2202/1544-6115.1128)
 
 ## See also
 
@@ -115,7 +141,7 @@ Centrality measure functions
 ``` r
 model <- tna(group_regulation)
 
-# Centrality measures including loops in the network
+# Centrality measures excluding loops in the network (the default)
 centralities(model)
 #> # A tibble: 9 × 11
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
@@ -132,20 +158,20 @@ centralities(model)
 #> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
 #> #   PageRank <dbl>
 
-# Centrality measures excluding loops in the network
-centralities(model, loops = FALSE)
+# Centrality measures including loops in the network
+centralities(model, loops = TRUE)
 #> # A tibble: 9 × 11
 #>   state    OutStrength InStrength ClosenessIn ClosenessOut Closeness Betweenness
 #> * <fct>          <dbl>      <dbl>       <dbl>        <dbl>     <dbl>       <dbl>
-#> 1 adapt          1          0.345     0.00834       0.0152    0.0248           1
-#> 2 cohesion       0.973      0.812     0.0138        0.0124    0.0265           0
-#> 3 consens…       0.918      2.67      0.0351        0.0125    0.0383          30
-#> 4 coregul…       0.977      0.567     0.0155        0.0150    0.0210           0
-#> 5 discuss        0.805      1.19      0.0196        0.0131    0.0271          16
-#> 6 emotion        0.923      0.894     0.0141        0.0121    0.0231           5
-#> 7 monitor        0.982      0.346     0.00758       0.0137    0.0193           0
-#> 8 plan           0.626      1.19      0.0274        0.0115    0.0274           9
-#> 9 synthes…       1          0.192     0.00997       0.0158    0.0243           7
+#> 1 adapt              1      0.345     0.00834       0.0152    0.0248           1
+#> 2 cohesion           1      0.839     0.0138        0.0124    0.0265           0
+#> 3 consens…           1      2.75      0.0351        0.0125    0.0383          30
+#> 4 coregul…           1      0.590     0.0155        0.0150    0.0210           0
+#> 5 discuss            1      1.38      0.0196        0.0131    0.0271          16
+#> 6 emotion            1      0.971     0.0141        0.0121    0.0231           5
+#> 7 monitor            1      0.364     0.00758       0.0137    0.0193           0
+#> 8 plan               1      1.57      0.0274        0.0115    0.0274           9
+#> 9 synthes…           1      0.192     0.00997       0.0158    0.0243           7
 #> # ℹ 4 more variables: BetweennessRSP <dbl>, Diffusion <dbl>, Clustering <dbl>,
 #> #   PageRank <dbl>
 

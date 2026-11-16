@@ -2,11 +2,9 @@
 
 This function detects communities within the transition networks
 (represented by the `tna` object). It uses various algorithms to find
-communities in the graph representation of transitions and returns a
-`list` of communities for each cluster or a specified cluster. If
-multiple transition matrices exist, the function iterates over each
-cluster in the `tna` object to find communities using different
-algorithms. The function uses the `igraph` package to convert the
+communities in the graph representation of transitions. For a
+`group_tna` object, the communities are detected in the network of each
+cluster. The function uses the `igraph` package to convert the
 transition matrices into graphs and then applies community detection
 algorithms (e.g., Walktrap, Fast Greedy, Label Propagation, Infomap,
 Edge Betweenness, Leading Eigenvector, and Spin Glass).
@@ -60,15 +58,15 @@ communities(x, methods, gamma = 1)
 
 ## Value
 
-An object of class `tna_communities` which is a `list` with an element
-for each cluster containing:
+An object of class `tna_communities` which is a `list` with the
+elements:
 
-- `counts`: A `list` with the number of communities found by each
-  algorithm.
+- `counts`: A named `integer` vector with the number of communities
+  found by each algorithm.
 
-- `assignments`: A `data.frame` where each row corresponds to a node and
-  each column to a community detection algorithm, with color-coded
-  community assignments.
+- `assignments`: A `data.frame` with one row per state, the column
+  `state`, and one column per algorithm giving the community (an
+  `integer`) that the state is assigned to.
 
 If `x` is a `group_tna` object, a `group_tna_communities` object is
 returned instead, which is a `list` of `tna_communities` objects.
@@ -82,8 +80,10 @@ Community detection functions
 [`print.tna_communities()`](https://sonsoles.me/tna/reference/print.tna_communities.md)
 
 Cluster-related functions
+[`cluster_data()`](https://sonsoles.me/tna/reference/cluster_data.md),
 [`group_model()`](https://sonsoles.me/tna/reference/group_model.md),
 [`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
 [`rename_groups()`](https://sonsoles.me/tna/reference/rename_groups.md)
 
 ## Examples

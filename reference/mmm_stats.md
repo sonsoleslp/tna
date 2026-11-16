@@ -29,13 +29,18 @@ mmm_stats(x, level = 0.05)
 
 ## Value
 
-A `data.frame` object.
+A `data.frame` with one row per cluster (other than the reference
+cluster) and covariate of the membership model, with the columns
+`cluster`, `variable`, `estimate`, `std_error`, `ci_lower`, `ci_upper`
+(the `1 - level` confidence interval), `z_value`, and `p_value`.
 
 ## See also
 
 Cluster-related functions
+[`cluster_data()`](https://sonsoles.me/tna/reference/cluster_data.md),
 [`communities()`](https://sonsoles.me/tna/reference/communities.md),
 [`group_model()`](https://sonsoles.me/tna/reference/group_model.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
 [`rename_groups()`](https://sonsoles.me/tna/reference/rename_groups.md)
 
 ## Examples

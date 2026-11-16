@@ -89,11 +89,10 @@ Basic functions
 ## Examples
 
 ``` r
-# \donttest{
 model <- group_model(engagement_mmm)
-# Default
 plot_frequencies(model)
 
+# \donttest{
 # Default labels outside and custom colors
 plot_frequencies(
   model,

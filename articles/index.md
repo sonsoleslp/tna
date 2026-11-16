@@ -10,6 +10,8 @@
 - [Frequency-based TNA](https://sonsoles.me/tna/articles/ftna.md):
 - [Using grouped sequence data with
   tna](https://sonsoles.me/tna/articles/grouped_sequences.md):
+- [Validating a transition
+  network](https://sonsoles.me/tna/articles/model-validation.md):
 - [tna — R Package
   Documentation](https://sonsoles.me/tna/articles/new-docs.md):
 - [How to prepare data for

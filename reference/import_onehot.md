@@ -62,7 +62,12 @@ import_onehot(
 
 ## Value
 
-The processed data as a `data.frame`.
+A tibble in wide format with one row per actor/session combination (or
+per `interval` windows) and one column per time point, named
+`W<window>_T<position>`. Each cell holds the name of the column of
+`cols` that was active, or `NA`. The result can be passed to
+[`build_model()`](https://sonsoles.me/tna/reference/build_model.md), for
+example with `type = "co-occurrence"`.
 
 ## See also
 
@@ -80,6 +85,7 @@ Other data:
 ## Examples
 
 ``` r
+set.seed(1)
 d <- data.frame(
   actor = gl(100, 5),
   session = gl(10, 50),

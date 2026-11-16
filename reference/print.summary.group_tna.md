@@ -56,9 +56,9 @@ print(summary(model))
 #>  3 Network Density                   1        1   e+ 0      1     
 #>  4 Mean Distance                     0.128    6.44e- 2      0.0991
 #>  5 Mean Out-Strength                 1        1   e+ 0      1     
-#>  6 SD Out-Strength                   0.212    2.93e- 1      0.104 
+#>  6 SD Out-Strength                   0        7.85e-17      0     
 #>  7 Mean In-Strength                  1        1   e+ 0      1     
-#>  8 SD In-Strength                    0        7.85e-17      0     
+#>  8 SD In-Strength                    0.212    2.93e- 1      0.104 
 #>  9 Mean Out-Degree                   3        3   e+ 0      3     
 #> 10 SD Out-Degree                     0        0             0     
 #> 11 Centralization (Out-Degree)       0        0             0     

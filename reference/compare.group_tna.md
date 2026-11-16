@@ -26,12 +26,12 @@ compare(
 - i:
 
   An `integer` index or the name of the principal cluster as a
-  `character` string.
+  `character` string. The default is the first cluster.
 
 - j:
 
   An `integer` index or the name of the secondary cluster as a
-  `character` string.
+  `character` string. The default is the second cluster.
 
 - scaling:
 
@@ -80,8 +80,7 @@ compare(
 
 - ...:
 
-  Additional arguments passed to
-  [`compare.tna()`](https://sonsoles.me/tna/reference/compare.md).
+  Ignored.
 
 ## Value
 
@@ -138,7 +137,7 @@ compare(model, i = 1, j = 2)
 #>  7 Correlations      Pearson              0.875 
 #>  8 Correlations      Spearman             0.433 
 #>  9 Correlations      Kendall              0.222 
-#> 10 Correlations      Distance             0.869 
+#> 10 Correlations      Distance             0.932 
 #> # ℹ 12 more rows
 #> 
 #> Network metrics
@@ -150,9 +149,9 @@ compare(model, i = 1, j = 2)
 #>  3 Network Density             1     1   e+ 0
 #>  4 Mean Distance               0.128 6.44e- 2
 #>  5 Mean Out-Strength           1     1   e+ 0
-#>  6 SD Out-Strength             0.212 2.93e- 1
+#>  6 SD Out-Strength             0     7.85e-17
 #>  7 Mean In-Strength            1     1   e+ 0
-#>  8 SD In-Strength              0     7.85e-17
+#>  8 SD In-Strength              0.212 2.93e- 1
 #>  9 Mean Out-Degree             3     3   e+ 0
 #> 10 SD Out-Degree               0     0       
 #> 11 Centralization (Out-Degree) 0     0       

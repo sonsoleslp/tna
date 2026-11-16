@@ -20,14 +20,17 @@ rename_groups(x, new_names)
 
 ## Value
 
-A renamed `group_tna` object.
+The `group_tna` object `x` with its elements (groups) renamed to
+`new_names`.
 
 ## See also
 
 Cluster-related functions
+[`cluster_data()`](https://sonsoles.me/tna/reference/cluster_data.md),
 [`communities()`](https://sonsoles.me/tna/reference/communities.md),
 [`group_model()`](https://sonsoles.me/tna/reference/group_model.md),
-[`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md)
+[`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md)
 
 ## Examples
 

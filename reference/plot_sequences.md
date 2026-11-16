@@ -208,14 +208,14 @@ distribution plot, faceted by `group` when supplied.
 # Sequence index plot (default)
 plot_sequences(
   group_regulation,
-  group = rep(1:2, each = 1000),
+  group = rep(1:2, each = 1000)
 )
 
 # State distribution plot
 plot_sequences(
   group_regulation,
   group = rep(1:2, each = 1000),
-  type = "distribution",
+  type = "distribution"
 )
 
 ```

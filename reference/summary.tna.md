@@ -24,33 +24,9 @@ summary(object, ...)
 
 ## Value
 
-A named `list` containing the following network metrics (invisibly):
-
-- `node_count`: The total number of nodes.
-
-- `edge_count`: The total number of edges.
-
-- `network_Density`: The density of the network.
-
-- `mean_distance`: The mean shortest path length.
-
-- `mean_out_strength`: The mean out-strength of nodes.
-
-- `sd_out_strength`: The standard deviation of out-strength.
-
-- `mean_in_strength`: The mean in-strength of nodes.
-
-- `sd_in_strength`: The standard deviation of in-strength.
-
-- `mean_out_degree`: The mean out-degree of nodes.
-
-- `sd_out_degree`: The standard deviation of out-degree.
-
-- `centralization_out_degree`: The centralization of out-degree.
-
-- `centralization_in_degree`: The centralization of in-degree.
-
-- `reciprocity`: The reciprocity of the network.
+A `summary.tna` object, which is a tibble with one row per metric (13
+rows) and the columns `metric` (the name of the metric, for example
+`"Node Count"` or `"Reciprocity"`) and `value`.
 
 ## Details
 
@@ -77,8 +53,6 @@ network metrics:
 
 - Reciprocity: The proportion of edges that are reciprocated (i.e.,
   mutual edges between nodes).
-
-A summary of the metrics is printed to the console.
 
 ## See also
 
@@ -113,9 +87,9 @@ summary(model)
 #>  3 Network Density             1   e+ 0
 #>  4 Mean Distance               4.72e- 2
 #>  5 Mean Out-Strength           1   e+ 0
-#>  6 SD Out-Strength             8.07e- 1
+#>  6 SD Out-Strength             6.80e-17
 #>  7 Mean In-Strength            1   e+ 0
-#>  8 SD In-Strength              6.80e-17
+#>  8 SD In-Strength              8.07e- 1
 #>  9 Mean Out-Degree             8.67e+ 0
 #> 10 SD Out-Degree               7.07e- 1
 #> 11 Centralization (Out-Degree) 1.56e- 2

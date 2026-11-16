@@ -76,32 +76,21 @@ print(model_scaled) # Print the FTNA model with scaled weights
 
 ### Plotting
 
+Scaling should change the units of the weights, not their relative
+order. Plotting the absolute weights against the scaled weights checks
+this: [`compare()`](https://sonsoles.me/tna/reference/compare.md) pairs
+the edges of the two models and its scatterplot shows the Pearson
+correlation of the weights.
+
 ``` r
 
 # Plotting the two weights together to see if the scaling distorts the data
-
-# Combine weights from absolute and scaled models into a data frame for plotting
-weights_data <- data.frame(
-  Absolute = as.vector(model$weights), # Extract absolute weights as a vector
-  Scaled = as.vector(model_scaled$weights) # Extract scaled weights as a vector
+plot(
+  compare(model, model_scaled),
+  type = "scatterplot",
+  name_x = "Absolute",
+  name_y = "Scaled"
 )
-corr <- cor(weights_data$Absolute, weights_data$Scaled, method = c("pearson")) |>
-  round(digits = 2)
-
-# Create a scatter plot comparing absolute vs. scaled weights
-plot_abs_scaled <- ggplot(weights_data, aes(x = Absolute, y = Scaled)) +
-  geom_point(color = "steelblue", alpha = 0.6, size = 2) +  # Add points with specified aesthetics
-  geom_smooth(formula = y ~ x, method = "lm", color = "red", linetype = "dashed") + # Add a linear trend line
-  # geom_smooth(method = lm, formula = y ~ x, se = FALSE) +
-  geom_text(x = 0.1, y = 0.9, label = paste0('r = ', corr), color = 'red')
-  # stat_cor(aes(label = after_stat(r.label)), label.x = 0.1, label.y = 0.9, 
-  #          size = 4, color = "black", method = "spearman") + # Display Spearman correlation
-  labs(x = "Absolute Weights", y = "Scaled Weights") + # Label axes
-  theme_minimal() # Apply a minimal theme for the plot
-#> NULL
-
-# Display the scatter plot
-plot_abs_scaled
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-4-1.png)
@@ -114,27 +103,20 @@ model_ranked <- ftna(group_regulation, scaling = "rank")
 print(model_ranked) # Print the FTNA model with ranked weights
 ```
 
+Ranking keeps the order of the weights but not their distances, so the
+relation with the absolute weights is monotone but not linear. The
+Spearman correlation measures that agreement in order.
+
 ``` r
 
-# Combine weights from absolute and ranked models into a data frame for plotting
-weights_data <- data.frame(
-  Absolute = as.vector(model$weights), # Extract absolute weights as a vector
-  Ranked = as.vector(model_ranked$weights) # Extract ranked weights as a vector
+# Compare the absolute and the ranked weights
+plot(
+  compare(model, model_ranked),
+  type = "scatterplot",
+  method = "spearman",
+  name_x = "Absolute",
+  name_y = "Ranked"
 )
-
-# Create a scatter plot comparing Absolute vs. Ranked weights with correlation annotations
-plot_abs_ranked <- ggplot(weights_data, aes(x = Absolute, y = Ranked)) +
-  geom_point(color = "steelblue", alpha = 0.6, size = 2) +  # Add points with specified aesthetics
-  geom_smooth(formula = y ~ x, method = "lm", color = "red", linetype = "dashed") +  # Add a linear trend line
-  # stat_cor(aes(label = paste("Spearman: ", round(after_stat(r), 2))), 
-  #          method = "spearman", label.x = 0.1, label.y = 0.9, size = 4, color = "black") + # Spearman correlation annotation
-  # stat_cor(aes(label = paste("Pearson: ", round(after_stat(r), 2))), 
-  #          method = "pearson", label.x = 0.1, label.y = 0.8, size = 4, color = "darkgreen") + # Pearson correlation annotation
-  labs(x = "Absolute Weights", y = "Ranked Weights") + # Label axes
-  theme_minimal() # Apply a minimal theme for the plot
-
-# Display the scatter plot
-plot_abs_ranked
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-6-1.png)
@@ -147,9 +129,7 @@ layout(matrix(1:4, ncol = 2))
 # Pruning with different methods
 pruned_threshold <- prune(model_scaled, method = "threshold", threshold = 0.1)
 pruned_lowest <- prune(model_scaled, method = "lowest", lowest = 0.15)
-pruned_disparity <- prune(model_scaled, method = "disparity", alpha = 0.5)
-#> Warning: Additional arguments in `...` are ignored unless `method =
-#> "bootstrap"`.
+pruned_disparity <- prune(model_scaled, method = "disparity", level = 0.5)
 
 # Plotting for comparison
 plot(pruned_threshold)
@@ -212,7 +192,7 @@ print(cliques_of_two)  # Display details of 2-cliques
 #>         monitor plan
 #> monitor    0.01 0.12
 #> plan       0.19 0.92
-plot(cliques_of_two, ask = F)   # Visualize 2-cliques in the network
+plot(cliques_of_two, ask = FALSE)   # Visualize 2-cliques in the network
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-8-1.png)
@@ -349,8 +329,8 @@ cliques_of_five <- cliques(
 
 # Print and visualize the identified 5-cliques (quintuples)
 print(cliques_of_five)  # Display details of 5-cliques
-#> Number of 5-cliques = 1 (weight threshold = 0.1)
-#> Showing 1 cliques starting from clique number 1
+#> Number of 5-cliques = 7 (weight threshold = 0.1)
+#> Showing 6 cliques starting from clique number 1
 #> 
 #> Clique 1
 #>            consensus coregulate discuss emotion  plan
@@ -359,10 +339,50 @@ print(cliques_of_five)  # Display details of 5-cliques
 #> discuss         0.51      0.133    0.31   0.167 0.018
 #> emotion         0.36      0.039    0.12   0.087 0.113
 #> plan            0.71      0.042    0.17   0.361 0.920
+#> 
+#> Clique 2
+#>            consensus coregulate discuss monitor  plan
+#> consensus      0.207      0.474    0.48   0.118 1.000
+#> coregulate     0.106      0.018    0.22   0.068 0.188
+#> discuss        0.507      0.133    0.31   0.035 0.018
+#> monitor        0.091      0.033    0.21   0.010 0.123
+#> plan           0.714      0.042    0.17   0.186 0.920
+#> 
+#> Clique 3
+#>            cohesion consensus coregulate emotion  plan
+#> cohesion      0.018      0.34      0.081   0.078 0.095
+#> consensus     0.038      0.21      0.474   0.184 1.000
+#> coregulate    0.028      0.11      0.018   0.135 0.188
+#> emotion       0.368      0.36      0.039   0.087 0.113
+#> plan          0.062      0.71      0.042   0.361 0.920
+#> 
+#> Clique 4
+#>            cohesion coregulate discuss emotion  plan
+#> cohesion      0.018      0.081    0.04   0.078 0.095
+#> coregulate    0.028      0.018    0.22   0.135 0.188
+#> discuss       0.075      0.133    0.31   0.167 0.018
+#> emotion       0.368      0.039    0.12   0.087 0.113
+#> plan          0.062      0.042    0.17   0.361 0.920
+#> 
+#> Clique 5
+#>            cohesion consensus coregulate discuss emotion
+#> cohesion      0.018      0.34      0.081    0.04   0.078
+#> consensus     0.038      0.21      0.474    0.48   0.184
+#> coregulate    0.028      0.11      0.018    0.22   0.135
+#> discuss       0.075      0.51      0.133    0.31   0.167
+#> emotion       0.368      0.36      0.039    0.12   0.087
+#> 
+#> Clique 6
+#>           cohesion consensus discuss emotion  plan
+#> cohesion     0.018      0.34    0.04   0.078 0.095
+#> consensus    0.038      0.21    0.48   0.184 1.000
+#> discuss      0.075      0.51    0.31   0.167 0.018
+#> emotion      0.368      0.36    0.12   0.087 0.113
+#> plan         0.062      0.71    0.17   0.361 0.920
 plot(cliques_of_five, ask = FALSE)   # Visualize 5-cliques in the network
 ```
 
-![](ftna_files/figure-html/unnamed-chunk-11-1.png)
+![](ftna_files/figure-html/unnamed-chunk-11-1.png)![](ftna_files/figure-html/unnamed-chunk-11-2.png)![](ftna_files/figure-html/unnamed-chunk-11-3.png)![](ftna_files/figure-html/unnamed-chunk-11-4.png)![](ftna_files/figure-html/unnamed-chunk-11-5.png)![](ftna_files/figure-html/unnamed-chunk-11-6.png)
 
 ### Graph level measures
 
@@ -377,9 +397,9 @@ summary(model_scaled)
 #>  3 Network Density              1     
 #>  4 Mean Distance                0.0240
 #>  5 Mean Out-Strength            1.13  
-#>  6 SD Out-Strength              0.886 
+#>  6 SD Out-Strength              0.878 
 #>  7 Mean In-Strength             1.13  
-#>  8 SD In-Strength               0.878 
+#>  8 SD In-Strength               0.886 
 #>  9 Mean Out-Degree              8.67  
 #> 10 SD Out-Degree                0.707 
 #> 11 Centralization (Out-Degree)  0.0156
@@ -398,9 +418,9 @@ summary(pruned_disparity)
 #>  3 Network Density              0.542
 #>  4 Mean Distance                0.188
 #>  5 Mean Out-Strength            0.900
-#>  6 SD Out-Strength              0.700
+#>  6 SD Out-Strength              0.673
 #>  7 Mean In-Strength             0.900
-#>  8 SD In-Strength               0.673
+#>  8 SD In-Strength               0.700
 #>  9 Mean Out-Degree              4.33 
 #> 10 SD Out-Degree                1.22 
 #> 11 Centralization (Out-Degree)  0.234
@@ -441,25 +461,87 @@ plot(centrality_measures)
 # Convert the FTNA model to an igraph object and 
 # calculate HITS (Hub and Authority) scores
 hits_results <- igraph::hits_scores(as.igraph(model_scaled))
-
-# Extract the hub and authority scores from the HITS results for further analysis
-hub_scores <- hits_results$hub
-authority_scores <- hits_results$authority
 ```
 
 ``` r
 
-# Print the hub and authority scores to view influential nodes
-print(hub_scores)
+# Print the hub and authority scores (and the eigenvalue) to view influential nodes
+print(hits_results)
+#> $hub
 #>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
 #>      0.056      0.240      0.955      0.256      0.377      0.305      0.189 
 #>       plan  synthesis 
-#>      1.000      0.074
-print(authority_scores)
+#>      1.000      0.074 
+#> 
+#> $authority
 #>      adapt   cohesion  consensus coregulate    discuss    emotion    monitor 
 #>      0.033      0.129      0.672      0.293      0.437      0.344      0.174 
 #>       plan  synthesis 
-#>      1.000      0.056
+#>      1.000      0.056 
+#> 
+#> $value
+#> [1] 3.3
+#> 
+#> $options
+#> $options$bmat
+#> [1] "I"
+#> 
+#> $options$n
+#> [1] 9
+#> 
+#> $options$which
+#> [1] "LA"
+#> 
+#> $options$nev
+#> [1] 1
+#> 
+#> $options$tol
+#> [1] 0
+#> 
+#> $options$ncv
+#> [1] 0
+#> 
+#> $options$ldv
+#> [1] 0
+#> 
+#> $options$ishift
+#> [1] 1
+#> 
+#> $options$maxiter
+#> [1] 3000
+#> 
+#> $options$nb
+#> [1] 1
+#> 
+#> $options$mode
+#> [1] 1
+#> 
+#> $options$start
+#> [1] 1
+#> 
+#> $options$sigma
+#> [1] 0
+#> 
+#> $options$sigmai
+#> [1] 0
+#> 
+#> $options$info
+#> [1] 0
+#> 
+#> $options$iter
+#> [1] 2
+#> 
+#> $options$nconv
+#> [1] 1
+#> 
+#> $options$numop
+#> [1] 9
+#> 
+#> $options$numopb
+#> [1] 0
+#> 
+#> $options$numreo
+#> [1] 8
 ```
 
 ### Edge level measures
@@ -484,7 +566,7 @@ plot(detected_communities, method = "leading_eigen")
 
 ``` r
 
-print(detected_communities, method = "leading_eigen")
+print(detected_communities)
 #> Number of communities found by each algorithm
 #> 
 #>         walktrap      fast_greedy       label_prop          infomap 
@@ -511,7 +593,7 @@ print(detected_communities, method = "leading_eigen")
 
 # Perform bootstrapping on the FTNA model with a fixed seed for reproducibility
 set.seed(265)
-boot <- bootstrap(model_scaled, threshold = 0.05)
+boot <- bootstrap(model_scaled)
 
 # Print the combined results data frame containing
 print(summary(boot))
@@ -537,13 +619,13 @@ print(boot, type = "nonsig")
 ``` r
 
 # Create FTNA for the high-achievers subset (rows 1 to 1000)
-Hi <- ftna(group_regulation[1:1000, ], scaling = "minmax")
+Hi <- ftna(head(group_regulation, 1000), scaling = "minmax")
 
 # Create FTNA for the low-achievers subset (rows 1001 to 2000)
-Lo <- ftna(group_regulation[1001:2000, ], scaling = "minmax")
+Lo <- ftna(tail(group_regulation, 1000), scaling = "minmax")
 
 # Plot a comparison of the "Hi" and "Lo" models
-# The 'minimum' parameter is set to 0.001, so edges with weights >= 0.001 are shown
+# The 'minimum' parameter is set to 0.0001, so edges with weights >= 0.0001 are shown
 plot_compare(Hi, Lo, minimum = 0.0001)
 ```
 
@@ -554,8 +636,11 @@ plot_compare(Hi, Lo, minimum = 0.0001)
 
 # Run a permutation test to determine statistical significance of 
 # differences between "Hi" and "Lo"
-# The 'it' parameter is set to 1000, meaning 1000 permutations are performed
-Permutation <- permutation_test(Hi, Lo, it = 1000)
+# The 'iter' argument is set to 1000, meaning 1000 permutations are performed
+Permutation <- permutation_test(Hi, Lo, iter = 1000)
+#> `x` or `y` has scaled edge weights.
+#> ℹ Each network is scaled on its own, so comparing scaled weights is not warranted.
+#>   Build the models without `scaling` to compare the transition weights.
 
 # Plot the significant differences identified in the permutation test
 plot(Permutation)
@@ -572,3 +657,70 @@ plot(Centrality_stability)
 ```
 
 ![](ftna_files/figure-html/unnamed-chunk-21-1.png)
+
+### More tutorials
+
+**Package articles** · [sonsoles.me/tna](https://sonsoles.me/tna/)
+
+- [Getting started with tna](https://sonsoles.me/tna/articles/tna.html)
+  — build, plot, and summarize a transition network
+- [Preparing data](https://sonsoles.me/tna/articles/prepare_data.html) —
+  turn event logs into sequences with
+  [`prepare_data()`](https://sonsoles.me/tna/reference/prepare_data.md)
+- [A showcase of the main
+  functions](https://sonsoles.me/tna/articles/complete_tutorial.html) —
+  models, centralities, communities, and validation
+- [Grouped sequence
+  data](https://sonsoles.me/tna/articles/grouped_sequences.html) — build
+  and compare networks of groups
+- [Cliques and
+  communities](https://sonsoles.me/tna/articles/communities_and_cliques.html)
+  — find the densely connected states
+- [Frequency-based TNA](https://sonsoles.me/tna/articles/ftna.html) —
+  model transition counts instead of probabilities
+- [Attention TNA](https://sonsoles.me/tna/articles/atna.html) —
+  accumulate transitions across temporal distances
+- [Validating a transition
+  network](https://sonsoles.me/tna/articles/model-validation.html) —
+  Markov order, bootstrap, case-dropping, reliability, and permutation
+  tests
+- [Function reference
+  sheet](https://sonsoles.me/tna/articles/new-docs.html) — every
+  function with its arguments and an example
+
+**Tutorials** · [sonsoles.me](https://sonsoles.me/)
+
+- [A comprehensive TNA
+  tutorial](https://sonsoles.me/posts/tna-tutorial/) — an updated
+  walkthrough of transition network analysis
+- [Data preparation](https://sonsoles.me/posts/tna-data/) — from raw
+  event data to sequences
+- [Comparing models](https://sonsoles.me/posts/tna-compare/) — network
+  comparison of TNA models
+- [Clustering](https://sonsoles.me/posts/tna-clustering/) — discover and
+  analyze clusters of sequences
+- [Group analysis](https://sonsoles.me/posts/tna-group/) — permutation
+  tests, bootstrapping, and clusters
+
+**Book chapters** · *Advanced Learning Analytics Methods*
+
+- [Mapping relational dynamics with
+  TNA](https://lamethods.org/book2/chapters/ch15-tna/ch15-tna.html) — a
+  primer and tutorial
+- [Frequency transition network
+  analysis](https://lamethods.org/book2/chapters/ch16-ftna/ch16-ftna.html)
+  — a primer and tutorial on FTNA
+- [Mining patterns and clusters with
+  TNA](https://lamethods.org/book2/chapters/ch17-tna-clusters/ch17-tna-clusters.html)
+  — a heterogeneity approach
+
+**Dynalytics** · [dynasite.org](https://dynasite.org/)
+
+- [Package sites](https://pak.dynasite.org/) — documentation of the R
+  packages of the Dynalytics framework
+- [Tools](https://dynasite.org/#/tools) — interactive web apps, jamovi,
+  and Python
+- [CarmNotes](https://dynasite.org/carmnotes) — single-file notebooks
+  that run the analyses in the browser, even offline
+- [Selected articles](https://dynasite.org/#/papers) — publications on
+  the framework and its methods

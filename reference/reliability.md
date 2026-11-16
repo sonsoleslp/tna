@@ -11,10 +11,11 @@ reliability(x, ...)
 # S3 method for class 'tna'
 reliability(
   x,
-  types = "relative",
+  types = NULL,
   split = 0.5,
   iter = 1000,
   scaling = "none",
+  actor = NULL,
   ...
 )
 ```
@@ -23,7 +24,8 @@ reliability(
 
 - x:
 
-  A `tna` object.
+  A `tna` object. Grouped models with scaled edge weights, and their
+  networks, are not resampled (an error of class `tna_error_scaling`).
 
 - ...:
 
@@ -31,9 +33,12 @@ reliability(
 
 - types:
 
-  A `character` vector giving the model types to fit. See
+  A `character` vector giving the model types to fit. The default `NULL`
+  uses the type of `x`. For every type, the transitions are counted from
+  the sequence data of `x` as that type defines them, with the
+  parameters (`params`) and scaling of `x`. See
   [`build_model()`](https://sonsoles.me/tna/reference/build_model.md)
-  for available options.
+  for the available types.
 
 - split:
 
@@ -47,11 +52,33 @@ reliability(
 
 - scaling:
 
-  See [`compare()`](https://sonsoles.me/tna/reference/compare.md).
+  A `character` string naming the scaling applied to the weights of the
+  two halves before they are compared. The default is `"none"`. See
+  [`compare()`](https://sonsoles.me/tna/reference/compare.md) for the
+  options.
+
+- actor:
+
+  An optional actor identifier for sequences nested in actors: a
+  `character` string naming a non-sequence column of the data the model
+  was built from, or a vector with one identifier per sequence. When
+  given, the actors are split, so that all sequences of an actor fall in
+  the same half, and `split` is the proportion of actors. The default
+  `NULL` splits single sequences.
 
 ## Value
 
-A `tna_reliability` object.
+A `tna_reliability` object, which is a `list` with two tibbles:
+
+- `metrics`: One row per split and comparison metric, with the columns
+  `category`, `metric`, and `value` (and `model_type` when several
+  `types` are given).
+
+- `summary`: One row per metric with the `mean`, `sd`, `median`, `min`,
+  `max`, and quartiles (`q25`, `q75`) of the metric over the splits.
+
+[`summary.tna_reliability()`](https://sonsoles.me/tna/reference/summary.tna_reliability.md)
+returns all metrics with their category as a tidy table.
 
 ## See also
 
@@ -59,12 +86,14 @@ Validation functions
 [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
 [`deprune()`](https://sonsoles.me/tna/reference/deprune.md),
 [`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+[`markov_order()`](https://sonsoles.me/tna/reference/markov_order.md),
 [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md),
 [`permutation_test.group_tna()`](https://sonsoles.me/tna/reference/permutation_test.group_tna.md),
 [`plot.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.group_tna_bootstrap.md),
 [`plot.group_tna_permutation()`](https://sonsoles.me/tna/reference/plot.group_tna_permutation.md),
 [`plot.group_tna_stability()`](https://sonsoles.me/tna/reference/plot.group_tna_stability.md),
 [`plot.tna_bootstrap()`](https://sonsoles.me/tna/reference/plot.tna_bootstrap.md),
+[`plot.tna_markov_order()`](https://sonsoles.me/tna/reference/plot.tna_markov_order.md),
 [`plot.tna_permutation()`](https://sonsoles.me/tna/reference/plot.tna_permutation.md),
 [`plot.tna_reliability()`](https://sonsoles.me/tna/reference/plot.tna_reliability.md),
 [`plot.tna_stability()`](https://sonsoles.me/tna/reference/plot.tna_stability.md),
@@ -73,8 +102,9 @@ Validation functions
 [`print.group_tna_stability()`](https://sonsoles.me/tna/reference/print.group_tna_stability.md),
 [`print.summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.group_tna_bootstrap.md),
 [`print.summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.summary.tna_bootstrap.md),
+[`print.summary.tna_markov_order()`](https://sonsoles.me/tna/reference/print.summary.tna_markov_order.md),
 [`print.tna_bootstrap()`](https://sonsoles.me/tna/reference/print.tna_bootstrap.md),
-[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
+[`print.tna_markov_order()`](https://sonsoles.me/tna/reference/print.tna_markov_order.md),
 [`print.tna_permutation()`](https://sonsoles.me/tna/reference/print.tna_permutation.md),
 [`print.tna_reliability()`](https://sonsoles.me/tna/reference/print.tna_reliability.md),
 [`print.tna_stability()`](https://sonsoles.me/tna/reference/print.tna_stability.md),
@@ -82,7 +112,11 @@ Validation functions
 [`pruning_details()`](https://sonsoles.me/tna/reference/pruning_details.md),
 [`reprune()`](https://sonsoles.me/tna/reference/reprune.md),
 [`summary.group_tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.group_tna_bootstrap.md),
-[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md)
+[`summary.tna_bootstrap()`](https://sonsoles.me/tna/reference/summary.tna_bootstrap.md),
+[`summary.tna_markov_order()`](https://sonsoles.me/tna/reference/summary.tna_markov_order.md),
+[`summary.tna_permutation()`](https://sonsoles.me/tna/reference/summary.tna_permutation.md),
+[`summary.tna_reliability()`](https://sonsoles.me/tna/reference/summary.tna_reliability.md),
+[`summary.tna_stability()`](https://sonsoles.me/tna/reference/summary.tna_stability.md)
 
 ## Examples
 

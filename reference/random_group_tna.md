@@ -102,7 +102,9 @@ random_group_tna(
 
 ## Value
 
-A `group_tna` object.
+A `group_tna` object: a named `list` with one `tna` object per group
+(see
+[`group_model()`](https://sonsoles.me/tna/reference/group_model.md)).
 
 ## See also
 

@@ -3,7 +3,7 @@
 Plots the difference network between model `x` and model `y`. The edges
 are computed from subtracting the two models. The pie chart is the
 difference in initial probabilities between model `x` and model `y`.
-Green color indicates that `x`is greater than `y`and red indicates
+Green color indicates that `x` is greater than `y` and red indicates
 otherwise.
 
 ## Usage
@@ -44,8 +44,9 @@ plot_compare(x, y, posCol = "#009900", negCol = "red", ...)
 
 ## Value
 
-A `cograph_network` object displaying the difference network between the
-two models.
+The difference network is drawn, and a `list` is returned invisibly with
+the elements `weights` (the `matrix` of edge weight differences `x - y`)
+and `inits` (the differences in the initial probabilities).
 
 ## See also
 
@@ -62,8 +63,9 @@ Model comparison functions
 ## Examples
 
 ``` r
-model_x <- tna(group_regulation[group_regulation[, 1] == "plan", ])
-model_y <- tna(group_regulation[group_regulation[, 1] != "plan", ])
+# Sequences that start with "plan" against the other sequences
+model_x <- tna(subset(group_regulation, T1 == "plan"))
+model_y <- tna(subset(group_regulation, T1 != "plan"))
 plot_compare(model_x, model_y)
 
 ```

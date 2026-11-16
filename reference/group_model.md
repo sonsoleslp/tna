@@ -85,9 +85,10 @@ group_atna(x, ...)
   data/sequence. Must have the same length as the number of
   rows/sequences of `x`. Alternatively, a single `character` string
   giving the column name of the data that defines the group when `x` is
-  a wide format `data.frame` or a `tna_data` object. If not provided,
-  each row of the data forms a cluster. Not used when `x` is a mixture
-  Markov model or a clustering result.
+  a wide format `data.frame` or a `tna_data` object. Required for
+  sequence data (an error is raised when it is missing). Factor levels
+  that no sequence belongs to are dropped. Not used when `x` is a
+  mixture Markov model or a clustering result.
 
 - type:
 
@@ -113,7 +114,7 @@ group_atna(x, ...)
 
   - `"attention"` aggregates all downstream pairs of states with an
     exponential decay for the gap between states. The parameter `lambda`
-    can be used to control the decay rate (the default is 1)-
+    can be used to control the decay rate (the default is 1).
 
 - scaling:
 
@@ -140,7 +141,18 @@ group_atna(x, ...)
 - groupwise:
 
   A `logical` value that indicates whether scaling methods should be
-  applied by group (`TRUE`) or globally (`FALSE`, the default).
+  applied by group (`TRUE`) or globally (`FALSE`, the default). A
+  grouped model with scaled edge weights (either way) and its networks
+  cannot be resampled:
+  [`bootstrap()`](https://sonsoles.me/tna/reference/bootstrap.md),
+  [`permutation_test()`](https://sonsoles.me/tna/reference/permutation_test.md),
+  [`estimate_cs()`](https://sonsoles.me/tna/reference/estimate_centrality_stability.md),
+  [`reliability()`](https://sonsoles.me/tna/reference/reliability.md),
+  and
+  [`compare_sequences()`](https://sonsoles.me/tna/reference/compare_sequences.md)
+  raise an error of class `tna_error_scaling`. Scaling across groups
+  depends on every group, so a resample of one group cannot reproduce
+  it.
 
 - cols:
 
@@ -208,20 +220,23 @@ group_atna(x, ...)
 - na.rm:
 
   A `logical` value that determines if observations with `NA` value in
-  `group` be removed. If `FALSE`, an additional category for `NA` values
-  will be added. The default is `FALSE` and a warning is issued if `NA`
-  values are detected.
+  `group` are removed. The default is `TRUE`: the observations are
+  removed, with a warning. If `FALSE`, an additional category for `NA`
+  values is added.
 
 ## Value
 
-An object of class `group_tna` which is a `list` containing one element
-per cluster. Each element is a `tna` object.
+An object of class `group_tna` which is a named `list` containing one
+element per group (cluster). Each element is a `tna` object (see
+[`build_model()`](https://sonsoles.me/tna/reference/build_model.md)).
 
 ## See also
 
 Cluster-related functions
+[`cluster_data()`](https://sonsoles.me/tna/reference/cluster_data.md),
 [`communities()`](https://sonsoles.me/tna/reference/communities.md),
 [`mmm_stats()`](https://sonsoles.me/tna/reference/mmm_stats.md),
+[`print.tna_clustering()`](https://sonsoles.me/tna/reference/print.tna_clustering.md),
 [`rename_groups()`](https://sonsoles.me/tna/reference/rename_groups.md)
 
 ## Examples

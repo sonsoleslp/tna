@@ -23,7 +23,7 @@ plot_frequencies(x, width = 0.7, hjust = 1.2, show_label = TRUE, colors, ...)
 
 - width:
 
-  A `numeric` value for the Width of the bars. Default is 0.7,
+  A `numeric` value for the width of the bars. Default is 0.7.
 
 - hjust:
 

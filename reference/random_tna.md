@@ -104,9 +104,11 @@ random_tna(
 
 ## Value
 
-A `tna` object, or a `list` with elements `model`, `trans_matrix`,
-`init_probs`, `sequences`, `labels`, and `category` when
-`return_params = TRUE`.
+A `tna` object, or, when `return_params = TRUE`, a `list` with the
+elements `model` (the `tna` object), `trans_matrix` (the true transition
+`matrix`), `init_probs` (the true initial probabilities), `sequences`
+(the simulated sequences as a wide `data.frame`), `labels` (the state
+labels), and `category` (the label pool used).
 
 ## See also
 
@@ -133,25 +135,20 @@ model <- random_tna(n_states = 3, category = "engagement")
 # Reproducible model
 model <- random_tna(seed = 42)
 
-# Recover the ground-truth parameters
+# Recover the ground-truth parameters along with the model
 out <- random_tna(seed = 7, return_params = TRUE)
-out$trans_matrix
-#>               Outline        Test        Note        Cite    Research
-#> Outline   0.650835298 0.043606039 0.028010411 0.111609915 0.056645413
-#> Test      0.006583164 0.691942762 0.097029742 0.008455561 0.045670543
-#> Note      0.064408166 0.004099030 0.655905813 0.014235598 0.103907112
-#> Cite      0.002314978 0.025650260 0.068111669 0.631944647 0.167362401
-#> Research  0.095737644 0.090456429 0.020780962 0.003247003 0.724659204
-#> Draft     0.060127477 0.024646562 0.009819818 0.073839085 0.009743293
-#> Highlight 0.012948049 0.005976364 0.046225233 0.131632139 0.127282132
-#> Annotate  0.034780472 0.029400254 0.094943630 0.051292094 0.103632443
-#>                Draft    Highlight    Annotate
-#> Outline   0.05123559 0.0394980023 0.018559331
-#> Test      0.05645087 0.0928047606 0.001062593
-#> Note      0.05110080 0.0773399977 0.029003486
-#> Cite      0.05251167 0.0255365930 0.026567783
-#> Research  0.04831808 0.0002156296 0.016585048
-#> Draft     0.76312071 0.0305544997 0.028148557
-#> Highlight 0.00470706 0.6555567365 0.015672288
-#> Annotate  0.01950503 0.0175106613 0.648935412
+str(out, max.level = 1)
+#> List of 6
+#>  $ model       :List of 4
+#>   ..- attr(*, "type")= chr "relative"
+#>   ..- attr(*, "scaling")= chr(0) 
+#>   ..- attr(*, "params")=List of 1
+#>   ..- attr(*, "class")= chr "tna"
+#>  $ trans_matrix: num [1:8, 1:8] 0.65084 0.00658 0.06441 0.00231 0.09574 ...
+#>   ..- attr(*, "dimnames")=List of 2
+#>  $ init_probs  : Named num [1:8] 0.0868 0.1265 0.1334 0.1099 0.4211 ...
+#>   ..- attr(*, "names")= chr [1:8] "Outline" "Test" "Note" "Cite" ...
+#>  $ sequences   :'data.frame':    602 obs. of  7 variables:
+#>  $ labels      : chr [1:8] "Outline" "Test" "Note" "Cite" ...
+#>  $ category    : chr "behavioral"
 ```
