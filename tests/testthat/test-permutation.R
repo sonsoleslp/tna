@@ -236,3 +236,28 @@ test_that("a co-occurrence network corrects each pair once", {
   expect_equal(p_bon[tested], pmin(1, p_raw[tested] * m))
   expect_equal(p_bon, t(p_bon))
 })
+
+test_that("comparing scaled models informs that it is not warranted", {
+  x <- ftna(group_regulation[1:100, ], scaling = "minmax")
+  y <- ftna(group_regulation[101:200, ], scaling = "minmax")
+  set.seed(1)
+  expect_message(
+    permutation_test(x, y, iter = 5),
+    class = "tna_message_scaling"
+  )
+  # one scaled model is enough
+  set.seed(1)
+  expect_message(
+    permutation_test(ftna(group_regulation[1:100, ]), y, iter = 5),
+    class = "tna_message_scaling"
+  )
+  set.seed(1)
+  expect_no_message(
+    permutation_test(
+      ftna(group_regulation[1:100, ]),
+      ftna(group_regulation[101:200, ]),
+      iter = 5
+    ),
+    class = "tna_message_scaling"
+  )
+})

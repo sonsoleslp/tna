@@ -1,3 +1,9 @@
+# tna 1.5.8
+
+* `permutation_test()`: comparing two models with scaled edge weights gives a
+  message (class `tna_message_scaling`). Each network is scaled on its own, so
+  comparing scaled weights is not warranted; the test still runs.
+
 # tna 1.5.7
 
 * `estimate_cs()`: the CS-coefficient is the largest passing proportion, whatever the order of `drop_prop`.

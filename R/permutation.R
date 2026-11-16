@@ -10,7 +10,9 @@
 #' @family validation
 #' @param x A `tna` object containing sequence data for the first `tna` model.
 #'   Grouped models with scaled edge weights, and their networks, are not
-#'   resampled (an error of class `tna_error_scaling`).
+#'   resampled (an error of class `tna_error_scaling`). Two models with scaled
+#'   edge weights are compared with a message (class `tna_message_scaling`):
+#'   each is scaled on its own, so comparing them is not warranted.
 #' @param y A `tna` object containing sequence data for the second `tna` model.
 #' @param adjust A `character` string for the method to adjust p-values with
 #' for multiple comparisons. The default is `"none"` for no adjustment.
@@ -83,6 +85,19 @@ permutation_test.tna <- function(x, y, adjust = "none", iter = 1000,
   check_tna_seq(y)
   check_not_scaled_group(x, "The permutation test")
   check_not_scaled_group(y, "The permutation test")
+  # Each model is scaled on its own, so its scaled weights are not on a
+  # common scale with the other's; the test still runs, as before 1.5.8
+  if (length(attr(x, "scaling")) > 0L || length(attr(y, "scaling")) > 0L) {
+    message_(
+      c(
+        "{.arg x} or {.arg y} has scaled edge weights.",
+        `i` = "Each network is scaled on its own, so comparing scaled
+               weights is not warranted. Build the models without
+               {.arg scaling} to compare the transition weights."
+      ),
+      class = "tna_message_scaling"
+    )
+  }
   check_values(iter, strict = TRUE)
   check_flag(paired)
   check_actor(actor, paired)

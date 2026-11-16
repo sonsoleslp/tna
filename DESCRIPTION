@@ -1,6 +1,6 @@
 Package: tna
 Title: Transition Network Analysis (TNA)
-Version: 1.5.7
+Version: 1.5.8
 Authors@R: c(
     person("Mohammed", "Saqr", role = "aut"),
     person("Santtu", "Tikka", role = "aut"),

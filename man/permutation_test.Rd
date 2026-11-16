@@ -22,7 +22,9 @@ permutation_test(x, ...)
 \arguments{
 \item{x}{A \code{tna} object containing sequence data for the first \code{tna} model.
 Grouped models with scaled edge weights, and their networks, are not
-resampled (an error of class \code{tna_error_scaling}).}
+resampled (an error of class \code{tna_error_scaling}). Two models with scaled
+edge weights are compared with a message (class \code{tna_message_scaling}):
+each is scaled on its own, so comparing them is not warranted.}
 
 \item{...}{Additional arguments passed to \code{\link[=centralities]{centralities()}}.}
 

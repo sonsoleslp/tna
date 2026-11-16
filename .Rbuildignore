@@ -30,3 +30,6 @@ Rplots.pdf
 ^Tutorial_docs$
 ^man/figures/README-
 ^codexclaims\.md$
+^\.mini-ci$
+^\.ci$
+^vignettes/articles$
