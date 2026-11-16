@@ -524,10 +524,12 @@ calculate_cs <- function(corr_mat, threshold, certainty, drop_prop) {
   prop_above <- apply(corr_mat, 2, function(x) {
     mean(!is.na(x) & x >= threshold)
   })
+  # The CS-coefficient is the largest proportion that passes, whatever the
+  # order in which drop_prop was given
   valid_indices <- which(prop_above >= certainty)
   ifelse_(
     length(valid_indices) > 0,
-    drop_prop[max(valid_indices)],
+    max(drop_prop[valid_indices]),
     0
   )
 }

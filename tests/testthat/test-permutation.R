@@ -192,3 +192,47 @@ test_that("pruning does not enter the permutation test", {
   )
   expect_equal(res_pruned, res_model)
 })
+
+test_that("p-value adjustment counts only the edges tested", {
+  # C -> C and B -> B never occur in either group: their p-values are 1 and
+  # they do not enter the correction
+  # x alternates A and B, y stays in A: the groups differ clearly, so some
+  # p-values are small enough for the size of the correction to show
+  x <- as.data.frame(matrix(rep(c("A", "B", "A", "B", "C"), each = 20), 20))
+  y <- as.data.frame(matrix(rep(c("A", "A", "A", "C", "B"), each = 20), 20))
+  mx <- tna(x)
+  my <- tna(y)
+  tested <- c(mx$weights != 0 | my$weights != 0)
+  m <- sum(tested)
+  expect_true(m < length(tested))
+  set.seed(1)
+  raw <- permutation_test(mx, my, iter = 200, adjust = "none")
+  expect_true(any(raw$edges$stats$p_value[tested] * m < 1))
+  set.seed(1)
+  bon <- permutation_test(mx, my, iter = 200, adjust = "bonferroni")
+  expect_equal(
+    bon$edges$stats$p_value[tested],
+    pmin(1, raw$edges$stats$p_value[tested] * m)
+  )
+  expect_true(all(bon$edges$stats$p_value[!tested] == 1))
+})
+
+test_that("a co-occurrence network corrects each pair once", {
+  # x alternates A and B, y stays in A: the groups differ clearly, so some
+  # p-values are small enough for the size of the correction to show
+  x <- as.data.frame(matrix(rep(c("A", "B", "A", "B", "C"), each = 20), 20))
+  y <- as.data.frame(matrix(rep(c("A", "A", "A", "C", "B"), each = 20), 20))
+  mx <- ctna(x)
+  my <- ctna(y)
+  tested <- (mx$weights != 0 | my$weights != 0) & upper.tri(mx$weights,
+                                                            diag = TRUE)
+  m <- sum(tested)
+  set.seed(1)
+  raw <- permutation_test(mx, my, iter = 200, adjust = "none")
+  set.seed(1)
+  bon <- permutation_test(mx, my, iter = 200, adjust = "bonferroni")
+  p_raw <- matrix(raw$edges$stats$p_value, nrow(mx$weights))
+  p_bon <- matrix(bon$edges$stats$p_value, nrow(mx$weights))
+  expect_equal(p_bon[tested], pmin(1, p_raw[tested] * m))
+  expect_equal(p_bon, t(p_bon))
+})

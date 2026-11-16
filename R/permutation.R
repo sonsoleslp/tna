@@ -15,7 +15,9 @@
 #' @param adjust A `character` string for the method to adjust p-values with
 #' for multiple comparisons. The default is `"none"` for no adjustment.
 #' See the `method` argument of [stats::p.adjust()] for details and available
-#' adjustment methods.
+#' adjustment methods. The edge p-values are corrected over the edges tested:
+#' the transitions present in either network, each pair of a co-occurrence
+#' network counted once. A transition absent from both keeps its p-value of 1.
 #' @param iter An `integer` giving the number of permutations to perform.
 #' The default is 1000.
 #' @param paired A `logical` value. If `TRUE`, perform paired permutation tests;
@@ -334,10 +336,23 @@ permutation_test_ <- function(x, y, adjust, iter, paired, level,
       1L * (abs(edge_diffs_perm[i, , ]) >= edge_diffs_true_abs)
   }
   edge_p_values <- (edge_p_values + 1) / (iter + 1)
-  edge_p_values[,] <- stats::p.adjust(
-    p = edge_p_values,
+  # Correct over the edges tested: the cells non-zero in either network
+  # (a cell zero in both is zero in every permutation, so its p-value is 1),
+  # each pair of a co-occurrence (undirected) network once
+  tested <- !is.na(weights_x) & !is.na(weights_y) &
+    (weights_x != 0 | weights_y != 0)
+  undirected <- identical(type, "co-occurrence")
+  if (undirected) {
+    tested[lower.tri(tested)] <- FALSE
+  }
+  edge_p_values[tested] <- stats::p.adjust(
+    p = edge_p_values[tested],
     method = adjust
   )
+  if (undirected) {
+    lower <- lower.tri(edge_p_values)
+    edge_p_values[lower] <- t(edge_p_values)[lower]
+  }
   edge_diffs_sd <- apply(edge_diffs_perm, c(2, 3), stats::sd)
   edge_diffs_sig <- edge_diffs_true * (edge_p_values < level)
   edge_stats <- data.frame(

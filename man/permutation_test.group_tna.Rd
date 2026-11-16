@@ -29,7 +29,9 @@ all pairs are compared (the default).}
 \item{adjust}{A \code{character} string for the method to adjust p-values with
 for multiple comparisons. The default is \code{"none"} for no adjustment.
 See the \code{method} argument of \code{\link[stats:p.adjust]{stats::p.adjust()}} for details and available
-adjustment methods.}
+adjustment methods. The edge p-values are corrected over the edges tested:
+the transitions present in either network, each pair of a co-occurrence
+network counted once. A transition absent from both keeps its p-value of 1.}
 
 \item{iter}{An \code{integer} giving the number of permutations to perform.
 The default is 1000.}

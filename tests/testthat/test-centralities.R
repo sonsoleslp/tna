@@ -532,3 +532,11 @@ test_that("pruning does not enter the centrality stability estimate", {
   )
   expect_equal(cs_pruned, cs_model)
 })
+
+test_that("the CS-coefficient is the largest passing proportion in any order", {
+  # every draw passes at 0.5 and 0.1; none at 0.3 in the second case
+  corr_mat <- matrix(0.9, 10, 3)
+  expect_equal(calculate_cs(corr_mat, 0.7, 0.95, c(0.5, 0.1, 0.3)), 0.5)
+  corr_mat[, 1] <- 0.2
+  expect_equal(calculate_cs(corr_mat, 0.7, 0.95, c(0.5, 0.1, 0.3)), 0.3)
+})
